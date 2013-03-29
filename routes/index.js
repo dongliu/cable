@@ -1,8 +1,5 @@
 
-/*
- * GET home page.
- */
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Cable' });
+exports.main = function(req, res) {
+  res.render('main', { username: req.session.username});
 };

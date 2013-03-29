@@ -2,14 +2,12 @@ doctype 5
 html
   head
     meta(charset='urf-8')
-    title= title
+    title FRIB Cable App
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
     link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
-    //- link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
   body
-    //- .navbar.navbar-fixed-top
     .navbar.navbar-inverse.navbar-fixed-top
       .navbar-inner
         .container
@@ -23,12 +21,11 @@ html
               li.active
                 a(href='./') Cable
               li
-                a(href='traveler link') Traveler
+                a(href='http://liud-dev.nscl.msu.edu:3001') Traveler
               li
-                a(href='other') other
+                a(href='other') Other
               li
-                a(href='other') other
-    //- .container
+                a(href='other') Another
     block content
 
     script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
