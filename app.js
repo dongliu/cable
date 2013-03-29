@@ -58,6 +58,7 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
+app.get('/logout', routes.logout);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

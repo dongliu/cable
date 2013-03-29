@@ -1,3 +1,33 @@
 extends layout
 
 block content
+  .container
+    .btn-toolbar
+      .btn-group
+        a.btn.btn-primary New Request
+      .btn-group
+        a.btn.btn-info(href='./about') About
+    .tabbable.tabs-left
+      ul.nav.nav-tabs
+        li.active
+          a(href='#requested', data-toggle='tab') Requested
+        li
+          a(href='#adjusted', data-toggle='tab') Adjusted
+        li
+          a(href='#approved', data-toggle='tab') Approved
+        li
+          a(href='#installed', data-toggle='tab') Installed
+        li
+          a(href='#working', data-toggle='tab') Working
+      .tab-content
+        #requested.tab-pane.active
+          p the list of requested cables
+        #adjusted.tab-pane
+          p the list of adjusted cables
+        #approved.tab-pane
+          p the list of approved cables
+        #installed.tab-pane
+          p the list of installed cables
+        #working.tab-pane
+          p the list of working cables
+
