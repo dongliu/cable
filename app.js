@@ -23,18 +23,6 @@ var cas = new Client({
   version: 1.0
 });
 
-// cas.configure({
-//   casHost: "liud-dev.nscl.msu.edu",   // required
-//   casPath: "/cas",                  // your cas login route (defaults to "/cas")
-//   ssl: true,                        // is the cas url https? defaults to false
-//   port: 443,                        // defaults to 80 if ssl false, 443 if ssl true
-//   service: "http://localhost:3000", // your site
-//   sessionName: "cas_user",          // the cas user_name will be at req.session.cas_user (this is the default)
-//   renew: false,                     // true or false, false is the default
-//   gateway: false,                   // true or false, false is the default
-//   redirectUrl: '/about'            // the route that cas.blocker will send to if not authed. Defaults to '/'
-// });
-
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
@@ -45,7 +33,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser('cable_secret'));
   app.use(express.session());
-  // app.use(cas_validate.redirect({'cas_host':'https://35.8.35.139/cas'}))
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -54,7 +41,6 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// var auth = cas.getMiddleware('https://35.8.35.139/cas', 'http://localhost:3000');
 
 app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
