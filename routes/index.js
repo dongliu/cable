@@ -4,6 +4,9 @@ exports.main = function(req, res) {
   res.render('main', { username: req.session.username});
 };
 
+
+//TODO implement the cas 2.0 logout
+
 exports.logout = function(req, res) {
   if (req.session) {
     req.session.destroy(function(err) {

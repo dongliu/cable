@@ -6,13 +6,8 @@
 var express = require('express'),
   routes = require('./routes'),
   about = require('./routes/about'),
-  // user = require('./routes/user'),
   http = require('http'),
-  Client = require('./lib/cas-client.js'),
-  // CAS = require('xcas'),
-  // cas = require('grand_master_cas'),
-  // cas_validate = require('cas_validate'),
-  // querystring = require('querystring'),
+  Client = require('cas.js'),
   path = require('path');
 
 var app = express();
