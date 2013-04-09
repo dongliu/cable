@@ -6,8 +6,11 @@
 var express = require('express'),
   routes = require('./routes'),
   about = require('./routes/about'),
+  admin = require('./routes/admin'),
   http = require('http'),
   Client = require('cas.js'),
+  // fs = require('fs'),
+  role = require(__dirname + '/config/role.json'),
   path = require('path');
 
 var app = express();
@@ -39,6 +42,8 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
+app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
+app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
 app.get('/logout', routes.logout);
 
 http.createServer(app).listen(app.get('port'), function(){
@@ -54,11 +59,44 @@ function ensureAuthenticated(req, res, next) {
       if (err) {
         res.send(401, err.message);
       } else {
-        req.session.username = username;
-        next();
+        if (status) {
+          req.session.username = username;
+          req.session.roles = role[req.session.username];
+          next();
+        }
       }
     });
   } else {
     res.redirect('https://' + cas.hostname + cas.base_path + '/login?service=' + encodeURIComponent(cas.service));
   }
 }
+
+function verifyRole(role) {
+  return function(req, res, next) {
+    if (req.session.roles) {
+      if (req.session.roles.indexOf(role) > -1) {
+        next();
+      } else {
+        res.send(403, "You are not authorized to access this resource. ");
+      }
+
+    } else {
+      console.log("Cannot identify the user's role.");
+      res.redirect(cas.service);
+    }
+  }
+}
+
+// function verifyRole(role, req, res, next) {
+//   if (req.session.roles) {
+//     if (req.ession.roles.indexOf(role) > -1) {
+//       next();
+//     } else {
+//       res.send(403, "You are not authorized to access this resource. ");
+//     }
+
+//   } else {
+//     console.log("Cannot identify the user's role.");
+//     res.redirect(cas.service);
+//   }
+// }
