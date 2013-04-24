@@ -3,6 +3,7 @@ node_modules/
 
 # logs #
 logs/
+doc/
 
 # Git related files. #
 *.orig
