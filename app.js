@@ -7,10 +7,13 @@ var express = require('express'),
   routes = require('./routes'),
   about = require('./routes/about'),
   admin = require('./routes/admin'),
+  numbering = require('./routes/numbering'),
   http = require('http'),
   Client = require('cas.js'),
   // fs = require('fs'),
   role = require(__dirname + '/config/role.json'),
+  sysSub = require(__dirname + '/config/sys-sub.json'),
+  signal = require(__dirname + '/config/signal.json'),
   path = require('path');
 
 var app = express();
@@ -44,6 +47,13 @@ app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
 app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
+app.get('/numbering', numbering.index);
+app.get('/sys-sub', function(req, res) {
+  res.json(sysSub);
+});
+app.get('/signal', function(req, res) {
+  res.json(signal);
+});
 app.get('/logout', routes.logout);
 
 http.createServer(app).listen(app.get('port'), function(){
@@ -84,7 +94,7 @@ function verifyRole(role) {
       console.log("Cannot identify the user's role.");
       res.redirect(cas.service);
     }
-  }
+  };
 }
 
 // function verifyRole(role, req, res, next) {
