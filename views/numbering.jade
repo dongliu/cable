@@ -23,12 +23,21 @@ block content
           td
             input#sequence.input-small(placeholder='######', disabled=true)
     .well
-      h4 Decoding information
-      p#detailed
+      p Decoding information
+      p System: &nbsp;
+        b
+          span#sys-val TBD
+        | &nbsp;Sub system: &nbsp;
+        b
+          span#sub-val TBD
+        | &nbsp;Signel type: &nbsp;
+        b
+          span#signal-val TBD
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src='/javascripts/knockout-2.2.1.js')
   script(type='text/javascript', src='/javascripts/number.js')
 
 
