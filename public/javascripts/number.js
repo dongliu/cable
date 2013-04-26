@@ -8,7 +8,7 @@ $(function(){
     dataType: 'json',
   }).done(function(json){
     sysSub = json;
-    updateSystem(sysSub);
+    update('#system', sysSub);
   }).fail(function(jqXHR, status, error){
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for numbering information.</div>');
   }).always(function(){
@@ -22,6 +22,7 @@ $(function(){
     dataType: 'json',
   }).done(function(json){
     signal = json;
+    update('#signal', signal);
   }).fail(function(jqXHR, status, error){
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for numbering information.</div>');
   }).always(function(){
@@ -42,11 +43,12 @@ function init() {
 function updateSystem(json) {
   $('#system').prop('disabled', false);
   $.each(json, function(k, v) {
-    $('#system').append($('<option>', {
-      value: v['name']
-    }).text(k));
+    if (v) {
+      $('#system').append($('<option>', {
+        value: v['name']
+      }).text(k));
+    }
   });
-  // updateSub(json);
 }
 
 function updateSub(json){
@@ -56,6 +58,17 @@ function updateSub(json){
   $.each(json[sys]['sub-system'], function(k, v){
     if (v) {
       $('#sub').append($('<option>', {
+        value: v['name']
+      }).text(k));
+    }
+  });
+}
+
+function update(select, json) {
+  $(select).prop('disabled', false);
+  $.each(json, function(k, v) {
+    if (v) {
+      $(select).append($('<option>', {
         value: v['name']
       }).text(k));
     }

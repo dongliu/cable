@@ -13,16 +13,15 @@ block content
       tbody
         tr
           td
-            select#system.input-small.disabled
+            select#system.input-small(disabled=true)
               option(value='', disabled=true) choose
           td
-            select#sub.input-small.disabled
-              //- option(value='', selected='selected') choose
+            select#sub.input-small(disabled=true)
           td
-            select#signal.input-small.disabled
+            select#signal.input-small(disabled=true)
               option(value='', disabled=true) choose
           td
-            input#sequence.input-small(placeholder='######').disabled
+            input#sequence.input-small(placeholder='######', disabled=true)
     .well
       h4 Decoding information
       p#detailed
