@@ -5,8 +5,23 @@ block content
     .btn-toolbar
       .btn-group
         a.btn.btn-primary New Request
+      .btn-group.dropdown
+        a#meta.btn.dropdown-toggle(data-toggle='dropdown') Meta
+          span.caret
+        ul.dropdown-menu
+          li#numbering
+            a(href='./numbering') FRIB cable numbering
+          li#add-text
+            a(href='./approved') FRIB approved cable types
+          li#add-par
+            a(href='#') Other
+      .btn-group
+        a.btn(href='#users') Users
       .btn-group
         a.btn.btn-info(href='./about') About
+
+
+
     .tabbable.tabs-left
       ul.nav.nav-tabs
         li.active

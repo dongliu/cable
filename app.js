@@ -8,6 +8,7 @@ var express = require('express'),
   about = require('./routes/about'),
   admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
+  cabletype = require('./routes/cabletype'),
   http = require('http'),
   Client = require('cas.js'),
   // fs = require('fs'),
@@ -48,6 +49,7 @@ app.get('/', ensureAuthenticated, routes.main);
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
 app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
 app.get('/numbering', numbering.index);
+app.get('/cabletype', cabletype.index);
 app.get('/sys-sub', function(req, res) {
   res.json(sysSub);
 });

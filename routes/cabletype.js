@@ -1,4 +1,6 @@
 
 exports.index = function(req, res){
-  res.render('numbering');
+  res.render('approved');
 };
+
+
