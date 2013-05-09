@@ -17,6 +17,13 @@ var express = require('express'),
   signal = require(__dirname + '/config/signal.json'),
   path = require('path');
 
+
+var mongoose = require('mongoose');
+// the model is called CableType
+var CableType = require('./model/meta.js').CableType;
+mongoose.connect('mongodb://localhost/cable');
+
+
 var app = express();
 
 var cas = new Client({
@@ -49,7 +56,9 @@ app.get('/', ensureAuthenticated, routes.main);
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
 app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
 app.get('/numbering', numbering.index);
+
 app.get('/cabletype', cabletype.index);
+app.get('/cabletype/all', cabletype.all);
 app.get('/sys-sub', function(req, res) {
   res.json(sysSub);
 });

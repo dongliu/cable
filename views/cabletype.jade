@@ -3,10 +3,13 @@ extends layout
 block content
   .container
     #message
-    table#cable-type-list.table.table-striped.table-bordered
+    table#cable-type.table.table-striped.table-bordered
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/javascripts/knockout-2.2.1.js')
+  script(type='text/javascript', src='/javascripts/TableTools.js')
+  script(type='text/javascript', src='/javascripts/dataTables.bootstrap.js')
+  script(type='text/javascript', src='/javascripts/ZeroClipboard.js')
   script(type='text/javascript', src='/javascripts/cable-type.js')
