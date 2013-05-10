@@ -1,6 +1,6 @@
 
 exports.index = function(req, res){
-  res.render('approved');
+  res.render('cabletype');
 };
 
 exports.all = function(req, res) {
