@@ -12,7 +12,7 @@ block content
   .container
     .btn-toolbar
       .btn-group
-        a.btn.btn-primary New Request
+        a.btn.btn-primary#new(href='./requestform', target='_blank') New Request
       .btn-group.dropdown
         a#meta.btn.dropdown-toggle(data-toggle='dropdown') Meta
           span.caret
@@ -28,9 +28,7 @@ block content
       .btn-group
         a.btn.btn-info(href='./about') About
 
-
-
-    .tabbable.tabs-left
+    .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
           a(href='#requested', data-toggle='tab') Requested
@@ -53,8 +51,11 @@ block content
           p the list of installed cables
         #working.tab-pane
           p the list of working cables
+    //- #requestform(style='display: none;')
+    //-   include requestform
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src='/javascripts/cable.js')
 

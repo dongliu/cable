@@ -9,6 +9,7 @@ var express = require('express'),
   admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
   cabletype = require('./routes/cabletype'),
+  cable = require('./routes/cable'),
   http = require('http'),
   Client = require('cas.js'),
   // fs = require('fs'),
@@ -53,6 +54,8 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
+app.get('/requestform', cable.requestform);
+
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
 app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
 app.get('/numbering', numbering.index);
@@ -73,16 +76,16 @@ http.createServer(app).listen(app.get('port'), function(){
 
 
 function ensureAuthenticated(req, res, next) {
-  if (req.session.username) {
+  if (req.session.userid) {
     next();
   } else if (req.param('ticket')) {
-    cas.validate(req.param('ticket'), function(err, status, username) {
+    cas.validate(req.param('ticket'), function(err, status, userid) {
       if (err) {
         res.send(401, err.message);
       } else {
         if (status) {
-          req.session.username = username;
-          req.session.roles = role[req.session.username];
+          req.session.userid = userid;
+          req.session.roles = role[req.session.userid];
           next();
         }
       }

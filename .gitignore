@@ -8,8 +8,13 @@ doc/
 # Git related files. #
 *.orig
 
+# CTag
+.tags
+.tags_sorted_by_file
+
+
 # Editor bread crumbs. #
 *~
-# sublime stuff# 
+# sublime stuff#
 *.sublime-project
 *.sublime-workspace
