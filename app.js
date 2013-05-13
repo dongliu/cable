@@ -12,7 +12,7 @@ var express = require('express'),
   cable = require('./routes/cable'),
   http = require('http'),
   Client = require('cas.js'),
-  // fs = require('fs'),
+  fs = require('fs'),
   role = require(__dirname + '/config/role.json'),
   sysSub = require(__dirname + '/config/sys-sub.json'),
   signal = require(__dirname + '/config/signal.json'),
@@ -27,6 +27,8 @@ mongoose.connect('mongodb://localhost/cable');
 
 var app = express();
 
+var access_logfile = fs.createWriteStream('./logs/access.log', {flags: 'a'});
+
 var cas = new Client({
   base_url: 'https://liud-dev.nscl.msu.edu/cas',
   service: 'http://localhost:3000',
@@ -38,7 +40,8 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/favicon.ico'));
-  app.use(express.logger('dev'));
+  app.use(express.logger({stream: access_logfile}));
+  // app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('cable_secret'));

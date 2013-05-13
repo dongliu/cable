@@ -1,0 +1,118 @@
+extends layout
+
+block head
+  meta(charset='urf-8')
+  title FRIB Cable :: request
+  meta(name='viewport', content='width=device-width, initial-scale=1.0')
+  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href='/stylesheets/style.css')
+
+block content
+  .container
+    form.form-horizontal#new
+      h3 Request cables
+      fieldset
+        legend Basic information
+        .control-group
+          .control-label System/subsystem/signal
+          .controls
+            select#system.input-small(disabled=true)
+                  option(value='', disabled=true) choose
+            select#sub.input-small(disabled=true)
+            select#signal.input-small(disabled=true)
+                  option(value='', disabled=true) choose
+        .control-group
+          .control-label Type
+          .controls
+            input#type(type='text')
+        .control-group
+          .control-label Engineer
+          .controls
+            input#engineer(type='text')
+        .control-group
+          .control-label Function
+          .controls
+            input#function(type='text')
+        .control-group
+          .control-label WBS
+          .controls
+            input#wbs(type='text')
+      fieldset
+        legend Source(from)
+        .control-group
+          .control-label Building
+          .controls
+            select#from-building.input-small(disabled=true)
+                  option(value='', disabled=true) choose
+        .control-group
+          .control-label Rack
+          .controls
+            input#from-rack(type='text')
+        .control-group
+          .control-label Elevation
+          .controls
+            .inout-append
+              input#from-elevation(type='text')
+              span.add-on ft
+        .control-group
+          .control-label Termination device
+          .controls
+            input#from-termination(type='text')
+        .control-group
+          .control-label Termination type
+          .controls
+            input#from-type(type='text')
+        .control-group
+          .control-label Wiring (pinout) drawing
+          .controls
+            input#from-drawing(type='text')
+        .control-group
+          .control-label Label "From"
+          .controls
+            input#from-label(type='text')
+      fieldset
+        legend Destination(to)
+        .control-group
+          .control-label Building
+          .controls
+            select#to-building.input-small(disabled=true)
+                  option(value='', disabled=true) choose
+        .control-group
+          .control-label Rack
+          .controls
+            input#to-rack(type='text')
+        .control-group
+          .control-label Elevation
+          .controls
+            .inout-append
+              input#to-elevation(type='text')
+              span.add-on ft
+        .control-group
+          .control-label Termination device
+          .controls
+            input#to-termination(type='text')
+        .control-group
+          .control-label Termination type
+          .controls
+            input#to-type(type='text')
+        .control-group
+          .control-label Wiring (pinout) drawing
+          .controls
+            input#to-drawing(type='text')
+        .control-group
+          .control-label Label "From"
+          .controls
+            input#to-label(type='text')
+
+
+
+
+
+
+
+block js
+  script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src='/javascripts/cable.js')
+
