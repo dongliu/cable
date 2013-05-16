@@ -6,30 +6,48 @@ block head
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
+  script
+    var sysSub = !{JSON.stringify(sysSub)};
+    var signal = !{JSON.stringify(signal)};
   .container
     form.form-horizontal#new
       h3 Request cables
       fieldset
         legend Basic information
         .control-group
-          .control-label System/subsystem/signal
+          .control-label System
           .controls
-            select#system.input-small(disabled=true)
-                  option(value='', disabled=true) choose
-            select#sub.input-small(disabled=true)
-            select#signal.input-small(disabled=true)
-                  option(value='', disabled=true) choose
+            .input-append
+              select#system.input(disabled=true)
+                option(value='', disabled=true) choose
+              span.add-on &nbsp
+        .control-group
+          .control-label Subsystem
+          .controls
+            .input-append
+              select#sub.input(disabled=true)
+              span.add-on &nbsp
+        .control-group
+          .control-label Signal
+          .controls
+            .input-append
+              select#signal.input(disabled=true)
+                option(value='', disabled=true) choose
+              span.add-on &nbsp
         .control-group
           .control-label Type
           .controls
-            input#type(type='text')
+            .input-append
+              input#type(type='text')
+              a.btn.btn-info(href='./cabletype', target='_blank') Browse
         .control-group
           .control-label Engineer
           .controls
-            input#engineer(type='text')
+            input#engineer(type='text', placeholder='Last, First')
         .control-group
           .control-label Function
           .controls
@@ -38,13 +56,28 @@ block content
           .control-label WBS
           .controls
             input#wbs(type='text')
+        .control-group
+          .control-label Quality
+          .controls
+            input#quality(type='text')
       fieldset
         legend Source(from)
         .control-group
           .control-label Building
           .controls
-            select#from-building.input-small(disabled=true)
-                  option(value='', disabled=true) choose
+            input#from-building(type='text')
+            //- select#from-building.input(disabled=true)
+            //-       option(value='', disabled=true) choose
+        //- .control-group
+        //-   .control-label Area
+        //-   .controls
+        //-     select#from-area.input(disabled=true)
+        //-       option(value='', disabled=true) choose
+        //- .control-group
+        //-   .control-label Room
+        //-   .controls
+        //-     select#from-room.input(disabled=true)
+        //-       option(value='', disabled=true)
         .control-group
           .control-label Rack
           .controls
@@ -52,7 +85,7 @@ block content
         .control-group
           .control-label Elevation
           .controls
-            .inout-append
+            .input-append
               input#from-elevation(type='text')
               span.add-on ft
         .control-group
@@ -76,8 +109,19 @@ block content
         .control-group
           .control-label Building
           .controls
-            select#to-building.input-small(disabled=true)
-                  option(value='', disabled=true) choose
+            input#to-building(type='text')
+            //- select#to-building.input(disabled=true)
+            //-       option(value='', disabled=true) choose
+        //- .control-group
+        //-   .control-label Area
+        //-   .controls
+        //-     select#to-area.input(disabled=true)
+        //-       option(value='', disabled=true) choose
+        //- .control-group
+        //-   .control-label Room
+        //-   .controls
+        //-     select#to-room.input(disabled=true)
+        //-       option(value='', disabled=true)
         .control-group
           .control-label Rack
           .controls
@@ -85,7 +129,7 @@ block content
         .control-group
           .control-label Elevation
           .controls
-            .inout-append
+            .input-append
               input#to-elevation(type='text')
               span.add-on ft
         .control-group
@@ -101,18 +145,50 @@ block content
           .controls
             input#to-drawing(type='text')
         .control-group
-          .control-label Label "From"
+          .control-label Label "To"
           .controls
             input#to-label(type='text')
-
-
-
-
-
-
-
+      fieldset
+        legend Routing
+        .control-group
+          .control-label Tray group
+          .controls
+            input#tray(type='text')
+        .control-group
+          .control-label Penetration #
+          .controls
+            input#penetration(type='text')
+        .control-group
+          .control-label Penetration Z position
+          .controls
+            input#position(type='text')
+      fieldset
+        legend General information
+        .control-group
+          .control-label Fabricated by
+          .controls
+            input#fab(type='text')
+        .control-group
+          .control-label Installed by
+          .controls
+            input#ins(type='text')
+        .control-group
+          .control-label Terminated by
+          .controls
+            input#term(type='text')
+        .control-group
+          .control-label Comments
+          .controls
+            textarea.input-xlarge#comments(rows=3)
+      .form-actions
+        button.btn.btn-info(type='submit') Save changes
+        span &nbsp
+        button.btn.btn-primary(type='submit') Submit
+        span &nbsp
+        button.btn(type='submit') Cancel
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/javascripts/cable.js')
 

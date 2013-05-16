@@ -1,5 +1,5 @@
 $(function(){
-  init();
+  // init();
   var sysSub, signal;
   // fetch sys-sub
   $.ajax({
@@ -43,23 +43,6 @@ $(function(){
   });
 
 });
-
-function init() {
-  // $('#system').prop('selectedIndex', -1);
-  // $('#sub').prop('selectedIndex', -1);
-  // $('#signal').prop('selectedIndex', -1);
-}
-
-// function updateSystem(json) {
-//   $('#system').prop('disabled', false);
-//   $.each(json, function(k, v) {
-//     if (v) {
-//       $('#system').append($('<option>', {
-//         value: v['name']
-//       }).text(k));
-//     }
-//   });
-// }
 
 function updateSub(json){
   var sys = $('#system option:selected').text();

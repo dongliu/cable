@@ -10,6 +10,7 @@
     "jade": "*",
     "cas.js": "*",
     "csv": "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "ldapjs": "*"
   }
 }

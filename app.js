@@ -40,8 +40,8 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/favicon.ico'));
-  app.use(express.logger({stream: access_logfile}));
-  // app.use(express.logger('dev'));
+  // app.use(express.logger({stream: access_logfile}));
+  app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('cable_secret'));
@@ -57,6 +57,12 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', ensureAuthenticated, routes.main);
+
+// init the user service
+// GET /user/:id
+// GET /username
+require('./routes/user')(app);
+
 app.get('/requestform', cable.requestform);
 
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
@@ -65,12 +71,16 @@ app.get('/numbering', numbering.index);
 
 app.get('/cabletype', cabletype.index);
 app.get('/cabletype/all', cabletype.all);
+
+
 app.get('/sys-sub', function(req, res) {
   res.json(sysSub);
 });
 app.get('/signal', function(req, res) {
   res.json(signal);
 });
+
+
 app.get('/logout', routes.logout);
 
 http.createServer(app).listen(app.get('port'), function(){
