@@ -5,6 +5,10 @@ $(function() {
   var rackCache = {};
   sss();
 
+  $('#type-details').popover({
+    html: true
+  });
+
   $('#engineer').autocomplete({
     minLength: 1,
     source: function(req, res) {
@@ -46,11 +50,31 @@ $(function() {
       } else {
         res(getType(cableType, term));
       }
+    },
+    select: function(event, ui) {
+      var type = null;
+      for (var i = 0; i < cableType.length; i += 1) {
+        if (cableType[i].name == ui.item.value) {
+          type = cableType[i];
+          break;
+        }
+      }
+      if (type) {
+        $('#type-details').attr('disabled', false);
+        $('#type-details').attr('data-original-title', type.name);
+        $('#type-details').attr('data-content', json2List(type));
+      }
     }
+
   });
 
 
 });
+
+
+// function typeDetails() {
+//   $('#type-details')
+// }
 
 
 function getType(type, term) {
@@ -104,4 +128,22 @@ function update(select, json) {
       }).text(v['name']));
     }
   });
+}
+
+function json2List(json) {
+  var output = '';
+  for (var k in json) {
+    if (json.hasOwnProperty(k)) {
+      if (json[k] && typeof(json[k]) === 'object') {
+        output = output + '<dl>' + '<dt>' + '<h4>' + k + '</h4>' + '</dt>' + '<dd>' + json2List(json[k]) + '</dd>' + '</dl>';
+      } else {
+        if (json[k] == null) {
+          output = output + '<b>' + k + '</b>' + ' : ' + '<br/>';
+        } else {
+          output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
+        }
+      }
+    }
+  }
+  return output;
 }

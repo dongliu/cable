@@ -44,6 +44,7 @@ block content
             .input-append
               input#type(type='text')
               a.btn.btn-info(href='./cabletype', target='_blank') Browse
+              a.btn.btn-info#type-details(disabled=true) Details
         .control-group
           .control-label Engineer
           .controls
@@ -81,7 +82,9 @@ block content
         .control-group
           .control-label Rack
           .controls
-            input#from-rack(type='text')
+            .input-append
+              input#from-rack(type='text')
+              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Elevation
           .controls
@@ -91,7 +94,9 @@ block content
         .control-group
           .control-label Termination device
           .controls
-            input#from-termination(type='text')
+            .input-append
+              input#from-termination(type='text')
+              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Termination type
           .controls
@@ -125,7 +130,9 @@ block content
         .control-group
           .control-label Rack
           .controls
-            input#to-rack(type='text')
+            .input-append
+              input#to-rack(type='text')
+              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Elevation
           .controls
@@ -135,7 +142,9 @@ block content
         .control-group
           .control-label Termination device
           .controls
-            input#to-termination(type='text')
+            .input-append
+              input#to-termination(type='text')
+              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Termination type
           .controls
