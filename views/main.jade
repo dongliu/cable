@@ -31,6 +31,8 @@ block content
     .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
+          a(href='#saved', data-toggle='tab') Saved
+        li
           a(href='#requested', data-toggle='tab') Requested
         li
           a(href='#adjusted', data-toggle='tab') Adjusted
@@ -41,12 +43,14 @@ block content
         li
           a(href='#working', data-toggle='tab') Working
       .tab-content
-        #requested.tab-pane.active
-          p the list of requested cables
+        #saved.tab-pane.active
+          p the list of saved cable request
+        #requested.tab-pane
+          p the list of cable requests
         #adjusted.tab-pane
-          p the list of adjusted cables
+          p the list of adjusted cable requests
         #approved.tab-pane
-          p the list of approved cables
+          p the list of approved cable requests
         #installed.tab-pane
           p the list of installed cables
         #working.tab-pane
@@ -57,5 +61,5 @@ block content
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/javascripts/cable.js')
+  //- script(type='text/javascript', src='/javascripts/cable.js')
 

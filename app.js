@@ -16,6 +16,7 @@ var express = require('express'),
   role = require(__dirname + '/config/role.json'),
   sysSub = require(__dirname + '/config/sys-sub.json'),
   signal = require(__dirname + '/config/signal.json'),
+  url = require('url'),
   path = require('path');
 
 
@@ -44,8 +45,9 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('cable_secret'));
-  app.use(express.session());
+  app.use(express.cookieParser());
+  app.use(express.session({secret: 'cable_secret',cookie: { maxAge: 14400000 }}));
+  // app.use(express.session());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -89,18 +91,31 @@ http.createServer(app).listen(app.get('port'), function(){
 
 
 function ensureAuthenticated(req, res, next) {
+  var ticketUrl = url.parse(req.url, true);
   if (req.session.userid) {
-    next();
-  } else if (req.param('ticket')) {
-    cas.validate(req.param('ticket'), function(err, status, userid) {
+    // console.log(req.session);
+    if (req.query.ticket) {
+      // remove the ticket query param
+      delete ticketUrl.query.ticket;
+      res.redirect(301, url.format({
+        pathname: ticketUrl.pathname,
+        query: ticketUrl.query
+      }));
+    } else {
+      next();
+    }
+  } else if (req.query.ticket) {
+    cas.validate(req.query.ticket, function(err, status, userid) {
       if (err) {
         res.send(401, err.message);
       } else {
-        if (status) {
-          req.session.userid = userid;
-          req.session.roles = role[req.session.userid];
-          next();
+        req.session.userid = userid;
+        if (role[userid]) {
+          req.session.roles = role[userid];
+        } else {
+          req.session.roles = [];
         }
+        next();
       }
     });
   } else {
@@ -108,32 +123,19 @@ function ensureAuthenticated(req, res, next) {
   }
 }
 
+
 function verifyRole(role) {
   return function(req, res, next) {
+    // console.log(req.session);
     if (req.session.roles) {
       if (req.session.roles.indexOf(role) > -1) {
-        next();
+        return next();
       } else {
-        res.send(403, "You are not authorized to access this resource. ");
+        return res.send(403, "You are not authorized to access this resource. ");
       }
-
     } else {
-      console.log("Cannot identify the user's role.");
-      res.redirect(cas.service);
+      console.log("Cannot find the user's role.");
+      return res.send(500, "something wrong for the user's session");
     }
   };
 }
-
-// function verifyRole(role, req, res, next) {
-//   if (req.session.roles) {
-//     if (req.ession.roles.indexOf(role) > -1) {
-//       next();
-//     } else {
-//       res.send(403, "You are not authorized to access this resource. ");
-//     }
-
-//   } else {
-//     console.log("Cannot identify the user's role.");
-//     res.redirect(cas.service);
-//   }
-// }
