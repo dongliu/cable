@@ -13,7 +13,6 @@ var vis = d3.select("#viz")
 
 var partition = d3.layout.partition()
   .value(function(d) {
-  // return d.size;
   return d.size || 100;
 });
 
