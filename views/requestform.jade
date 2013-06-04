@@ -56,7 +56,9 @@ block content
         .control-group
           .control-label WBS
           .controls
-            input#wbs(type='text')
+            .input-append
+              input#wbs(type='text')
+              a.btn.btn-info(href='./wbs', target='_blank') Browse
         .control-group
           .control-label Quality
           .controls

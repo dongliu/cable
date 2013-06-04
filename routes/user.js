@@ -68,7 +68,8 @@ module.exports= function(app){
   });
 
   app.get('/username', function(req, res) {
-    var query = req.param('term');
+    // var query = req.param('term');
+    var query = req.query.term;
     var nameFilter, opts;
     if (query && query.length > 0) {
       nameFilter = ad.nameFilter.replace('_name', query+'*');

@@ -9,6 +9,7 @@ var express = require('express'),
   admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
   cabletype = require('./routes/cabletype'),
+  // wbs = require('./routes/wbs'),
   cable = require('./routes/cable'),
   http = require('http'),
   Client = require('cas.js'),
@@ -74,6 +75,11 @@ app.get('/numbering', numbering.index);
 app.get('/cabletype', cabletype.index);
 app.get('/cabletype/all', cabletype.all);
 
+
+// init the wbs service
+// GET /wbs/:number
+// GET /wbs/list
+require('./routes/wbs')(app);
 
 app.get('/sys-sub', function(req, res) {
   res.json(sysSub);
