@@ -2,7 +2,6 @@ $(function() {
   var cableType = [];
   var nameCache = {};
   var wbs;
-  var penetration = [];
   var deviceCache = {};
   var rackCache = {};
   sss();
@@ -46,6 +45,7 @@ $(function() {
     minLength : 1,
     source: function(req, res) {
       var term = req.term.toLowerCase();
+      var output = [];
       if (cableType.length === 0) {
         $.getJSON('/cabletype/all', req, function(data, status, xhr) {
           cableType = data;
@@ -56,8 +56,8 @@ $(function() {
       }
     },
     select: function(event, ui) {
-      var type = null;
       $('#type').val(ui.item.value);
+      var type = null;
       for (var i = 0; i < cableType.length; i += 1) {
         if (cableType[i].name == ui.item.value) {
           type = cableType[i];
@@ -68,7 +68,6 @@ $(function() {
         $('#type-details').attr('disabled', false);
         $('#type-details').attr('data-original-title', type.name);
         $('#type-details').attr('data-content', json2List(type));
-        $('#function').val(type.service);
       }
     }
 
@@ -88,7 +87,7 @@ $(function() {
       term = term.substring(0, term.length-1);
       if (wbs && wbs.children) {
         output = getChildren(wbs, term);
-        if (output.length === 0) {
+        if (output.length == 0) {
           // warning
           // res(output);
           return;
@@ -98,7 +97,7 @@ $(function() {
         $.getJSON('/wbs/all', req, function(data, status, xhr) {
           wbs = data;
           output = getChildren(wbs, term);
-          if (output.length === 0) {
+          if (output.length == 0) {
             // warning
             // res(output);
             return;
@@ -108,34 +107,12 @@ $(function() {
       }
     },
     select: function(event, ui) {
-      $('#wbs').val(ui.item.value);
+      var value = ui.item.value;
+
     }
 
   });
 
-  $('#penetration').autocomplete({
-    minLength : 1,
-    source: function(req, res) {
-      var term = req.term.toLowerCase();
-      var output = [];
-      if (penetration.length === 0) {
-        $.getJSON('/penetration', req, function(data, status, xhr) {
-          penetration = data;
-          res(getList(penetration, term));
-        });
-      } else {
-        res(getList(penetration, term));
-      }
-    }
-
-  });
-
-  $('#save').click(function(e){
-
-  });
-  $('#submit').click(function(e){
-
-  });
 
 });
 
@@ -188,18 +165,6 @@ function getType(type, term) {
   }
   return output;
 }
-
-
-function getList(list, term) {
-  var output = [];
-  for (var i = 0; i < list.length; i += 1) {
-    if (list[i].toLowerCase().indexOf(term) !== -1) {
-      output.push(list[i]);
-    }
-  }
-  return output;
-}
-
 
 // system/subsystem/signal
 function sss(){

@@ -14,8 +14,7 @@ block content
     var sysSub = !{JSON.stringify(sysSub)};
     var signal = !{JSON.stringify(signal)};
   .container
-    //- form.form-horizontal#new(action='/request', method='post')
-    form.form-horizontal(name='request')
+    form.form-horizontal#new
       h3 Cable request
       fieldset
         legend Basic information
@@ -23,53 +22,53 @@ block content
           .control-label System
           .controls
             .input-append
-              select#system.input(disabled=true, name='system', ng-model='basic.system')
+              select#system.input(disabled=true)
                 option(value='', disabled=true) choose
               span.add-on &nbsp
         .control-group
           .control-label Subsystem
           .controls
             .input-append
-              select#sub.input(disabled=true, name='subsystem', ng-model='basic.subsystem')
+              select#sub.input(disabled=true)
               span.add-on &nbsp
         .control-group
           .control-label Signal
           .controls
             .input-append
-              select#signal.input(disabled=true, name='signal', ng-model='basic.signal')
+              select#signal.input(disabled=true)
                 option(value='', disabled=true) choose
               span.add-on &nbsp
         .control-group
           .control-label Type
           .controls
             .input-append
-              input#type(type='text', name='type', ng-model='basic.type')
+              input#type(type='text')
               a.btn.btn-info(href='./cabletype', target='_blank') Browse
               a.btn.btn-info#type-details(disabled=true) Details
         .control-group
           .control-label Engineer
           .controls
-            input#engineer(type='text', placeholder='Last, First', name='engineer', ng-model='basic.engineer')
+            input#engineer(type='text', placeholder='Last, First')
         .control-group
           .control-label Function
           .controls
-            input#function(type='text', name='function', ng-model='basic.function')
+            input#function(type='text')
         .control-group
           .control-label WBS
           .controls
             .input-append
-              input#wbs(type='text', name='wbs', ng-model='basic.wbs')
+              input#wbs(type='text')
               a.btn.btn-info(href='./wbs', target='_blank') Browse
         .control-group
           .control-label Quality
           .controls
-            input#quality(type='text', name='quality', ng-model='basic.quality')
+            input#quality(type='text')
       fieldset
         legend Source(from)
         .control-group
           .control-label Building
           .controls
-            input#from-building(type='text', name='from-building', ng-model='from.building')
+            input#from-building(type='text')
             //- select#from-building.input(disabled=true)
             //-       option(value='', disabled=true) choose
         //- .control-group
@@ -86,38 +85,38 @@ block content
           .control-label Rack
           .controls
             .input-append
-              input#from-rack(type='text', name='from-rack', ng-model='from.rack')
+              input#from-rack(type='text')
               a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Elevation
           .controls
             .input-append
-              input#from-elevation(type='text', name='from-elevation', ng-model='from.elevation')
+              input#from-elevation(type='text')
               span.add-on ft
         .control-group
           .control-label Termination device
           .controls
             .input-append
-              input#from-termination(type='text', name='from-termination', ng-model='from.terminationDevice')
+              input#from-termination(type='text')
               a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Termination type
           .controls
-            input#from-type(type='text', name='from-type', ng-model='from.terminationType')
+            input#from-type(type='text')
         .control-group
           .control-label Wiring (pinout) drawing
           .controls
-            input#from-drawing(type='text', name='from-drawing', ng-model='from.wiringDrawing')
+            input#from-drawing(type='text')
         .control-group
           .control-label Label "From"
           .controls
-            input#from-label(type='text', name='from-label', ng-model='from.label')
+            input#from-label(type='text')
       fieldset
         legend Destination(to)
         .control-group
           .control-label Building
           .controls
-            input#to-building(type='text', name='to-building', ng-model='to.building')
+            input#to-building(type='text')
             //- select#to-building.input(disabled=true)
             //-       option(value='', disabled=true) choose
         //- .control-group
@@ -134,77 +133,73 @@ block content
           .control-label Rack
           .controls
             .input-append
-              input#to-rack(type='text', name='to-rack', ng-model='to.rack')
+              input#to-rack(type='text')
               a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Elevation
           .controls
             .input-append
-              input#to-elevation(type='text', name='to-elevation', ng-model='to.elevation')
+              input#to-elevation(type='text')
               span.add-on ft
         .control-group
           .control-label Termination device
           .controls
             .input-append
-              input#to-termination(type='text', name='to-termination', ng-model='to.terminationDevice')
+              input#to-termination(type='text')
               a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
         .control-group
           .control-label Termination type
           .controls
-            input#to-type(type='text', name='to-type', ng-model='to.terminationType')
+            input#to-type(type='text')
         .control-group
           .control-label Wiring (pinout) drawing
           .controls
-            input#to-drawing(type='text', name='to-drawing', ng-model='to.wiringDrawing')
+            input#to-drawing(type='text')
         .control-group
           .control-label Label "To"
           .controls
-            input#to-label(type='text', name='to-label', ng-model='to.label')
+            input#to-label(type='text')
       fieldset
         legend Routing
         .control-group
           .control-label Tray group
           .controls
-            input#tray(type='text', name='tray', ng-model='routing.trayGroup')
+            input#tray(type='text')
         .control-group
           .control-label Penetration #
           .controls
-            .input-append
-              input#penetration(type='text', name='penetration', ng-model='routing.penetration')
-              a.btn.btn-info(href='https://portal.frib.msu.edu/dcc/Drawings/T20302-MDE-0007-0001.pdf', target='_blank') Browse
+            input#penetration(type='text')
         .control-group
           .control-label Penetration Z position
           .controls
-            input#position(type='text', name='position', ng-model='routing.penetrationZ')
+            input#position(type='text')
       fieldset
         legend General information
         .control-group
           .control-label Fabricated by
           .controls
-            input#fab(type='text', name="fab", ng-model='other.fabricatedBy')
+            input#fab(type='text')
         //- .control-group
         //-   .control-label Installed by
         //-   .controls
-        //-     input#ins(type='text', name='ins', ng-model='other.installedBy')
+        //-     input#ins(type='text')
         .control-group
           .control-label Terminated by
           .controls
-            input#term(type='text', name='term', ng-model='other.terminatedBy')
+            input#term(type='text')
         .control-group
           .control-label Comments
           .controls
-            textarea.input-xlarge#comments(rows=3, name='comments', ng-model='other.comments')
+            textarea.input-xlarge#comments(rows=3)
       .form-actions
-        button.btn.btn-info#save(type='botton') Save changes
+        button.btn.btn-info(type='submit') Save changes
         span &nbsp
-        button.btn.btn-primary#submit(type='submit') Submit
+        button.btn.btn-primary(type='submit') Submit
         span &nbsp
-        button.btn#reset(type='reset') reset
-    p form = {{ basic | json }}
+        button.btn(type='submit') Cancel
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/javascripts/angular.js')
   script(type='text/javascript', src='/javascripts/cable.js')
 
