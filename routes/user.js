@@ -8,8 +8,8 @@ var client = ldap.createClient({
   timeout: 3000
 });
 
-module.exports= function(app){
-  app.get('/user/:id', function(req, res){
+module.exports = function(app) {
+  app.get('/user/:id', function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
     var opts = {
@@ -43,7 +43,7 @@ module.exports= function(app){
 
   });
 
-  app.get('/user/:id/photo', function(req, res){
+  app.get('/user/:id/photo', function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
     var opts = {
@@ -72,7 +72,7 @@ module.exports= function(app){
     var query = req.query.term;
     var nameFilter, opts;
     if (query && query.length > 0) {
-      nameFilter = ad.nameFilter.replace('_name', query+'*');
+      nameFilter = ad.nameFilter.replace('_name', query + '*');
       opts = {
         filter: nameFilter,
         attributes: ['displayName'],
@@ -97,8 +97,8 @@ function bind(cb) {
   if (ad.bind) {
     return cb();
   }
-  client.bind(ad.adminDn, ad.adminPassword, function(err){
-    if(err) {
+  client.bind(ad.adminDn, ad.adminPassword, function(err) {
+    if (err) {
       console.log(err);
       return cb(err);
     }
@@ -111,13 +111,13 @@ function search(base, opts, raw, cb) {
     if (err) {
       return cb(err);
     }
-    client.search(base, opts, function(err, result){
+    client.search(base, opts, function(err, result) {
       if (err) {
         console.log(JSON.stringify(err));
         return cb(err);
       }
       var items = [];
-      result.on('searchEntry', function(entry){
+      result.on('searchEntry', function(entry) {
         if (raw) {
           items.push(entry.raw);
         } else {
@@ -128,7 +128,7 @@ function search(base, opts, raw, cb) {
         console.log(JSON.stringify(err));
         return cb(err);
       });
-      result.on('end', function(result){
+      result.on('end', function(result) {
         if (result.status !== 0) {
           var err = 'non-zero status from LDAP search: ' + result.status;
           console.log(JSON.stringify(err));

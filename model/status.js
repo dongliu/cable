@@ -1,0 +1,1 @@
+var status = ['saved', 'submitted', 'rejected', 'adjusted', 'approved', 'installed', 'passed', 'failed', 'replaced'];

@@ -9,21 +9,21 @@ var express = require('express'),
   admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
   cabletype = require('./routes/cabletype'),
-  // wbs = require('./routes/wbs'),
-  cable = require('./routes/cable'),
+  // cable = require('./routes/cable'),
   http = require('http'),
   Client = require('cas.js'),
   fs = require('fs'),
   role = require(__dirname + '/config/role.json'),
   sysSub = require(__dirname + '/config/sys-sub.json'),
   signal = require(__dirname + '/config/signal.json'),
+  penetration = require(__dirname + '/config/penetration.json'),
   url = require('url'),
   path = require('path');
 
 
 var mongoose = require('mongoose');
-// the model is called CableType
 var CableType = require('./model/meta.js').CableType;
+var Request = require('./model/request.js').Request;
 mongoose.connect('mongodb://localhost/cable');
 
 
@@ -66,7 +66,17 @@ app.get('/', ensureAuthenticated, routes.main);
 // GET /username
 require('./routes/user')(app);
 
-app.get('/requestform', cable.requestform);
+// init the wbs services
+// GET /wbs/:number
+// GET /wbs/list
+require('./routes/wbs')(app);
+
+// init the cable services
+
+require('./routes/cable')(app);
+
+
+// app.get('/requestform', cable.requestform);
 
 app.get('/admin', ensureAuthenticated, verifyRole('admin'), admin.index);
 app.get('/testrole', ensureAuthenticated, verifyRole('testrole'), admin.index);
@@ -75,11 +85,10 @@ app.get('/numbering', numbering.index);
 app.get('/cabletype', cabletype.index);
 app.get('/cabletype/all', cabletype.all);
 
+app.get('/penetration', function(req, res) {
+  res.json(penetration);
+});
 
-// init the wbs service
-// GET /wbs/:number
-// GET /wbs/list
-require('./routes/wbs')(app);
 
 app.get('/sys-sub', function(req, res) {
   res.json(sysSub);
