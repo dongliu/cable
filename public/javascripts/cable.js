@@ -2,8 +2,16 @@ $(function() {
   var cableType = [];
   var nameCache = {};
   var wbs;
+  var penetration = [];
   var deviceCache = {};
   var rackCache = {};
+
+  var requestObject = {};
+  var requestForm = document.forms[0];
+  var binder = new Binder.FormBinder(requestForm, requestObject);
+
+  var path = window.location.pathname;
+
   sss();
 
   $('#type-details').popover({
@@ -87,7 +95,7 @@ $(function() {
       term = term.substring(0, term.length-1);
       if (wbs && wbs.children) {
         output = getChildren(wbs, term);
-        if (output.length == 0) {
+        if (output.length === 0) {
           // warning
           // res(output);
           return;
@@ -97,7 +105,7 @@ $(function() {
         $.getJSON('/wbs/all', req, function(data, status, xhr) {
           wbs = data;
           output = getChildren(wbs, term);
-          if (output.length == 0) {
+          if (output.length === 0) {
             // warning
             // res(output);
             return;
@@ -108,12 +116,91 @@ $(function() {
     },
     select: function(event, ui) {
       var value = ui.item.value;
+    }
+  });
 
+  $('#penetration').autocomplete({
+    minLength : 1,
+    source: function(req, res) {
+      var term = req.term.toLowerCase();
+      var output = [];
+      if (penetration.length === 0) {
+        $.getJSON('/penetration', req, function(data, status, xhr) {
+          penetration = data;
+          res(getList(penetration, term));
+        });
+      } else {
+        res(getList(penetration, term));
+      }
     }
 
   });
 
+  $('#save').click(function(e){
+    requestObject = binder.serialize();
+    // future validation here
+    var url, type;
+    if (/^\/request\/new/.test(path)) {
+      url = '/request';
+      type = 'POST';
+    } else {
+      url = path;
+      type = 'PUT';
+    }
+    $('#request').fadeTo('slow', 0.2);
+    var formRequest = $.ajax({
+      url: url,
+      type: type,
+      async: true,
+      data: JSON.stringify(requestObject),
+      contentType: 'application/json',
+      processData: false,
+      dataType: 'json'
+    }).done(function(json){
+      $('#request').fadeTo('slow', 1);
+      // var location = formRequest.getResponseHeader('Location');
+      if (/^\/request\/new/.test(path)) {
+        document.location.href = json.location;
+      } else {
+        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
+      }
 
+    }).fail(function(jqXHR, status, error){
+      alert('The save request failed. You might need to try again or contact the admin.');
+    }).always(function(){
+      $('#request').fadeTo('slow', 1);
+    });
+      // $('#test').html(JSON.stringify(requestObject));
+    });
+
+  // check if the request is for an existing request
+  if ($('#cableId').length) {
+    $.ajax({
+      url: '/request/' + $('#cableId').text() + '/json',
+      type: 'GET',
+      async: true,
+      dataType: 'json'
+    }).done(function(json){
+      // load the data
+      var system = json.basic.system;
+      var subsystem = json.basic.subsystem;
+      var signal = json.basic.signal;
+      delete json.basic.system;
+      delete json.basic.subsystem;
+      delete json.basic.signal;
+      setSSS(system, subsystem, signal);
+      var savedBinder = new Binder.FormBinder(requestForm, json);
+      savedBinder.deserialize();
+
+    }).fail(function(jqXHR, status, error){
+      alert('Cannot find the saved request.');
+    }).always(function(){
+      // $('#request').fadeTo('slow', 1);
+    });
+  }
+
+  // setSSS('1', '1', 'D');
+  // $('#quality').val(5);
 });
 
 
@@ -166,6 +253,17 @@ function getType(type, term) {
   return output;
 }
 
+function getList(list, term) {
+  var output = [];
+  for (var i = 0; i < list.length; i += 1) {
+    if (list[i].toLowerCase().indexOf(term) !== -1) {
+      output.push(list[i]);
+    }
+  }
+  return output;
+}
+
+
 // system/subsystem/signal
 function sss(){
   update('#system', sysSub);
@@ -182,6 +280,16 @@ function sss(){
   $('#signal').change(function(){
     $('#signal').next('.add-on').text($('#signal option:selected').val());
   });
+}
+
+function setSSS(system, subsystem, signal) {
+  $('#system').val(system);
+  $('#system').next('.add-on').text(system);
+  updateSub(sysSub);
+  $('#signal').val(signal);
+  $('#signal').next('.add-on').text(signal);
+  $('#subsystem').val(subsystem);
+   $('#sub').next('.add-on').text(subsystem);
 }
 
 

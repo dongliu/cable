@@ -1,205 +1,184 @@
-extends layout
-
-block head
-  meta(charset='urf-8')
-  title FRIB Cable :: request
-  meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
-  link(rel='stylesheet', href='/stylesheets/style.css')
-
-block content
-  script
-    var sysSub = !{JSON.stringify(sysSub)};
-    var signal = !{JSON.stringify(signal)};
-  .container
-    form.form-horizontal#new
-      h3 Cable request
-      fieldset
-        legend Basic information
-        .control-group
-          .control-label System
-          .controls
-            .input-append
-              select#system.input(disabled=true)
-                option(value='', disabled=true) choose
-              span.add-on &nbsp
-        .control-group
-          .control-label Subsystem
-          .controls
-            .input-append
-              select#sub.input(disabled=true)
-              span.add-on &nbsp
-        .control-group
-          .control-label Signal
-          .controls
-            .input-append
-              select#signal.input(disabled=true)
-                option(value='', disabled=true) choose
-              span.add-on &nbsp
-        .control-group
-          .control-label Type
-          .controls
-            .input-append
-              input#type(type='text')
-              a.btn.btn-info(href='./cabletype', target='_blank') Browse
-              a.btn.btn-info#type-details(disabled=true) Details
-        .control-group
-          .control-label Engineer
-          .controls
-            input#engineer(type='text', placeholder='Last, First')
-        .control-group
-          .control-label Function
-          .controls
-            input#function(type='text')
-        .control-group
-          .control-label WBS
-          .controls
-            .input-append
-              input#wbs(type='text')
-              a.btn.btn-info(href='./wbs', target='_blank') Browse
-        .control-group
-          .control-label Quality
-          .controls
-            input#quality(type='text')
-      fieldset
-        legend Source(from)
-        .control-group
-          .control-label Building
-          .controls
-            input#from-building(type='text')
-            //- select#from-building.input(disabled=true)
-            //-       option(value='', disabled=true) choose
-        //- .control-group
-        //-   .control-label Area
-        //-   .controls
-        //-     select#from-area.input(disabled=true)
-        //-       option(value='', disabled=true) choose
-        //- .control-group
-        //-   .control-label Room
-        //-   .controls
-        //-     select#from-room.input(disabled=true)
-        //-       option(value='', disabled=true)
-        .control-group
-          .control-label Rack
-          .controls
-            .input-append
-              input#from-rack(type='text')
-              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
-        .control-group
-          .control-label Elevation
-          .controls
-            .input-append
-              input#from-elevation(type='text')
-              span.add-on ft
-        .control-group
-          .control-label Termination device
-          .controls
-            .input-append
-              input#from-termination(type='text')
-              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
-        .control-group
-          .control-label Termination type
-          .controls
-            input#from-type(type='text')
-        .control-group
-          .control-label Wiring (pinout) drawing
-          .controls
-            input#from-drawing(type='text')
-        .control-group
-          .control-label Label "From"
-          .controls
-            input#from-label(type='text')
-      fieldset
-        legend Destination(to)
-        .control-group
-          .control-label Building
-          .controls
-            input#to-building(type='text')
-            //- select#to-building.input(disabled=true)
-            //-       option(value='', disabled=true) choose
-        //- .control-group
-        //-   .control-label Area
-        //-   .controls
-        //-     select#to-area.input(disabled=true)
-        //-       option(value='', disabled=true) choose
-        //- .control-group
-        //-   .control-label Room
-        //-   .controls
-        //-     select#to-room.input(disabled=true)
-        //-       option(value='', disabled=true)
-        .control-group
-          .control-label Rack
-          .controls
-            .input-append
-              input#to-rack(type='text')
-              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
-        .control-group
-          .control-label Elevation
-          .controls
-            .input-append
-              input#to-elevation(type='text')
-              span.add-on ft
-        .control-group
-          .control-label Termination device
-          .controls
-            .input-append
-              input#to-termination(type='text')
-              a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
-        .control-group
-          .control-label Termination type
-          .controls
-            input#to-type(type='text')
-        .control-group
-          .control-label Wiring (pinout) drawing
-          .controls
-            input#to-drawing(type='text')
-        .control-group
-          .control-label Label "To"
-          .controls
-            input#to-label(type='text')
-      fieldset
-        legend Routing
-        .control-group
-          .control-label Tray group
-          .controls
-            input#tray(type='text')
-        .control-group
-          .control-label Penetration #
-          .controls
-            input#penetration(type='text')
-        .control-group
-          .control-label Penetration Z position
-          .controls
-            input#position(type='text')
-      fieldset
-        legend General information
-        .control-group
-          .control-label Fabricated by
-          .controls
-            input#fab(type='text')
-        //- .control-group
-        //-   .control-label Installed by
-        //-   .controls
-        //-     input#ins(type='text')
-        .control-group
-          .control-label Terminated by
-          .controls
-            input#term(type='text')
-        .control-group
-          .control-label Comments
-          .controls
-            textarea.input-xlarge#comments(rows=3)
-      .form-actions
-        button.btn.btn-info(type='submit') Save changes
-        span &nbsp
-        button.btn.btn-primary(type='submit') Submit
-        span &nbsp
-        button.btn(type='submit') Cancel
-block js
-  script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
-  script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
-  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/javascripts/cable.js')
+fieldset
+  legend Basic information
+  .control-group
+    .control-label System
+    .controls
+      .input-append
+        select#system.input(disabled=true, name='basic.system')
+          option(value='', disabled=true) choose
+        span.add-on &nbsp
+  .control-group
+    .control-label Subsystem
+    .controls
+      .input-append
+        select#sub.input(disabled=true, name='basic.subsystem')
+        span.add-on &nbsp
+  .control-group
+    .control-label Signal
+    .controls
+      .input-append
+        select#signal.input(disabled=true, name='basic.signal')
+          option(value='', disabled=true) choose
+        span.add-on &nbsp
+  .control-group
+    .control-label Type
+    .controls
+      .input-append
+        input#type(type='text', name='basic.cableType')
+        a.btn.btn-info(href='./cabletype', target='_blank') Browse
+        a.btn.btn-info#type-details(disabled=true) Details
+  .control-group
+    .control-label Engineer
+    .controls
+      input#engineer(type='text', placeholder='Last, First', name='basic.engineer')
+  .control-group
+    .control-label Function
+    .controls
+      input#function(type='text', name='basic.service')
+  .control-group
+    .control-label WBS
+    .controls
+      .input-append
+        input#wbs(type='text', name='basic.wbs')
+        a.btn.btn-info(href='./wbs', target='_blank') Browse
+  .control-group
+    .control-label Quality
+    .controls
+      input#quality(type='text', name='basic.quality', class='type[number]')
+fieldset
+  legend Source(from)
+  .control-group
+    .control-label Building
+    .controls
+      input#from-building(type='text', name='from.building')
+      //- select#from-building.input(disabled=true)
+      //-       option(value='', disabled=true) choose
+  //- .control-group
+  //-   .control-label Area
+  //-   .controls
+  //-     select#from-area.input(disabled=true)
+  //-       option(value='', disabled=true) choose
+  //- .control-group
+  //-   .control-label Room
+  //-   .controls
+  //-     select#from-room.input(disabled=true)
+  //-       option(value='', disabled=true)
+  .control-group
+    .control-label Rack
+    .controls
+      .input-append
+        input#from-rack(type='text', name='from.rack')
+        a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
+  .control-group
+    .control-label Elevation
+    .controls
+      .input-append
+        input#from-elevation(type='text', name='from.elevation', class='type[number]')
+        span.add-on ft
+  .control-group
+    .control-label Termination device
+    .controls
+      .input-append
+        input#from-termination(type='text', name='from.ternimationDevice')
+        a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
+  .control-group
+    .control-label Termination type
+    .controls
+      input#from-type(type='text', name='from.ternimationType')
+  .control-group
+    .control-label Wiring (pinout) drawing
+    .controls
+      input#from-drawing(type='text', name='from.wiringDrawing')
+  .control-group
+    .control-label Label "From"
+    .controls
+      input#from-label(type='text', name='from.label')
+fieldset
+  legend Destination(to)
+  .control-group
+    .control-label Building
+    .controls
+      input#to-building(type='text', name='to.building')
+      //- select#to-building.input(disabled=true)
+      //-       option(value='', disabled=true) choose
+  //- .control-group
+  //-   .control-label Area
+  //-   .controls
+  //-     select#to-area.input(disabled=true)
+  //-       option(value='', disabled=true) choose
+  //- .control-group
+  //-   .control-label Room
+  //-   .controls
+  //-     select#to-room.input(disabled=true)
+  //-       option(value='', disabled=true)
+  .control-group
+    .control-label Rack
+    .controls
+      .input-append
+        input#to-rack(type='text', name='to.rack')
+        a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
+  .control-group
+    .control-label Elevation
+    .controls
+      .input-append
+        input#to-elevation(type='text', name='to.elevation', class='type[number]')
+        span.add-on ft
+  .control-group
+    .control-label Termination device
+    .controls
+      .input-append
+        input#to-termination(type='text', , name='to.ternimationDevice')
+        a.btn.btn-info(href='https://controls.frib.msu.edu/conf/index.xhtml', target='_blank') Browse
+  .control-group
+    .control-label Termination type
+    .controls
+      input#to-type(type='text', name='to.ternimationType')
+  .control-group
+    .control-label Wiring (pinout) drawing
+    .controls
+      input#to-drawing(type='text', name='to.wiringDrawing')
+  .control-group
+    .control-label Label "To"
+    .controls
+      input#to-label(type='text', name='to.label')
+fieldset
+  legend Routing
+  .control-group
+    .control-label Tray group
+    .controls
+      input#tray(type='text', name='routing.trayGroup')
+  .control-group
+    .control-label Penetration #
+    .controls
+      .input-append
+        input#penetration(type='text', name='routing.penetration')
+        a.btn.btn-info(href='https://portal.frib.msu.edu/dcc/Drawings/T20302-MDE-0007-0001.pdf', target='_blank') Browse
+  .control-group
+    .control-label Penetration Z position
+    .controls
+      input#position(type='text', name='routing.penetrationZ')
+fieldset
+  legend General information
+  .control-group
+    .control-label Fabricated by
+    .controls
+      input#fab(type='text', name='other.fabricatedBy')
+  //- .control-group
+  //-   .control-label Installed by
+  //-   .controls
+  //-     input#ins(type='text')
+  .control-group
+    .control-label Terminated by
+    .controls
+      input#term(type='text', name='other.terminatedBy')
+  .control-group
+    .control-label Comments
+    .controls
+      textarea.input-xlarge#comments(rows=3, name='other.comments')
+.form-actions
+  button.btn.btn-info#save(type='button') Save changes
+  span &nbsp
+  button.btn.btn-primary(type='submit') Submit
+  span &nbsp
+  button.btn(type='reset') Reset
 

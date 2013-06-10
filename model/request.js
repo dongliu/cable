@@ -3,8 +3,10 @@ var Schema = mongoose.Schema;
 
 var request = new Schema({
   basic: {
-    sss: String,
-    type: String,
+    system: String,
+    subsystem: String,
+    signal: String,
+    cableType: String,
     engineer: String,
     service: String,
     wbs: String,
