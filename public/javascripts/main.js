@@ -43,7 +43,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     saved = json.map(function(request) {
-      return [].concat(request.createdBy).concat(request.createdOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy ? '' : request.updatedBy).concat(request.updatedOn ? '' : request.updatedOn).concat(request._id);
+      return [].concat(request.createdBy).concat(request.createdOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy? request.updatedBy : '').concat(request.updatedOn? request.updatedOn : '' ).concat(request._id);
     });
     savedTable.fnClearTable();
     savedTable.fnAddData(saved);
