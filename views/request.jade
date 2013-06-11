@@ -15,10 +15,11 @@ block content
     var signal = !{JSON.stringify(signal)};
   .container
     #message
-    form.form-horizontal#request(name='request')
+    form.form-horizontal(name='request')
       h3 Cable Request &nbsp
         span#cableId #{id}
       include requestform
+      include request_action
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')

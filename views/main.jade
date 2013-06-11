@@ -6,6 +6,7 @@ block head
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
@@ -27,15 +28,17 @@ block content
         a.btn(href='#users') Users
       .btn-group
         a.btn.btn-info(href='./about') About
-
-    .tabbable.tabs-left#tabs
+    #message
+    .tabbable#tabs
       ul.nav.nav-tabs
         li.active
           a(href='#saved', data-toggle='tab') Saved
         li
-          a(href='#requested', data-toggle='tab') Requested
+          a(href='#submitted', data-toggle='tab') Submitted
         li
           a(href='#adjusted', data-toggle='tab') Adjusted
+        li
+          a(href='#rejected', data-toggle='tab') Rejected
         li
           a(href='#approved', data-toggle='tab') Approved
         li
@@ -44,21 +47,26 @@ block content
           a(href='#working', data-toggle='tab') Working
       .tab-content
         #saved.tab-pane.active
-          p the list of saved cable request
-        #requested.tab-pane
-          p the list of cable requests
+          table#saved-table.table.table-bordered.table-hover
+        #submitted.tab-pane
+          table#submitted-table.table.table-bordered.table-hover
         #adjusted.tab-pane
-          p the list of adjusted cable requests
+          table#adjusted-table.table.table-bordered.table-hover
+        #rejected.tab-pane
+          table#rejected-table.table.table-bordered.table-hover
         #approved.tab-pane
-          p the list of approved cable requests
+          table#approved-table.table.table-bordered.table-hover
         #installed.tab-pane
           p the list of installed cables
         #working.tab-pane
           p the list of working cables
-    //- #requestform(style='display: none;')
-    //-   include requestform
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
+  script(type='text/javascript', src='/datatables/js/TableTools.js')
+  script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
+  script(type='text/javascript', src='/javascripts/main.js')
 

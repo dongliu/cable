@@ -44,6 +44,7 @@ var request = new Schema({
     terminatedBy: String,
     comments: String
   },
+  status: Number,
   createdBy: String,
   createdOn: Date,
   updatedBy: String,
@@ -52,6 +53,8 @@ var request = new Schema({
   submittedOn: Date,
   adjustedBy: String,
   adjustedOn: Date,
+  requestedBy: String,
+  requestedOn: Date,
   approvedBy: String,
   approvedOn: Date,
   rejectedBy: String,

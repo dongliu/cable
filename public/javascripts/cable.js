@@ -6,11 +6,11 @@ $(function() {
   var deviceCache = {};
   var rackCache = {};
 
-  var requestObject = {};
+  // var requestObject = {};
   var requestForm = document.forms[0];
-  var binder = new Binder.FormBinder(requestForm, requestObject);
+  // var binder = new Binder.FormBinder(requestForm, requestObject);
 
-  var path = window.location.pathname;
+  // var path = window.location.pathname;
 
   sss();
 
@@ -50,7 +50,7 @@ $(function() {
   });
 
   $('#type').autocomplete({
-    minLength : 1,
+    minLength: 1,
     source: function(req, res) {
       var term = req.term.toLowerCase();
       var output = [];
@@ -76,23 +76,24 @@ $(function() {
         $('#type-details').attr('disabled', false);
         $('#type-details').attr('data-original-title', type.name);
         $('#type-details').attr('data-content', json2List(type));
+        $('#function').val(type.service);
       }
     }
 
   });
 
   $('#wbs').autocomplete({
-    minLength : 2,
+    minLength: 2,
     source: function(req, res) {
       var term = req.term;
       var output = [];
 
-      if (term.indexOf('.', term.length-1) == -1) {
+      if (term.indexOf('.', term.length - 1) == -1) {
         // res(output);
         return;
       }
 
-      term = term.substring(0, term.length-1);
+      term = term.substring(0, term.length - 1);
       if (wbs && wbs.children) {
         output = getChildren(wbs, term);
         if (output.length === 0) {
@@ -120,7 +121,7 @@ $(function() {
   });
 
   $('#penetration').autocomplete({
-    minLength : 1,
+    minLength: 1,
     source: function(req, res) {
       var term = req.term.toLowerCase();
       var output = [];
@@ -132,46 +133,48 @@ $(function() {
       } else {
         res(getList(penetration, term));
       }
+    },
+    select: function(event, ui) {
+      $('#penetration').val(ui.item.value);
     }
-
   });
 
-  $('#save').click(function(e){
-    requestObject = binder.serialize();
-    // future validation here
-    var url, type;
-    if (/^\/request\/new/.test(path)) {
-      url = '/request';
-      type = 'POST';
-    } else {
-      url = path;
-      type = 'PUT';
-    }
-    $('#request').fadeTo('slow', 0.2);
-    var formRequest = $.ajax({
-      url: url,
-      type: type,
-      async: true,
-      data: JSON.stringify(requestObject),
-      contentType: 'application/json',
-      processData: false,
-      dataType: 'json'
-    }).done(function(json){
-      $('#request').fadeTo('slow', 1);
-      // var location = formRequest.getResponseHeader('Location');
-      if (/^\/request\/new/.test(path)) {
-        document.location.href = json.location;
-      } else {
-        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
-      }
+  // $('#save').click(function(e){
+  //   requestObject = binder.serialize();
+  //   // future validation here
+  //   var url, type;
+  //   if (/^\/request\/new/.test(path)) {
+  //     url = '/request';
+  //     type = 'POST';
+  //   } else {
+  //     url = path;
+  //     type = 'PUT';
+  //   }
+  //   $('#request').fadeTo('slow', 0.2);
+  //   var formRequest = $.ajax({
+  //     url: url,
+  //     type: type,
+  //     async: true,
+  //     data: JSON.stringify(requestObject),
+  //     contentType: 'application/json',
+  //     processData: false,
+  //     dataType: 'json'
+  //   }).done(function(json){
+  //     $('#request').fadeTo('slow', 1);
+  //     // var location = formRequest.getResponseHeader('Location');
+  //     if (/^\/request\/new/.test(path)) {
+  //       document.location.href = json.location;
+  //     } else {
+  //       $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
+  //     }
 
-    }).fail(function(jqXHR, status, error){
-      alert('The save request failed. You might need to try again or contact the admin.');
-    }).always(function(){
-      $('#request').fadeTo('slow', 1);
-    });
-      // $('#test').html(JSON.stringify(requestObject));
-    });
+  //   }).fail(function(jqXHR, status, error){
+  //     alert('The save request failed. You might need to try again or contact the admin.');
+  //   }).always(function(){
+  //     $('#request').fadeTo('slow', 1);
+  //   });
+  //     // $('#test').html(JSON.stringify(requestObject));
+  //  });
 
   // check if the request is for an existing request
   if ($('#cableId').length) {
@@ -180,7 +183,7 @@ $(function() {
       type: 'GET',
       async: true,
       dataType: 'json'
-    }).done(function(json){
+    }).done(function(json) {
       // load the data
       var system = json.basic.system;
       var subsystem = json.basic.subsystem;
@@ -192,16 +195,108 @@ $(function() {
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
 
-    }).fail(function(jqXHR, status, error){
+      // show action buttons
+
+      if (!json.hasOwnProperty('submittedBy')) {
+        $('#save').closest('.btn-group').show();
+        $('#submit').closest('.btn-group').show();
+        $('#reset').closest('.btn-group').show();
+      } else if (!json.hasOwnProperty('requestedBy')) {
+        $('#adjust').closest('.btn-group').show();
+        $('#reject').closest('.btn-group').show();
+        $('#request').closest('.btn-group').show();
+      } else if (!json.hasOwnProperty('approvedBy')) {
+        $('#reject').closest('.btn-group').show();
+        $('#approve').closest('.btn-group').show();
+      }
+
+      if (json.hasOwnProperty('rejectedBy')) {
+        $('.form-actions').hide();
+      }
+
+    }).fail(function(jqXHR, status, error) {
       alert('Cannot find the saved request.');
-    }).always(function(){
+    }).always(function() {
       // $('#request').fadeTo('slow', 1);
     });
   }
 
-  // setSSS('1', '1', 'D');
-  // $('#quality').val(5);
+  $('#save').click(function(e) {
+    updateRequest('save');
+  });
+
+  $('#submit').click(function(e) {
+    updateRequest('submit');
+  });
+
+  $('#adjust').click(function(e) {
+    updateRequest('adjust');
+  });
+
+  $('#reject').click(function(e) {
+    updateRequest('reject');
+  });
+
+  $('#request').click(function(e) {
+    updateRequest('request');
+  });
+
+  $('#approve').click(function(e) {
+    updateRequest('approve');
+  });
+
+
 });
+
+function updateRequest(action) {
+  var path = window.location.pathname;
+  var requestObject = {};
+  var requestForm = document.forms[0];
+  var binder = new Binder.FormBinder(requestForm, requestObject);
+  requestObject = binder.serialize();
+  // future validation here
+  var url, type;
+  var data = {
+    request: requestObject,
+    action: action
+  };
+  if (/^\/request\/new/.test(path)) {
+    url = '/request';
+    type = 'POST';
+  } else {
+    url = path;
+    type = 'PUT';
+  }
+  $('#request').fadeTo('slow', 0.2);
+  var formRequest = $.ajax({
+    url: url,
+    type: type,
+    async: true,
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    processData: false,
+    dataType: 'json'
+  }).done(function(json) {
+    $('#request').fadeTo('slow', 1);
+    // var location = formRequest.getResponseHeader('Location');
+    if (/^\/request\/new/.test(path)) {
+      document.location.href = json.location;
+    } else {
+      // redirect based on the action
+      if (action == 'save' || action == 'adjust') {
+        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
+      } else {
+        document.location.href = '/';
+      }
+    }
+
+  }).fail(function(jqXHR, status, error) {
+    alert('The save request failed. You might need to try again or contact the admin.');
+  }).always(function() {
+    $('#request').fadeTo('slow', 1);
+  });
+  // $('#test').html(JSON.stringify(requestObject));
+}
 
 
 function getChildren(wbs, term) {
@@ -209,15 +304,15 @@ function getChildren(wbs, term) {
   var key = parts[0];
   var locator = findChild(wbs, key);
   // var result;
-  if (locator == null) {
-     return [];
+  if (locator === null) {
+    return [];
   }
 
   for (var i = 1; i < parts.length; i += 1) {
     key = key + '.' + parts[i];
     locator = findChild(locator, key);
-    if (locator == null) {
-       return [];
+    if (locator === null) {
+      return [];
     }
   }
 
@@ -265,19 +360,20 @@ function getList(list, term) {
 
 
 // system/subsystem/signal
-function sss(){
+
+function sss() {
   update('#system', sysSub);
   update('#signal', signal);
-  $('#system').change(function(){
+  $('#system').change(function() {
     updateSub(sysSub);
     $('#system').next('.add-on').text($('#system option:selected').val());
   });
 
-  $('#sub').change(function(){
+  $('#sub').change(function() {
     $('#sub').next('.add-on').text($('#sub option:selected').val());
   });
 
-  $('#signal').change(function(){
+  $('#signal').change(function() {
     $('#signal').next('.add-on').text($('#signal option:selected').val());
   });
 }
@@ -289,15 +385,15 @@ function setSSS(system, subsystem, signal) {
   $('#signal').val(signal);
   $('#signal').next('.add-on').text(signal);
   $('#subsystem').val(subsystem);
-   $('#sub').next('.add-on').text(subsystem);
+  $('#sub').next('.add-on').text(subsystem);
 }
 
 
-function updateSub(json){
+function updateSub(json) {
   var sys = $('#system option:selected').val();
   $('#sub').prop('disabled', false);
   $('#sub option').remove();
-  $.each(json[sys]['sub-system'], function(k, v){
+  $.each(json[sys]['sub-system'], function(k, v) {
     if (v) {
       $('#sub').append($('<option>', {
         value: k
