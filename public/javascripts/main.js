@@ -43,7 +43,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     saved = json.map(function(request) {
-      return [].concat(request.createdBy).concat(request.createdOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy? request.updatedBy : '').concat(request.updatedOn? request.updatedOn : '' ).concat(request._id);
+      return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy? request.updatedBy : '').concat(request.updatedOn? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '' ).concat(request._id);
     });
     savedTable.fnClearTable();
     savedTable.fnAddData(saved);
@@ -97,7 +97,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     submitted = json.map(function(request) {
-      return [].concat(request.createdBy).concat(request.createdOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.submittedBy).concat(request.submittedOn).concat(request._id);
+      return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
     });
     submittedTable.fnClearTable();
     submittedTable.fnAddData(submitted);
@@ -152,7 +152,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     adjusted = json.map(function(request) {
-      return [].concat(request.submittedBy).concat(request.submittedOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedBy).concat(request.adjustedOn).concat(request._id);
+      return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedBy).concat(moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
     });
     adjustedTable.fnClearTable();
     adjustedTable.fnAddData(adjusted);
@@ -208,7 +208,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     rejected = json.map(function(request) {
-      return [].concat(request.submittedBy).concat(request.submittedOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(request.rejectedOn).concat(request._id);
+      return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
     });
     rejectedTable.fnClearTable();
     rejectedTable.fnAddData(rejected);
@@ -263,7 +263,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     approved = json.map(function(request) {
-      return [].concat(request.submittedBy).concat(request.submittedOn).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.approvedBy).concat(request.approvedOn).concat(request._id);
+      return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.approvedBy).concat(moment(request.approvedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
     });
     approvedTable.fnClearTable();
     approvedTable.fnAddData(approved);
