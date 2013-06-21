@@ -235,7 +235,7 @@ Binder.FormBinder.prototype = {
   },
   serializeField: function( element, obj ) {
     var accessor = this._getAccessor( obj );
-    var value = undefined
+    var value;
     if( element.type == "radio" || element.type == "checkbox" )  {
       if( element.value != "" && element.value != "on" ) {
         value = this._parse( element.name, element.value, element );
@@ -259,8 +259,10 @@ Binder.FormBinder.prototype = {
         }
       }
     } else {
-      value = this._parse( element.name, element.value, element );
-      accessor.set( element.name, value );
+      if (element.value != "") {
+        value = this._parse( element.name, element.value, element );
+        accessor.set( element.name, value );
+      }
     }
   },
   deserialize: function( obj ) {

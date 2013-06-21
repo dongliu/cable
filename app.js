@@ -8,7 +8,7 @@ var express = require('express'),
   about = require('./routes/about'),
   admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
-  cabletype = require('./routes/cabletype'),
+  // cabletype = require('./routes/cabletype'),
   // cable = require('./routes/cable'),
   http = require('http'),
   // Client = require('cas.js'),
@@ -77,6 +77,9 @@ require('./routes/wbs')(app);
 
 require('./routes/cable')(app);
 
+// app.get('/cabletype', cabletype.index);
+// app.get('/cabletype/all', cabletype.all);
+require('./routes/cabletype')(app);
 
 // app.get('/requestform', cable.requestform);
 
@@ -84,8 +87,6 @@ app.get('/admin', auth.ensureAuthenticated, auth.verifyRole('admin'), admin.inde
 app.get('/testrole', auth.ensureAuthenticated, auth.verifyRole('testrole'), admin.index);
 app.get('/numbering', numbering.index);
 
-app.get('/cabletype', cabletype.index);
-app.get('/cabletype/all', cabletype.all);
 
 app.get('/penetration', function(req, res) {
   res.json(penetration);

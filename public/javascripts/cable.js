@@ -6,11 +6,40 @@ $(function() {
   var deviceCache = {};
   var rackCache = {};
 
-  // var requestObject = {};
   var requestForm = document.forms[0];
-  // var binder = new Binder.FormBinder(requestForm, requestObject);
 
-  // var path = window.location.pathname;
+  var validation = [
+    ['#system', 'presence', 'Please select system type'],
+    ['#sub', 'presence', 'Please select sub system type'],
+    ['#signal', 'presence', 'Please select signal type'],
+    ['#type', 'presence', 'Please input cable type'],
+    ['#engineer', 'presence', 'Please input engineer fullname'],
+    ['#function', 'presence', 'Please input cable function'],
+    ['#wbs', 'presence', 'Please input WBS number'],
+    ['#quality', 'presence', 'Please input the quality'],
+    ['#quality', 'integer', 'The quality needs to be an integer'],
+    ['#from-building', 'presence', 'Please input the building'],
+    ['#from-rack', 'presence', 'Please input the rack'],
+    ['#from-elevation', 'presence', 'Please input the elevation'],
+    ['#from-elevation', 'float', 'The elevation needs to be an integer'],
+    ['#from-termination', 'presence', 'Please input the termination'],
+    ['#from-type', 'presence', 'Please input the termination'],
+    ['#from-drawing', 'presence', 'Please input the wiring drawing'],
+    ['#from-label', 'presence', 'Please input the label'],
+    ['#to-building', 'presence', 'Please input the building'],
+    ['#to-rack', 'presence', 'Please input the rack'],
+    ['#to-elevation', 'presence', 'Please input the elevation'],
+    ['#to-elevation', 'float', 'The elevation needs to be an integer'],
+    ['#to-termination', 'presence', 'Please input the termination'],
+    ['#to-type', 'presence', 'Please input the termination'],
+    ['#to-drawing', 'presence', 'Please input the wiring drawing'],
+    ['#to-label', 'presence', 'Please input the label'],
+    ['#tray', 'presence', 'Please input the tray'],
+    ['#penetration', 'presence', 'Please input the penetration number'],
+    ['#position', 'presence', 'Please input the penetration position']
+  ];
+
+  $('form[name="request"]').nod(validation);
 
   sss();
 
@@ -65,17 +94,8 @@ $(function() {
     },
     select: function(event, ui) {
       $('#type').val(ui.item.value);
-      var type = null;
-      for (var i = 0; i < cableType.length; i += 1) {
-        if (cableType[i].name == ui.item.value) {
-          type = cableType[i];
-          break;
-        }
-      }
+      var type = setTypeDetails($('#type').val(), cableType);
       if (type) {
-        $('#type-details').attr('disabled', false);
-        $('#type-details').attr('data-original-title', type.name);
-        $('#type-details').attr('data-content', json2List(type));
         $('#function').val(type.service);
       }
     }
@@ -89,7 +109,6 @@ $(function() {
       var output = [];
 
       if (term.indexOf('.', term.length - 1) == -1) {
-        // res(output);
         return;
       }
 
@@ -97,8 +116,6 @@ $(function() {
       if (wbs && wbs.children) {
         output = getChildren(wbs, term);
         if (output.length === 0) {
-          // warning
-          // res(output);
           return;
         }
         res(output);
@@ -107,8 +124,6 @@ $(function() {
           wbs = data;
           output = getChildren(wbs, term);
           if (output.length === 0) {
-            // warning
-            // res(output);
             return;
           }
           res(output);
@@ -139,43 +154,6 @@ $(function() {
     }
   });
 
-  // $('#save').click(function(e){
-  //   requestObject = binder.serialize();
-  //   // future validation here
-  //   var url, type;
-  //   if (/^\/request\/new/.test(path)) {
-  //     url = '/request';
-  //     type = 'POST';
-  //   } else {
-  //     url = path;
-  //     type = 'PUT';
-  //   }
-  //   $('#request').fadeTo('slow', 0.2);
-  //   var formRequest = $.ajax({
-  //     url: url,
-  //     type: type,
-  //     async: true,
-  //     data: JSON.stringify(requestObject),
-  //     contentType: 'application/json',
-  //     processData: false,
-  //     dataType: 'json'
-  //   }).done(function(json){
-  //     $('#request').fadeTo('slow', 1);
-  //     // var location = formRequest.getResponseHeader('Location');
-  //     if (/^\/request\/new/.test(path)) {
-  //       document.location.href = json.location;
-  //     } else {
-  //       $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
-  //     }
-
-  //   }).fail(function(jqXHR, status, error){
-  //     alert('The save request failed. You might need to try again or contact the admin.');
-  //   }).always(function(){
-  //     $('#request').fadeTo('slow', 1);
-  //   });
-  //     // $('#test').html(JSON.stringify(requestObject));
-  //  });
-
   // check if the request is for an existing request
   if ($('#cableId').length) {
     $.ajax({
@@ -194,6 +172,19 @@ $(function() {
       setSSS(system, subsystem, signal);
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
+
+      // cable type details
+      if ($('#type').val() !== '') {
+        if (cableType.length === 0) {
+          $.getJSON('/cabletype/all', function(data, status, xhr) {
+            cableType = data;
+            setTypeDetails($('#type').val(), cableType);
+          });
+        } else {
+          setTypeDetails($('#type').val(), cableType);
+        }
+      }
+
 
       // show action buttons
 
@@ -223,26 +214,32 @@ $(function() {
 
   $('#save').click(function(e) {
     updateRequest('save');
+    e.preventDefault();
   });
 
   $('#submit').click(function(e) {
     updateRequest('submit');
+    e.preventDefault();
   });
 
   $('#adjust').click(function(e) {
     updateRequest('adjust');
+    e.preventDefault();
   });
 
   $('#reject').click(function(e) {
     updateRequest('reject');
+    e.preventDefault();
   });
 
   $('#request').click(function(e) {
     updateRequest('request');
+    e.preventDefault();
   });
 
   $('#approve').click(function(e) {
     updateRequest('approve');
+    e.preventDefault();
   });
 
 
@@ -284,7 +281,14 @@ function updateRequest(action) {
     } else {
       // redirect based on the action
       if (action == 'save' || action == 'adjust') {
-        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved.</div>');
+        var timestamp = formRequest.getResponseHeader('Date');
+        // var dateObj = Date.parse(timestamp);
+        // var dateObj = moment(timestamp, 'ddd, DD MMM YYYY HH:mm:ss' );
+        var dateObj = moment(timestamp);
+        // var dateObj = utc2date(timestamp);
+        // var date = isoDate(dateObj);
+        // var time = isoTime(dateObj);
+        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
       } else {
         document.location.href = '/';
       }
@@ -430,3 +434,38 @@ function json2List(json) {
   }
   return output;
 }
+
+function setTypeDetails(val, cableType) {
+  var type = null;
+  for (var i = 0; i < cableType.length; i += 1) {
+    if (cableType[i].name == val) {
+      type = cableType[i];
+      break;
+    }
+  }
+  if (type) {
+    $('#type-details').attr('disabled', false);
+    $('#type-details').attr('data-original-title', type.name);
+    $('#type-details').attr('data-content', json2List(type));
+    return type;
+  }
+  return null;
+}
+
+
+// function pad(n){
+//   return n<10 ? '0'+n : n;
+// }
+
+// function isoDate(d){
+//  return d.getFullYear()+'-'+ pad(d.getMonth()+1)+'-'+ pad(d.getDate());
+// }
+// function isoTime(d){
+//  return pad(d.getHours())+':'+ pad(d.getMinutes())+':'+ pad(d.getSeconds());
+// }
+
+// function utc2date(utc) {
+//   var segments = utc.split(/[-T:.Z]/,6);
+//   return Date.UTC(parseInt(segments[0], 10), parseInt(segments[1], 10)-1, parseInt(segments[2], 10), parseInt(segments[3], 10), parseInt(segments[4], 10), parseInt(segments[5], 10));
+// }
+
