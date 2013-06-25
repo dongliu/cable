@@ -31,7 +31,7 @@ $(function() {
       }
     });
   $.ajax({
-    url: '/cabletype/all',
+    url: '/cabletypes/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json){

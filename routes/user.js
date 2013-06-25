@@ -8,7 +8,22 @@ var client = ldap.createClient({
   timeout: 3000
 });
 
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+
+var auth = require('../lib/auth');
+
+var Roles = ["adjust", "approve", "install", "qa", "admin"];
+
 module.exports = function(app) {
+  // app.get('/users/new', function(req, res) {
+  //   res.render('newuser');
+  // });
+
+  app.get('/users', function(req, res) {
+    res.render('user');
+  });
+
   app.get('/user/:id', function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);

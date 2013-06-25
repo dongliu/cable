@@ -38,7 +38,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/request/status/0',
+    url: '/requests/statuses/0/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -92,7 +92,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/request/status/1',
+    url: '/requests/statuses/1/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -147,7 +147,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/request/status/2',
+    url: '/requests/statuses/2/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -203,7 +203,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/request/status/4',
+    url: '/requests/statuses/4/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -258,7 +258,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/request/status/3',
+    url: '/requests/statuses/3/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -279,6 +279,6 @@ $(function() {
 function addClick(div, table, position) {
   $('tbody tr', div).click(function(e) {
     var id = table.fnGetData(this, position);
-    window.open('/request/'+id);
+    window.open('/requests/'+id);
   });
 }

@@ -9,7 +9,7 @@ var auth = require('../lib/auth');
 
 
 module.exports = function(app) {
-  app.get('/request/new', auth.ensureAuthenticated, function(req, res) {
+  app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
     res.render('newrequest', {
       sysSub: sysSub,
       signal: signal
@@ -17,7 +17,7 @@ module.exports = function(app) {
   });
 
   // create a new request
-  app.post('/request', auth.ensureAuthenticated, function(req, res) {
+  app.post('/requests', auth.ensureAuthenticated, function(req, res) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
@@ -33,35 +33,32 @@ module.exports = function(app) {
       request.status = 1;
     }
     // console.log(request.inspect());
-    request.save(function(err, cableRequest){
+    request.save(function(err, cableRequest) {
       if (err) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
       var url = req.protocol + '://' + req.get('host') + '/request/' + cableRequest.id;
       res.set('Location', url);
-      res.json(201, {location: '/request/' + cableRequest.id});
+      res.json(201, {
+        location: '/requests/' + cableRequest.id
+      });
     });
   });
 
   // get the request details
-  app.get('/request/:id', auth.ensureAuthenticated, function(req, res) {
-      return res.render('request', {
-        sysSub: sysSub,
-        signal: signal,
-        id: req.params.id
-      });
+  app.get('/requests/:id', auth.ensureAuthenticated, function(req, res) {
+    return res.render('request', {
+      sysSub: sysSub,
+      signal: signal,
+      id: req.params.id
+    });
   });
 
-  app.get('/request/:id/json', auth.ensureAuthenticated, function(req, res) {
-    // Request.findById(req.params.id, function(err, cableRequest) {
-    //   if (err) {
-    //     return res.send(500, 'something is wrong.');
-    //   }
-    //   res.json(cableRequest.toObject());
-    // });
-  Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
+  app.get('/requests/:id/json', auth.ensureAuthenticated, function(req, res) {
+    Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
       if (err) {
+        console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
       res.json(cableRequest);
@@ -69,13 +66,16 @@ module.exports = function(app) {
   });
 
   // get the request list based on query
-  app.get('/request/status/:s', function(req, res) {
+  app.get('/requests/statuses/:s/json', function(req, res) {
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
       return res.send(400, 'request is wrong.');
     }
-    Request.find({status: status}).lean().exec(function(err, docs){
+    Request.find({
+      status: status
+    }).lean().exec(function(err, docs) {
       if (err) {
+        console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
       res.json(docs);
@@ -84,7 +84,7 @@ module.exports = function(app) {
 
 
   // update a request
-  app.put('/request/:id', auth.ensureAuthenticated, function(req, res) {
+  app.put('/requests/:id', auth.ensureAuthenticated, function(req, res) {
     var request = req.body.request;
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
@@ -120,6 +120,7 @@ module.exports = function(app) {
 
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
       if (err) {
+        console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
       res.json(cableRequest);
@@ -129,15 +130,15 @@ module.exports = function(app) {
 
 
 
-  app.get('/cable/', function(req, res) {
+  app.get('/cables/', function(req, res) {
 
   });
 
-  app.get('/cable/:id', function(req, res) {
+  app.get('/cables/:id', function(req, res) {
 
   });
 
-  app.put('/cable/:id', function(req, res) {
+  app.put('/cables/:id', function(req, res) {
 
   });
 

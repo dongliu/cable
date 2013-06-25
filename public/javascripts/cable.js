@@ -84,7 +84,7 @@ $(function() {
       var term = req.term.toLowerCase();
       var output = [];
       if (cableType.length === 0) {
-        $.getJSON('/cabletype/all', req, function(data, status, xhr) {
+        $.getJSON('/cabletypes/json', req, function(data, status, xhr) {
           cableType = data;
           res(getType(cableType, term));
         });
@@ -176,7 +176,7 @@ $(function() {
       // cable type details
       if ($('#type').val() !== '') {
         if (cableType.length === 0) {
-          $.getJSON('/cabletype/all', function(data, status, xhr) {
+          $.getJSON('/cabletypes/json', function(data, status, xhr) {
             cableType = data;
             setTypeDetails($('#type').val(), cableType);
           });
