@@ -8,7 +8,8 @@ var user = new Schema({
   office: String,
   phone: String,
   mobile: String,
-  roles: [String]
+  roles: [String],
+  lastVisitedOn: Date
 });
 
 var User = mongoose.model('User', user);

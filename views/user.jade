@@ -7,15 +7,16 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
   .container(style="margin-top: 10px")
     #message
     .btn-group
-        button.btn.btn-primary Add a user
+        button.btn.btn-primary Change privilege
     table#users.table.table-bordered.table-hover
-    #new-user
+    #change-user
       form.form-horizontal(name='user')
         .control-group
           .control-label User name
@@ -24,30 +25,32 @@ block content
         .control-group
           .control-label Privileges
           .controls
-            label.checkbox.inline
+            label.checkbox
               input#adjust(type='checkbox', value='adjust')
               | adjust
-            label.checkbox.inline
-              input#adjust(type='checkbox', value='adjust')
+            label.checkbox
+              input#approve(type='checkbox', value='approve')
               | approve
-            label.checkbox.inline
-              input#adjust(type='checkbox', value='adjust')
+            label.checkbox
+              input#install(type='checkbox', value='install')
               | install
-            label.checkbox.inline
-              input#adjust(type='checkbox', value='adjust')
+            label.checkbox
+              input#qa(type='checkbox', value='qa')
               | QA
-            label.checkbox.inline
-              input#adjust(type='checkbox', value='adjust')
+            label.checkbox
+              input#admin(type='checkbox', value='admin')
               | admin
         .form-actions
           .btn-group
-            button.btn.btn-primary#save(type='submit') Add
+            button.btn.btn-primary#change(type='submit') Change
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
   script(type='text/javascript', src='/datatables/js/TableTools.js')
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
+  script(type='text/javascript', src='/javascripts/nod.js')
   script(type='text/javascript', src='/javascripts/user.js')

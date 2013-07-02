@@ -21,6 +21,13 @@ Checker = (function() {
   Checker.prototype.makeGetVal = function($el, sel) {
     var inputs, name, type;
     type = $el.attr('type');
+    if (type === 'checkbox' && this.metric === 'one-of') {
+      inputs = jQuery(sel);
+      return function() {
+        return inputs.filter(':checked').val();
+      };
+    }
+
     if (type === 'checkbox') {
       return function() {
         return $el.is(':checked');
@@ -132,6 +139,9 @@ Listener = (function() {
   }
 
   Listener.prototype.events = function() {
+    if (this.$el.attr('type') === 'checkbox' && this.field[1] === 'one-of') {
+      return jQuery(this.field[0]).on('change', this.runCheck);
+    }
     if (this.$el.attr('type') === 'radio') {
       return jQuery('[name="' + this.$el.attr("name") + '"]').on('change', this.runCheck);
     } else {

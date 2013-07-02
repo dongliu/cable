@@ -218,7 +218,9 @@ $(function() {
   });
 
   $('#submit').click(function(e) {
-    updateRequest('submit');
+    if (Nod.formIsErrorFree()) {
+      updateRequest('submit');
+    }
     e.preventDefault();
   });
 
@@ -233,17 +235,23 @@ $(function() {
   });
 
   $('#request').click(function(e) {
-    updateRequest('request');
+    if (Nod.formIsErrorFree()){
+      updateRequest('request');
+    }
     e.preventDefault();
   });
 
   $('#approve').click(function(e) {
-    updateRequest('approve');
+    if (Nod.formIsErrorFree()){
+      updateRequest('approve');
+    }
     e.preventDefault();
   });
 
 
 });
+
+// TODO: update the response to inform the user when the request is successful
 
 function updateRequest(action) {
   var path = window.location.pathname;
@@ -451,21 +459,3 @@ function setTypeDetails(val, cableType) {
   }
   return null;
 }
-
-
-// function pad(n){
-//   return n<10 ? '0'+n : n;
-// }
-
-// function isoDate(d){
-//  return d.getFullYear()+'-'+ pad(d.getMonth()+1)+'-'+ pad(d.getDate());
-// }
-// function isoTime(d){
-//  return pad(d.getHours())+':'+ pad(d.getMinutes())+':'+ pad(d.getSeconds());
-// }
-
-// function utc2date(utc) {
-//   var segments = utc.split(/[-T:.Z]/,6);
-//   return Date.UTC(parseInt(segments[0], 10), parseInt(segments[1], 10)-1, parseInt(segments[2], 10), parseInt(segments[3], 10), parseInt(segments[4], 10), parseInt(segments[5], 10));
-// }
-
