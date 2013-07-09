@@ -39,12 +39,13 @@ $(function() {
   //   ['#position', 'presence', 'Please input the penetration position']
   // ];
 
-  var validation = [
-    ['#system', 'presence', 'Please select system type']
-  ];
+  // var validation = [
+  //   ['#system', 'presence', 'Please select system type']
+  // ];
   
-  $('form[name="request"]').nod(validation);
+  // $('form[name="request"]').nod(validation);
 
+  $('input, select, textarea').jqBootstrapValidation();
   sss();
 
   $('#type-details').popover({
@@ -222,10 +223,10 @@ $(function() {
   });
 
   $('#submit').click(function(e) {
-    if (.formIsErrorFree()) {
+    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
       updateRequest('submit');
     }
-    e.preventDefault();
+    // e.preventDefault();
   });
 
   $('#adjust').click(function(e) {
@@ -239,16 +240,16 @@ $(function() {
   });
 
   $('#request').click(function(e) {
-    if (Nod.formIsErrorFree()){
+    // if (Nod.formIsErrorFree()){
       updateRequest('request');
-    }
+    // }
     e.preventDefault();
   });
 
   $('#approve').click(function(e) {
-    if (Nod.formIsErrorFree()){
+    // if (Nod.formIsErrorFree()){
       updateRequest('approve');
-    }
+    // }
     e.preventDefault();
   });
 
