@@ -55,22 +55,36 @@ module.exports = function(app) {
         email: result[0].mail,
         office: result[0].physicalDeliveryOfficeName,
         phone: result[0].telephoneNumber,
-        mobile: result[0].mobile,
-        roles: req.roles
+        mobile: result[0].mobile
       });
 
+      user.save(function(err, newUser) {
+        if (err) {
+          console.err(err.msg);
+          return res.send(500, err);
+        }
 
+        var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.id;
+        res.set('Location', url);
+        res.send(201, 'A new user is added at ' + url);
+      });
 
     });
 
   });
 
   app.get('/users/json', function(req, res) {
-    // res.render('user');
+    User.find().lean().exec(function(err, users) {
+      if (err) {
+        console.error(err.msg);
+        return res.send(500, 'something is wrong with the DB.');
+      }
+      res.json(users);
+    });
   });
 
 
-  // TODO: first check the db for the id, then retrieve from the ad?
+  // get from the db not ad
   app.get('/users/:id', function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
@@ -104,7 +118,6 @@ module.exports = function(app) {
     });
 
   });
-
 
 
 // resource /adusers
@@ -158,7 +171,7 @@ module.exports = function(app) {
 
   });
 
-  app.get('/adusers/names', function(req, res) {
+  app.get('/adusernames', function(req, res) {
     // var query = req.param('term');
     var query = req.query.term;
     var nameFilter, opts;

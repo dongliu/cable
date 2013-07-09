@@ -9,7 +9,9 @@ var user = new Schema({
   phone: String,
   mobile: String,
   roles: [String],
-  lastVisitedOn: Date
+  lastVisitedOn: Date,
+  requests: [],
+  cables: []
 });
 
 var User = mongoose.model('User', user);

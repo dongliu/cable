@@ -8,38 +8,41 @@ $(function() {
 
   var requestForm = document.forms[0];
 
-  var validation = [
-    ['#system', 'presence', 'Please select system type'],
-    ['#sub', 'presence', 'Please select sub system type'],
-    ['#signal', 'presence', 'Please select signal type'],
-    ['#type', 'presence', 'Please input cable type'],
-    ['#engineer', 'presence', 'Please input engineer fullname'],
-    ['#function', 'presence', 'Please input cable function'],
-    ['#wbs', 'presence', 'Please input WBS number'],
-    ['#quality', 'presence', 'Please input the quality'],
-    ['#quality', 'integer', 'The quality needs to be an integer'],
-    ['#from-building', 'presence', 'Please input the building'],
-    ['#from-rack', 'presence', 'Please input the rack'],
-    ['#from-elevation', 'presence', 'Please input the elevation'],
-    ['#from-elevation', 'float', 'The elevation needs to be an integer'],
-    ['#from-termination', 'presence', 'Please input the termination'],
-    ['#from-type', 'presence', 'Please input the termination'],
-    ['#from-drawing', 'presence', 'Please input the wiring drawing'],
-    ['#from-label', 'presence', 'Please input the label'],
-    ['#to-building', 'presence', 'Please input the building'],
-    ['#to-rack', 'presence', 'Please input the rack'],
-    ['#to-elevation', 'presence', 'Please input the elevation'],
-    ['#to-elevation', 'float', 'The elevation needs to be an integer'],
-    ['#to-termination', 'presence', 'Please input the termination'],
-    ['#to-type', 'presence', 'Please input the termination'],
-    ['#to-drawing', 'presence', 'Please input the wiring drawing'],
-    ['#to-label', 'presence', 'Please input the label'],
-    ['#tray', 'presence', 'Please input the tray'],
-    ['#penetration', 'presence', 'Please input the penetration number'],
-    ['#position', 'presence', 'Please input the penetration position']
-  ];
+  // var validation = [
+  //   ['#system', 'presence', 'Please select system type'],
+  //   ['#sub', 'presence', 'Please select sub system type'],
+  //   ['#signal', 'presence', 'Please select signal type'],
+  //   ['#type', 'presence', 'Please input cable type'],
+  //   ['#engineer', 'presence', 'Please input engineer fullname'],
+  //   ['#function', 'presence', 'Please input cable function'],
+  //   ['#wbs', 'presence', 'Please input WBS number'],
+  //   ['#quality', 'presence', 'Please input the quality'],
+  //   ['#quality', 'integer', 'The quality needs to be an integer'],
+  //   ['#from-building', 'presence', 'Please input the building'],
+  //   ['#from-rack', 'presence', 'Please input the rack'],
+  //   ['#from-elevation', 'presence', 'Please input the elevation'],
+  //   ['#from-elevation', 'float', 'The elevation needs to be an integer'],
+  //   ['#from-termination', 'presence', 'Please input the termination'],
+  //   ['#from-type', 'presence', 'Please input the termination'],
+  //   ['#from-drawing', 'presence', 'Please input the wiring drawing'],
+  //   ['#from-label', 'presence', 'Please input the label'],
+  //   ['#to-building', 'presence', 'Please input the building'],
+  //   ['#to-rack', 'presence', 'Please input the rack'],
+  //   ['#to-elevation', 'presence', 'Please input the elevation'],
+  //   ['#to-elevation', 'float', 'The elevation needs to be an integer'],
+  //   ['#to-termination', 'presence', 'Please input the termination'],
+  //   ['#to-type', 'presence', 'Please input the termination'],
+  //   ['#to-drawing', 'presence', 'Please input the wiring drawing'],
+  //   ['#to-label', 'presence', 'Please input the label'],
+  //   ['#tray', 'presence', 'Please input the tray'],
+  //   ['#penetration', 'presence', 'Please input the penetration number'],
+  //   ['#position', 'presence', 'Please input the penetration position']
+  // ];
 
-  $('form[name="request"]').nod(validation);
+  var validation = [
+    ['#system', 'presence', 'Please select system type']
+  ];
+  var nod = $('form[name="request"]').nod(validation);
 
   sss();
 
@@ -62,7 +65,7 @@ $(function() {
         res(output);
         return;
       }
-      $.getJSON('/username', req, function(data, status, xhr) {
+      $.getJSON('/adusernames', req, function(data, status, xhr) {
         var names = [];
         for (var i = 0; i < data.length; i += 1) {
           if (data[i].displayName.indexOf(',') !== -1) {
@@ -157,7 +160,7 @@ $(function() {
   // check if the request is for an existing request
   if ($('#cableId').length) {
     $.ajax({
-      url: '/request/' + $('#cableId').text() + '/json',
+      url: '/requests/' + $('#cableId').text() + '/json',
       type: 'GET',
       async: true,
       dataType: 'json'
@@ -218,9 +221,9 @@ $(function() {
   });
 
   $('#submit').click(function(e) {
-    if (Nod.formIsErrorFree()) {
+    // if (Nod.formIsErrorFree()) {
       updateRequest('submit');
-    }
+    // }
     e.preventDefault();
   });
 
@@ -265,14 +268,14 @@ function updateRequest(action) {
     request: requestObject,
     action: action
   };
-  if (/^\/request\/new/.test(path)) {
-    url = '/request';
+  if (/^\/requests\/new/.test(path)) {
+    url = '/requests';
     type = 'POST';
   } else {
     url = path;
     type = 'PUT';
   }
-  $('#request').fadeTo('slow', 0.2);
+  $('form[name="request"]').fadeTo('slow', 0.2);
   var formRequest = $.ajax({
     url: url,
     type: type,
@@ -282,23 +285,18 @@ function updateRequest(action) {
     processData: false,
     dataType: 'json'
   }).done(function(json) {
-    $('#request').fadeTo('slow', 1);
+    $('form[name="request"]').fadeTo('slow', 1);
     // var location = formRequest.getResponseHeader('Location');
-    if (/^\/request\/new/.test(path)) {
+    if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
-      // redirect based on the action
       if (action == 'save' || action == 'adjust') {
         var timestamp = formRequest.getResponseHeader('Date');
-        // var dateObj = Date.parse(timestamp);
-        // var dateObj = moment(timestamp, 'ddd, DD MMM YYYY HH:mm:ss' );
         var dateObj = moment(timestamp);
-        // var dateObj = utc2date(timestamp);
-        // var date = isoDate(dateObj);
-        // var time = isoTime(dateObj);
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
       } else {
-        document.location.href = '/';
+        $('form[name="request"]').hide();
+        $('message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
       }
     }
 

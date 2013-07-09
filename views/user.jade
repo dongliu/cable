@@ -13,36 +13,39 @@ block head
 block content
   .container(style="margin-top: 10px")
     #message
-    .btn-group
-        button.btn.btn-primary Change privilege
+    //- .btn-group
+    //-     button.btn.btn-primary Change privilege
     table#users.table.table-bordered.table-hover
-    #change-user
+    #user-details
+      #ad-details
       form.form-horizontal(name='user')
-        .control-group
-          .control-label User name
-          .controls
-            input.input-large#name(type='text', placeholder='Last, First')
+        //- .control-group
+        //-   .control-label User name
+        //-   .controls
+        //-     input.input-large#name(type='text', placeholder='Last, First')
         .control-group
           .control-label Privileges
           .controls
-            label.checkbox
+            label.checkbox.inline
               input#adjust(type='checkbox', value='adjust')
               | adjust
-            label.checkbox
+            label.checkbox.inline
               input#approve(type='checkbox', value='approve')
               | approve
-            label.checkbox
+            label.checkbox.inline
               input#install(type='checkbox', value='install')
               | install
-            label.checkbox
+            label.checkbox.inline
               input#qa(type='checkbox', value='qa')
               | QA
-            label.checkbox
+            label.checkbox.inline
               input#admin(type='checkbox', value='admin')
               | admin
         .form-actions
           .btn-group
-            button.btn.btn-primary#change(type='submit') Change
+            button.btn.btn-primary#update(type='submit') Update
+          .btn-group
+            button.btn.btn#cancle(type='button') Cancle
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
@@ -53,4 +56,5 @@ block js
   script(type='text/javascript', src='/datatables/js/TableTools.js')
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/nod.js')
+  script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/user.js')

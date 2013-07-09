@@ -9,6 +9,8 @@ $(function(){
         'sTitle': 'Full name'
       }, {
         'sTitle': 'Privileges'
+      }, {
+        'sTitle': 'Last visited on'
       }
     ],
     'aaSorting': [
@@ -33,13 +35,33 @@ $(function(){
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
-    saved = json.map(function(request) {
-      return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy? request.updatedBy : '').concat(request.updatedOn? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '' ).concat(request._id);
+    users = json.map(function(user) {
+      return [].concat(user.id).concat(user.name).concat(user.roles.join()).concat(user.lastVisitedOn? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '' );
     });
-    savedTable.fnClearTable();
-    savedTable.fnAddData(saved);
-    savedTable.fnDraw();
-    addClick($('#saved-table'), savedTable, 7);
+    userTable.fnClearTable();
+    userTable.fnAddData(saved);
+    userTable.fnDraw();
+    // addClick($('#users'), userTable, 7);
+    $('tbody tr', '#users').click(function(e) {
+      var id = table.fnGetData(this, 0);
+      var user;
+      for(var i = 0; i < json.length; i += 1) {
+        if (json[i].id === id) {
+          user = json[i];
+          break;
+        }
+      }
+      if (user) {
+        for (i = 0; i < user.roles.length; i += 1) {
+          $('#'+user.roles[i]).prop('checked', true);
+        }
+        delete user.roles;
+        $('ad-details').html(json2List(roles));
+        $('#users').hide();
+        $('#user-details').show();
+      }
+
+    });
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
   }).always();
@@ -60,7 +82,7 @@ $(function(){
         res(output);
         return;
       }
-      $.getJSON('/username', req, function(data, status, xhr) {
+      $.getJSON('/adusernames', req, function(data, status, xhr) {
         var names = [];
         for (var i = 0; i < data.length; i += 1) {
           if (data[i].displayName.indexOf(',') !== -1) {
@@ -76,18 +98,40 @@ $(function(){
     }
   });
 
-  var validation = [
-    // ['#adjust, #approve, #install, #qa, #admin', 'one-of', 'Need to select at least one privilege'],
-    ['#name', 'presence', 'Please input a name']
-  ];
 
-  $('form[name="user"]').nod(validation);
+  // var validation = [
+  //   // ['#adjust, #approve, #install, #qa, #admin', 'one-of', 'Need to select at least one privilege'],
+  //   ['#name', 'presence', 'Please input a name']
+  // ];
 
-  $('#change').click(function(e){
-    if (Nod.formIsErrorFree()){
-      updateRequest('request');
-    }
-    e.preventDefault();
-  });
+  // $('form[name="user"]').nod(validation);
+
+  // $('#change').click(function(e){
+  //   if (Nod.formIsErrorFree()){
+  //     updateRequest('request');
+  //   }
+  //   e.preventDefault();
+  // });
 
 });
+
+// function addClick(div, table, position) {
+//   $('tbody tr', div).click(function(e) {
+//     var id = table.fnGetData(this, position);
+//     window.open('/requests/'+id);
+//   });
+// }
+
+function Json2List(json) {
+  var output = '';
+  for (var k in json) {
+    if (json.hasOwnProperty(k)) {
+      if (typeof(json[k]) == 'object') {
+        output = output + '<dl>' + '<dt>' + k + '</dt>' + '<dd>' + Json2List(json[k]) + '</dd>' + '</dl>';
+      } else {
+        output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
+      }
+    }
+  }
+  return output;
+}

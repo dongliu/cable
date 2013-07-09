@@ -38,9 +38,14 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
-      var url = req.protocol + '://' + req.get('host') + '/request/' + cableRequest.id;
+      var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
       res.set('Location', url);
-      res.json(201, {
+      // res.status(201).render(created ,{
+      //   submit : true,
+      //   location: '/requests/' + cableRequest.id
+      // }); 
+    res.json(201 ,{
+        submit : true,
         location: '/requests/' + cableRequest.id
       });
     });
@@ -125,7 +130,6 @@ module.exports = function(app) {
       }
       res.json(cableRequest);
     });
-    // res.json(req.body);
   });
 
 
