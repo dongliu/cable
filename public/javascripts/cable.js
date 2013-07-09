@@ -42,7 +42,8 @@ $(function() {
   var validation = [
     ['#system', 'presence', 'Please select system type']
   ];
-  var nod = $('form[name="request"]').nod(validation);
+  
+  $('form[name="request"]').nod(validation);
 
   sss();
 
@@ -221,9 +222,9 @@ $(function() {
   });
 
   $('#submit').click(function(e) {
-    // if (Nod.formIsErrorFree()) {
+    if (.formIsErrorFree()) {
       updateRequest('submit');
-    // }
+    }
     e.preventDefault();
   });
 
