@@ -45,7 +45,8 @@ $(function() {
   
   // $('form[name="request"]').nod(validation);
 
-  $('input, select, textarea').jqBootstrapValidation();
+  $(requestForm.elements).jqBootstrapValidation();
+  
   sss();
 
   $('#type-details').popover({
@@ -226,7 +227,7 @@ $(function() {
     if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
       updateRequest('submit');
     }
-    // e.preventDefault();
+    e.preventDefault();
   });
 
   $('#adjust').click(function(e) {
@@ -240,16 +241,16 @@ $(function() {
   });
 
   $('#request').click(function(e) {
-    // if (Nod.formIsErrorFree()){
+    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
       updateRequest('request');
-    // }
+    }
     e.preventDefault();
   });
 
   $('#approve').click(function(e) {
-    // if (Nod.formIsErrorFree()){
+    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
       updateRequest('approve');
-    // }
+    }
     e.preventDefault();
   });
 

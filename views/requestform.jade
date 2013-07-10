@@ -11,13 +11,13 @@ fieldset
     .control-label Subsystem
     .controls
       .input-append
-        select#sub.input(disabled=true, name='basic.subsystem')
+        select#sub.input(disabled=true, name='basic.subsystem', required)
         span.add-on &nbsp
   .control-group
     .control-label Signal
     .controls
       .input-append
-        select#signal.input(disabled=true, name='basic.signal')
+        select#signal.input(disabled=true, name='basic.signal', required)
           option(value='', disabled=true) choose
         span.add-on &nbsp
   .control-group
@@ -30,7 +30,7 @@ fieldset
   .control-group
     .control-label Engineer
     .controls
-      input#engineer(type='text', placeholder='Last, First', name='basic.engineer')
+      input#engineer(type='text', placeholder='Last, First', name='basic.engineer', required)
   .control-group
     .control-label Function
     .controls
