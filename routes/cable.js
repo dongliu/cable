@@ -10,7 +10,7 @@ var auth = require('../lib/auth');
 
 module.exports = function(app) {
   app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
-    res.render('newrequest', {
+    return res.render('request', {
       sysSub: sysSub,
       signal: signal
     });

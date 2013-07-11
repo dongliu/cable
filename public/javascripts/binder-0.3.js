@@ -1,4 +1,5 @@
 // Copyright 2008 Steven Bazyl
+// Copyright 2013 Dong Liu
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -10,7 +11,9 @@
 //   distributed under the License is distributed on an "AS IS" BASIS,
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
- //  limitations under the License.
+//   limitations under the License.
+
+// The original project is hosted at https://code.google.com/p/js-binding/
 
 var Binder = {};
 Binder.Util = {
@@ -259,6 +262,7 @@ Binder.FormBinder.prototype = {
         }
       }
     } else {
+      // only serialize non-empty element values
       if (element.value != "") {
         value = this._parse( element.name, element.value, element );
         accessor.set( element.name, value );
@@ -276,7 +280,7 @@ Binder.FormBinder.prototype = {
     var accessor = this._getAccessor( obj );
     var value = accessor.get( element.name );
     // do not format the undefined values, otherwise the form will be filled with 'undefined'
-    if (typeof value !== 'undefined') {
+    if (typeof value != 'undefined') {
       value = this._format( element.name, value, element );
     }
     if( element.type == "radio" || element.type == "checkbox" )  {
@@ -286,7 +290,7 @@ Binder.FormBinder.prototype = {
         element.options[j].selected = this._isSelected( element.options[j].value, value );
       }
     } else {
-      element.value = (typeof value === 'undefined')? "" : value;
+      element.value = (typeof value == 'undefined')? "" : value;
     }
   }
 };

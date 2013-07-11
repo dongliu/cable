@@ -2,7 +2,10 @@ extends layout
 
 block head
   meta(charset='urf-8')
-  title FRIB Cable :: request :: #{id}
+  if (typeof id == 'undefined') 
+    title FRIB Cable :: new request
+  else 
+    title FRIB Cable :: request :: #{id}
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
@@ -15,9 +18,20 @@ block content
     var signal = !{JSON.stringify(signal)};
   .container
     #message
+    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
+      .modal-header
+        //- button.close(type='button',data-dismiss='modal',aria-hidden='true') x
+        h3#modalLable 
+      .modal-body
+      .modal-footer
+        button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
+        //- button.btn.btn(onclick='',aria-hidden='true') Close the window
     form.form-horizontal(name='request')
-      h3 Cable Request &nbsp
-        span#cableId #{id}
+      if (typeof id == 'undefined') 
+        h3 New Cable Request
+      else 
+        h3 Cable Request &nbsp
+          span#cableId #{id}
       include requestform
       include request_action
 block js

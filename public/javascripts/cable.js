@@ -49,6 +49,11 @@ $(function() {
   
   sss();
 
+  // snapshot the initial form model
+  var binder = new Binder.FormBinder(requestForm);
+  var initModel = _.clone(binder.serialize());
+  
+
   $('#type-details').popover({
     html: true
   });
@@ -216,61 +221,91 @@ $(function() {
     }).always(function() {
       // $('#request').fadeTo('slow', 1);
     });
+  } else {
+    $('#save').closest('.btn-group').show();
+    $('#submit').closest('.btn-group').show();
+    $('#reset').closest('.btn-group').show();
   }
 
-  $('#save').click(function(e) {
-    updateRequest('save');
-    e.preventDefault();
-  });
-
-  $('#submit').click(function(e) {
-    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-      updateRequest('submit');
+  $('.form-actions button').not('#reset').click(function(e){
+    var currentModel = binder.serialize();
+    if (_.isEqual(initModel, currentModel)) {
+      $('#modalLable').html('The request cannot be sent');
+      $('#modal .modal-body').html('No change has been made in the form');
+      // $('#modal .modal-footer').html();
+      $('#modal').modal('show');
+    } else {
+      var action = this.id;
+      var data = {
+        request: currentModel,
+        action: action
+      };
+      if (action == 'submit' || action == 'request' || action == 'approve') {
+        if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
+          sendRequest(data);
+        }
+      } else {
+        sendRequest(data);
+      }
     }
     e.preventDefault();
   });
 
-  $('#adjust').click(function(e) {
-    updateRequest('adjust');
-    e.preventDefault();
-  });
+  // $('#save').click(function(e) {
+  //   updateRequest('save', initModel);
+  //   e.preventDefault();
+  // });
 
-  $('#reject').click(function(e) {
-    updateRequest('reject');
-    e.preventDefault();
-  });
+  // $('#submit').click(function(e) {
+  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
+  //     updateRequest('submit');
+  //   }
+  //   e.preventDefault();
+  // });
 
-  $('#request').click(function(e) {
-    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-      updateRequest('request');
-    }
-    e.preventDefault();
-  });
+  // $('#adjust').click(function(e) {
+  //   updateRequest('adjust');
+  //   e.preventDefault();
+  // });
 
-  $('#approve').click(function(e) {
-    if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-      updateRequest('approve');
-    }
-    e.preventDefault();
-  });
+  // $('#reject').click(function(e) {
+  //   updateRequest('reject');
+  //   e.preventDefault();
+  // });
+
+  // $('#request').click(function(e) {
+  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
+  //     updateRequest('request');
+  //   }
+  //   e.preventDefault();
+  // });
+
+  // $('#approve').click(function(e) {
+  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
+  //     updateRequest('approve');
+  //   }
+  //   e.preventDefault();
+  // });
 
 
 });
 
 // TODO: update the response to inform the user when the request is successful
 
-function updateRequest(action) {
+function sendRequest(data) {
   var path = window.location.pathname;
-  var requestObject = {};
-  var requestForm = document.forms[0];
-  var binder = new Binder.FormBinder(requestForm, requestObject);
-  requestObject = binder.serialize();
-  // future validation here
+  // var requestObject = {};
+  // var requestForm = document.forms[0];
+  // var binder = new Binder.FormBinder(requestForm, requestObject);
+  // requestObject = binder.serialize();
+  // // future validation here
+  // if (_isEqual(initModel, ))
+
   var url, type;
-  var data = {
-    request: requestObject,
-    action: action
-  };
+  // var data = {
+  //   request: requestObject,
+  //   action: action
+  // };
   if (/^\/requests\/new/.test(path)) {
     url = '/requests';
     type = 'POST';
@@ -293,23 +328,84 @@ function updateRequest(action) {
     if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
+      var timestamp = formRequest.getResponseHeader('Date');
+      var dateObj = moment(timestamp);
       if (action == 'save' || action == 'adjust') {
-        var timestamp = formRequest.getResponseHeader('Date');
-        var dateObj = moment(timestamp);
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
       } else {
         $('form[name="request"]').hide();
-        $('message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
+        // change to modal
+        // $('#message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
+        $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
+        $('#modal .modal-body').html('You can access it at <a href ="' + json.location + '">' + json.location + '</a>');
+        $('#modal .modal-footer').empty();
+        $('#modal').modal('show');
       }
     }
 
   }).fail(function(jqXHR, status, error) {
+    // TODO change to modal
     alert('The save request failed. You might need to try again or contact the admin.');
   }).always(function() {
     $('#request').fadeTo('slow', 1);
   });
   // $('#test').html(JSON.stringify(requestObject));
 }
+
+
+// function updateRequest(action, initModel) {
+//   var path = window.location.pathname;
+//   var requestObject = {};
+//   var requestForm = document.forms[0];
+//   var binder = new Binder.FormBinder(requestForm, requestObject);
+//   requestObject = binder.serialize();
+//   // future validation here
+//   if (_isEqual(initModel, ))
+
+//   var url, type;
+//   var data = {
+//     request: requestObject,
+//     action: action
+//   };
+//   if (/^\/requests\/new/.test(path)) {
+//     url = '/requests';
+//     type = 'POST';
+//   } else {
+//     url = path;
+//     type = 'PUT';
+//   }
+//   $('form[name="request"]').fadeTo('slow', 0.2);
+//   var formRequest = $.ajax({
+//     url: url,
+//     type: type,
+//     async: true,
+//     data: JSON.stringify(data),
+//     contentType: 'application/json',
+//     processData: false,
+//     dataType: 'json'
+//   }).done(function(json) {
+//     $('form[name="request"]').fadeTo('slow', 1);
+//     // var location = formRequest.getResponseHeader('Location');
+//     if (/^\/requests\/new/.test(path)) {
+//       document.location.href = json.location;
+//     } else {
+//       if (action == 'save' || action == 'adjust') {
+//         var timestamp = formRequest.getResponseHeader('Date');
+//         var dateObj = moment(timestamp);
+//         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
+//       } else {
+//         $('form[name="request"]').hide();
+//         $('message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
+//       }
+//     }
+
+//   }).fail(function(jqXHR, status, error) {
+//     alert('The save request failed. You might need to try again or contact the admin.');
+//   }).always(function() {
+//     $('#request').fadeTo('slow', 1);
+//   });
+//   // $('#test').html(JSON.stringify(requestObject));
+// }
 
 
 function getChildren(wbs, term) {
@@ -406,6 +502,9 @@ function updateSub(json) {
   var sys = $('#system option:selected').val();
   $('#sub').prop('disabled', false);
   $('#sub option').remove();
+  $('#sub').append($('<option>', {
+        value: ''
+      }).text('choose').prop('disabled', true));
   $.each(json[sys]['sub-system'], function(k, v) {
     if (v) {
       $('#sub').append($('<option>', {
