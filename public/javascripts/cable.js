@@ -45,7 +45,19 @@ $(function() {
   
   // $('form[name="request"]').nod(validation);
 
-  $(requestForm.elements).jqBootstrapValidation();
+  $(requestForm.elements).jqBootstrapValidation({
+    preventSubmit: true, 
+    submitError: function(form, event, errors) {
+      alert('not validated');
+    },
+    submitSuccess: function(form, event) {
+      alert('validated');
+      event.preventDefault();
+    }, 
+    filter: function() {
+      return $(this).is(':visible');
+    }
+  });
 
   if ($('#cableId').length) {
     $('form[name="request"]').fadeTo('slow', 0.2);
@@ -231,7 +243,7 @@ $(function() {
     $('#reset').closest('.btn-group').show();
   }
 
-  $('.form-actions button').not('#reset').click(function(e){
+  $('.form-actions button').not('#reset, #submit, #request, #approve').click(function(e){
     var currentModel = {};
     var currentBinder = new Binder.FormBinder(requestForm, currentModel);
     currentModel = currentBinder.serialize();
@@ -254,7 +266,7 @@ $(function() {
         sendRequest(data);
       }
     }
-    // e.preventDefault();
+    e.preventDefault();
   });
 
 });
@@ -286,7 +298,7 @@ function sendRequest(data) {
   var formRequest = $.ajax({
     url: url,
     type: type,
-    async: false,
+    async: true,
     data: JSON.stringify(data),
     contentType: 'application/json',
     processData: false,
@@ -299,7 +311,7 @@ function sendRequest(data) {
     } else {
       var timestamp = formRequest.getResponseHeader('Date');
       var dateObj = moment(timestamp);
-      if (action == 'save' || action == 'adjust') {
+      if (data.action == 'save' || data.action == 'adjust') {
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
       } else {
         $('form[name="request"]').hide();
