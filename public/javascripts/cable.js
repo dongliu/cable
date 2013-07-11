@@ -8,6 +8,10 @@ $(function() {
 
   var requestForm = document.forms[0];
 
+  var binder = new Binder.FormBinder(requestForm);
+
+  var initModel;
+
   // var validation = [
   //   ['#system', 'presence', 'Please select system type'],
   //   ['#sub', 'presence', 'Please select sub system type'],
@@ -38,21 +42,17 @@ $(function() {
   //   ['#penetration', 'presence', 'Please input the penetration number'],
   //   ['#position', 'presence', 'Please input the penetration position']
   // ];
-
-  // var validation = [
-  //   ['#system', 'presence', 'Please select system type']
-  // ];
   
   // $('form[name="request"]').nod(validation);
 
   $(requestForm.elements).jqBootstrapValidation();
-  
+
+  if ($('#cableId').length) {
+    $('form[name="request"]').fadeTo('slow', 0.2);
+  }
   sss();
 
   // snapshot the initial form model
-  var binder = new Binder.FormBinder(requestForm);
-  var initModel = _.clone(binder.serialize());
-  
 
   $('#type-details').popover({
     html: true
@@ -181,9 +181,12 @@ $(function() {
       delete json.basic.subsystem;
       delete json.basic.signal;
       setSSS(system, subsystem, signal);
+      
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
 
+      $('form[name="request"]').fadeTo('slow', 1);
+      initModel = binder.serialize();
       // cable type details
       if ($('#type').val() !== '') {
         if (cableType.length === 0) {
@@ -195,8 +198,6 @@ $(function() {
           setTypeDetails($('#type').val(), cableType);
         }
       }
-
-
       // show action buttons
 
       if (!json.hasOwnProperty('submittedBy')) {
@@ -222,13 +223,18 @@ $(function() {
       // $('#request').fadeTo('slow', 1);
     });
   } else {
+    // $('form[name="request"]').fadeTo('slow', 1);
+    initModel = _.clone(binder.serialize());
+
     $('#save').closest('.btn-group').show();
     $('#submit').closest('.btn-group').show();
     $('#reset').closest('.btn-group').show();
   }
 
   $('.form-actions button').not('#reset').click(function(e){
-    var currentModel = binder.serialize();
+    var currentModel = {};
+    var currentBinder = new Binder.FormBinder(requestForm, currentModel);
+    currentModel = currentBinder.serialize();
     if (_.isEqual(initModel, currentModel)) {
       $('#modalLable').html('The request cannot be sent');
       $('#modal .modal-body').html('No change has been made in the form');
@@ -248,45 +254,8 @@ $(function() {
         sendRequest(data);
       }
     }
-    e.preventDefault();
+    // e.preventDefault();
   });
-
-  // $('#save').click(function(e) {
-  //   updateRequest('save', initModel);
-  //   e.preventDefault();
-  // });
-
-  // $('#submit').click(function(e) {
-  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-  //     updateRequest('submit');
-  //   }
-  //   e.preventDefault();
-  // });
-
-  // $('#adjust').click(function(e) {
-  //   updateRequest('adjust');
-  //   e.preventDefault();
-  // });
-
-  // $('#reject').click(function(e) {
-  //   updateRequest('reject');
-  //   e.preventDefault();
-  // });
-
-  // $('#request').click(function(e) {
-  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-  //     updateRequest('request');
-  //   }
-  //   e.preventDefault();
-  // });
-
-  // $('#approve').click(function(e) {
-  //   if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
-  //     updateRequest('approve');
-  //   }
-  //   e.preventDefault();
-  // });
-
 
 });
 
@@ -317,7 +286,7 @@ function sendRequest(data) {
   var formRequest = $.ajax({
     url: url,
     type: type,
-    async: true,
+    async: false,
     data: JSON.stringify(data),
     contentType: 'application/json',
     processData: false,
@@ -347,65 +316,11 @@ function sendRequest(data) {
     // TODO change to modal
     alert('The save request failed. You might need to try again or contact the admin.');
   }).always(function() {
-    $('#request').fadeTo('slow', 1);
+    $('form[name="request"]').fadeTo('slow', 1);
   });
   // $('#test').html(JSON.stringify(requestObject));
 }
 
-
-// function updateRequest(action, initModel) {
-//   var path = window.location.pathname;
-//   var requestObject = {};
-//   var requestForm = document.forms[0];
-//   var binder = new Binder.FormBinder(requestForm, requestObject);
-//   requestObject = binder.serialize();
-//   // future validation here
-//   if (_isEqual(initModel, ))
-
-//   var url, type;
-//   var data = {
-//     request: requestObject,
-//     action: action
-//   };
-//   if (/^\/requests\/new/.test(path)) {
-//     url = '/requests';
-//     type = 'POST';
-//   } else {
-//     url = path;
-//     type = 'PUT';
-//   }
-//   $('form[name="request"]').fadeTo('slow', 0.2);
-//   var formRequest = $.ajax({
-//     url: url,
-//     type: type,
-//     async: true,
-//     data: JSON.stringify(data),
-//     contentType: 'application/json',
-//     processData: false,
-//     dataType: 'json'
-//   }).done(function(json) {
-//     $('form[name="request"]').fadeTo('slow', 1);
-//     // var location = formRequest.getResponseHeader('Location');
-//     if (/^\/requests\/new/.test(path)) {
-//       document.location.href = json.location;
-//     } else {
-//       if (action == 'save' || action == 'adjust') {
-//         var timestamp = formRequest.getResponseHeader('Date');
-//         var dateObj = moment(timestamp);
-//         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
-//       } else {
-//         $('form[name="request"]').hide();
-//         $('message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
-//       }
-//     }
-
-//   }).fail(function(jqXHR, status, error) {
-//     alert('The save request failed. You might need to try again or contact the admin.');
-//   }).always(function() {
-//     $('#request').fadeTo('slow', 1);
-//   });
-//   // $('#test').html(JSON.stringify(requestObject));
-// }
 
 
 function getChildren(wbs, term) {

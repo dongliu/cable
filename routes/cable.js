@@ -44,7 +44,7 @@ module.exports = function(app) {
       //   submit : true,
       //   location: '/requests/' + cableRequest.id
       // }); 
-    res.json(201 ,{
+    res.json(201,{
         submit : true,
         location: '/requests/' + cableRequest.id
       });
