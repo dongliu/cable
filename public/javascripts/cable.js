@@ -201,16 +201,17 @@ $(function() {
       dataType: 'json'
     }).done(function(json) {
       // load the data
-      var system = json.basic.system;
-      var subsystem = json.basic.subsystem;
-      var signal = json.basic.signal;
-      delete json.basic.system;
-      delete json.basic.subsystem;
-      delete json.basic.signal;
-      setSSS(system, subsystem, signal);
+      var system, subsystem, signal;
+      if (json.basic) {
+        system = json.basic.system || null;
+        subsystem = json.basic.subsystem || null;
+        signal = json.basic.signal || null;
+      }
 
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
+
+      setSSS(system, subsystem, signal);
 
       $('form[name="request"]').fadeTo('slow', 1);
 
@@ -439,13 +440,19 @@ function sss() {
 }
 
 function setSSS(system, subsystem, signal) {
-  $('#system').val(system);
-  $('#system').next('.add-on').text(system);
-  updateSub(sysSub);
-  $('#signal').val(signal);
-  $('#signal').next('.add-on').text(signal);
-  $('#sub').val(subsystem);
-  $('#sub').next('.add-on').text(subsystem);
+  if (system) {
+    $('#system').val(system);
+    $('#system').next('.add-on').text(system);
+    updateSub(sysSub);
+  }
+  if (signal) {
+    $('#signal').val(signal);
+    $('#signal').next('.add-on').text(signal);
+  }
+  if (subsystem) {
+    $('#sub').val(subsystem);
+    $('#sub').next('.add-on').text(subsystem);
+  }
 }
 
 

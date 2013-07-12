@@ -8,6 +8,8 @@ var Cable = mongoose.model('Cable');
 var auth = require('../lib/auth');
 
 
+//TODO need a server side validation in the future
+
 module.exports = function(app) {
   app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {

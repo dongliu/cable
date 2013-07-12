@@ -43,7 +43,10 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     saved = json.map(function(request) {
-      return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy? request.updatedBy : '').concat(request.updatedOn? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '' ).concat(request._id);
+      if (request.basic) {
+        return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedBy || '').concat(request.updatedOn? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '' ).concat(request._id);
+      }
+      return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedBy || '').concat(request.updatedOn? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '' ).concat(request._id);
     });
     savedTable.fnClearTable();
     savedTable.fnAddData(saved);

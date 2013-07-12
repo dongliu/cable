@@ -279,18 +279,18 @@ Binder.FormBinder.prototype = {
   deserializeField: function( element, obj ) {
     var accessor = this._getAccessor( obj );
     var value = accessor.get( element.name );
-    // do not format the undefined values, otherwise the form will be filled with 'undefined'
+    // do not deserialized the undefined values, otherwise the form will be filled with 'undefined'
     if (typeof value != 'undefined') {
       value = this._format( element.name, value, element );
-    }
-    if( element.type == "radio" || element.type == "checkbox" )  {
-      element.checked = this._isSelected( element.value, value );
-    } else if ( element.type == "select-one" || element.type == "select-multiple" ) {
-      for( var j = 0; j < element.options.length; j++ ) {
-        element.options[j].selected = this._isSelected( element.options[j].value, value );
+      if( element.type == "radio" || element.type == "checkbox" )  {
+        element.checked = this._isSelected( element.value, value );
+      } else if ( element.type == "select-one" || element.type == "select-multiple" ) {
+        for( var j = 0; j < element.options.length; j++ ) {
+          element.options[j].selected = this._isSelected( element.options[j].value, value );
+        }
+      } else {
+        element.value = value;
       }
-    } else {
-      element.value = (typeof value == 'undefined')? "" : value;
     }
   }
 };
