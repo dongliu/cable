@@ -45,20 +45,35 @@ $(function() {
   
   // $('form[name="request"]').nod(validation);
 
-  $(requestForm.elements).jqBootstrapValidation({
-    preventSubmit: true, 
-    submitError: function(form, event, errors) {
-      alert('not validated');
+  // $(requestForm.elements).jqBootstrapValidation({
+  //   preventSubmit: true, 
+  //   submitError: function(form, event, errors) {
+  //     alert('not validated');
+  //   },
+  //   submitSuccess: function(form, event) {
+  //     alert('validated');
+  //     event.preventDefault();
+  //   }, 
+  //   filter: function() {
+  //     return $(this).is(':visible');
+  //   }
+  // });
+  
+
+  var validator = $(requestForm).validate({
+    errorElement: 'span',
+    errorClass: 'help-inline',
+    errorPlacement: function(error, element){
+      error.appendTo($(element).closest('.controls'));
     },
-    submitSuccess: function(form, event) {
-      alert('validated');
-      event.preventDefault();
-    }, 
-    filter: function() {
-      return $(this).is(':visible');
+    highlight: function(element) {
+      $(element).closest('.control-group').removeClass('success').addClass('error');
+    },
+    success: function(element){
+      $(element).closest('.control-group').removeClass('error').addClass('success');
     }
   });
-
+  
   if ($('#cableId').length) {
     $('form[name="request"]').fadeTo('slow', 0.2);
   }
@@ -193,11 +208,14 @@ $(function() {
       delete json.basic.subsystem;
       delete json.basic.signal;
       setSSS(system, subsystem, signal);
-      
+
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
 
       $('form[name="request"]').fadeTo('slow', 1);
+
+      validator.form();
+
       initModel = binder.serialize();
       // cable type details
       if ($('#type').val() !== '') {
@@ -236,31 +254,37 @@ $(function() {
     });
   } else {
     // $('form[name="request"]').fadeTo('slow', 1);
-    initModel = _.clone(binder.serialize());
+    // validator.form();
+    initModel = binder.serialize();
 
     $('#save').closest('.btn-group').show();
     $('#submit').closest('.btn-group').show();
     $('#reset').closest('.btn-group').show();
   }
 
-  $('.form-actions button').not('#reset, #submit, #request, #approve').click(function(e){
+  $('.form-actions button').not('#reset').click(function(e){
+    var action = this.id;
     var currentModel = {};
     var currentBinder = new Binder.FormBinder(requestForm, currentModel);
     currentModel = currentBinder.serialize();
-    if (_.isEqual(initModel, currentModel)) {
+    var data = {
+      request: currentModel,
+      action: action
+    };
+    if ((action == 'save' || action == 'adjust') && _.isEqual(initModel, currentModel)) {
       $('#modalLable').html('The request cannot be sent');
       $('#modal .modal-body').html('No change has been made in the form');
       // $('#modal .modal-footer').html();
       $('#modal').modal('show');
     } else {
-      var action = this.id;
-      var data = {
-        request: currentModel,
-        action: action
-      };
       if (action == 'submit' || action == 'request' || action == 'approve') {
-        if (!($(requestForm.elements).jqBootstrapValidation('hasErrors'))) {
+        if ($(requestForm).valid()) {
           sendRequest(data);
+        } else {
+          $('#modalLable').html('The request cannot be sent');
+          $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
+          // $('#modal .modal-footer').html();
+          $('#modal').modal('show');
         }
       } else {
         sendRequest(data);
@@ -420,7 +444,7 @@ function setSSS(system, subsystem, signal) {
   updateSub(sysSub);
   $('#signal').val(signal);
   $('#signal').next('.add-on').text(signal);
-  $('#subsystem').val(subsystem);
+  $('#sub').val(subsystem);
   $('#sub').next('.add-on').text(subsystem);
 }
 

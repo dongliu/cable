@@ -40,12 +40,7 @@ module.exports = function(app) {
       }
       var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
       res.set('Location', url);
-      // res.status(201).render(created ,{
-      //   submit : true,
-      //   location: '/requests/' + cableRequest.id
-      // }); 
-    res.json(201,{
-        submit : true,
+      res.json(201,{
         location: '/requests/' + cableRequest.id
       });
     });
@@ -128,7 +123,9 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
-      res.json(cableRequest);
+      res.json(200,{
+        location: '/requests/' + cableRequest._id
+      });
     });
   });
 
