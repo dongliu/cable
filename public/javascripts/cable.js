@@ -483,23 +483,23 @@ function update(select, json) {
   });
 }
 
-function json2List(json) {
-  var output = '';
-  for (var k in json) {
-    if (json.hasOwnProperty(k)) {
-      if (json[k] && typeof(json[k]) === 'object') {
-        output = output + '<dl>' + '<dt>' + '<h4>' + k + '</h4>' + '</dt>' + '<dd>' + json2List(json[k]) + '</dd>' + '</dl>';
-      } else {
-        if (json[k] === null) {
-          output = output + '<b>' + k + '</b>' + ' : ' + '<br/>';
-        } else {
-          output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
-        }
-      }
-    }
-  }
-  return output;
-}
+// function json2List(json) {
+//   var output = '';
+//   for (var k in json) {
+//     if (json.hasOwnProperty(k)) {
+//       if (json[k] && typeof(json[k]) === 'object') {
+//         output = output + '<dl>' + '<dt>' + '<h4>' + k + '</h4>' + '</dt>' + '<dd>' + json2List(json[k]) + '</dd>' + '</dl>';
+//       } else {
+//         if (json[k] === null) {
+//           output = output + '<b>' + k + '</b>' + ' : ' + '<br/>';
+//         } else {
+//           output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
+//         }
+//       }
+//     }
+//   }
+//   return output;
+// }
 
 function setTypeDetails(val, cableType) {
   var type = null;

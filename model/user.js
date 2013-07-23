@@ -10,6 +10,7 @@ var user = new Schema({
   mobile: String,
   roles: [String],
   lastVisitedOn: Date,
+  subscribe: {type: Boolean, default: false},
   requests: [],
   cables: []
 });

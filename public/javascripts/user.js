@@ -98,40 +98,18 @@ $(function(){
     }
   });
 
-
-  // var validation = [
-  //   // ['#adjust, #approve, #install, #qa, #admin', 'one-of', 'Need to select at least one privilege'],
-  //   ['#name', 'presence', 'Please input a name']
-  // ];
-
-  // $('form[name="user"]').nod(validation);
-
-  // $('#change').click(function(e){
-  //   if (Nod.formIsErrorFree()){
-  //     updateRequest('request');
-  //   }
-  //   e.preventDefault();
-  // });
-
 });
 
-// function addClick(div, table, position) {
-//   $('tbody tr', div).click(function(e) {
-//     var id = table.fnGetData(this, position);
-//     window.open('/requests/'+id);
-//   });
+// function Json2List(json) {
+//   var output = '';
+//   for (var k in json) {
+//     if (json.hasOwnProperty(k)) {
+//       if (typeof(json[k]) == 'object') {
+//         output = output + '<dl>' + '<dt>' + k + '</dt>' + '<dd>' + Json2List(json[k]) + '</dd>' + '</dl>';
+//       } else {
+//         output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
+//       }
+//     }
+//   }
+//   return output;
 // }
-
-function Json2List(json) {
-  var output = '';
-  for (var k in json) {
-    if (json.hasOwnProperty(k)) {
-      if (typeof(json[k]) == 'object') {
-        output = output + '<dl>' + '<dt>' + k + '</dt>' + '<dd>' + Json2List(json[k]) + '</dd>' + '</dl>';
-      } else {
-        output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
-      }
-    }
-  }
-  return output;
-}

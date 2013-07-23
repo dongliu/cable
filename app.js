@@ -84,7 +84,8 @@ require('./routes/cable')(app);
 // GET /cabletypes/json
 require('./routes/cabletype')(app);
 
-// app.get('/requestform', cable.requestform);
+// GET /profile
+require('./routes/profile')(app);
 
 app.get('/admin', auth.ensureAuthenticated, auth.verifyRole('admin'), admin.index);
 app.get('/testrole', auth.ensureAuthenticated, auth.verifyRole('testrole'), admin.index);
