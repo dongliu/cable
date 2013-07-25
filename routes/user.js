@@ -31,7 +31,7 @@ module.exports = function(app) {
     ldapClient.search(ad.searchBase, opts, false, function(err, result) {
       if (err) {
         console.err(err.name + ' : ' + err.message);
-        return res.send(500, 'cannot perform the search');
+        return res.json(500, {error: err.mesage});
       }
 
       if (result.length === 0) {
@@ -54,7 +54,7 @@ module.exports = function(app) {
       user.save(function(err, newUser) {
         if (err) {
           console.err(err.msg);
-          return res.send(500, err);
+          return res.json(500, {error: err.mesage});
         }
 
         var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.id;
@@ -70,7 +70,7 @@ module.exports = function(app) {
     User.find().lean().exec(function(err, users) {
       if (err) {
         console.error(err.msg);
-        return res.send(500, 'something is wrong with the DB.');
+        return res.json(500, {error: err.mesage});
       }
       res.json(users);
     });
@@ -83,7 +83,7 @@ module.exports = function(app) {
     User.findOne({id: req.params.id}).lean().exec(function(err, user) {
       if (err) {
         console.error(err.msg);
-        return res.send(500, 'something is wrong with the DB.');
+        return res.json(500, {error: err.mesage});
       }
       return res.json(user);
     });
@@ -103,13 +103,13 @@ module.exports = function(app) {
     };
     ldapClient.search(ad.searchBase, opts, false, function(err, result) {
       if (err) {
-        return res.send(500, JSON.stringify(err));
+        return res.json(500, err);
       }
       if (result.length === 0) {
-        return res.send(500, req.params.id + ' is not found!');
+        return res.json(500, {error: req.params.id + ' is not found!'});
       }
       if (result.length > 1) {
-        return res.send(500, req.params.id + ' is not unique!');
+        return res.json(500, {error: req.params.id + ' is not unique!'});
       }
 
       return res.json(result[0]);
@@ -128,13 +128,13 @@ module.exports = function(app) {
     };
     ldapClient.search(ad.searchBase, opts, true, function(err, result) {
       if (err) {
-        return res.send(500, JSON.stringify(err));
+        return res.json(500, err);
       }
       if (result.length === 0) {
-        return res.send(500, req.params.id + ' is not found!');
+        return res.json(500, {error: req.params.id + ' is not found!'});
       }
       if (result.length > 1) {
-        return res.send(500, req.params.id + ' is not unique!');
+        return res.json(500, {error: req.params.id + ' is not unique!'});
       }
       res.set('Content-Type', 'image/jpeg');
       return res.send(result[0].thumbnailPhoto);
@@ -155,15 +155,15 @@ module.exports = function(app) {
       };
       ldapClient.search(ad.searchBase, opts, false, function(err, result) {
         if (err) {
-          return res.send(500, JSON.stringify(err));
+          return res.json(500, JSON.stringify(err));
         }
         if (result.length === 0) {
-          return res.send(500, 'Names starting with ' + query + ' are not found!');
+          return res.json(500, {error: 'Names starting with ' + query + ' are not found!'});
         }
         return res.json(result);
       });
     } else {
-      return res.send(500, 'query term is required.');
+      return res.json(500, {error: 'query term is required.'});
     }
   });
 };

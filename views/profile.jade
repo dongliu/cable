@@ -10,20 +10,41 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
+  //- script
+  //-   var user = !{JSON.stringify(user)};
   .container
-    script
-      var user = !{JSON.stringify(user)};
     #message
     #profile.well
-    form.form-inline
-      label.checkbox
-        input#sub(type='checkbox') 
-        | subscibe to notices &nbsp
-      button.btn(type='submit') Save
+      dl
+        dt Name 
+        dd #{user.name}
+        dt Email 
+        dd #{user.email}
+        dt Office 
+        dd #{user.office}
+        dt Office phone 
+        dd #{user.phone}
+        dt Mobile phone
+        dd #{user.mobile}
+        dt Last visited on
+        dd #{user.lastVisitedOn}
+        dt Roles
+        dd #{user.roles}
+        dt Notice
+        dd           
+          form.form-inline  
+            label.checkbox
+              if (user.subscribe)
+                input#sub(type='checkbox', checked) 
+              else
+                input#sub(type='checkbox') 
+              | subscibe &nbsp
+            button#modify.btn(type='submit') Modify
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/javascripts/util.js')
+  script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/profile.js')

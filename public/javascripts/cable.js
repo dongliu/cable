@@ -337,7 +337,7 @@ function sendRequest(data) {
       var timestamp = formRequest.getResponseHeader('Date');
       var dateObj = moment(timestamp);
       if (data.action == 'save' || data.action == 'adjust') {
-        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
+        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
       } else {
         $('form[name="request"]').hide();
         // change to modal

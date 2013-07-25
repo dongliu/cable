@@ -61,7 +61,7 @@ module.exports = function(app) {
     Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
       if (err) {
         console.error(err.msg);
-        return res.send(500, 'something is wrong.');
+        return res.json(500, {error: err.msg});
       }
       res.json(cableRequest);
     });
@@ -71,14 +71,14 @@ module.exports = function(app) {
   app.get('/requests/statuses/:s/json', function(req, res) {
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
-      return res.send(400, 'request is wrong.');
+      return res.json(400, {error: 'No such status'});
     }
     Request.find({
       status: status
     }).lean().exec(function(err, docs) {
       if (err) {
         console.error(err.msg);
-        return res.send(500, 'something is wrong.');
+        return res.json(500, {error: err.msg});
       }
       res.json(docs);
     });
@@ -123,11 +123,9 @@ module.exports = function(app) {
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
       if (err) {
         console.error(err.msg);
-        return res.send(500, 'something is wrong.');
+        return res.json(500, {error: err.msg});
       }
-      res.json(200,{
-        location: '/requests/' + cableRequest._id
-      });
+      res.send(204);
     });
   });
 
