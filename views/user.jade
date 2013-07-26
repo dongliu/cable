@@ -13,8 +13,6 @@ block head
 block content
   .container(style="margin-top: 10px")
     #message
-    //- .btn-group
-    //-     button.btn.btn-primary Change privilege
     table#users.table.table-bordered.table-hover
     #user-details
       #ad-details
@@ -27,19 +25,19 @@ block content
           .control-label Privileges
           .controls
             label.checkbox.inline
-              input#adjust(type='checkbox', value='adjust')
+              input#adjust(type='checkbox')
               | adjust
             label.checkbox.inline
-              input#approve(type='checkbox', value='approve')
+              input#approve(type='checkbox')
               | approve
             label.checkbox.inline
-              input#install(type='checkbox', value='install')
+              input#install(type='checkbox')
               | install
             label.checkbox.inline
-              input#qa(type='checkbox', value='qa')
+              input#qa(type='checkbox')
               | QA
             label.checkbox.inline
-              input#admin(type='checkbox', value='admin')
+              input#admin(type='checkbox')
               | admin
         .form-actions
           .btn-group

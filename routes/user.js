@@ -11,11 +11,11 @@ var auth = require('../lib/auth');
 var Roles = ["adjust", "approve", "install", "qa", "admin"];
 
 module.exports = function(app) {
-  app.get('/users', function(req, res) {
+  app.get('/users', auth.ensureAuthenticated, function(req, res) {
     res.render('user');
   });
 
-  app.post('/users', function(req, res) {
+  app.post('/users', auth.ensureAuthenticated, function(req, res) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
@@ -66,7 +66,10 @@ module.exports = function(app) {
 
   });
 
-  app.get('/users/json', function(req, res) {
+  app.get('/users/json', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.indexOf('admin') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
     User.find().lean().exec(function(err, users) {
       if (err) {
         console.error(err.msg);
@@ -78,7 +81,7 @@ module.exports = function(app) {
 
 
   // get from the db not ad
-  app.get('/users/:id', function(req, res) {
+  app.get('/users/:id', auth.ensureAuthenticated, function(req, res) {
 
     User.findOne({id: req.params.id}).lean().exec(function(err, user) {
       if (err) {
@@ -93,7 +96,7 @@ module.exports = function(app) {
 
 // resource /adusers
 
-  app.get('/adusers/:id', function(req, res) {
+  app.get('/adusers/:id', auth.ensureAuthenticated, function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
     var opts = {
@@ -118,7 +121,7 @@ module.exports = function(app) {
   });
 
 
-  app.get('/adusers/:id/photo', function(req, res) {
+  app.get('/adusers/:id/photo', auth.ensureAuthenticated, function(req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
     var opts = {
@@ -142,7 +145,7 @@ module.exports = function(app) {
 
   });
 
-  app.get('/adusernames', function(req, res) {
+  app.get('/adusernames', auth.ensureAuthenticated, function(req, res) {
     // var query = req.param('term');
     var query = req.query.term;
     var nameFilter, opts;

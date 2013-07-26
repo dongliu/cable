@@ -4,6 +4,7 @@ var signal = require('../config/signal.json');
 var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var Cable = mongoose.model('Cable');
+var User = mongoose.model('User');
 
 var auth = require('../lib/auth');
 
@@ -16,6 +17,27 @@ module.exports = function(app) {
       sysSub: sysSub,
       signal: signal
     });
+  });
+
+  // get the requests owned by the current user
+  // this is different from the request with status parameter
+  app.get('/requests', auth.ensureAuthenticated, function(req, res) {
+    // if (!req.is('json')) {
+    //   return res.send(415, 'json request expected.');
+    // }
+    User.findOne({id: req.session.userid}).exec(function(err, user) {
+      if (err) {
+        return res.json(500, {error: err.msg});
+      }
+      Request.find({_id: {$in : user.requests}}).lean().exec(function(err, requests) {
+        if (err) {
+          return res.json(500, {error: err.msg});
+        }
+        return res.json(requests);
+      });
+
+    });
+
   });
 
   // create a new request
@@ -40,15 +62,23 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
-      var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
-      res.set('Location', url);
-      res.json(201,{
-        location: '/requests/' + cableRequest.id
+      User.findOneAndUpdate({id: req.session.userid}, {$push: {requests: cableRequest.id}}).exec(function(err, user) {
+        if (err) {
+          // cableRequest.remove();
+          return res.json(500, {error: err.msg});
+        }
+
+        var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+        res.set('Location', url);
+        res.json(201,{
+          location: '/requests/' + cableRequest.id
+        });
       });
     });
   });
 
   // get the request details
+  // add authorization check here
   app.get('/requests/:id', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {
       sysSub: sysSub,
@@ -68,19 +98,32 @@ module.exports = function(app) {
   });
 
   // get the request list based on query
-  app.get('/requests/statuses/:s/json', function(req, res) {
+  // a user can only view the requests created by her/him self 
+  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.length == 0) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
-      return res.json(400, {error: 'No such status'});
+      return res.json(400, {error: 'wrong status'});
     }
-    Request.find({
-      status: status
-    }).lean().exec(function(err, docs) {
+    var query;
+    if (status === 0 ){
+      query = {
+        createdBy: req.session.userid,
+        status: status
+      };
+    } else {
+      query = {
+        status: status
+      };
+    }
+    Request.find(query).lean().exec(function(err, docs) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {error: err.msg});
       }
-      res.json(docs);
+      return res.json(docs);
     });
   });
 

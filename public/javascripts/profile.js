@@ -1,6 +1,5 @@
 $(function(){
   var sub = $('#sub').prop('checked');
-  // var data = {subscribe: sub};
   $('#modify').click(function(e){
     if ($('#sub').prop('checked') === sub) {
       $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The subscription state was not changed.</div>');

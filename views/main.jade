@@ -25,17 +25,19 @@ block content
           li#add-par
             a(href='./wbs', target='_blank') FRIB work breakdown structure
       .btn-group
-        a.btn(href='/users') Users
-      .btn-group
         a.btn(href='/profile') Profile
+      if (roles && roles.length)
+        .btn-group
+          a.btn.btn-primary(href='/users') Users
       .btn-group
         a.btn.btn-info(href='./about') About
     #message
     .tabbable#tabs
       ul.nav.nav-tabs
-        li.active
-          a(href='#saved', data-toggle='tab') Saved
+        //- if (roles && roles.length)
         li
+          a(href='#saved', data-toggle='tab') Saved
+        li.active
           a(href='#submitted', data-toggle='tab') Submitted
         li
           a(href='#adjusted', data-toggle='tab') Adjusted
@@ -48,9 +50,10 @@ block content
         li
           a(href='#working', data-toggle='tab') Working
       .tab-content
-        #saved.tab-pane.active
+        //- if (roles && roles.length)
+        #saved.tab-pane
           table#saved-table.table.table-bordered.table-hover
-        #submitted.tab-pane
+        #submitted.tab-pane.active
           table#submitted-table.table.table-bordered.table-hover
         #adjusted.tab-pane
           table#adjusted-table.table.table-bordered.table-hover
@@ -71,5 +74,10 @@ block js
   script(type='text/javascript', src='/datatables/js/TableTools.js')
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/moment.js')
-  script(type='text/javascript', src='/javascripts/main.js')
+  script(type='text/javascript', src='/javascripts/underscore.js')
+  if (roles && roles.length)
+    script(type='text/javascript', src='/javascripts/manage.js')
+  else
+    script(type='text/javascript', src='/javascripts/main.js')
+
 

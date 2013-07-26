@@ -39,11 +39,11 @@ $(function(){
       return [].concat(user.id).concat(user.name).concat(user.roles.join()).concat(user.lastVisitedOn? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '' );
     });
     userTable.fnClearTable();
-    userTable.fnAddData(saved);
+    userTable.fnAddData(users);
     userTable.fnDraw();
     // addClick($('#users'), userTable, 7);
     $('tbody tr', '#users').click(function(e) {
-      var id = table.fnGetData(this, 0);
+      var id = userTable.fnGetData(this, 0);
       var user;
       for(var i = 0; i < json.length; i += 1) {
         if (json[i].id === id) {
@@ -55,10 +55,10 @@ $(function(){
         for (i = 0; i < user.roles.length; i += 1) {
           $('#'+user.roles[i]).prop('checked', true);
         }
-        delete user.roles;
-        $('ad-details').html(json2List(roles));
-        $('#users').hide();
-        $('#user-details').show();
+        // delete user.roles;
+        // $('ad-details').html(json2List(roles));
+        // $('#users').hide();
+        // $('#user-details').show();
       }
 
     });
@@ -67,36 +67,36 @@ $(function(){
   }).always();
 
 
-  $('#name').autocomplete({
-    minLength: 1,
-    source: function(req, res) {
-      var term = req.term.toLowerCase();
-      var output = [];
-      var key = term.charAt(0);
-      if (key in nameCache) {
-        for (var i = 0; i < nameCache[key].length; i += 1) {
-          if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
-            output.push(nameCache[key][i]);
-          }
-        }
-        res(output);
-        return;
-      }
-      $.getJSON('/adusernames', req, function(data, status, xhr) {
-        var names = [];
-        for (var i = 0; i < data.length; i += 1) {
-          if (data[i].displayName.indexOf(',') !== -1) {
-            names.push(data[i].displayName);
-          }
-        }
-        nameCache[term] = names;
-        res(names);
-      });
-    },
-    select: function(event, ui) {
-      $('#name').val(ui.item.value);
-    }
-  });
+  // $('#name').autocomplete({
+  //   minLength: 1,
+  //   source: function(req, res) {
+  //     var term = req.term.toLowerCase();
+  //     var output = [];
+  //     var key = term.charAt(0);
+  //     if (key in nameCache) {
+  //       for (var i = 0; i < nameCache[key].length; i += 1) {
+  //         if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
+  //           output.push(nameCache[key][i]);
+  //         }
+  //       }
+  //       res(output);
+  //       return;
+  //     }
+  //     $.getJSON('/adusernames', req, function(data, status, xhr) {
+  //       var names = [];
+  //       for (var i = 0; i < data.length; i += 1) {
+  //         if (data[i].displayName.indexOf(',') !== -1) {
+  //           names.push(data[i].displayName);
+  //         }
+  //       }
+  //       nameCache[term] = names;
+  //       res(names);
+  //     });
+  //   },
+  //   select: function(event, ui) {
+  //     $('#name').val(ui.item.value);
+  //   }
+  // });
 
 });
 
