@@ -25,13 +25,23 @@ module.exports = function(app) {
     // if (!req.is('json')) {
     //   return res.send(415, 'json request expected.');
     // }
-    User.findOne({id: req.session.userid}).exec(function(err, user) {
+    User.findOne({
+      id: req.session.userid
+    }).exec(function(err, user) {
       if (err) {
-        return res.json(500, {error: err.msg});
+        return res.json(500, {
+          error: err.msg
+        });
       }
-      Request.find({_id: {$in : user.requests}}).lean().exec(function(err, requests) {
+      Request.find({
+        _id: {
+          $in: user.requests
+        }
+      }).lean().exec(function(err, requests) {
         if (err) {
-          return res.json(500, {error: err.msg});
+          return res.json(500, {
+            error: err.msg
+          });
         }
         return res.json(requests);
       });
@@ -62,15 +72,23 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
-      User.findOneAndUpdate({id: req.session.userid}, {$push: {requests: cableRequest.id}}).exec(function(err, user) {
+      User.findOneAndUpdate({
+        id: req.session.userid
+      }, {
+        $push: {
+          requests: cableRequest.id
+        }
+      }).exec(function(err, user) {
         if (err) {
           // cableRequest.remove();
-          return res.json(500, {error: err.msg});
+          return res.json(500, {
+            error: err.msg
+          });
         }
 
         var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
         res.set('Location', url);
-        res.json(201,{
+        res.json(201, {
           location: '/requests/' + cableRequest.id
         });
       });
@@ -91,7 +109,9 @@ module.exports = function(app) {
     Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.msg});
+        return res.json(500, {
+          error: err.msg
+        });
       }
       res.json(cableRequest);
     });
@@ -105,10 +125,12 @@ module.exports = function(app) {
     }
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
-      return res.json(400, {error: 'wrong status'});
+      return res.json(400, {
+        error: 'wrong status'
+      });
     }
     var query;
-    if (status === 0 ){
+    if (status === 0) {
       query = {
         createdBy: req.session.userid,
         status: status
@@ -121,7 +143,9 @@ module.exports = function(app) {
     Request.find(query).lean().exec(function(err, docs) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.msg});
+        return res.json(500, {
+          error: err.msg
+        });
       }
       return res.json(docs);
     });
@@ -166,9 +190,63 @@ module.exports = function(app) {
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.msg});
+        return res.json(500, {
+          error: err.msg
+        });
       }
-      res.send(204);
+      if (req.body.action !== 'approve') {
+        res.send(204);
+      } else {
+        // the infinite loop smells bad
+        // while (1) {
+          var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
+          Cable.findOne({
+            number: {
+              $regex: '^' + sss + '/d{6}'
+            }
+          }, 'number', {
+            sort: {
+              number: -1
+            }
+          }).lean().exec(function(err, cable) {
+            var nextNumber;
+            if (err) {
+              console.error(err.msg);
+              // revert the request state?
+              return res.json(500, {
+                error: err.msg
+              });
+            } else {
+              if (cable) {
+                nextNumber = increment(cable.number);
+              } else {
+                nextNumber = sss + '000000';
+              }
+              var newCable = new Cable({number: nextNumber, request_id: cableRequest._id});
+              newCable.save(function(err, doc){
+                if (err && err.code) {
+                  console.dir(err);
+                  if (err.code == 11000) {
+                    // continue;
+                    console.log('need to retry a cable number');
+                  } else {
+                    console.error(err.msg);
+                    return res.json(500, {
+                      error: err.msg
+                    });
+                  }
+                }
+                var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
+                res.set('Location', url);
+                res.json(201, {
+                  location: '/cables/' + nextNumber
+                });
+              });
+            }
+          });
+        // }
+        // create the cable
+      }
     });
   });
 

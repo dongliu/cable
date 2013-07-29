@@ -65,8 +65,8 @@ var cable = new Schema({
   request_id: String,
   number: {
     type: String,
-    unique: true,
-    index: true
+    // index: true,
+    unique: true
   },
   fufilledBy: String,
   fufilledOn: Date,
