@@ -12,7 +12,7 @@ var Roles = ["adjust", "approve", "install", "qa", "admin"];
 
 module.exports = function(app) {
   app.get('/users', auth.ensureAuthenticated, function(req, res) {
-    res.render('user');
+    res.render('users');
   });
 
   app.post('/users', auth.ensureAuthenticated, function(req, res) {
@@ -66,6 +66,8 @@ module.exports = function(app) {
 
   });
 
+  
+
   app.get('/users/json', auth.ensureAuthenticated, function(req, res) {
     if (req.session.roles.indexOf('admin') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
@@ -80,8 +82,37 @@ module.exports = function(app) {
   });
 
 
-  // get from the db not ad
   app.get('/users/:id', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.indexOf('admin') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    User.findOne({id: req.session.userid}).lean().exec(function(err, user) {
+      if (err) {
+        console.error(err.msg);
+        return res.send(500, err.msg);
+      }
+      return res.render('user',{user: user});
+    });
+  });
+
+  app.put('/users/:id', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.indexOf('admin') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    if (!req.is('json')) {
+      return res.json(415, {error: 'json request expected.'});
+    }
+    User.findOneAndUpdate({id: req.params.id}, req.body).lean().exec(function(err, user) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {error: err.msg});
+      }
+      res.send(204);
+    });
+  });
+
+  // get from the db not ad
+  app.get('/users/:id/json', auth.ensureAuthenticated, function(req, res) {
 
     User.findOne({id: req.params.id}).lean().exec(function(err, user) {
       if (err) {

@@ -25,16 +25,15 @@ block content
           li#add-par
             a(href='./wbs', target='_blank') FRIB work breakdown structure
       .btn-group
-        a.btn(href='/profile') Profile
+        a.btn(href='/profile', target='_blank') Profile
       if (roles && roles.length)
         .btn-group
-          a.btn.btn-primary(href='/users') Users
+          a.btn.btn-primary(href='/users', target='_blank') Users
       .btn-group
-        a.btn.btn-info(href='./about') About
+        a.btn.btn-info(href='./about', target='_blank') About
     #message
     .tabbable#tabs
       ul.nav.nav-tabs
-        //- if (roles && roles.length)
         li
           a(href='#saved', data-toggle='tab') Saved
         li.active
@@ -50,7 +49,6 @@ block content
         li
           a(href='#working', data-toggle='tab') Working
       .tab-content
-        //- if (roles && roles.length)
         #saved.tab-pane
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane.active
