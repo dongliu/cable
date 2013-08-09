@@ -1,3 +1,7 @@
+var initModel;
+var binder;
+var requestForm;
+
 $(function() {
   var cableType = [];
   var nameCache = {};
@@ -6,11 +10,11 @@ $(function() {
   var deviceCache = {};
   var rackCache = {};
 
-  var requestForm = document.forms[0];
+  // var requestForm = document.forms[0];
+  requestForm = document.forms[0];
 
-  var binder = new Binder.FormBinder(requestForm);
+  binder = new Binder.FormBinder(requestForm);
 
-  var initModel;
 
   // var validation = [
   //   ['#system', 'presence', 'Please select system type'],
@@ -42,23 +46,23 @@ $(function() {
   //   ['#penetration', 'presence', 'Please input the penetration number'],
   //   ['#position', 'presence', 'Please input the penetration position']
   // ];
-  
+
   // $('form[name="request"]').nod(validation);
 
   // $(requestForm.elements).jqBootstrapValidation({
-  //   preventSubmit: true, 
+  //   preventSubmit: true,
   //   submitError: function(form, event, errors) {
   //     alert('not validated');
   //   },
   //   submitSuccess: function(form, event) {
   //     alert('validated');
   //     event.preventDefault();
-  //   }, 
+  //   },
   //   filter: function() {
   //     return $(this).is(':visible');
   //   }
   // });
-  
+
 
   var validator = $(requestForm).validate({
     errorElement: 'span',
@@ -73,7 +77,7 @@ $(function() {
       $(element).closest('.control-group').removeClass('error').addClass('success');
     }
   });
-  
+
   if ($('#cableId').length) {
     $('form[name="request"]').fadeTo('slow', 0.2);
   }
@@ -338,10 +342,13 @@ function sendRequest(data) {
       var dateObj = moment(timestamp);
       if (data.action == 'save' || data.action == 'adjust') {
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
+        // move the focus to the message
+        $(window).scrollTop($('#message div:last-child').offset().top-40);
+        // need to update the init model here
+        binder = new Binder.FormBinder(requestForm);
+        initModel = binder.serialize();
       } else {
         $('form[name="request"]').hide();
-        // change to modal
-        // $('#message').html('<div class="well">The request was submitted and you can access it at <a href ="' + json.location + '">here</a></div>');
         $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
         $('#modal .modal-body').html('You can access it at <a href ="' + json.location + '">' + json.location + '</a>');
         $('#modal .modal-footer').empty();

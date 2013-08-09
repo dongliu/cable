@@ -70,6 +70,11 @@ require('./routes/user')(app);
 // GET /wbs/list
 require('./routes/wbs')(app);
 
+
+require('./routes/room')(app);
+
+
+
 // init the cable services
 // GET /requests
 // POST /requests

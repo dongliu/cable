@@ -118,7 +118,7 @@ module.exports = function(app) {
   });
 
   // get the request list based on query
-  // a user can only view the requests created by her/him self 
+  // a user can only view the requests created by her/him self
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
     if (req.session.roles.length == 0) {
       return res.send(403, "You are not authorized to access this resource. ");
@@ -267,3 +267,64 @@ module.exports = function(app) {
 
 
 };
+
+
+function createCable(cableRequest, req, res) {
+  var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
+  Cable.findOne({
+    number: {
+      $regex: '^' + sss + '/d{6}'
+    }
+  }, 'number', {
+    sort: {
+      number: -1
+    }
+  }).lean().exec(function(err, cable) {
+    var nextNumber;
+    if (err) {
+      console.error(err.msg);
+      // revert the request state?
+      return res.json(500, {
+        error: err.msg
+      });
+    } else {
+      if (cable) {
+        nextNumber = increment(cable.number);
+      } else {
+        nextNumber = sss + '000000';
+      }
+      if (nextNumber)
+      var newCable = new Cable({
+        number: nextNumber,
+        request_id: cableRequest._id
+      });
+      newCable.save(function(err, doc) {
+        if (err && err.code) {
+          console.dir(err);
+          if (err.code == 11000) {
+            // continue;
+            console.log('need to retry a cable number');
+          } else {
+            console.error(err.msg);
+            return res.json(500, {
+              error: err.msg
+            });
+          }
+        }
+        var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
+        res.set('Location', url);
+        res.json(201, {
+          location: '/cables/' + nextNumber
+        });
+      });
+    }
+  });
+}
+
+function increment(number) {
+  var sequence = parseInt(number.substring(3), 10);
+  if (sequence == 999999) {
+    return null;
+  }
+  return number.substring(0, 3) + 1;
+}
