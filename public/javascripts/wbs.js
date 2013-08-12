@@ -14,7 +14,7 @@ var vis = d3.select("#viz")
 var partition = d3.layout.partition()
   .value(function(d) {
   return d.size || 100;
-});
+}).sort(null);
 
 d3.json("wbs/all", function(root) {
   var g = vis.selectAll("g")

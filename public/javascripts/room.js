@@ -13,11 +13,8 @@ var vis = d3.select("#viz")
 
 var partition = d3.layout.partition()
   .value(function(d) {
-    // if (isNaN(Number(d.number))) {
-      return d.size || 100;
-    // }
-    // return Number(d.number);
-});
+    return d.size || 100;
+}).sort(null);
 
 d3.json("rooms/json", function(root) {
   var g = vis.selectAll("g")
