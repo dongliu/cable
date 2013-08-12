@@ -15,7 +15,8 @@ module.exports = function(app) {
   app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      signal: signal
+      signal: signal,
+      roles: req.session.roles
     });
   });
 
