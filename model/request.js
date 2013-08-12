@@ -68,6 +68,7 @@ var cable = new Schema({
     // index: true,
     unique: true
   },
+  status: Number,
   fufilledBy: String,
   fufilledOn: Date,
   installedBy: String,

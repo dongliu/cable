@@ -195,55 +195,7 @@ module.exports = function(app) {
       if (req.body.action !== 'approve') {
         res.send(204);
       } else {
-        // the infinite loop smells bad
-        // while (1) {
-          var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
-          Cable.findOne({
-            number: {
-              $regex: '^' + sss + '/d{6}'
-            }
-          }, 'number', {
-            sort: {
-              number: -1
-            }
-          }).lean().exec(function(err, cable) {
-            var nextNumber;
-            if (err) {
-              console.error(err.msg);
-              // revert the request state?
-              return res.json(500, {
-                error: err.msg
-              });
-            } else {
-              if (cable) {
-                nextNumber = increment(cable.number);
-              } else {
-                nextNumber = sss + '000000';
-              }
-              var newCable = new Cable({number: nextNumber, request_id: cableRequest._id});
-              newCable.save(function(err, doc){
-                if (err && err.code) {
-                  console.dir(err);
-                  if (err.code == 11000) {
-                    // continue;
-                    console.log('need to retry a cable number');
-                  } else {
-                    console.error(err.msg);
-                    return res.json(500, {
-                      error: err.msg
-                    });
-                  }
-                }
-                var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
-                res.set('Location', url);
-                res.json(201, {
-                  location: '/cables/' + nextNumber
-                });
-              });
-            }
-          });
-        // }
-        // create the cable
+        createCable(cableRequest, req, res);
       }
     });
   });
@@ -254,7 +206,15 @@ module.exports = function(app) {
 
   });
 
+  app.get('/cables/json', function(req, res) {
+
+  });
+
   app.get('/cables/:id', function(req, res) {
+
+  });
+
+  app.get('/cables/:id/json', function(req, res) {
 
   });
 
@@ -291,17 +251,18 @@ function createCable(cableRequest, req, res) {
       } else {
         nextNumber = sss + '000000';
       }
-      if (nextNumber)
       var newCable = new Cable({
         number: nextNumber,
+        status: 0,
         request_id: cableRequest._id
       });
       newCable.save(function(err, doc) {
         if (err && err.code) {
           console.dir(err);
+          // see test/duplicatedCableNumber.js for a test of this case
           if (err.code == 11000) {
-            // continue;
-            console.log('need to retry a cable number');
+            console.log(nextNumber + ' already existed, try again ...');
+            createCable(cableRequest, req, res);
           } else {
             console.error(err.msg);
             return res.json(500, {
