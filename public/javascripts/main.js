@@ -206,7 +206,7 @@ $(function() {
     //   return (request.status === 3);
     // });
     rejected = json.filter(function(request) {
-      return (request.status === 3);
+      return (request.status === 4);
     });
 
     if (saved.length) {

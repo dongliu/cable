@@ -110,6 +110,8 @@ var cable = new Schema({
     comments: String
   },
 
+  submittedBy: String,
+  submittedOn: Date,
   approvedBy: String,
   approvedOn: Date,
   fufilledBy: String,

@@ -176,14 +176,14 @@ module.exports = function(app) {
       // check if already submitted
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
+      request.status = 4;
+    }
+    if (req.body.action == 'approve') {
+      // check if already request-approval
+      request.approvedBy = req.session.userid;
+      request.approvedOn = Date.now();
       request.status = 3;
     }
-    // if (req.body.action == 'approve') {
-    //   // check if already request-approval
-    //   request.approvedBy = req.session.userid;
-    //   request.approvedOn = Date.now();
-    //   request.status = 3;
-    // }
 
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
       if (err) {
@@ -269,7 +269,7 @@ function createCable(cableRequest, req, res) {
     sort: {
       number: -1
     }
-  }).exec(function(err, cable) {
+  }).lean().exec(function(err, cable) {
     var nextNumber;
     if (err) {
       console.error(err.msg);
@@ -286,7 +286,7 @@ function createCable(cableRequest, req, res) {
       var newCable = new Cable({
         number: nextNumber,
         status: 0,
-        request_id: cableRequest.id,
+        request_id: cableRequest._id,
         basic : cableRequest.basic,
         from: cableRequest.from,
         to: cableRequest.to,

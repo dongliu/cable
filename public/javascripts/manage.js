@@ -205,7 +205,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/requests/statuses/3/json',
+    url: '/requests/statuses/4/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
