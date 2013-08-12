@@ -268,6 +268,7 @@ $(function() {
   }
 
   $('.form-actions button').not('#reset').click(function(e){
+    e.preventDefault();
     var action = this.id;
     var currentModel = {};
     var currentBinder = new Binder.FormBinder(requestForm, currentModel);
@@ -295,7 +296,7 @@ $(function() {
         sendRequest(data);
       }
     }
-    e.preventDefault();
+    // e.preventDefault();
   });
 
 });
@@ -333,8 +334,8 @@ function sendRequest(data) {
     processData: false,
     dataType: 'json'
   }).done(function(json) {
-    $('form[name="request"]').fadeTo('slow', 1);
     // var location = formRequest.getResponseHeader('Location');
+    $('form[name="request"]').fadeTo('slow', 1);
     if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
@@ -350,7 +351,11 @@ function sendRequest(data) {
       } else {
         $('form[name="request"]').hide();
         $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
-        $('#modal .modal-body').html('You can access it at <a href ="' + json.location + '">' + json.location + '</a>');
+        if (json && json.location) {
+          $('#modal .modal-body').html('You can access it at <a href ="' + json.location + '">' + json.location + '</a>');
+        } else {
+          $('#modal .modal-body').html('You can access it at <a href ="' + path + '">' + path + '</a>');
+        }
         $('#modal .modal-footer').empty();
         $('#modal').modal('show');
       }
