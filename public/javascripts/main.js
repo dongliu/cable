@@ -159,15 +159,11 @@ $(function() {
   var approvedTable = $('#approved-table').dataTable({
     'aaData': approved,
     'aoColumns': [{
+      'sTitle': 'Number'
+    }, {
       'sTitle': 'Submitted by'
     }, {
       'sTitle': 'Submitted on'
-    }, {
-      'sTitle': 'System'
-    }, {
-      'sTitle': 'Sub system'
-    }, {
-      'sTitle': 'Signal'
     }, {
       'sTitle': 'Approved by'
     }, {
@@ -177,7 +173,7 @@ $(function() {
       "bVisible": false
     }],
     'aaSorting': [
-      [6, 'desc']
+      [4, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -272,6 +268,7 @@ $(function() {
 
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
 });

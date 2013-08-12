@@ -54,6 +54,7 @@ $(function() {
     addClick($('#saved-table'), savedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
   var submitted = [];
@@ -108,6 +109,7 @@ $(function() {
     addClick($('#submitted-table'), submittedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
 
@@ -163,6 +165,7 @@ $(function() {
     addClick($('#adjusted-table'), adjustedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
 
@@ -219,6 +222,7 @@ $(function() {
     addClick($('#rejected-table'), rejectedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
 
@@ -226,26 +230,21 @@ $(function() {
   var approvedTable = $('#approved-table').dataTable({
     'aaData': approved,
     'aoColumns': [{
-        'sTitle': 'Submitted by'
-      }, {
-        'sTitle': 'Submitted on'
-      }, {
-        'sTitle': 'System'
-      }, {
-        'sTitle': 'Sub system'
-      }, {
-        'sTitle': 'Signal'
-      }, {
-        'sTitle': 'Approved by'
-      }, {
-        'sTitle': 'Approved on'
-      }, {
-        'sTitle': 'id',
-        "bVisible": false
-      }
-    ],
+      'sTitle': 'Number'
+    }, {
+      'sTitle': 'Submitted by'
+    }, {
+      'sTitle': 'Submitted on'
+    }, {
+      'sTitle': 'Approved by'
+    }, {
+      'sTitle': 'Approved on'
+    }, {
+      'sTitle': 'id',
+      "bVisible": false
+    }],
     'aaSorting': [
-      [6, 'desc']
+      [4, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -261,7 +260,7 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/requests/statuses/3/json',
+    url: '/cables/statuses/0/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
@@ -274,6 +273,7 @@ $(function() {
     addClick($('#approved-table'), approvedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top-40);
   }).always();
 
 });
