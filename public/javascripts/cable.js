@@ -10,7 +10,6 @@ $(function() {
   var deviceCache = {};
   var rackCache = {};
 
-  // var requestForm = document.forms[0];
   requestForm = document.forms[0];
 
   binder = new Binder.FormBinder(requestForm);
@@ -301,22 +300,11 @@ $(function() {
 
 });
 
-// TODO: update the response to inform the user when the request is successful
 
 function sendRequest(data) {
   var path = window.location.pathname;
-  // var requestObject = {};
-  // var requestForm = document.forms[0];
-  // var binder = new Binder.FormBinder(requestForm, requestObject);
-  // requestObject = binder.serialize();
-  // // future validation here
-  // if (_isEqual(initModel, ))
 
   var url, type;
-  // var data = {
-  //   request: requestObject,
-  //   action: action
-  // };
   if (/^\/requests\/new/.test(path)) {
     url = '/requests';
     type = 'POST';
@@ -376,7 +364,6 @@ function getChildren(wbs, term) {
   var parts = term.split('.');
   var key = parts[0];
   var locator = findChild(wbs, key);
-  // var result;
   if (locator === null) {
     return [];
   }
@@ -494,24 +481,6 @@ function update(select, json) {
     }
   });
 }
-
-// function json2List(json) {
-//   var output = '';
-//   for (var k in json) {
-//     if (json.hasOwnProperty(k)) {
-//       if (json[k] && typeof(json[k]) === 'object') {
-//         output = output + '<dl>' + '<dt>' + '<h4>' + k + '</h4>' + '</dt>' + '<dd>' + json2List(json[k]) + '</dd>' + '</dl>';
-//       } else {
-//         if (json[k] === null) {
-//           output = output + '<b>' + k + '</b>' + ' : ' + '<br/>';
-//         } else {
-//           output = output + '<b>' + k + '</b>' + ' : ' + json[k] + '<br/>';
-//         }
-//       }
-//     }
-//   }
-//   return output;
-// }
 
 function setTypeDetails(val, cableType) {
   var type = null;

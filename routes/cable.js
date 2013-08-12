@@ -22,9 +22,6 @@ module.exports = function(app) {
   // get the requests owned by the current user
   // this is different from the request with status parameter
   app.get('/requests', auth.ensureAuthenticated, function(req, res) {
-    // if (!req.is('json')) {
-    //   return res.send(415, 'json request expected.');
-    // }
     User.findOne({
       id: req.session.userid
     }).exec(function(err, user) {
@@ -101,7 +98,8 @@ module.exports = function(app) {
     return res.render('request', {
       sysSub: sysSub,
       signal: signal,
-      id: req.params.id
+      id: req.params.id,
+      roles: req.session.roles
     });
   });
 
