@@ -55,8 +55,6 @@ var request = new Schema({
   adjustedOn: Date,
   requestedBy: String,
   requestedOn: Date,
-  approvedBy: String,
-  approvedOn: Date,
   rejectedBy: String,
   rejectedOn: Date
 });
@@ -69,6 +67,51 @@ var cable = new Schema({
     unique: true
   },
   status: Number,
+  basic: {
+    system: String,
+    subsystem: String,
+    signal: String,
+    cableType: String,
+    engineer: String,
+    service: String,
+    wbs: String
+    // ,quality: Number The quality can make the assign cable number tricky
+  },
+
+  from: {
+    building: String,
+    rack: String,
+    elevation: Number,
+    ternimationDevice: String,
+    ternimationType: String,
+    wiringDrawing: String,
+    label: String
+  },
+
+  to: {
+    building: String,
+    rack: String,
+    elevation: Number,
+    ternimationDevice: String,
+    ternimationType: String,
+    wiringDrawing: String,
+    label: String
+  },
+
+  routing: {
+    trayGroup: String,
+    penetration: String,
+    penetrationZ: String
+  },
+
+  other: {
+    fabricatedBy: String,
+    terminatedBy: String,
+    comments: String
+  },
+
+  approvedBy: String,
+  approvedOn: Date,
   fufilledBy: String,
   fufilledOn: Date,
   installedBy: String,

@@ -176,14 +176,14 @@ module.exports = function(app) {
       // check if already submitted
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
-      request.status = 4;
-    }
-    if (req.body.action == 'approve') {
-      // check if already request-approval
-      request.approvedBy = req.session.userid;
-      request.approvedOn = Date.now();
       request.status = 3;
     }
+    // if (req.body.action == 'approve') {
+    //   // check if already request-approval
+    //   request.approvedBy = req.session.userid;
+    //   request.approvedOn = Date.now();
+    //   request.status = 3;
+    // }
 
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
       if (err) {
@@ -210,12 +210,44 @@ module.exports = function(app) {
 
   });
 
+  app.get('/cables/statuses/:s/json', function(req, res) {
+    if (req.session.roles.length === 0) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    var status = parseInt(req.params.s, 10);
+    if (status < 0 || status > 3) {
+      return res.json(400, {
+        error: 'wrong status'
+      });
+    }
+    var query = {
+        status: status
+      };
+    Cable.find(query).lean().exec(function(err, docs) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      return res.json(docs);
+    });
+  });
+
   app.get('/cables/:id', function(req, res) {
 
   });
 
-  app.get('/cables/:id/json', function(req, res) {
-
+  app.get('/cables/:id/json', auth.ensureAuthenticated, function(req, res) {
+    Cable.findOne({number: req.params.id}).lean().exec(function(err, cable) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      res.json(cable);
+    });
   });
 
   app.put('/cables/:id', function(req, res) {
@@ -237,7 +269,7 @@ function createCable(cableRequest, req, res) {
     sort: {
       number: -1
     }
-  }).lean().exec(function(err, cable) {
+  }).exec(function(err, cable) {
     var nextNumber;
     if (err) {
       console.error(err.msg);
@@ -254,7 +286,16 @@ function createCable(cableRequest, req, res) {
       var newCable = new Cable({
         number: nextNumber,
         status: 0,
-        request_id: cableRequest._id
+        request_id: cableRequest.id,
+        basic : cableRequest.basic,
+        from: cableRequest.from,
+        to: cableRequest.to,
+        routing: cableRequest.routing,
+        other: cableRequest.other,
+        submittedBy: cableRequest.submittedBy,
+        submittedOn: cableRequest.submittedOn,
+        approvedBy: req.session.userid,
+        approvedOn: Date.now(),
       });
       newCable.save(function(err, doc) {
         if (err && err.code) {
