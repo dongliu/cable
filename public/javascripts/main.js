@@ -41,9 +41,9 @@ $(function() {
   var submittedTable = $('#submitted-table').dataTable({
     'aaData': submitted,
     'aoColumns': [{
-      'sTitle': 'Created by'
+      'sTitle': 'Submitted by'
     }, {
-      'sTitle': 'Created on'
+      'sTitle': 'Submitted on'
     }, {
       'sTitle': 'System'
     }, {
@@ -51,16 +51,13 @@ $(function() {
     }, {
       'sTitle': 'Signal'
     }, {
-      'sTitle': 'Submitted by'
+      'sTitle': 'Adjusted by'
     }, {
-      'sTitle': 'Submitted on'
+      'sTitle': 'Adjusted on'
     }, {
       'sTitle': 'id',
       "bVisible": false
     }],
-    'aaSorting': [
-      [6, 'desc']
-    ],
     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
@@ -90,9 +87,9 @@ $(function() {
     }, {
       'sTitle': 'Signal'
     }, {
-      'sTitle': 'Adjusted by'
+      'sTitle': 'Requested by'
     }, {
-      'sTitle': 'Adjusted on'
+      'sTitle': 'Requested on'
     }, {
       'sTitle': 'id',
       "bVisible": false
@@ -205,11 +202,11 @@ $(function() {
     adjusted = json.filter(function(request) {
       return (request.status === 2);
     });
-    approved = json.filter(function(request) {
-      return (request.status === 3);
-    });
+    // approved = json.filter(function(request) {
+    //   return (request.status === 3);
+    // });
     rejected = json.filter(function(request) {
-      return (request.status === 4);
+      return (request.status === 3);
     });
 
     if (saved.length) {
@@ -227,8 +224,8 @@ $(function() {
 
     if (submitted.length) {
       submitted = json.map(function(request) {
-        return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      });
+        return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+    });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       submittedTable.fnDraw();
@@ -237,7 +234,7 @@ $(function() {
 
     if (adjusted.length) {
       adjusted = json.map(function(request) {
-        return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedBy).concat(moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+        return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.requestedBy).concat(moment(request.requestedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
       });
       adjustedTable.fnClearTable();
       adjustedTable.fnAddData(adjusted);
@@ -245,15 +242,15 @@ $(function() {
       addClick($('#adjusted-table'), adjustedTable, 7);
     }
 
-    if (approved.length) {
-      approved = json.map(function(request) {
-        return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.approvedBy).concat(moment(request.approvedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      });
-      approvedTable.fnClearTable();
-      approvedTable.fnAddData(approved);
-      approvedTable.fnDraw();
-      addClick($('#approved-table'), approvedTable, 7);
-    }
+    // if (approved.length) {
+    //   approved = json.map(function(request) {
+    //     return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.approvedBy).concat(moment(request.approvedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+    //   });
+    //   approvedTable.fnClearTable();
+    //   approvedTable.fnAddData(approved);
+    //   approvedTable.fnDraw();
+    //   addClick($('#approved-table'), approvedTable, 7);
+    // }
 
     if (rejected.length) {
       rejected = json.map(function(request) {
@@ -268,7 +265,7 @@ $(function() {
 
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top-40);
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 
 });
