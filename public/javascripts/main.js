@@ -151,42 +151,6 @@ $(function() {
     }
   });
 
-
-  var approved = [];
-  var approvedTable = $('#approved-table').dataTable({
-    'aaData': approved,
-    'aoColumns': [{
-      'sTitle': 'Number'
-    }, {
-      'sTitle': 'Submitted by'
-    }, {
-      'sTitle': 'Submitted on'
-    }, {
-      'sTitle': 'Approved by'
-    }, {
-      'sTitle': 'Approved on'
-    }, {
-      'sTitle': 'id',
-      "bVisible": false
-    }],
-    'aaSorting': [
-      [4, 'desc']
-    ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
-  });
-
-
   $.ajax({
     url: '/requests',
     type: 'GET',
@@ -225,7 +189,7 @@ $(function() {
     if (submitted.length) {
       submitted = json.map(function(request) {
         return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-    });
+      });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       submittedTable.fnDraw();
@@ -261,12 +225,76 @@ $(function() {
       rejectedTable.fnDraw();
       addClick($('#rejected-table'), rejectedTable, 7);
     }
+  }).fail(function(jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  }).always();
 
+
+  var approved = [];
+  var approvedTable = $('#approved-table').dataTable({
+    'aaData': approved,
+    'aoColumns': [{
+      'sTitle': 'Number'
+    }, {
+      'sTitle': 'Submitted by'
+    }, {
+      'sTitle': 'Submitted on'
+    }, {
+      'sTitle': 'Approved by'
+    }, {
+      'sTitle': 'Approved on'
+    }, {
+      'sTitle': 'id',
+      "bVisible": false
+    }],
+    'aaSorting': [
+      [4, 'desc']
+    ],
+    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    "oTableTools": {
+      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
+      "aButtons": [
+        "copy",
+        "print", {
+          "sExtends": "collection",
+          "sButtonText": 'Save <span class="caret" />',
+          "aButtons": ["csv", "xls", "pdf"]
+        }
+      ]
+    }
+  });
+
+  $.ajax({
+    url: '/cables/json',
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'json'
+  }).done(function(json) {
+    approved = json.filter(function(cable) {
+      return (cable.status === 0);
+    });
+
+
+    if (approved.length) {
+      approved = json.map(function(request) {
+        return [].concat(cable.number).concat(cable.submittedBy).concat(moment(cable.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(cable.approvedBy).concat(moment(cable.approvedOn).format('YYYY-MM-DD HH:mm:ss'));
+      });
+      approvedTable.fnClearTable();
+      approvedTable.fnAddData(approved);
+      approvedTable.fnDraw();
+      $('tbody tr', $('#approved-table')).click(function(e) {
+        var id = approvedTable.fnGetData(this, 0);
+        window.open('/cables/' + id);
+      });
+    }
 
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
+
+
 
 });
 
