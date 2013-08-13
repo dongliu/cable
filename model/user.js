@@ -10,9 +10,7 @@ var user = new Schema({
   mobile: String,
   roles: [String],
   lastVisitedOn: Date,
-  subscribe: {type: Boolean, default: false},
-  requests: [],
-  cables: []
+  subscribe: {type: Boolean, default: false}
 });
 
 var User = mongoose.model('User', user);

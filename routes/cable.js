@@ -22,29 +22,37 @@ module.exports = function(app) {
 
   // get the requests owned by the current user
   // this is different from the request with status parameter
+  // need more work when sharing is enabled
   app.get('/requests', auth.ensureAuthenticated, function(req, res) {
-    User.findOne({
-      id: req.session.userid
-    }).exec(function(err, user) {
+    Request.find({createdBy: req.session.userid}).lean().exec(function(err, requests) {
       if (err) {
         return res.json(500, {
           error: err.msg
         });
       }
-      Request.find({
-        _id: {
-          $in: user.requests
-        }
-      }).lean().exec(function(err, requests) {
-        if (err) {
-          return res.json(500, {
-            error: err.msg
-          });
-        }
-        return res.json(requests);
-      });
-
+      return res.json(requests);
     });
+    // User.findOne({
+    //   id: req.session.userid
+    // }).exec(function(err, user) {
+    //   if (err) {
+    //     return res.json(500, {
+    //       error: err.msg
+    //     });
+    //   }
+    //   Request.find({
+    //     _id: {
+    //       $in: user.requests
+    //     }
+    //   }).lean().exec(function(err, requests) {
+    //     if (err) {
+    //       return res.json(500, {
+    //         error: err.msg
+    //       });
+    //     }
+    //     return res.json(requests);
+    //   });
+    // });
 
   });
 
@@ -70,26 +78,31 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, 'something is wrong.');
       }
-      User.findOneAndUpdate({
-        id: req.session.userid
-      }, {
-        $push: {
-          requests: cableRequest.id
-        }
-      }).exec(function(err, user) {
-        if (err) {
-          // cableRequest.remove();
-          return res.json(500, {
-            error: err.msg
-          });
-        }
-
-        var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
-        res.set('Location', url);
-        res.json(201, {
-          location: '/requests/' + cableRequest.id
-        });
+      var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+      res.set('Location', url);
+      res.json(201, {
+        location: '/requests/' + cableRequest.id
       });
+      // User.findOneAndUpdate({
+      //   id: req.session.userid
+      // }, {
+      //   $push: {
+      //     requests: cableRequest.id
+      //   }
+      // }).exec(function(err, user) {
+      //   if (err) {
+      //     // cableRequest.remove();
+      //     return res.json(500, {
+      //       error: err.msg
+      //     });
+      //   }
+
+      //   var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+      //   res.set('Location', url);
+      //   res.json(201, {
+      //     location: '/requests/' + cableRequest.id
+      //   });
+      // });
     });
   });
 
@@ -129,6 +142,7 @@ module.exports = function(app) {
       });
     }
     var query;
+    // This needs to be changed if sharing is enabled
     if (status === 0) {
       query = {
         createdBy: req.session.userid,
@@ -312,6 +326,7 @@ function createCable(cableRequest, req, res) {
             });
           }
         }
+        // push the cable into the user? no!
         var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
         res.set('Location', url);
         res.json(201, {
