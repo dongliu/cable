@@ -10,29 +10,29 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  script
+  script.
     var roles = !{JSON.stringify(user.roles)};
   .container(style="margin-top: 10px")
     #message
     #profile.well
       dl
-        dt Name 
+        dt Name
         dd #{user.name}
-        dt Email 
+        dt Email
         dd #{user.email}
-        dt Office 
+        dt Office
         dd #{user.office}
-        dt Office phone 
+        dt Office phone
         dd #{user.phone}
         dt Mobile phone
         dd #{user.mobile}
         dt Last visited on
         dd #{user.lastVisitedOn}
         dt Notice subscribed
-        dd #{user.subscribe}          
+        dd #{user.subscribe}
         dt Priviledges
-        dd#roles 
-          //- form.form-inline  
+        dd#roles
+          //- form.form-inline
           label.checkbox.inline
             input(type='checkbox', value='adjust')
             | adjust
