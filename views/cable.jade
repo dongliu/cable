@@ -2,10 +2,7 @@ extends layout
 
 block head
   meta(charset='urf-8')
-  if (typeof id == 'undefined')
-    title FRIB Cable :: new request
-  else
-    title FRIB Cable :: request :: #{id}
+  title FRIB Cable :: cable :: #{id}
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
@@ -13,27 +10,21 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  script
-    var sysSub = !{JSON.stringify(sysSub)};
-    var signal = !{JSON.stringify(signal)};
+  //- script
+  //-   var sysSub = !{JSON.stringify(sysSub)};
   .container
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
-      .modal-header
-        //- button.close(type='button',data-dismiss='modal',aria-hidden='true') x
-        h3#modalLable
-      .modal-body
-      .modal-footer
-        button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
-        //- button.btn.btn(onclick='',aria-hidden='true') Close the window
-    form.form-horizontal(name='request')
-      if (typeof id == 'undefined')
-        h3 New Cable Request
-      else
-        h3 Cable Request &nbsp
-          span#cableId #{id}
-      include requestform
-      include request_action
+    //- #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
+    //-   .modal-header
+    //-     h3#modalLable
+    //-   .modal-body
+    //-   .modal-footer
+    //-     button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
+    //- h3 Cable &nbsp
+    h3 Cable
+      =' '
+      span#cableId #{id}
+    #cableObject
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
@@ -43,4 +34,4 @@ block js
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/underscore.js')
   script(type='text/javascript', src='/javascripts/util.js')
-  script(type='text/javascript', src='/javascripts/request.js')
+  script(type='text/javascript', src='/javascripts/cable.js')

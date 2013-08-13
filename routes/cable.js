@@ -24,7 +24,9 @@ module.exports = function(app) {
   // this is different from the request with status parameter
   // need more work when sharing is enabled
   app.get('/requests', auth.ensureAuthenticated, function(req, res) {
-    Request.find({createdBy: req.session.userid}).lean().exec(function(err, requests) {
+    Request.find({
+      createdBy: req.session.userid
+    }).lean().exec(function(err, requests) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -57,7 +59,9 @@ module.exports = function(app) {
   });
 
   app.get('/requests/json', auth.ensureAuthenticated, function(req, res) {
-    Request.find({createdBy: req.session.userid}).lean().exec(function(err, requests) {
+    Request.find({
+      createdBy: req.session.userid
+    }).lean().exec(function(err, requests) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -229,7 +233,9 @@ module.exports = function(app) {
 
 
   app.get('/cables', function(req, res) {
-    Cable.find({submittedBy: req.session.userid}).lean().exec(function(err, cables) {
+    Cable.find({
+      submittedBy: req.session.userid
+    }).lean().exec(function(err, cables) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -242,7 +248,9 @@ module.exports = function(app) {
 
   // get the current user's cables
   app.get('/cables/json', function(req, res) {
-    Cable.find({submittedBy: req.session.userid}).lean().exec(function(err, cables) {
+    Cable.find({
+      submittedBy: req.session.userid
+    }).lean().exec(function(err, cables) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -263,8 +271,8 @@ module.exports = function(app) {
       });
     }
     var query = {
-        status: status
-      };
+      status: status
+    };
     Cable.find(query).lean().exec(function(err, docs) {
       if (err) {
         console.error(err.msg);
@@ -277,18 +285,15 @@ module.exports = function(app) {
   });
 
   app.get('/cables/:id', function(req, res) {
-    Cable.findOne({number: req.params.id}).lean().exec(function(err, cable) {
-      if (err) {
-        return res.json(500, {
-          error: err.msg
-        });
-      }
-      return res.json(cable);
+    return res.render('cable', {
+      id: req.params.id
     });
   });
 
   app.get('/cables/:id/json', auth.ensureAuthenticated, function(req, res) {
-    Cable.findOne({number: req.params.id}).lean().exec(function(err, cable) {
+    Cable.findOne({
+      number: req.params.id
+    }).lean().exec(function(err, cable) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -302,9 +307,6 @@ module.exports = function(app) {
   app.put('/cables/:id', function(req, res) {
 
   });
-
-
-
 };
 
 
@@ -336,7 +338,7 @@ function createCable(cableRequest, req, res) {
         number: nextNumber,
         status: 0,
         request_id: cableRequest._id,
-        basic : cableRequest.basic,
+        basic: cableRequest.basic,
         from: cableRequest.from,
         to: cableRequest.to,
         routing: cableRequest.routing,
