@@ -56,6 +56,17 @@ module.exports = function(app) {
 
   });
 
+  app.get('/requests/json', auth.ensureAuthenticated, function(req, res) {
+    Request.find({createdBy: req.session.userid}).lean().exec(function(err, requests) {
+      if (err) {
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      return res.json(requests);
+    });
+  });
+
   // create a new request
   app.post('/requests', auth.ensureAuthenticated, function(req, res) {
     if (!req.is('json')) {
@@ -217,12 +228,28 @@ module.exports = function(app) {
 
 
 
-  app.get('/cables/', function(req, res) {
-
+  app.get('/cables', function(req, res) {
+    Cable.find({submittedBy: req.session.userid}).lean().exec(function(err, cables) {
+      if (err) {
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      return res.json(cables);
+    });
   });
 
-  app.get('/cables/json', function(req, res) {
 
+  // get the current user's cables
+  app.get('/cables/json', function(req, res) {
+    Cable.find({submittedBy: req.session.userid}).lean().exec(function(err, cables) {
+      if (err) {
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      return res.json(cables);
+    });
   });
 
   app.get('/cables/statuses/:s/json', function(req, res) {
@@ -250,7 +277,14 @@ module.exports = function(app) {
   });
 
   app.get('/cables/:id', function(req, res) {
-
+    Cable.findOne({number: req.params.id}).lean().exec(function(err, cable) {
+      if (err) {
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      return res.json(cable);
+    });
   });
 
   app.get('/cables/:id/json', auth.ensureAuthenticated, function(req, res) {
