@@ -263,7 +263,10 @@ $(function() {
     approvedTable.fnClearTable();
     approvedTable.fnAddData(approved);
     approvedTable.fnDraw();
-    // addClick($('#approved-table'), approvedTable, 7);
+    $('tbody tr', $('#approved-table')).click(function(e) {
+      var id = approvedTable.fnGetData(this, 0);
+      window.open('/cables/' + id);
+    });
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
