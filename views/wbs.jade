@@ -2,7 +2,7 @@ extends layout
 
 block head
   meta(charset='urf-8')
-  title FRIB Work Breakdown Structure
+  title #{project} Work Breakdown Structure
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
@@ -10,15 +10,16 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
+  script.
+    var json = '!{json}';
   .container(style="margin-top: 10px")
+    h3 #{project} Work Breakdown Structure
     #message
     #viz
-    p
-    p.pull-right This visualization is generated from the document of <a href='https://portal.frib.msu.edu/dcc/Pages/DCCLink.aspx?WBS=Z00000&Sub=BL&SN=000004'>FRIB FRIB-Z00000-BL-000004-R021 Issued 14 March 2013</a>.
+    //- p
+    //- p.pull-right This visualization is generated from the document of <a href='https://portal.frib.msu.edu/dcc/Pages/DCCLink.aspx?WBS=Z00000&Sub=BL&SN=000004'>FRIB FRIB-Z00000-BL-000004-R021 Issued 14 March 2013</a>.
 
 
 block js
-  //- script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
-  //- script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/javascripts/d3.v3.js')
   script(type='text/javascript', src='/javascripts/wbs.js')

@@ -1,13 +1,15 @@
 var wbs = require('../config/wbs.json');
+var rea6wbs = require('../config/rea6.json');
 
 module.exports = function (app) {
   app.get('/wbs', function(req, res) {
-    res.render('wbs', {wbs: wbs});
+    res.render('wbs', {project: 'FRIB', json: '/wbs/json'});
   });
 
-  app.get('/wbs/all', function(req, res) {
+  app.get('/wbs/json', function(req, res) {
     res.json(wbs);
   });
+
   app.get('/wbs/:number', function(req, res) {
     var parts = req.params.number.split('.');
     var key = parts[0];
@@ -24,6 +26,14 @@ module.exports = function (app) {
       }
     }
     res.json(locator);
+  });
+
+  app.get('/rea6-wbs', function(req, res) {
+    res.render('wbs', {project: 'ReA 6', json: '/rea6-wbs/json'});
+  });
+
+  app.get('/rea6-wbs/json', function(req, res) {
+    res.json(rea6wbs);
   });
 };
 

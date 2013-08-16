@@ -1,5 +1,5 @@
-var w = 1120,
-  h = 600,
+var w = 1024,
+  h = 800,
   x = d3.scale.linear().range([0, w]),
   y = d3.scale.linear().range([0, h]);
 
@@ -16,7 +16,7 @@ var partition = d3.layout.partition()
   return d.size || 100;
 }).sort(null);
 
-d3.json("wbs/all", function(root) {
+d3.json(json, function(root) {
   var g = vis.selectAll("g")
     .data(partition.nodes(root))
     .enter().append("svg:g")
@@ -44,16 +44,17 @@ d3.json("wbs/all", function(root) {
     return d.dx * ky > 12 ? 1 : 0;
   })
     .text(function(d) {
+    // .html(function(d) {
     return d.number + ' (' + d.name + ')';
-  })
+  });
 
   d3.select(window)
     .on("click", function() {
     click(root);
-  })
+  });
 
   function click(d) {
-    if (!d.children || d.children.length === 0) return;
+    // if (!d.children || d.children.length === 0) return;
 
     kx = (d.y ? w - 40 : w) / (1 - d.y);
     ky = h / d.dx;
