@@ -14,55 +14,6 @@ $(function() {
 
   binder = new Binder.FormBinder(requestForm);
 
-
-  // var validation = [
-  //   ['#system', 'presence', 'Please select system type'],
-  //   ['#sub', 'presence', 'Please select sub system type'],
-  //   ['#signal', 'presence', 'Please select signal type'],
-  //   ['#type', 'presence', 'Please input cable type'],
-  //   ['#engineer', 'presence', 'Please input engineer fullname'],
-  //   ['#function', 'presence', 'Please input cable function'],
-  //   ['#wbs', 'presence', 'Please input WBS number'],
-  //   ['#quality', 'presence', 'Please input the quality'],
-  //   ['#quality', 'integer', 'The quality needs to be an integer'],
-  //   ['#from-building', 'presence', 'Please input the building'],
-  //   ['#from-rack', 'presence', 'Please input the rack'],
-  //   ['#from-elevation', 'presence', 'Please input the elevation'],
-  //   ['#from-elevation', 'float', 'The elevation needs to be an integer'],
-  //   ['#from-termination', 'presence', 'Please input the termination'],
-  //   ['#from-type', 'presence', 'Please input the termination'],
-  //   ['#from-drawing', 'presence', 'Please input the wiring drawing'],
-  //   ['#from-label', 'presence', 'Please input the label'],
-  //   ['#to-building', 'presence', 'Please input the building'],
-  //   ['#to-rack', 'presence', 'Please input the rack'],
-  //   ['#to-elevation', 'presence', 'Please input the elevation'],
-  //   ['#to-elevation', 'float', 'The elevation needs to be an integer'],
-  //   ['#to-termination', 'presence', 'Please input the termination'],
-  //   ['#to-type', 'presence', 'Please input the termination'],
-  //   ['#to-drawing', 'presence', 'Please input the wiring drawing'],
-  //   ['#to-label', 'presence', 'Please input the label'],
-  //   ['#tray', 'presence', 'Please input the tray'],
-  //   ['#penetration', 'presence', 'Please input the penetration number'],
-  //   ['#position', 'presence', 'Please input the penetration position']
-  // ];
-
-  // $('form[name="request"]').nod(validation);
-
-  // $(requestForm.elements).jqBootstrapValidation({
-  //   preventSubmit: true,
-  //   submitError: function(form, event, errors) {
-  //     alert('not validated');
-  //   },
-  //   submitSuccess: function(form, event) {
-  //     alert('validated');
-  //     event.preventDefault();
-  //   },
-  //   filter: function() {
-  //     return $(this).is(':visible');
-  //   }
-  // });
-
-
   var validator = $(requestForm).validate({
     errorElement: 'span',
     errorClass: 'help-inline',
@@ -220,7 +171,7 @@ $(function() {
 
       validator.form();
 
-      initModel = binder.serialize();
+      initModel = _.cloneDeep(binder.serialize());
       // cable type details
       if ($('#type').val() !== '') {
         if (cableType.length === 0) {
@@ -259,7 +210,7 @@ $(function() {
   } else {
     // $('form[name="request"]').fadeTo('slow', 1);
     // validator.form();
-    initModel = binder.serialize();
+    initModel = _.cloneDeep(binder.serialize());
 
     $('#save').closest('.btn-group').show();
     $('#submit').closest('.btn-group').show();
@@ -270,8 +221,9 @@ $(function() {
     e.preventDefault();
     var action = this.id;
     var currentModel = {};
-    var currentBinder = new Binder.FormBinder(requestForm, currentModel);
-    currentModel = currentBinder.serialize();
+    // var currentBinder = new Binder.FormBinder(requestForm, currentModel);
+    // currentModel = currentBinder.serialize();
+    currentModel = binder.serialize();
     var data = {
       request: currentModel,
       action: action
@@ -334,8 +286,11 @@ function sendRequest(data) {
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top-40);
         // need to update the init model here
-        binder = new Binder.FormBinder(requestForm);
-        initModel = binder.serialize();
+        // binder = new Binder.FormBinder(requestForm);
+        // initModel = binder.serialize();
+        initModel = _.cloneDeep(binder.serialize());
+
+
       } else {
         $('form[name="request"]').hide();
         $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
