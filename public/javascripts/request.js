@@ -217,12 +217,18 @@ $(function() {
     $('#reset').closest('.btn-group').show();
   }
 
+  $('#reset').click(function(e){
+    e.preventDefault();
+    // requestForm.reset();
+    // ($(this).closest('form')[0]).reset();
+    binder.deserialize(initModel);
+    // initModel = _.cloneDeep(binder.serialize());
+  });
+
   $('.form-actions button').not('#reset').click(function(e){
     e.preventDefault();
     var action = this.id;
     var currentModel = {};
-    // var currentBinder = new Binder.FormBinder(requestForm, currentModel);
-    // currentModel = currentBinder.serialize();
     currentModel = binder.serialize();
     var data = {
       request: currentModel,
@@ -247,7 +253,6 @@ $(function() {
         sendRequest(data);
       }
     }
-    // e.preventDefault();
   });
 
 });
@@ -285,9 +290,6 @@ function sendRequest(data) {
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top-40);
-        // need to update the init model here
-        // binder = new Binder.FormBinder(requestForm);
-        // initModel = binder.serialize();
         initModel = _.cloneDeep(binder.serialize());
 
 
