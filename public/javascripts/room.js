@@ -13,10 +13,11 @@ var vis = d3.select("#viz")
 
 var partition = d3.layout.partition()
   .value(function(d) {
-    return d.size || 100;
+    // return d.size || 100;
+    return 100;
 }).sort(null);
 
-d3.json("rooms/json", function(root) {
+d3.json(json, function(root) {
   var g = vis.selectAll("g")
     .data(partition.nodes(root))
     .enter().append("svg:g")
@@ -44,13 +45,13 @@ d3.json("rooms/json", function(root) {
     return d.dx * ky > 12 ? 1 : 0;
   })
     .text(function(d) {
-    return d.number + ' (' + d.name + ')';
-  })
+    return d.number +  (d.name ? (' (' + d.name + ')') : '');
+  });
 
   d3.select(window)
     .on("click", function() {
     click(root);
-  })
+  });
 
   function click(d) {
     if (!d.children || d.children.length === 0) return;

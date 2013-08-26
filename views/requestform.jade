@@ -42,29 +42,33 @@ fieldset
     .controls
       .input-append
         input#wbs(type='text', name='basic.wbs')
-        a.btn.btn-info(href='/wbs', target='_blank') Browse
-  //- .control-group
-  //-   .control-label Quality
-  //-   .controls
-  //-     input#quality(type='text', name='basic.quality', class='type[number]')
+        a.btn.btn-info(href='/wbs', target='_blank') FRIB WBS
+        a.btn.btn-info(href='/rea6-wbs', target='_blank') ReA 6 WBS
+  .control-group
+    .control-label Quality
+    .controls
+      input#quality(type='text', name='basic.quality', class='type[number]')
 fieldset
   legend Source(from)
   .control-group
     .control-label Building
     .controls
-      input#from-building(type='text', name='from.building')
+      //- input#from-building(type='text', name='from.building')
       //- select#from-building.input(disabled=true)
-      //-       option(value='', disabled=true) choose
-  //- .control-group
-  //-   .control-label Area
-  //-   .controls
-  //-     select#from-area.input(disabled=true)
-  //-       option(value='', disabled=true) choose
-  //- .control-group
-  //-   .control-label Room
-  //-   .controls
-  //-     select#from-room.input(disabled=true)
-  //-       option(value='', disabled=true)
+      select#from-building.input(name='from.building')
+            option(value='', disabled=true) choose
+            option(value='frib') FRIB
+            option(value='nscl') NSCL
+  .control-group(style='display: none;')
+    .control-label Area
+    .controls
+      select#from-area.input(disabled=true)
+        option(value='', disabled=true) choose
+  .control-group
+    .control-label Room
+    .controls
+      select#from-room.input(disabled=true)
+        option(value='', disabled=true)
   .control-group
     .control-label Rack
     .controls
@@ -100,19 +104,22 @@ fieldset
   .control-group
     .control-label Building
     .controls
-      input#to-building(type='text', name='to.building')
+      //- input#to-building(type='text', name='to.building')
       //- select#to-building.input(disabled=true)
-      //-       option(value='', disabled=true) choose
-  //- .control-group
-  //-   .control-label Area
-  //-   .controls
-  //-     select#to-area.input(disabled=true)
-  //-       option(value='', disabled=true) choose
-  //- .control-group
-  //-   .control-label Room
-  //-   .controls
-  //-     select#to-room.input(disabled=true)
-  //-       option(value='', disabled=true)
+      select#from-building.input(name='to.building')
+            option(value='', disabled=true) choose
+            option(value='frib') FRIB
+            option(value='nscl') NSCL
+  .control-group(style='display: none;')
+    .control-label Area
+    .controls
+      select#to-area.input(disabled=true)
+        option(value='', disabled=true) choose
+  .control-group
+    .control-label Room
+    .controls
+      select#to-room.input(disabled=true)
+        option(value='', disabled=true)
   .control-group
     .control-label Rack
     .controls
@@ -159,22 +166,22 @@ fieldset
     .control-label Penetration Z position
     .controls
       input#position(type='text', name='routing.penetrationZ')
-fieldset
-  legend General information
-  .control-group
-    .control-label Fabricated by
-    .controls
-      input#fab(type='text', name='other.fabricatedBy')
+//- fieldset
+  //- legend General information
+  //- .control-group
+  //-   .control-label Fabricated by
+  //-   .controls
+  //-     input#fab(type='text', name='other.fabricatedBy')
   //- .control-group
   //-   .control-label Installed by
   //-   .controls
   //-     input#ins(type='text')
-  .control-group
-    .control-label Terminated by
-    .controls
-      input#term(type='text', name='other.terminatedBy')
-  .control-group
-    .control-label Comments
-    .controls
-      textarea.input-xlarge#comments(rows=3, name='other.comments')
+  //- .control-group
+  //-   .control-label Terminated by
+  //-   .controls
+  //-     input#term(type='text', name='other.terminatedBy')
+.control-group
+  .control-label Comments
+  .controls
+    textarea.input-xlarge#comments(rows=3, name='comments')
 
