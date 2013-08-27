@@ -16,7 +16,7 @@ $(function() {
         {'sTitle' : 'Comments'},
         {'sTitle' : 'Spec'}
       ],
-      "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+      "sDom": "<'row-fluid'<'span4 offset8'T>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
       "oTableTools": {
         "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
         "aButtons": [
