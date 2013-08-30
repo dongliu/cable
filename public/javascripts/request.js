@@ -3,6 +3,11 @@ var binder;
 var requestForm;
 
 $(function() {
+  $('input').keypress(function(e){
+    if (e.which == 13) {
+      return false;
+    }
+  });
   var cableType = [];
   var nameCache = {};
   var wbs;
@@ -17,13 +22,13 @@ $(function() {
   var validator = $(requestForm).validate({
     errorElement: 'span',
     errorClass: 'help-inline',
-    errorPlacement: function(error, element){
+    errorPlacement: function(error, element) {
       error.appendTo($(element).closest('.controls'));
     },
     highlight: function(element) {
       $(element).closest('.control-group').removeClass('success').addClass('error');
     },
-    success: function(element){
+    success: function(element) {
       $(element).closest('.control-group').removeClass('error').addClass('success');
     }
   });
@@ -34,6 +39,58 @@ $(function() {
   sss();
 
   // snapshot the initial form model
+
+  $('#project').change(function() {
+    $('#wbs').prop('disabled', false);
+    wbs = {};
+    var link;
+    if ($('#project option:selected').val() == 'frib') {
+      $('#fribwbs').show();
+      $('#rea6wbs').hide();
+      link = '/frib/wbs/json';
+    }
+    if ($('#project option:selected').val() == 'rea6') {
+      $('#fribwbs').hide();
+      $('#rea6wbs').show();
+      link = '/rea6/wbs/json';
+    }
+    $('#wbs').autocomplete({
+      minLength: 2,
+      source: function(req, res) {
+        var term = req.term;
+        var output = [];
+
+        if (term.indexOf('.', term.length - 1) == -1) {
+          return;
+        }
+
+        term = term.substring(0, term.length - 1);
+        if (wbs && wbs.children) {
+          output = getChildren(wbs, term);
+          if (output.length === 0) {
+            return;
+          }
+          res(output);
+        } else {
+          $.getJSON(link, req, function(data, status, xhr) {
+            wbs = data;
+            output = getChildren(wbs, term);
+            if (output.length === 0) {
+              return;
+            }
+            res(output);
+          });
+        }
+      },
+      focus: function(event, ui) {
+        $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
+      },
+      select: function(event, ui) {
+        var value = ui.item.value;
+      }
+    });
+  });
+
 
   $('#type-details').popover({
     html: true
@@ -94,38 +151,7 @@ $(function() {
 
   });
 
-  $('#wbs').autocomplete({
-    minLength: 2,
-    source: function(req, res) {
-      var term = req.term;
-      var output = [];
 
-      if (term.indexOf('.', term.length - 1) == -1) {
-        return;
-      }
-
-      term = term.substring(0, term.length - 1);
-      if (wbs && wbs.children) {
-        output = getChildren(wbs, term);
-        if (output.length === 0) {
-          return;
-        }
-        res(output);
-      } else {
-        $.getJSON('/wbs/all', req, function(data, status, xhr) {
-          wbs = data;
-          output = getChildren(wbs, term);
-          if (output.length === 0) {
-            return;
-          }
-          res(output);
-        });
-      }
-    },
-    select: function(event, ui) {
-      var value = ui.item.value;
-    }
-  });
 
   $('#penetration').autocomplete({
     minLength: 1,
@@ -217,7 +243,7 @@ $(function() {
     $('#reset').closest('.btn-group').show();
   }
 
-  $('#reset').click(function(e){
+  $('#reset').click(function(e) {
     e.preventDefault();
     // requestForm.reset();
     // ($(this).closest('form')[0]).reset();
@@ -225,7 +251,7 @@ $(function() {
     // initModel = _.cloneDeep(binder.serialize());
   });
 
-  $('.form-actions button').not('#reset').click(function(e){
+  $('.form-actions button').not('#reset').click(function(e) {
     e.preventDefault();
     var action = this.id;
     var currentModel = {};
@@ -289,7 +315,7 @@ function sendRequest(data) {
       if (data.action == 'save' || data.action == 'adjust') {
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
         // move the focus to the message
-        $(window).scrollTop($('#message div:last-child').offset().top-40);
+        $(window).scrollTop($('#message div:last-child').offset().top - 40);
         initModel = _.cloneDeep(binder.serialize());
 
 
@@ -315,6 +341,26 @@ function sendRequest(data) {
   // $('#test').html(JSON.stringify(requestObject));
 }
 
+
+function getNodeName(wbs, term) {
+  var parts = term.split('.');
+  var key = parts[0];
+  var locator = findChild(wbs, key);
+  if (locator === null) {
+    return 'unknown';
+  }
+
+  for (var i = 1; i < parts.length; i += 1) {
+    key = key + '.' + parts[i];
+    locator = findChild(locator, key);
+    if (locator === null) {
+      return 'unknown';
+    }
+  }
+
+  return locator.name;
+
+}
 
 
 function getChildren(wbs, term) {
@@ -417,8 +463,8 @@ function updateSub(json) {
   $('#sub').prop('disabled', false);
   $('#sub option').remove();
   $('#sub').append($('<option>', {
-        value: ''
-      }).text('choose').prop('disabled', true));
+    value: ''
+  }).text('choose').prop('disabled', true));
   $.each(json[sys]['sub-system'], function(k, v) {
     if (v) {
       $('#sub').append($('<option>', {
