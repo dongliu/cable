@@ -55,7 +55,7 @@ fieldset
   .control-group
     .control-label Quality
     .controls
-      input#quality(type='text', name='basic.quality', class='type[number]')
+      input#quality(type='text', name='basic.quality', class='type[number]', value=1)
 fieldset
   legend Source(from)
   .control-group
@@ -74,6 +74,7 @@ fieldset
     .control-label Room
     .controls
       input#from-room(type='text', disabled=true, name='from.room')
+      span.help-inline
   .control-group
     .control-label Rack
     .controls

@@ -2,6 +2,9 @@ var initModel;
 var binder;
 var requestForm;
 
+var fribrooms = [];
+var nsclrooms = [];
+
 $(function() {
   $('input').keypress(function(e){
     if (e.which == 13) {
@@ -14,6 +17,8 @@ $(function() {
   var penetration = [];
   var deviceCache = {};
   var rackCache = {};
+
+
 
   requestForm = document.forms[0];
 
@@ -72,7 +77,7 @@ $(function() {
           }
           res(output);
         } else {
-          $.getJSON(link, req, function(data, status, xhr) {
+          $.getJSON(link, function(data, status, xhr) {
             wbs = data;
             output = getChildren(wbs, term);
             if (output.length === 0) {
@@ -91,6 +96,24 @@ $(function() {
     });
   });
 
+  $.getJSON('/frib/rooms/json', function(json){
+    // fribrooms = json;
+    getLeaves(json, fribrooms);
+  });
+  $.getJSON('/nscl/rooms/json', function(json){
+    // nsclrooms = json;
+    getLeaves(json, nsclrooms);
+  });
+
+  $('#from-building').change(function(){
+    $('#from-room').prop('disabled', false);
+    setRooms('#from-building', '#from-room');
+  });
+
+  $('#to-building').change(function(){
+    $('#to-room').prop('disabled', false);
+    setRooms('#to-building', '#to-room');
+  });
 
   $('#type-details').popover({
     html: true
@@ -133,7 +156,7 @@ $(function() {
       var term = req.term.toLowerCase();
       var output = [];
       if (cableType.length === 0) {
-        $.getJSON('/cabletypes/json', req, function(data, status, xhr) {
+        $.getJSON('/cabletypes/json', function(data, status, xhr) {
           cableType = data;
           res(getType(cableType, term));
         });
@@ -159,7 +182,7 @@ $(function() {
       var term = req.term.toLowerCase();
       var output = [];
       if (penetration.length === 0) {
-        $.getJSON('/penetration', req, function(data, status, xhr) {
+        $.getJSON('/penetration', function(data, status, xhr) {
           penetration = data;
           res(getList(penetration, term));
         });
@@ -500,4 +523,60 @@ function setTypeDetails(val, cableType) {
     return type;
   }
   return null;
+}
+
+function setRooms(building, room) {
+  var rooms;
+  if ($(building + ' option:selected').val() === 'frib') {
+    rooms = fribrooms;
+  } else if ($(building + ' option:selected').val() === 'nscl') {
+    rooms = nsclrooms;
+  }
+  $(room).autocomplete({
+    minLength: 1,
+    source: function(req, res) {
+      var term = req.term;
+      var output = [];
+      if (rooms.length) {
+        output = getRooms(rooms, term);
+        if (output.length === 0) {
+          return;
+        }
+        res(output);
+      }
+    },
+    focus: function(event, ui) {
+      $(room).siblings('.help-inline').text(
+        _.find(rooms,function(room){
+          return room.number == ui.item.value;
+        }).name);
+        // getRoomName(rooms, ui.item.value));
+    },
+    select: function(event, ui) {
+      var value = ui.item.value;
+    }
+  });
+}
+
+function getRooms(rooms, term) {
+  var upper = term.toUpperCase();
+  var result = _.filter(rooms, function(room) {
+    return (room.number.indexOf(upper) === 0);
+  });
+  return _.map(result, function(room){
+    return room.number;
+  });
+}
+
+function getLeaves(rooms, leaves) {
+  // var leaves = [];
+  if (rooms.children && rooms.children.length) {
+    for (var i = 0; i < rooms.children.length; i += 1) {
+      if (rooms.children[i].children) {
+        getLeaves(rooms.children[i], leaves);
+      } else {
+        leaves.push(rooms.children[i]);
+      }
+    }
+  }
 }
