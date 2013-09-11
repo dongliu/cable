@@ -12,8 +12,8 @@ block head
 block content
   .container
     .btn-toolbar
-      .btn-group
-        a.btn.btn-primary#new(href='./requests/new', target='_blank') New Request
+      //- .btn-group
+      //-   a.btn.btn-primary#new(href='./requests/new', target='_blank') New Request
       .btn-group.dropdown
         a#meta.btn.dropdown-toggle(data-toggle='dropdown') Meta
           span.caret
@@ -31,35 +31,35 @@ block content
           li#rooms
             a(href='./nscl/rooms', target='_blank') NSCL rooms
       .btn-group
-        a.btn(href='/profile', target='_blank') Profile
+        a.btn.btn-primary(href='/users', target='_blank') Users
       .btn-group
-        a.btn.btn-warning(href='/switch-to-management') Switch to management view
+        a.btn.btn-warning(href='/switch-to-normal') Switch to normal view
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
     .tabbable#tabs
       ul.nav.nav-tabs
         li.active
-          a(href='#saved', data-toggle='tab') Saved
-        li
-          a(href='#submitted', data-toggle='tab') Submitted
+          a(href='#approving', data-toggle='tab') To be approved
         li
           a(href='#rejected', data-toggle='tab') Rejected
         li
-          a(href='#approved', data-toggle='tab') Approved
+          a(href='#procuring', data-toggle='tab') To be procured
+        li
+          a(href='#installing', data-toggle='tab') To be installed
         li
           a(href='#installed', data-toggle='tab') Installed
       .tab-content
-        #saved.tab-pane.active
-          table#saved-table.table.table-bordered.table-hover
-        #submitted.tab-pane
-          table#submitted-table.table.table-bordered.table-hover
-        #approved.tab-pane
-          table#approved-table.table.table-bordered.table-hover
+        #approving.tab-pane.active
+          table#approving-table.table.table-bordered.table-hover
         #rejected.tab-pane
           table#rejected-table.table.table-bordered.table-hover
-        #installed.tab-pane
+        #procuring.tab-pane
+          table#procuring-table.table.table-bordered.table-hover
+        #installing.tab-pane
           p the list of installed cables
+        #installed.tab-pane
+          p the list of working cables
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
@@ -70,6 +70,6 @@ block js
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/lodash.js')
-  script(type='text/javascript', src='/javascripts/main.js')
+  script(type='text/javascript', src='/javascripts/manage.js')
 
 

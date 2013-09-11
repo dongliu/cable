@@ -108,6 +108,11 @@ $(function() {
   $('#from-building').change(function(){
     $('#from-room').prop('disabled', false);
     setRooms('#from-building', '#from-room');
+    // if ($(this).val() === 'frib') {
+    //   $('#from-area').show();
+    // } else {
+    //   $('#from-area').hide();
+    // }
   });
 
   $('#to-building').change(function(){
@@ -217,6 +222,10 @@ $(function() {
       setSSS(system, subsystem, signal);
 
       $('form[name="request"]').fadeTo('slow', 1);
+
+      if ($('#project').val()) {
+        $('#wbs').prop('disabled', false);
+      }
 
       validator.form();
 

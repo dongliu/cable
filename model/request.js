@@ -10,8 +10,7 @@ var request = new Schema({
     engineer: String,
     service: String,
     wbs: String,
-    quality: Number
-    // The quality can make the assign cable number tricky
+    quantity: Number
   },
 
   from: {

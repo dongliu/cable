@@ -9,6 +9,15 @@ var User = mongoose.model('User');
 var auth = require('../lib/auth');
 
 
+// request status
+// 0: saved 1: submitted 2: approved 3: rejected
+
+// cable status
+// 0: approved 1: ordered 2: received 3: accepted 4: labeled
+// 5: bench terminated 6: bench tested 7: pulled 8: field terminated
+// 9: tested
+
+
 //TODO need a server side validation in the future
 
 module.exports = function(app) {
@@ -34,28 +43,6 @@ module.exports = function(app) {
       }
       return res.json(requests);
     });
-    // User.findOne({
-    //   id: req.session.userid
-    // }).exec(function(err, user) {
-    //   if (err) {
-    //     return res.json(500, {
-    //       error: err.msg
-    //     });
-    //   }
-    //   Request.find({
-    //     _id: {
-    //       $in: user.requests
-    //     }
-    //   }).lean().exec(function(err, requests) {
-    //     if (err) {
-    //       return res.json(500, {
-    //         error: err.msg
-    //       });
-    //     }
-    //     return res.json(requests);
-    //   });
-    // });
-
   });
 
   app.get('/requests/json', auth.ensureAuthenticated, function(req, res) {
@@ -147,7 +134,7 @@ module.exports = function(app) {
   // get the request list based on query
   // a user can only view the requests created by her/him self
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.length == 0) {
+    if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var status = parseInt(req.params.s, 10);
@@ -196,23 +183,23 @@ module.exports = function(app) {
       request.adjustedBy = req.session.userid;
       request.adjustedOn = Date.now();
     }
-    if (req.body.action == 'request') {
-      // check if already adjusted
-      request.requestedBy = req.session.userid;
-      request.requestedOn = Date.now();
-      request.status = 2;
-    }
+    // if (req.body.action == 'request') {
+    //   // check if already adjusted
+    //   request.requestedBy = req.session.userid;
+    //   request.requestedOn = Date.now();
+    //   request.status = 2;
+    // }
     if (req.body.action == 'reject') {
       // check if already submitted
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
-      request.status = 4;
+      request.status = 3;
     }
     if (req.body.action == 'approve') {
       // check if already request-approval
       request.approvedBy = req.session.userid;
       request.approvedOn = Date.now();
-      request.status = 3;
+      request.status = 2;
     }
 
     Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
@@ -225,7 +212,7 @@ module.exports = function(app) {
       if (req.body.action !== 'approve') {
         res.send(204);
       } else {
-        createCable(cableRequest, req, res);
+        createCable(cableRequest, req, res, cableRequest.basic.quantity);
       }
     });
   });
@@ -310,7 +297,7 @@ module.exports = function(app) {
 };
 
 
-function createCable(cableRequest, req, res) {
+function createCable(cableRequest, req, res, quantity) {
   var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
   Cable.findOne({
     number: {
@@ -338,13 +325,13 @@ function createCable(cableRequest, req, res) {
         number: nextNumber,
         status: 0,
         request_id: cableRequest._id,
-        basic: cableRequest.basic,
-        from: cableRequest.from,
-        to: cableRequest.to,
-        routing: cableRequest.routing,
-        other: cableRequest.other,
-        submittedBy: cableRequest.submittedBy,
-        submittedOn: cableRequest.submittedOn,
+        // basic: cableRequest.basic,
+        // from: cableRequest.from,
+        // to: cableRequest.to,
+        // routing: cableRequest.routing,
+        // other: cableRequest.other,
+        // submittedBy: cableRequest.submittedBy,
+        // submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });
@@ -354,7 +341,7 @@ function createCable(cableRequest, req, res) {
           // see test/duplicatedCableNumber.js for a test of this case
           if (err.code == 11000) {
             console.log(nextNumber + ' already existed, try again ...');
-            createCable(cableRequest, req, res);
+            createCable(cableRequest, req, res, quantity);
           } else {
             console.error(err.msg);
             return res.json(500, {
@@ -362,12 +349,15 @@ function createCable(cableRequest, req, res) {
             });
           }
         }
-        // push the cable into the user? no!
-        var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
-        res.set('Location', url);
-        res.json(201, {
-          location: '/cables/' + nextNumber
-        });
+        if (quantity === 1) {
+          var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
+          res.set('Location', url);
+          res.json(201, {
+            location: '/cables/' + nextNumber
+          });
+        } else {
+            createCable(cableRequest, req, res, quantity-1);
+          }
       });
     }
   });

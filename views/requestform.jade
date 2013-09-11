@@ -11,7 +11,7 @@ fieldset
     .control-label WBS
     .controls
       //- .input-append
-      input#wbs(type='text', name='basic.wbs', disabled=true)
+      input#wbs(type='text', name='basic.wbs', disabled=true, required)
       a#fribwbs.btn.btn-info(href='/frib/wbs', target='_blank', style='display: none;') FRIB WBS
       a#rea6wbs.btn.btn-info(href='/rea6/wbs', target='_blank', style='display: none;') ReA6 WBS
       span.help-inline
@@ -53,9 +53,9 @@ fieldset
     .controls
       input#function(type='text', name='basic.service')
   .control-group
-    .control-label Quality
+    .control-label Quantity
     .controls
-      input#quality(type='text', name='basic.quality', class='type[number]', value=1)
+      input#quantity(type='text', name='basic.quantity', class='type[number]', value=1, required)
 fieldset
   legend Source(from)
   .control-group
@@ -125,6 +125,7 @@ fieldset
     .control-label Room
     .controls
       input#to-room(type='text', disabled=true, name='to.room')
+      span.help-inline
   .control-group
     .control-label Rack
     .controls

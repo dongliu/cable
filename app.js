@@ -55,6 +55,8 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', auth.ensureAuthenticated, routes.main);
+app.get('/switch-to-management', auth.ensureAuthenticated, routes.switch2management);
+app.get('/switch-to-normal', auth.ensureAuthenticated, routes.switch2normal);
 
 // init the user service
 // GET /users
