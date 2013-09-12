@@ -26,7 +26,8 @@ $(function() {
 
   var validator = $(requestForm).validate({
     errorElement: 'span',
-    errorClass: 'help-inline',
+    errorClass: 'error',
+    validClass: 'success',
     errorPlacement: function(error, element) {
       error.appendTo($(element).closest('.controls'));
     },
@@ -247,12 +248,12 @@ $(function() {
         $('#save').closest('.btn-group').show();
         $('#submit').closest('.btn-group').show();
         $('#reset').closest('.btn-group').show();
-      } else if (!json.hasOwnProperty('requestedBy')) {
+      } else if (!json.hasOwnProperty('rejectedBy') && !json.hasOwnProperty('approvedBy')) {
         $('#adjust').closest('.btn-group').show();
         $('#reject').closest('.btn-group').show();
-        $('#request').closest('.btn-group').show();
-      } else if (!json.hasOwnProperty('approvedBy')) {
-        $('#reject').closest('.btn-group').show();
+        // $('#request').closest('.btn-group').show();
+      // } else if (!json.hasOwnProperty('approvedBy')) {
+      //   $('#reject').closest('.btn-group').show();
         $('#approve').closest('.btn-group').show();
       }
 

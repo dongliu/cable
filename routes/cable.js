@@ -301,7 +301,7 @@ function createCable(cableRequest, req, res, quantity) {
   var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
   Cable.findOne({
     number: {
-      $regex: '^' + sss + '/d{6}'
+      $regex: '^' + sss + '\\d{6}'
     }
   }, 'number', {
     sort: {
@@ -316,11 +316,13 @@ function createCable(cableRequest, req, res, quantity) {
         error: err.msg
       });
     } else {
+      console.dir(cable);
       if (cable) {
         nextNumber = increment(cable.number);
       } else {
         nextNumber = sss + '000000';
       }
+      console.log(nextNumber);
       var newCable = new Cable({
         number: nextNumber,
         status: 0,
@@ -348,16 +350,17 @@ function createCable(cableRequest, req, res, quantity) {
               error: err.msg
             });
           }
-        }
-        if (quantity === 1) {
-          var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
-          res.set('Location', url);
-          res.json(201, {
-            location: '/cables/' + nextNumber
-          });
         } else {
-            createCable(cableRequest, req, res, quantity-1);
+          if (quantity === 1) {
+            var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
+            res.set('Location', url);
+            return res.json(201, {
+              location: '/cables/' + nextNumber
+            });
+          } else {
+            createCable(cableRequest, req, res, quantity - 1);
           }
+        }
       });
     }
   });
@@ -368,5 +371,15 @@ function increment(number) {
   if (sequence == 999999) {
     return null;
   }
-  return number.substring(0, 3) + 1;
+  return number.substring(0, 3) + pad(sequence + 1);
+}
+
+function pad(num) {
+  var s = '' + num;
+  if (s.length >= 6) {
+    return s;
+  } else {
+    s = '000000' + s;
+    return s.substring(s.length - 6);
+  }
 }

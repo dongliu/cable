@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var request = new Schema({
   basic: {
+    project: String,
     system: String,
     subsystem: String,
     signal: String,
@@ -66,11 +67,7 @@ var request = new Schema({
 
 var cable = new Schema({
   request_id: String,
-  number: {
-    type: String,
-    // index: true,
-    unique: true
-  },
+  number: String,
   status: Number,
   // submittedBy: String,
   // submittedOn: Date,

@@ -25,7 +25,7 @@ $(function() {
       "bVisible": false
     }],
     'aaSorting': [
-      [1, 'desc']
+      [0, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -166,34 +166,32 @@ $(function() {
   });
 
   $.ajax({
-    url: '/requests',
+    url: '/requests/json',
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
   }).done(function(json) {
-    saved = json.filter(function(request) {
+    var savedJson = json.filter(function(request) {
       return (request.status === 0);
     });
-    submitted = json.filter(function(request) {
+    var submittedJson = json.filter(function(request) {
       return (request.status === 1);
     });
-    approved = json.filter(function(request) {
-      return (request.status === 2);
-    });
+    // var approvedJson = json.filter(function(request) {
+    //   return (request.status === 2);
+    // });
     // approved = json.filter(function(request) {
     //   return (request.status === 3);
     // });
-    rejected = json.filter(function(request) {
+    var rejectedJson = json.filter(function(request) {
       return (request.status === 3);
     });
 
-    if (saved.length) {
-      saved = json.map(function(request) {
+    if (savedJson.length) {
+      saved = savedJson.map(function(request) {
         if (request.basic) {
-          // return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
           return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
         }
-        // return [].concat(request.createdBy).concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
         return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
       });
       savedTable.fnClearTable();
@@ -202,15 +200,14 @@ $(function() {
       addClick($('#saved-table'), savedTable, 5);
     }
 
-    if (submitted.length) {
-      submitted = json.map(function(request) {
-        // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-        return [].concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+    if (submittedJson.length) {
+      submitted = submittedJson.map(function(request) {
+        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
       });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       submittedTable.fnDraw();
-      addClick($('#submitted-table'), submittedTable, 5);
+      addClick($('#submitted-table'), submittedTable, 6);
     }
 
     // if (adjusted.length) {
@@ -233,8 +230,8 @@ $(function() {
     //   addClick($('#approved-table'), approvedTable, 7);
     // }
 
-    if (rejected.length) {
-      rejected = json.map(function(request) {
+    if (rejectedJson.length) {
+      rejected = rejectedJson.map(function(request) {
         // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
         return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
       });
@@ -249,8 +246,8 @@ $(function() {
   }).always();
 
 
-/*  var approved = [];
-  var approvedTable = $('#approved-table').dataTable({
+/*  var approved = []
+;  var approvedTable = $('#approved-table').dataTable({
     'aaData': approved,
     'aoColumns': [{
       'sTitle': 'Number'

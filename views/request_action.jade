@@ -11,9 +11,9 @@
   if (roles.length && (roles.indexOf('approve') != -1 || roles.indexOf('adjust') != -1))
     .btn-group(style='display: none;')
       button.btn.btn-warning#reject(type='button') Reject
-  if (roles.length && roles.indexOf('adjust') != -1)
-    .btn-group(style='display: none;')
-      button.btn.btn-info#request(type='submit') Request approval
+  //- if (roles.length && roles.indexOf('adjust') != -1)
+  //-   .btn-group(style='display: none;')
+  //-     button.btn.btn-info#request(type='submit') Request approval
   if (roles.length && roles.indexOf('approve') != -1)
     .btn-group(style='display: none;')
       button.btn.btn-primary#approve(type='submit') Approve
