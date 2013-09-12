@@ -178,11 +178,11 @@ module.exports = function(app) {
       request.submittedOn = Date.now();
       request.status = 1;
     }
-    if (req.body.action == 'adjust') {
-      // check if already submitted
-      request.adjustedBy = req.session.userid;
-      request.adjustedOn = Date.now();
-    }
+    // if (req.body.action == 'adjust') {
+    //   // check if already submitted
+    //   request.adjustedBy = req.session.userid;
+    //   request.adjustedOn = Date.now();
+    // }
     // if (req.body.action == 'request') {
     //   // check if already adjusted
     //   request.requestedBy = req.session.userid;
@@ -332,8 +332,8 @@ function createCable(cableRequest, req, res, quantity) {
         // to: cableRequest.to,
         // routing: cableRequest.routing,
         // other: cableRequest.other,
-        // submittedBy: cableRequest.submittedBy,
-        // submittedOn: cableRequest.submittedOn,
+        submittedBy: cableRequest.submittedBy,
+        submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });

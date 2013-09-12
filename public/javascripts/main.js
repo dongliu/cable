@@ -58,9 +58,9 @@ $(function() {
     }, {
       'sTitle': 'Signal'
     }, {
-      'sTitle': 'Adjusted by'
+      'sTitle': 'Updated by'
     }, {
-      'sTitle': 'Adjusted on'
+      'sTitle': 'Updated on'
     }, {
       'sTitle': 'id',
       "bVisible": false
@@ -81,47 +81,6 @@ $(function() {
       ]
     }
   });
-
-
-  // var approved = [];
-  // var approvedTable = $('#approved-table').dataTable({
-  //   'aaData': approved,
-  //   'aoColumns': [
-  //   // {
-  //   //   'sTitle': 'Submitted by'
-  //   // }, {
-  //   //   'sTitle': 'Submitted on'
-  //   // },
-  //   {
-  //     'sTitle': 'System'
-  //   }, {
-  //     'sTitle': 'Sub system'
-  //   }, {
-  //     'sTitle': 'Signal'
-  //   }, {
-  //     'sTitle': 'Approved by'
-  //   }, {
-  //     'sTitle': 'Approved on'
-  //   }, {
-  //     'sTitle': 'id',
-  //     "bVisible": false
-  //   }],
-  //   'aaSorting': [
-  //     [4, 'desc']
-  //   ],
-  //   "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-  //   "oTableTools": {
-  //     "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-  //     "aButtons": [
-  //       "copy",
-  //       "print", {
-  //         "sExtends": "collection",
-  //         "sButtonText": 'Save <span class="caret" />',
-  //         "aButtons": ["csv", "xls", "pdf"]
-  //       }
-  //     ]
-  //   }
-  // });
 
 
   var rejected = [];
@@ -202,33 +161,13 @@ $(function() {
 
     if (submittedJson.length) {
       submitted = submittedJson.map(function(request) {
-        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.adjustedby || '').concat(request.adjustedOn ? moment(request.adjustedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
       });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       submittedTable.fnDraw();
       addClick($('#submitted-table'), submittedTable, 6);
     }
-
-    // if (adjusted.length) {
-    //   adjusted = json.map(function(request) {
-    //     return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.requestedBy).concat(moment(request.requestedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-    //   });
-    //   adjustedTable.fnClearTable();
-    //   adjustedTable.fnAddData(adjusted);
-    //   adjustedTable.fnDraw();
-    //   addClick($('#adjusted-table'), adjustedTable, 7);
-    // }
-
-    // if (approved.length) {
-    //   approved = json.map(function(request) {
-    //     return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.approvedBy).concat(moment(request.approvedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-    //   });
-    //   approvedTable.fnClearTable();
-    //   approvedTable.fnAddData(approved);
-    //   approvedTable.fnDraw();
-    //   addClick($('#approved-table'), approvedTable, 7);
-    // }
 
     if (rejectedJson.length) {
       rejected = rejectedJson.map(function(request) {
@@ -246,13 +185,11 @@ $(function() {
   }).always();
 
 
-/*  var approved = []
-;  var approvedTable = $('#approved-table').dataTable({
+  var approved = [];
+  var approvedTable = $('#approved-table').dataTable({
     'aaData': approved,
     'aoColumns': [{
       'sTitle': 'Number'
-    }, {
-      'sTitle': 'Submitted by'
     }, {
       'sTitle': 'Submitted on'
     }, {
@@ -286,13 +223,13 @@ $(function() {
     contentType: 'application/json',
     dataType: 'json'
   }).done(function(json) {
-    approved = json.filter(function(cable) {
+    var approvedJson = json.filter(function(cable) {
       return (cable.status === 0);
     });
 
 
-    if (approved.length) {
-      approved = json.map(function(request) {
+    if (approvedJson.length) {
+      approved = approvedJson.map(function(request) {
         return [].concat(cable.number).concat(cable.submittedBy).concat(moment(cable.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(cable.approvedBy).concat(moment(cable.approvedOn).format('YYYY-MM-DD HH:mm:ss'));
       });
       approvedTable.fnClearTable();
@@ -307,7 +244,7 @@ $(function() {
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();*/
+  }).always();
 
 
 

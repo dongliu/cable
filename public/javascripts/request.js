@@ -251,9 +251,6 @@ $(function() {
       } else if (!json.hasOwnProperty('rejectedBy') && !json.hasOwnProperty('approvedBy')) {
         $('#adjust').closest('.btn-group').show();
         $('#reject').closest('.btn-group').show();
-        // $('#request').closest('.btn-group').show();
-      // } else if (!json.hasOwnProperty('approvedBy')) {
-      //   $('#reject').closest('.btn-group').show();
         $('#approve').closest('.btn-group').show();
       }
 
