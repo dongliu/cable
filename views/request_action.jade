@@ -19,3 +19,6 @@
       button.btn.btn-primary#approve(type='submit') Approve
   .btn-group(style='display: none;')
     button.btn.btn-warning#reset(type='reset') Reset
+  if (typeof id !== 'undefined')
+    .btn-group
+      button.btn.btn-primary#clone(type='button') Clone

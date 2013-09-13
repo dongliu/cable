@@ -290,25 +290,33 @@ $(function() {
       request: currentModel,
       action: action
     };
-    if ((action == 'save' || action == 'adjust') && _.isEqual(initModel, currentModel)) {
-      $('#modalLable').html('The request cannot be sent');
-      $('#modal .modal-body').html('No change has been made in the form');
-      // $('#modal .modal-footer').html();
-      $('#modal').modal('show');
-    } else {
-      if (action == 'submit' || action == 'request' || action == 'approve') {
-        if ($(requestForm).valid()) {
-          sendRequest(data);
-        } else {
-          $('#modalLable').html('The request cannot be sent');
-          $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
-          // $('#modal .modal-footer').html();
-          $('#modal').modal('show');
-        }
+    if (action == 'save' || action == 'adjust') {
+      if (_.isEqual(initModel, currentModel)) {
+
+        $('#modalLable').html('The request cannot be sent');
+        $('#modal .modal-body').html('No change has been made in the form');
+        // $('#modal .modal-footer').html();
+        $('#modal').modal('show');
       } else {
         sendRequest(data);
       }
     }
+
+    if (action == 'submit' || action == 'approve') {
+      if ($(requestForm).valid()) {
+        sendRequest(data);
+      } else {
+        $('#modalLable').html('The request cannot be sent');
+        $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
+        // $('#modal .modal-footer').html();
+        $('#modal').modal('show');
+      }
+    }
+
+    if (action == 'clone') {
+      sendRequest(data);
+    }
+
   });
 
 });
@@ -318,7 +326,7 @@ function sendRequest(data) {
   var path = window.location.pathname;
 
   var url, type;
-  if (/^\/requests\/new/.test(path)) {
+  if (/^\/requests\/new/.test(path) || data.action === 'clone') {
     url = '/requests';
     type = 'POST';
   } else {
@@ -337,7 +345,7 @@ function sendRequest(data) {
   }).done(function(json) {
     // var location = formRequest.getResponseHeader('Location');
     $('form[name="request"]').fadeTo('slow', 1);
-    if (/^\/requests\/new/.test(path)) {
+    if (/^\/requests\/new/.test(path) || data.action === 'clone') {
       document.location.href = json.location;
     } else {
       var timestamp = formRequest.getResponseHeader('Date');

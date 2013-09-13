@@ -63,13 +63,45 @@ module.exports = function(app) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
-
     // console.dir(req.body);
+
+
     var request = new Request(req.body.request);
+
+    if (req.body.action === 'clone') {
+      request.basic.quantity = 1;
+    }
+
+
+    // if (req.body.action === 'clone') {
+    //   if (!req.body.hasOwnProperty('copyFrom')){
+    //     return res.send(400, 'need the request id');
+    //   }
+    //   Request.findById(req.body.copyFrom).lean().exec(function(err, cableRequest){
+    //     if (err) {
+    //       console.erroe(err.msg);
+    //       return res.send(500, 'cannot find the original request to clone');
+    //     } else {
+    //       request = new Request();
+    //       request.basic = cableRequest.basic;
+    //       request.from = cableRequest.from;
+    //       request.to = cableRequest.to;
+    //       request.comments = cableRequest.comments;
+    //       // request.createdBy = req.session.userid;
+    //       // request.createdOn = Date.now();
+    //       // request.status = 0;
+    //     }
+    //   });
+    // } else {
+    //   request = new Request(req.body.request);
+    // }
+    // set new request attribute
+
     request.createdBy = req.session.userid;
     request.createdOn = Date.now();
     request.status = 0;
-    if (req.body.action == 'submit') {
+
+    if (req.body.action === 'submit') {
       request.submittedBy = req.session.userid;
       request.submittedOn = request.createdOn;
       request.status = 1;
@@ -85,26 +117,6 @@ module.exports = function(app) {
       res.json(201, {
         location: '/requests/' + cableRequest.id
       });
-      // User.findOneAndUpdate({
-      //   id: req.session.userid
-      // }, {
-      //   $push: {
-      //     requests: cableRequest.id
-      //   }
-      // }).exec(function(err, user) {
-      //   if (err) {
-      //     // cableRequest.remove();
-      //     return res.json(500, {
-      //       error: err.msg
-      //     });
-      //   }
-
-      //   var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
-      //   res.set('Location', url);
-      //   res.json(201, {
-      //     location: '/requests/' + cableRequest.id
-      //   });
-      // });
     });
   });
 
