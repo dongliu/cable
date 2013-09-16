@@ -13,6 +13,7 @@ block content
   script.
     var roles = !{JSON.stringify(user.roles)};
   .container(style="margin-top: 10px")
+    a.btn.btn-primary(href="/users") users
     #message
     #profile.well
       dl
@@ -32,22 +33,22 @@ block content
         dd #{user.subscribe}
         dt Priviledges
         dd#roles
-          //- form.form-inline
-          label.checkbox.inline
-            input(type='checkbox', value='adjust')
-            | adjust
+          //- //- form.form-inline
+          //- label.checkbox.inline
+          //-   input(type='checkbox', value='adjust')
+          //-   | adjust
+          //- //- = ' '
+          //- label.checkbox.inline
+          //-   input(type='checkbox', value='approve')
+          //-   | approve
+          //- //- = ' '
+          //- label.checkbox.inline
+          //-   input(type='checkbox', value='install')
+          //-   | install
           //- = ' '
           label.checkbox.inline
-            input(type='checkbox', value='approve')
-            | approve
-          //- = ' '
-          label.checkbox.inline
-            input(type='checkbox', value='install')
-            | install
-          //- = ' '
-          label.checkbox.inline
-            input(type='checkbox', value='qa')
-            | QA
+            input(type='checkbox', value='manage')
+            | manage
           //- = ' '
           label.checkbox.inline
             input(type='checkbox', value='admin')

@@ -1,4 +1,3 @@
-
 var ad = require('../config/ad.json');
 
 var ldapClient = require('../lib/ldap-client');
@@ -8,65 +7,56 @@ var User = mongoose.model('User');
 
 var auth = require('../lib/auth');
 
-var Roles = ["adjust", "approve", "install", "qa", "admin"];
+var Roles = ['manage', 'admin'];
 
 module.exports = function(app) {
   app.get('/users', auth.ensureAuthenticated, function(req, res) {
-    res.render('users');
+    if (req.session.roles.indexOf('admin') !== -1) {
+      return res.render('users');
+    } else {
+      return res.send(403, 'only admin allowed');
+    }
   });
 
+  // app.get('/users/new', auth.ensureAuthenticated, function(req, res) {
+  //   res.render('user');
+  // });
+
   app.post('/users', auth.ensureAuthenticated, function(req, res) {
-    if (!req.is('json')) {
-      return res.send(415, 'json request expected.');
+    // if (!req.is('json')) {
+    //   return res.send(415, 'json request expected.');
+    // }
+
+    if (req.session.roles.indexOf('admin') == -1) {
+      return res.send(403, 'only admin allowed');
     }
 
-    // get user id
-    var nameFilter = ad.nameFilter.replace('_id', req.name);
-    var opts = {
-      filter: nameFilter,
-      attributes: ad.objAttributes,
-      scope: 'sub'
-    };
+    if (!req.body.name) {
+      return res.send(400, 'need to know name');
+    }
 
-    ldapClient.search(ad.searchBase, opts, false, function(err, result) {
+    // return res.send(200, req.body.name);
+
+    // check if already in db
+
+    User.findOne({
+      name: req.body.name
+    }).lean().exec(function(err, user) {
       if (err) {
-        console.err(err.name + ' : ' + err.message);
-        return res.json(500, {error: err.mesage});
+        return res.send(500, err.msg);
       }
-
-      if (result.length === 0) {
-        return res.send(500, req.name + ' is not found in AD!');
-      }
-
-      if (result.length > 1) {
-        return res.send(500, req.name + ' is not unique!');
-      }
-
-      var user = new User({
-        id: result[0].sAMAccountName,
-        name: result[0].displayName,
-        email: result[0].mail,
-        office: result[0].physicalDeliveryOfficeName,
-        phone: result[0].telephoneNumber,
-        mobile: result[0].mobile
-      });
-
-      user.save(function(err, newUser) {
-        if (err) {
-          console.err(err.msg);
-          return res.json(500, {error: err.mesage});
-        }
-
-        var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.id;
+      if (user) {
+        var url = req.protocol + '://' + req.get('host') + '/users/' + user.id;
         res.set('Location', url);
-        res.send(201, 'A new user is added at ' + url);
-      });
-
+        return res.send(303, 'The user is at ' + url);
+      } else {
+        addUser(req, res);
+      }
     });
 
   });
 
-  
+
 
   app.get('/users/json', auth.ensureAuthenticated, function(req, res) {
     if (req.session.roles.indexOf('admin') === -1) {
@@ -75,7 +65,9 @@ module.exports = function(app) {
     User.find().lean().exec(function(err, users) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.mesage});
+        return res.json(500, {
+          error: err.msg
+        });
       }
       res.json(users);
     });
@@ -86,12 +78,16 @@ module.exports = function(app) {
     if (req.session.roles.indexOf('admin') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
-    User.findOne({id: req.session.userid}).lean().exec(function(err, user) {
+    User.findOne({
+      id: req.params.id
+    }).lean().exec(function(err, user) {
       if (err) {
         console.error(err.msg);
         return res.send(500, err.msg);
       }
-      return res.render('user',{user: user});
+      return res.render('user', {
+        user: user
+      });
     });
   });
 
@@ -100,12 +96,18 @@ module.exports = function(app) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     if (!req.is('json')) {
-      return res.json(415, {error: 'json request expected.'});
+      return res.json(415, {
+        error: 'json request expected.'
+      });
     }
-    User.findOneAndUpdate({id: req.params.id}, req.body).lean().exec(function(err, user) {
+    User.findOneAndUpdate({
+      id: req.params.id
+    }, req.body).lean().exec(function(err, user) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.msg});
+        return res.json(500, {
+          error: err.msg
+        });
       }
       res.send(204);
     });
@@ -114,10 +116,14 @@ module.exports = function(app) {
   // get from the db not ad
   app.get('/users/:id/json', auth.ensureAuthenticated, function(req, res) {
 
-    User.findOne({id: req.params.id}).lean().exec(function(err, user) {
+    User.findOne({
+      id: req.params.id
+    }).lean().exec(function(err, user) {
       if (err) {
         console.error(err.msg);
-        return res.json(500, {error: err.mesage});
+        return res.json(500, {
+          error: err.mesage
+        });
       }
       return res.json(user);
     });
@@ -125,7 +131,7 @@ module.exports = function(app) {
 
 
 
-// resource /adusers
+  // resource /adusers
 
   app.get('/adusers/:id', auth.ensureAuthenticated, function(req, res) {
 
@@ -140,10 +146,14 @@ module.exports = function(app) {
         return res.json(500, err);
       }
       if (result.length === 0) {
-        return res.json(500, {error: req.params.id + ' is not found!'});
+        return res.json(500, {
+          error: req.params.id + ' is not found!'
+        });
       }
       if (result.length > 1) {
-        return res.json(500, {error: req.params.id + ' is not unique!'});
+        return res.json(500, {
+          error: req.params.id + ' is not unique!'
+        });
       }
 
       return res.json(result[0]);
@@ -165,10 +175,14 @@ module.exports = function(app) {
         return res.json(500, err);
       }
       if (result.length === 0) {
-        return res.json(500, {error: req.params.id + ' is not found!'});
+        return res.json(500, {
+          error: req.params.id + ' is not found!'
+        });
       }
       if (result.length > 1) {
-        return res.json(500, {error: req.params.id + ' is not unique!'});
+        return res.json(500, {
+          error: req.params.id + ' is not unique!'
+        });
       }
       res.set('Content-Type', 'image/jpeg');
       return res.send(result[0].thumbnailPhoto);
@@ -192,13 +206,61 @@ module.exports = function(app) {
           return res.json(500, JSON.stringify(err));
         }
         if (result.length === 0) {
-          return res.json(500, {error: 'Names starting with ' + query + ' are not found!'});
+          return res.json(500, {
+            error: 'Names starting with ' + query + ' are not found!'
+          });
         }
         return res.json(result);
       });
     } else {
-      return res.json(500, {error: 'query term is required.'});
+      return res.json(500, {
+        error: 'query term is required.'
+      });
     }
   });
 };
 
+function addUser(req, res) {
+  var nameFilter = ad.nameFilter.replace('_name', req.body.name);
+  var opts = {
+    filter: nameFilter,
+    attributes: ad.objAttributes,
+    scope: 'sub'
+  };
+
+  ldapClient.search(ad.searchBase, opts, false, function(err, result) {
+    if (err) {
+      console.err(err.name + ' : ' + err.message);
+      return res.json(500, err);
+    }
+
+    if (result.length === 0) {
+      return res.send(404, req.body.name + ' is not found in AD!');
+    }
+
+    if (result.length > 1) {
+      return res.send(400, req.body.name + ' is not unique!');
+    }
+
+    var user = new User({
+      id: result[0].sAMAccountName,
+      name: result[0].displayName,
+      email: result[0].mail,
+      office: result[0].physicalDeliveryOfficeName,
+      phone: result[0].telephoneNumber,
+      mobile: result[0].mobile
+    });
+
+    user.save(function(err, newUser) {
+      if (err) {
+        console.err(err.msg);
+        return res.send(500, err.msg);
+      }
+
+      var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.id;
+      res.set('Location', url);
+      res.send(303, 'The new user is at ' + url);
+    });
+
+  });
+}

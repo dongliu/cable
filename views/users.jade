@@ -13,6 +13,20 @@ block head
 block content
   .container(style="margin-top: 10px")
     #message
+    form.form-inline(method='post')
+      input#user-name.input-medium(type='text', placeholder='Last, First', name='name')
+      = ' '
+      //- | &nbsp;
+      //- label.checkbox
+      //-   input(type='checkbox')
+      //-   | &nbsp;manage
+      //- | &nbsp;
+      //- label.checkbox
+      //-   input(type='checkbox')
+      //-   | &nbsp;admin
+      //- | &nbsp;
+      button.btn.btn-primary(type='submit') Add
+
     table#users.table.table-bordered.table-hover
 
 block js

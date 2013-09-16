@@ -1,6 +1,38 @@
 $(function() {
   var users = [];
   var nameCache = {};
+
+  $('#user-name').autocomplete({
+    minLength: 1,
+    source: function(req, res) {
+      var term = req.term.toLowerCase();
+      var output = [];
+      var key = term.charAt(0);
+      if (key in nameCache) {
+        for (var i = 0; i < nameCache[key].length; i += 1) {
+          if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
+            output.push(nameCache[key][i]);
+          }
+        }
+        res(output);
+        return;
+      }
+      $.getJSON('/adusernames', req, function(data, status, xhr) {
+        var names = [];
+        for (var i = 0; i < data.length; i += 1) {
+          if (data[i].displayName.indexOf(',') !== -1) {
+            names.push(data[i].displayName);
+          }
+        }
+        nameCache[term] = names;
+        res(names);
+      });
+    },
+    select: function(event, ui) {
+      $('#user-name').val(ui.item.value);
+    }
+  });
+
   var userTable = $('#users').dataTable({
     'aaData': users,
     'bAutoWidth': false,
@@ -36,7 +68,6 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     users = json.map(function(user) {
-      // return [].concat(user.id).concat(user.name).concat(rolesForm(user.roles)).concat(user.lastVisitedOn ? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '');
       return [].concat(user.id).concat(user.name).concat(user.roles.join()).concat(user.lastVisitedOn ? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '');
     });
     userTable.fnClearTable();
@@ -47,41 +78,17 @@ $(function() {
       window.open('/users/' + id);
       e.preventDefault();
     });
-
-    // $('tbody tr button', '#users').click(function(e) {
-    //   var id = userTable.fnGetData($(this).parent().closest('tr')[], 0);
-    //   var roles = $('input:checked', $(this).parent()).val();
-      // var request = $.ajax({
-      //   url: '/users/'+id,
-      //   type: 'PUT',
-      //   async: true,
-      //   data: JSON.stringify({
-      //     roles: roles
-      //   }),
-      //   contentType: 'application/json',
-      //   processData: false,
-      //   dataType: 'json'
-      // }).done(function(json) {
-      //   var timestamp = request.getResponseHeader('Date');
-      //   var dateObj = moment(timestamp);
-      //   $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The modification was saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
-      // }).fail(function(jqXHR, status, error) {
-      //   // TODO change to modal
-      //   alert('The save request failed. You might need to try again or contact the admin.');
-      // }).always(function() {});
-      // e.preventDefault();
-    // });
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
   }).always();
 
 });
 
-function rolesForm(roles) {
-  var form = $('form[name = "roles"]').clone();
-  form.show();
-  for (var i = 0; i < roles.length; i += 1) {
-    $('input[value= "' + roles[i] + '"]', form).attr('checked', 'checked');
-  }
-  return form.html();
-}
+// function rolesForm(roles) {
+//   var form = $('form[name = "roles"]').clone();
+//   form.show();
+//   for (var i = 0; i < roles.length; i += 1) {
+//     $('input[value= "' + roles[i] + '"]', form).attr('checked', 'checked');
+//   }
+//   return form.html();
+// }
