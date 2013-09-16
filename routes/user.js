@@ -85,9 +85,14 @@ module.exports = function(app) {
         console.error(err.msg);
         return res.send(500, err.msg);
       }
+      if (user) {
+
       return res.render('user', {
         user: user
       });
+      } else {
+        return res.send(404, req.params.id + ' not found');
+      }
     });
   });
 
