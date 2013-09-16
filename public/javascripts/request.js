@@ -345,19 +345,21 @@ function sendRequest(data) {
   }).done(function(json) {
     // var location = formRequest.getResponseHeader('Location');
     $('form[name="request"]').fadeTo('slow', 1);
-    if (/^\/requests\/new/.test(path) || data.action === 'clone') {
+    if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
       var timestamp = formRequest.getResponseHeader('Date');
       var dateObj = moment(timestamp);
-      if (data.action == 'save' || data.action == 'adjust') {
+      if (data.action == 'save' || data.action == 'adjust' ) {
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
         initModel = _.cloneDeep(binder.serialize());
-
-
-      } else {
+      } else if ( data.action === 'clone') {
+        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
+        // move the focus to the message
+        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+      }else {
         $('form[name="request"]').hide();
         $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
         if (json && json.location) {
