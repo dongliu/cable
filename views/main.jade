@@ -10,7 +10,7 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  .container
+  .container-fluid
     .btn-toolbar
       .btn-group
         a.btn.btn-primary#new(href='./requests/new', target='_blank') New Request
@@ -37,7 +37,7 @@ block content
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
-    .tabbable#tabs
+    .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
           a(href='#saved', data-toggle='tab') Saved

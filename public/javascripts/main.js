@@ -1,33 +1,133 @@
 $(function() {
   var saved = [];
   var savedTable = $('#saved-table').dataTable({
-    'aaData': saved,
-    'aoColumns': [
-    // {
-    //   'sTitle': 'Created by'
-    // },
-    {
-      'sTitle': 'Created on'
-    }, {
-      'sTitle': 'System'
-    }, {
-      'sTitle': 'Sub system'
-    }, {
-      'sTitle': 'Signal'
-    },
-    // {
-    //   'sTitle': 'Updated by'
-    // },
-    {
-      'sTitle': 'Updated on'
-    }, {
-      'sTitle': 'id',
-      "bVisible": false
-    }],
-    'aaSorting': [
-      [0, 'desc']
+    aaData: saved,
+    aoColumns: [{
+        sTitle: '',
+        mData: '_id',
+        bVisible: false
+      }, {
+        sTitle: 'Created on',
+        mData: formatDate('createdOn')
+      }, {
+        sTitle: 'Updated on',
+        sDefaultContent: '',
+        mData: formatDate('updatedOn')
+      }, {
+        sTitle: 'project',
+        sDefaultContent: '',
+        mData: 'basic.project'
+      }, {
+        sTitle: 'SSS',
+        sDefaultContent: '',
+        mData: function(source, type, val) {
+          return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+        }
+      },
+      // {
+      //   sTitle: 'Sub system',
+      //   sDefaultContent: '',
+      //   mData: 'basic.subsystem'
+      // }, {
+      //   sTitle: 'Signal',
+      //   sDefaultContent: '',
+      //   mData: 'basic.signal'
+      // },
+      {
+        sTitle: 'Cable type',
+        sDefaultContent: '',
+        mData: 'basic.cableType'
+      }, {
+        sTitle: 'Engineer',
+        sDefaultContent: '',
+        mData: 'basic.engineer'
+      }, {
+        sTitle: 'Service',
+        sDefaultContent: '',
+        mData: 'basic.service'
+      }, {
+        sTitle: 'WBS',
+        sDefaultContent: '',
+        mData: 'basic.wbs'
+      }, {
+        sTitle: 'Quantity',
+        sDefaultContent: '',
+        mData: 'basic.quantity'
+      }, {
+        sTitle: 'From building',
+        sDefaultContent: '',
+        mData: 'from.building'
+      }, {
+        sTitle: 'room',
+        sDefaultContent: '',
+        mData: 'from.room'
+      }, {
+        sTitle: 'elevation',
+        sDefaultContent: '',
+        mData: 'from.elevation'
+      }, {
+        sTitle: 'unit',
+        sDefaultContent: '',
+        mData: 'from.unit'
+      }, {
+        sTitle: 'term. device',
+        sDefaultContent: '',
+        mData: 'from.terminationDevice'
+      }, {
+        sTitle: 'term. type',
+        sDefaultContent: '',
+        mData: 'from.terminationType'
+      }, {
+        sTitle: 'wiring drawing',
+        sDefaultContent: '',
+        mData: 'from.wiringDrawing'
+      }, {
+        sTitle: 'lebel',
+        sDefaultContent: '',
+        mData: 'from.label'
+      }, {
+        sTitle: 'To building',
+        sDefaultContent: '',
+        mData: 'to.building'
+      }, {
+        sTitle: 'room',
+        sDefaultContent: '',
+        mData: 'to.room'
+      }, {
+        sTitle: 'elevation',
+        sDefaultContent: '',
+        mData: 'to.elevation'
+      }, {
+        sTitle: 'unit',
+        sDefaultContent: '',
+        mData: 'to.unit'
+      }, {
+        sTitle: 'term. device',
+        sDefaultContent: '',
+        mData: 'to.terminationDevice'
+      }, {
+        sTitle: 'term. type',
+        sDefaultContent: '',
+        mData: 'to.terminationType'
+      }, {
+        sTitle: 'wiring drawing',
+        sDefaultContent: '',
+        mData: 'to.wiringDrawing'
+      }, {
+        sTitle: 'lebel',
+        sDefaultContent: '',
+        mData: 'to.label'
+      }, {
+        sTitle: 'Comments',
+        sDefaultContent: '',
+        mData: 'comments'
+      }
+
     ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    'aaSorting': [
+      [1, 'desc']
+    ],
+    "sDom": "<'row-fluid'<'span6'T>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
       "aButtons": [
@@ -45,26 +145,26 @@ $(function() {
   var submittedTable = $('#submitted-table').dataTable({
     'aaData': submitted,
     'aoColumns': [
-    // {
-    //   'sTitle': 'Submitted by'
-    // },
-    {
-      'sTitle': 'Submitted on'
-    },
-    {
-      'sTitle': 'System'
-    }, {
-      'sTitle': 'Sub system'
-    }, {
-      'sTitle': 'Signal'
-    }, {
-      'sTitle': 'Updated by'
-    }, {
-      'sTitle': 'Updated on'
-    }, {
-      'sTitle': 'id',
-      "bVisible": false
-    }],
+      // {
+      //   'sTitle': 'Submitted by'
+      // },
+      {
+        'sTitle': 'Submitted on'
+      }, {
+        'sTitle': 'System'
+      }, {
+        'sTitle': 'Sub system'
+      }, {
+        'sTitle': 'Signal'
+      }, {
+        'sTitle': 'Updated by'
+      }, {
+        'sTitle': 'Updated on'
+      }, {
+        'sTitle': 'id',
+        "bVisible": false
+      }
+    ],
     'aaSorting': [
       [1, 'desc']
     ],
@@ -87,25 +187,26 @@ $(function() {
   var rejectedTable = $('#rejected-table').dataTable({
     'aaData': rejected,
     'aoColumns': [
-    // {
-    //   'sTitle': 'Submitted by'
-    // },
-    {
-      'sTitle': 'Submitted on'
-    }, {
-      'sTitle': 'System'
-    }, {
-      'sTitle': 'Sub system'
-    }, {
-      'sTitle': 'Signal'
-    }, {
-      'sTitle': 'Rejected by'
-    }, {
-      'sTitle': 'Rejected on'
-    }, {
-      'sTitle': 'id',
-      "bVisible": false
-    }],
+      // {
+      //   'sTitle': 'Submitted by'
+      // },
+      {
+        'sTitle': 'Submitted on'
+      }, {
+        'sTitle': 'System'
+      }, {
+        'sTitle': 'Sub system'
+      }, {
+        'sTitle': 'Signal'
+      }, {
+        'sTitle': 'Rejected by'
+      }, {
+        'sTitle': 'Rejected on'
+      }, {
+        'sTitle': 'id',
+        "bVisible": false
+      }
+    ],
     'aaSorting': [
       [5, 'desc']
     ],
@@ -147,16 +248,17 @@ $(function() {
     });
 
     if (savedJson.length) {
-      saved = savedJson.map(function(request) {
-        if (request.basic) {
-          return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-        }
-        return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-      });
+      // saved = savedJson.map(function(request) {
+      //   if (request.basic) {
+      //     return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+      //   }
+      //   return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+      // });
+      saved = savedJson;
       savedTable.fnClearTable();
       savedTable.fnAddData(saved);
       savedTable.fnDraw();
-      addClick($('#saved-table'), savedTable, 5);
+      // addClick($('#saved-table'), savedTable, 5);
     }
 
     if (submittedJson.length) {
@@ -229,7 +331,7 @@ $(function() {
 
 
     if (approvedJson.length) {
-      approved = approvedJson.map(function(request) {
+      approved = approvedJson.map(function(cable) {
         return [].concat(cable.number).concat(cable.submittedBy).concat(moment(cable.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(cable.approvedBy).concat(moment(cable.approvedOn).format('YYYY-MM-DD HH:mm:ss'));
       });
       approvedTable.fnClearTable();
@@ -256,4 +358,19 @@ function addClick(div, table, position) {
     var id = table.fnGetData(this, position);
     window.open('/requests/' + id);
   });
+}
+
+function formatRequest(requests) {
+  for (var i = 0; i < requests.length; i += 1) {
+    formatDate(requests[i].createdOn);
+    formatDate(requests[i].updatedOn);
+    formatDate(requests[i].submittedOn);
+    formatDate(requests[i].rejectedOn);
+  }
+}
+
+function formatDate(date) {
+  return function(source, type, val) {
+    return source[date] ? moment(source[date]).format('YYYY-MM-DD HH:mm:ss') : '';
+  }
 }
