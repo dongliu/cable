@@ -21,8 +21,8 @@ var request = new Schema({
     rack: String,
     elevation: Number,
     unit: String,
-    ternimationDevice: String,
-    ternimationType: String,
+    terminationDevice: String,
+    terminationType: String,
     wiringDrawing: String,
     label: String
   },
@@ -34,8 +34,8 @@ var request = new Schema({
     rack: String,
     elevation: Number,
     unit: String,
-    ternimationDevice: String,
-    ternimationType: String,
+    terminationDevice: String,
+    terminationType: String,
     wiringDrawing: String,
     label: String
   },
