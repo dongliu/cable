@@ -85,10 +85,10 @@ fieldset
     .control-label Elevation
     .controls
       input#from-elevation(type='text', name='from.elevation', class='type[number]')
-      select.input-mini#from-elevation-unit
+      select.input-mini#from-elevation-unit(type='text', name='from.unit')
         //- option(value='', disabled=true) choose
-        option(value='frib') ft
-        option(value='nscl') m
+        option(value='m') m
+        option(value='ft') ft
   .control-group
     .control-label Termination device
     .controls
@@ -136,10 +136,10 @@ fieldset
     .control-label Elevation
     .controls
       input#to-elevation(type='text', name='to.elevation', class='type[number]')
-      select.input-mini#to-elevation-unit
+      select.input-mini#to-elevation-unit(type='text', name='to.unit')
         //- option(value='', disabled=true) choose
-        option(value='frib') ft
-        option(value='nscl') m
+        option(value='m') m
+        option(value='ft') ft
   .control-group
     .control-label Termination device
     .controls
