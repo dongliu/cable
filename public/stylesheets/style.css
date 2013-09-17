@@ -315,3 +315,5 @@ rect.parent {
 text {
   pointer-events: none;
 }
+
+td { white-space: nowrap; }
