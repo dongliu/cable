@@ -4,8 +4,9 @@ $(function() {
     aaData: saved,
     aoColumns: [{
       sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox"></label>',
-      bSortable: false
+      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+      sSortDataType: 'dom-checkbox'
+      // ,bSortable: false
     }, {
       sTitle: '',
       mData: '_id',
@@ -119,7 +120,7 @@ $(function() {
     'aaSorting': [
       [1, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'T>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
       "aButtons": [
@@ -130,6 +131,14 @@ $(function() {
           "aButtons": ["csv", "xls", "pdf"]
         }
       ]
+    }
+  });
+
+  $('#saved-table tbody').on('click', 'input.select-row', function(e) {
+    if ($(this).prop('checked')) {
+      $(e.target).closest('tr').addClass('row-selected');
+    } else {
+      $(e.target).closest('tr').removeClass('row-selected');
     }
   });
 
@@ -251,6 +260,13 @@ $(function() {
       savedTable.fnAddData(saved);
       savedTable.fnDraw();
       // addClick($('#saved-table'), savedTable, 5);
+      // $('#saved-table input.select-row').change(function(e) {
+      //   if ($(this).prop('checked')) {
+      //     $(e.target).closest('tr').addClass('row-selected');
+      //   } else {
+      //     $(e.target).closest('tr').removeClass('row-selected');
+      //   }
+      // });
     }
 
     if (submittedJson.length) {
@@ -364,5 +380,11 @@ function formatRequest(requests) {
 function formatDate(date) {
   return function(source, type, val) {
     return source[date] ? moment(source[date]).format('YYYY-MM-DD HH:mm:ss') : '';
-  }
+  };
 }
+
+$.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {
+  return $.map(oSettings.oApi._fnGetTrNodes(oSettings), function(tr, i) {
+    return $('td:eq(' + iColumn + ') input', tr).prop('checked') ? '1' : '0';
+  });
+};

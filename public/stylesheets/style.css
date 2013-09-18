@@ -317,3 +317,7 @@ text {
 }
 
 td { white-space: nowrap; }
+
+.row-selected td{
+  background-color: #c09853 !important;
+}
