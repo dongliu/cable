@@ -20,3 +20,13 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
     }
   }
 }
+
+function formatDate(date) {
+  return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
+}
+
+$.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {
+  return $.map(oSettings.oApi._fnGetTrNodes(oSettings), function(tr, i) {
+    return $('td:eq(' + iColumn + ') input', tr).prop('checked') ? '1' : '0';
+  });
+};

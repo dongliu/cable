@@ -13,11 +13,17 @@ $(function() {
       bVisible: false
     }, {
       sTitle: 'Created on',
-      mData: formatDate('createdOn')
+      mData: 'createdOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
     }, {
       sTitle: 'Updated on',
       sDefaultContent: '',
-      mData: formatDate('updatedOn')
+      mData: 'updatedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
     }, {
       sTitle: 'project',
       sDefaultContent: '',
@@ -381,14 +387,4 @@ function formatRequest(requests) {
   }
 }
 
-function formatDate(date) {
-  return function(source, type, val) {
-    return source[date] ? moment(source[date]).format('YYYY-MM-DD HH:mm:ss') : '';
-  };
-}
 
-$.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {
-  return $.map(oSettings.oApi._fnGetTrNodes(oSettings), function(tr, i) {
-    return $('td:eq(' + iColumn + ') input', tr).prop('checked') ? '1' : '0';
-  });
-};
