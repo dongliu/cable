@@ -2,15 +2,18 @@ $(function() {
   var saved = [];
   var savedTable = $('#saved-table').dataTable({
     aaData: saved,
+    bAutoWidth: false,
     aoColumns: [{
       sTitle: '',
       sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
       sSortDataType: 'dom-checkbox'
-      // ,bSortable: false
     }, {
       sTitle: '',
       mData: '_id',
-      bVisible: false
+      mRender: function(data, type, full) {
+        return '<a href="requests/'+data+'" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+      },
+      bSortable: false
     }, {
       sTitle: 'Created on',
       mData: 'createdOn',
@@ -139,7 +142,11 @@ $(function() {
       ]
     }
   });
-
+  var savedTableColumns = {
+    from: [11, 12, 13, 14, 15, 16, 17, 18],
+    to: [19, 20, 21, 22, 23, 24, 25, 26],
+    comments:[27]
+  };
   $('#saved-table tbody').on('click', 'input.select-row', function(e) {
     if ($(this).prop('checked')) {
       $(e.target).closest('tr').addClass('row-selected');
@@ -148,8 +155,14 @@ $(function() {
     }
   });
 
+  $('#saved-show input:checkbox').change(function(e){
+    fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+
+  });
+
   $('#saved-select-none').click(function(e){
     fnDeselect(savedTable, 'row-selected', 'select-row');
+    savedTable.fnAdjustColumnSizing();
   });
 
   var submitted = [];
@@ -259,24 +272,15 @@ $(function() {
     });
 
     if (savedJson.length) {
-      // saved = savedJson.map(function(request) {
-      //   if (request.basic) {
-      //     return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system || '').concat(request.basic.subsystem || '').concat(request.basic.signal || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-      //   }
-      //   return [].concat(moment(request.createdOn).format('YYYY-MM-DD HH:mm:ss')).concat('').concat('').concat('').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-      // });
+
+      $('#saved-show input:checkbox').each(function(i){
+        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
       saved = savedJson;
       savedTable.fnClearTable();
       savedTable.fnAddData(saved);
+
       savedTable.fnDraw();
-      // addClick($('#saved-table'), savedTable, 5);
-      // $('#saved-table input.select-row').change(function(e) {
-      //   if ($(this).prop('checked')) {
-      //     $(e.target).closest('tr').addClass('row-selected');
-      //   } else {
-      //     $(e.target).closest('tr').removeClass('row-selected');
-      //   }
-      // });
     }
 
     if (submittedJson.length) {

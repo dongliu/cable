@@ -7,6 +7,7 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
@@ -53,26 +54,32 @@ block content
         #saved.tab-pane.active
           .btn-toolbar
             .btn-group
-              button.btn.btn-primary#saved-clone Clone
+              button.btn.btn-primary#saved-clone
+                i.icon-copy
+                | &nbsp;Clone
             .btn-group
-              button.btn.btn-warning#saved-delete Delete
+              button.btn.btn-warning#saved-delete
+                i.icon-trash
+                | &nbsp;Delete
             .btn-group
-              button.btn#saved-select-none Clear selection
-            .btn-group
+              button.btn#saved-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            #saved-show.btn-group
               button.btn.dropdown-toggle(data-toggle='dropdown') Show
                 span.caret
               ul.dropdown-menu
                 li
                   label.checkbox
-                    input(type='checkbox')
+                    input#saved-from(type='checkbox', value='from')
                     | from
                 li
                   label.checkbox
-                    input(type='checkbox')
+                    input#saved-to(type='checkbox', value='to')
                     | to
                 li
                   label.checkbox
-                    input(type='checkbox')
+                    input#saved-comments(type='checkbox', value='comments')
                     | comments
                 li.divider
                 li

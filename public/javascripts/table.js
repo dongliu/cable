@@ -21,6 +21,13 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
   }
 }
 
+
+function fnSetColumnsVis(oTableLocal, columns, show) {
+  columns.forEach(function(e, i, a) {
+    oTableLocal.fnSetColumnVis(e, show);
+  });
+}
+
 function formatDate(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
@@ -30,3 +37,4 @@ $.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {
     return $('td:eq(' + iColumn + ') input', tr).prop('checked') ? '1' : '0';
   });
 };
+
