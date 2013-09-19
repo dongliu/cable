@@ -51,12 +51,43 @@ block content
           a(href='#installed', data-toggle='tab') Installed
       .tab-content
         #saved.tab-pane.active
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-primary#saved-clone Clone
+            .btn-group
+              button.btn.btn-warning#saved-delete Delete
+            .btn-group
+              button.btn#saved-select-none Clear selection
+            .btn-group
+              button.btn.dropdown-toggle(data-toggle='dropdown') Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox')
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox')
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox')
+                    | comments
+                li.divider
+                li
+                  a(href='#restore') restore
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           table#submitted-table.table.table-bordered.table-hover
         #approved.tab-pane
           table#approved-table.table.table-bordered.table-hover
         #rejected.tab-pane
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-primary#saved-clone Clone
+            .btn-group
+              button.btn.btn-warning#saved-delete Delete
           table#rejected-table.table.table-bordered.table-hover
         #installed.tab-pane
           p the list of installed cables
@@ -70,6 +101,7 @@ block js
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/lodash.js')
+  script(type='text/javascript', src='/javascripts/table.js')
   script(type='text/javascript', src='/javascripts/main.js')
 
 

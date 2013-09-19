@@ -142,6 +142,10 @@ $(function() {
     }
   });
 
+  $('#saved-select-none').click(function(e){
+    fnDeselect(savedTable, 'row-selected', 'select-row');
+  });
+
   var submitted = [];
   var submittedTable = $('#submitted-table').dataTable({
     'aaData': submitted,

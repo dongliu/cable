@@ -321,3 +321,7 @@ td { white-space: nowrap; }
 .row-selected td{
   background-color: #c09853 !important;
 }
+
+ul.dropdown-menu input[type="checkbox"] {
+  margin-left: 0;
+}
