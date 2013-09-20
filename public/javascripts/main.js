@@ -160,12 +160,31 @@ $(function() {
 
   $('#saved-show input:checkbox').change(function(e){
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-
   });
 
   $('#saved-select-none').click(function(e){
     fnDeselect(savedTable, 'row-selected', 'select-row');
     savedTable.fnAdjustColumnSizing();
+  });
+
+  $('#saved-delete').click(function(e){
+    var selected = fnGetSelected(savedTable, 'row-selected');
+    if (selected.length) {
+      $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
+      $('#modal .modal-body').empty();
+      selected.forEach(function(row){
+        var data = savedTable.fnGetData(row);
+        $('#modal .modal-body').append('<div>'+moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss')+'||'+data.basic.project+'||');
+      });
+      // $('#modal .modal-body').html('test');
+      $('#modal .modal-footer').html('<button class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
   });
 
   var submitted = [];
@@ -373,12 +392,12 @@ $(function() {
 });
 
 
-function addClick(div, table, position) {
-  $('tbody tr', div).click(function(e) {
-    var id = table.fnGetData(this, position);
-    window.open('/requests/' + id);
-  });
-}
+// function addClick(div, table, position) {
+//   $('tbody tr', div).click(function(e) {
+//     var id = table.fnGetData(this, position);
+//     window.open('/requests/' + id);
+//   });
+// }
 
 function formatRequest(requests) {
   for (var i = 0; i < requests.length; i += 1) {
