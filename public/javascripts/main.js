@@ -1,12 +1,19 @@
+var savedTableColumns = {
+    from: [11, 12, 13, 14, 15, 16, 17, 18],
+    to: [19, 20, 21, 22, 23, 24, 25, 26],
+    comments:[27]
+  };
+
 $(function() {
-  var saved = [];
+  // var saved = [];
   var savedTable = $('#saved-table').dataTable({
-    aaData: saved,
+    aaData: [],
     bAutoWidth: false,
     aoColumns: [{
       sTitle: '',
       sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox'
+      sSortDataType: 'dom-checkbox',
+      asSorting: ['desc', 'asc']
     }, {
       sTitle: '',
       mData: '_id',
@@ -20,6 +27,7 @@ $(function() {
       mRender: function(data, type, full) {
         return formatDate(data);
       }
+      // ,asSorting: ['desc']
     }, {
       sTitle: 'Updated on',
       sDefaultContent: '',
@@ -127,7 +135,7 @@ $(function() {
       mData: 'comments'
     }],
     'aaSorting': [
-      [1, 'desc']
+      [2, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -142,11 +150,6 @@ $(function() {
       ]
     }
   });
-  var savedTableColumns = {
-    from: [11, 12, 13, 14, 15, 16, 17, 18],
-    to: [19, 20, 21, 22, 23, 24, 25, 26],
-    comments:[27]
-  };
   $('#saved-table tbody').on('click', 'input.select-row', function(e) {
     if ($(this).prop('checked')) {
       $(e.target).closest('tr').addClass('row-selected');
@@ -249,64 +252,59 @@ $(function() {
     }
   });
 
-  $.ajax({
-    url: '/requests/json',
-    type: 'GET',
-    contentType: 'application/json',
-    dataType: 'json'
-  }).done(function(json) {
-    var savedJson = json.filter(function(request) {
-      return (request.status === 0);
-    });
-    var submittedJson = json.filter(function(request) {
-      return (request.status === 1);
-    });
-    // var approvedJson = json.filter(function(request) {
-    //   return (request.status === 2);
-    // });
-    // approved = json.filter(function(request) {
-    //   return (request.status === 3);
-    // });
-    var rejectedJson = json.filter(function(request) {
-      return (request.status === 3);
-    });
+  initRequests(savedTable, submittedTable, rejectedTable);
+  // $.ajax({
+  //   url: '/requests/json',
+  //   type: 'GET',
+  //   contentType: 'application/json',
+  //   dataType: 'json'
+  // }).done(function(json) {
+  //   var savedJson = json.filter(function(request) {
+  //     return (request.status === 0);
+  //   });
+  //   var submittedJson = json.filter(function(request) {
+  //     return (request.status === 1);
+  //   });
+  //   var rejectedJson = json.filter(function(request) {
+  //     return (request.status === 3);
+  //   });
 
-    if (savedJson.length) {
+  //   if (savedJson.length) {
 
-      $('#saved-show input:checkbox').each(function(i){
-        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
-      saved = savedJson;
-      savedTable.fnClearTable();
-      savedTable.fnAddData(saved);
+  //     $('#saved-show input:checkbox').each(function(i){
+  //       fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+  //     });
+  //     saved = savedJson;
+  //     savedTable.fnClearTable();
+  //     savedTable.fnAddData(saved);
 
-      savedTable.fnDraw();
-    }
+  //     savedTable.fnDraw();
+  //   }
 
-    if (submittedJson.length) {
-      submitted = submittedJson.map(function(request) {
-        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-      });
-      submittedTable.fnClearTable();
-      submittedTable.fnAddData(submitted);
-      submittedTable.fnDraw();
-      addClick($('#submitted-table'), submittedTable, 6);
-    }
+  //   if (submittedJson.length) {
+  //     submitted = submittedJson.map(function(request) {
+  //       return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+  //     });
+  //     submittedTable.fnClearTable();
+  //     submittedTable.fnAddData(submitted);
+  //     submittedTable.fnDraw();
+  //     addClick($('#submitted-table'), submittedTable, 6);
+  //   }
 
-    if (rejectedJson.length) {
-      rejected = rejectedJson.map(function(request) {
-        // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      });
-      rejectedTable.fnClearTable();
-      rejectedTable.fnAddData(rejected);
-      rejectedTable.fnDraw();
-      addClick($('#rejected-table'), rejectedTable, 6);
-    }
-  }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
+  //   if (rejectedJson.length) {
+  //     rejected = rejectedJson.map(function(request) {
+  //       // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+  //       return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+  //     });
+  //     rejectedTable.fnClearTable();
+  //     rejectedTable.fnAddData(rejected);
+  //     rejectedTable.fnDraw();
+  //     addClick($('#rejected-table'), rejectedTable, 6);
+  //   }
+  // }).fail(function(jqXHR, status, error) {
+  //   $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+  //   $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  // }).always();
 
 
   var approved = [];
@@ -391,4 +389,58 @@ function formatRequest(requests) {
   }
 }
 
+function initRequests(savedTable, submittedTable, rejectedTable) {
+  $.ajax({
+    url: '/requests/json',
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'json'
+  }).done(function(json) {
+    var saved = json.filter(function(request) {
+      return (request.status === 0);
+    });
+    var submittedJson = json.filter(function(request) {
+      return (request.status === 1);
+    });
+    var rejectedJson = json.filter(function(request) {
+      return (request.status === 3);
+    });
+
+    if (saved.length) {
+
+      $('#saved-show input:checkbox').each(function(i){
+        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      // saved = savedJson;
+      savedTable.fnClearTable();
+      savedTable.fnAddData(saved);
+
+      savedTable.fnDraw();
+    }
+
+    if (submittedJson.length) {
+      submitted = submittedJson.map(function(request) {
+        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+      });
+      submittedTable.fnClearTable();
+      submittedTable.fnAddData(submitted);
+      submittedTable.fnDraw();
+      addClick($('#submitted-table'), submittedTable, 6);
+    }
+
+    if (rejectedJson.length) {
+      rejected = rejectedJson.map(function(request) {
+        // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+      });
+      rejectedTable.fnClearTable();
+      rejectedTable.fnAddData(rejected);
+      rejectedTable.fnDraw();
+      addClick($('#rejected-table'), rejectedTable, 6);
+    }
+  }).fail(function(jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  }).always();
+}
 
