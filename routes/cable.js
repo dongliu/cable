@@ -131,6 +131,33 @@ module.exports = function(app) {
     });
   });
 
+  app.delete('/requests/:id', auth.ensureAuthenticated, function(req, res) {
+    Request.findById(req.params.id).exec(function(err, request){
+      if(err) {
+        console.error(err.msg);
+        return res.send(500, err.msg);
+      }
+      if (request) {
+        if (req.session.userid !== request.createdBy) {
+          return res.send(403, 'current user is not allowed to delete this resource');
+        }
+        if (request.status !== 0 || request.status !== 3) {
+          return res.send(400, 'this resource is not allowed to be deleted');
+        }
+        request.remove(function(err) {
+          if (err) {
+            console.error(err.msg);
+            return res.send(500, err.msg);
+          }
+          return res.send(200, 'deleted');
+        });
+      } else {
+        return res.send(410, 'already gone');
+      }
+
+    });
+  });
+
   app.get('/requests/:id/json', auth.ensureAuthenticated, function(req, res) {
     Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
       if (err) {

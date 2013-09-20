@@ -38,6 +38,14 @@ block content
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
+    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
+      .modal-header
+        //- button.close(type='button',data-dismiss='modal',aria-hidden='true') x
+        h3#modalLable
+      .modal-body
+      .modal-footer
+        button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
+        //- button.btn.btn(onclick='',aria-hidden='true') Close the window
     .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
@@ -66,7 +74,9 @@ block content
                 i.icon-list.icon-light
                 | &nbsp;Clear selection
             #saved-show.btn-group
-              button.btn.dropdown-toggle(data-toggle='dropdown') Show
+              button.btn.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
                 span.caret
               ul.dropdown-menu
                 li
@@ -81,9 +91,9 @@ block content
                   label.checkbox
                     input#saved-comments(type='checkbox', value='comments')
                     | comments
-                li.divider
-                li
-                  a(href='#restore') restore
+                //- li.divider
+                //- li
+                //-   a(href='#restore') restore
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           table#submitted-table.table.table-bordered.table-hover

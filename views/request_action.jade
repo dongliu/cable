@@ -1,23 +1,23 @@
 .form-actions
-  .btn-group(style='display: none;')
+  .btn-group.hide
     button.btn.btn-info#save(type='button') Save changes
-  .btn-group(style='display: none;')
+  .btn-group.hide
     button.btn.btn-primary#submit(type='submit') Submit
-  .btn-group(style='display: none;')
+  .btn-group.hide
     button.btn.btn-warning#reset(type='button') Reset
   if (roles.length && roles.indexOf('adjust') != -1)
-    .btn-group(style='display: none;')
+    .btn-group.hide
       button.btn.btn-info#adjust(type='button') Save adjustment
   if (roles.length && (roles.indexOf('approve') != -1 || roles.indexOf('adjust') != -1))
-    .btn-group(style='display: none;')
+    .btn-group.hide
       button.btn.btn-warning#reject(type='button') Reject
   //- if (roles.length && roles.indexOf('adjust') != -1)
-  //-   .btn-group(style='display: none;')
+  //-   .btn-group.hide
   //-     button.btn.btn-info#request(type='submit') Request approval
   if (roles.length && roles.indexOf('approve') != -1)
-    .btn-group(style='display: none;')
+    .btn-group.hide
       button.btn.btn-primary#approve(type='submit') Approve
-  .btn-group(style='display: none;')
+  .btn-group.hide
     button.btn.btn-warning#reset(type='reset') Reset
   if (typeof id !== 'undefined')
     .btn-group
