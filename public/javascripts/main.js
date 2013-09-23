@@ -4,10 +4,13 @@ var savedTableColumns = {
   comments: [27]
 };
 
+var submittedTableColumns = savedTableColumns;
+
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
-  // var saved = [];
+
+  /*saved tab starts*/
   savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
@@ -152,13 +155,14 @@ $(function() {
       ]
     }
   });
-  $('#saved-table tbody').on('click', 'input.select-row', function(e) {
-    if ($(this).prop('checked')) {
-      $(e.target).closest('tr').addClass('row-selected');
-    } else {
-      $(e.target).closest('tr').removeClass('row-selected');
-    }
-  });
+
+  // $('#saved-table tbody').on('click', 'input.select-row', function(e) {
+  //   if ($(this).prop('checked')) {
+  //     $(e.target).closest('tr').addClass('row-selected');
+  //   } else {
+  //     $(e.target).closest('tr').removeClass('row-selected');
+  //   }
+  // });
 
   $('#saved-show input:checkbox').change(function(e) {
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
@@ -190,72 +194,178 @@ $(function() {
   });
 
   $('#saved-clone').click(function(e) {
-    var selected = fnGetSelected(savedTable, 'row-selected');
-    if (selected.length) {
-      $('#saved-clone').prop('disabled', true);
-      var selectedData = selected.map(function(row) {
-        return savedTable.fnGetData(row);
-      });
-      var data = {
-        requests: selectedData,
-        action: 'clone'
-      };
-      $.ajax({
-        url: '/requests',
-        type: 'POST',
-        async: true,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        processData: false
-      }).done(function(data) {
-        initRequests(savedTable, submittedTable, rejectedTable);
-        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
-        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    cloneInTable(savedTable, '#save-clone');
+    // var selected = fnGetSelected(savedTable, 'row-selected');
+    // if (selected.length) {
+    //   $('#saved-clone').prop('disabled', true);
+    //   var selectedData = selected.map(function(row) {
+    //     return savedTable.fnGetData(row);
+    //   });
+    //   var data = {
+    //     requests: selectedData,
+    //     action: 'clone'
+    //   };
+    //   $.ajax({
+    //     url: '/requests',
+    //     type: 'POST',
+    //     async: true,
+    //     data: JSON.stringify(data),
+    //     contentType: 'application/json',
+    //     processData: false
+    //   }).done(function(data) {
+    //     initRequests(savedTable, submittedTable, rejectedTable);
+    //     $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+    //     $(window).scrollTop($('#message div:last-child').offset().top - 40);
 
-      })
-        .fail(function(jqXHR, status, error) {
-          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
-        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    //   })
+    //     .fail(function(jqXHR, status, error) {
+    //       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
+    //       $(window).scrollTop($('#message div:last-child').offset().top - 40);
 
-        })
-        .always();
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+    //     })
+    //     .always();
+    // } else {
+    //   $('#modalLable').html('Alert');
+    //   $('#modal .modal-body').html('No request has been selected!');
+    //   $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    //   $('#modal').modal('show');
+    // }
   });
+  /*saved tab ends*/
 
-
-  var submitted = [];
+  /*submitted tab starts*/
   submittedTable = $('#submitted-table').dataTable({
-    'aaData': submitted,
-    'aoColumns': [
-      // {
-      //   'sTitle': 'Submitted by'
-      // },
-      {
-        'sTitle': 'Submitted on'
-      }, {
-        'sTitle': 'System'
-      }, {
-        'sTitle': 'Sub system'
-      }, {
-        'sTitle': 'Signal'
-      }, {
-        'sTitle': 'Updated by'
-      }, {
-        'sTitle': 'Updated on'
-      }, {
-        'sTitle': 'id',
-        "bVisible": false
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: [{
+      sTitle: '',
+      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+      sSortDataType: 'dom-checkbox',
+      asSorting: ['desc', 'asc']
+    }, {
+      sTitle: '',
+      mData: '_id',
+      mRender: function(data, type, full) {
+        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+      },
+      bSortable: false
+    }, {
+      sTitle: 'Created on',
+      mData: 'createdOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
       }
-    ],
+      // ,asSorting: ['desc']
+    }, {
+      sTitle: 'Updated on',
+      sDefaultContent: '',
+      mData: 'updatedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
+      sTitle: 'project',
+      sDefaultContent: '',
+      mData: 'basic.project'
+    }, {
+      sTitle: 'SSS',
+      sDefaultContent: '',
+      mData: function(source, type, val) {
+        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+      }
+    }, {
+      sTitle: 'Cable type',
+      sDefaultContent: '',
+      mData: 'basic.cableType'
+    }, {
+      sTitle: 'Engineer',
+      sDefaultContent: '',
+      mData: 'basic.engineer'
+    }, {
+      sTitle: 'Service',
+      sDefaultContent: '',
+      mData: 'basic.service'
+    }, {
+      sTitle: 'WBS',
+      sDefaultContent: '',
+      mData: 'basic.wbs'
+    }, {
+      sTitle: 'Quantity',
+      sDefaultContent: '',
+      mData: 'basic.quantity'
+    }, {
+      sTitle: 'From building',
+      sDefaultContent: '',
+      mData: 'from.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'from.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'from.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'from.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'from.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'from.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'from.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'from.label'
+    }, {
+      sTitle: 'To building',
+      sDefaultContent: '',
+      mData: 'to.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'to.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'to.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'to.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'to.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'to.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'to.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'to.label'
+    }, {
+      sTitle: 'Comments',
+      sDefaultContent: '',
+      mData: 'comments'
+    }],
     'aaSorting': [
-      [1, 'desc']
+      [2, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
       "aButtons": [
@@ -268,6 +378,22 @@ $(function() {
       ]
     }
   });
+
+  $('#submitted-clone').click(function(e){
+    cloneInTable(submittedTable, '#submitted-clone');
+  });
+
+  $('#submitted-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#submitted-select-none').click(function(e) {
+    fnDeselect(submittedTable, 'row-selected', 'select-row');
+    submittedTable.fnAdjustColumnSizing();
+  });
+
+
+  /*submitted tab ends*/
 
 
   var rejected = [];
@@ -375,8 +501,14 @@ $(function() {
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 
-
-
+  /*all tabs*/
+  $('tbody').on('click', 'input.select-row', function(e) {
+    if ($(this).prop('checked')) {
+      $(e.target).closest('tr').addClass('row-selected');
+    } else {
+      $(e.target).closest('tr').removeClass('row-selected');
+    }
+  });
 });
 
 
@@ -406,10 +538,10 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
     var saved = json.filter(function(request) {
       return (request.status === 0);
     });
-    var submittedJson = json.filter(function(request) {
+    var submitted = json.filter(function(request) {
       return (request.status === 1);
     });
-    var rejectedJson = json.filter(function(request) {
+    var rejected = json.filter(function(request) {
       return (request.status === 3);
     });
 
@@ -418,32 +550,30 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
       $('#saved-show input:checkbox').each(function(i) {
         fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
       });
-      // saved = savedJson;
       savedTable.fnClearTable();
       savedTable.fnAddData(saved);
 
       savedTable.fnDraw();
     }
 
-    if (submittedJson.length) {
-      submitted = submittedJson.map(function(request) {
-        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
+    if (submitted.length) {
+      $('#submitted-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       submittedTable.fnDraw();
-      addClick($('#submitted-table'), submittedTable, 6);
     }
 
-    if (rejectedJson.length) {
-      rejected = rejectedJson.map(function(request) {
-        // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-        return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      });
-      rejectedTable.fnClearTable();
-      rejectedTable.fnAddData(rejected);
-      rejectedTable.fnDraw();
-      addClick($('#rejected-table'), rejectedTable, 6);
+    if (rejected.length) {
+      // rejected = rejectedJson.map(function(request) {
+      //   // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+      //   return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
+      // });
+      // rejectedTable.fnClearTable();
+      // rejectedTable.fnAddData(rejected);
+      // rejectedTable.fnDraw();
+      // addClick($('#rejected-table'), rejectedTable, 6);
     }
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
@@ -477,4 +607,43 @@ function deleteFromModal() {
         }
       });
   });
+}
+
+
+function cloneInTable(table, button){
+  var selected = fnGetSelected(table, 'row-selected');
+    if (selected.length) {
+      $(button).prop('disabled', true);
+      var selectedData = selected.map(function(row) {
+        return table.fnGetData(row);
+      });
+      var data = {
+        requests: selectedData,
+        action: 'clone'
+      };
+      $.ajax({
+        url: '/requests',
+        type: 'POST',
+        async: true,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        processData: false
+      }).done(function(data) {
+        initRequests(savedTable, submittedTable, rejectedTable);
+        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+
+      })
+        .fail(function(jqXHR, status, error) {
+          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
+          $(window).scrollTop($('#message div:last-child').offset().top - 40);
+
+        })
+        .always();
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
 }

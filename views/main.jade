@@ -40,12 +40,9 @@ block content
     #message
     #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
       .modal-header
-        //- button.close(type='button',data-dismiss='modal',aria-hidden='true') x
         h3#modalLable
       .modal-body
       .modal-footer
-        //- button.btn(data-dismiss='modal',aria-hidden='true') Return
-        //- button.btn.btn(onclick='',aria-hidden='true') Close the window
     .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
@@ -96,6 +93,36 @@ block content
                 //-   a(href='#restore') restore
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-primary#submitted-clone
+                i.icon-copy
+                | &nbsp;Clone
+            .btn-group
+              button.btn#submitted-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            #submitted-show.btn-group
+              button.btn.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+                //- li.divider
+                //- li
+                //-   a(href='#restore') restore
           table#submitted-table.table.table-bordered.table-hover
         #approved.tab-pane
           table#approved-table.table.table-bordered.table-hover
