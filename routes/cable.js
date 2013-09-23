@@ -6,6 +6,8 @@ var Request = mongoose.model('Request');
 var Cable = mongoose.model('Cable');
 var User = mongoose.model('User');
 
+var util = require('util');
+
 var auth = require('../lib/auth');
 
 
@@ -63,61 +65,77 @@ module.exports = function(app) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
-    // console.dir(req.body);
+    var request = {};
+    if (req.body.requests) {
+      // console.log(req.body.requests);
+      if (!util.isArray(req.body.requests)) {
+        res.send(400, 'requests should be an array');
+      } else {
+        var requests = [];
+        for (var i = 0; i < req.body.requests.length; i += 1) {
+          // request = new Request(req.body.request);
+          request.basic = req.body.requests[i].basic;
+          request.from = req.body.requests[i].from;
+          request.to = req.body.requests[i].to;
 
+          if (req.body.action === 'clone') {
+            request.basic.quantity = 1;
+          }
 
-    var request = new Request(req.body.request);
+          request.createdBy = req.session.userid;
+          request.createdOn = Date.now();
+          request.status = 0;
 
-    if (req.body.action === 'clone') {
-      request.basic.quantity = 1;
-    }
+          if (req.body.action === 'submit') {
+            request.submittedBy = req.session.userid;
+            request.submittedOn = request.createdOn;
+            request.status = 1;
+          }
 
-
-    // if (req.body.action === 'clone') {
-    //   if (!req.body.hasOwnProperty('copyFrom')){
-    //     return res.send(400, 'need the request id');
-    //   }
-    //   Request.findById(req.body.copyFrom).lean().exec(function(err, cableRequest){
-    //     if (err) {
-    //       console.erroe(err.msg);
-    //       return res.send(500, 'cannot find the original request to clone');
-    //     } else {
-    //       request = new Request();
-    //       request.basic = cableRequest.basic;
-    //       request.from = cableRequest.from;
-    //       request.to = cableRequest.to;
-    //       request.comments = cableRequest.comments;
-    //       // request.createdBy = req.session.userid;
-    //       // request.createdOn = Date.now();
-    //       // request.status = 0;
-    //     }
-    //   });
-    // } else {
-    //   request = new Request(req.body.request);
-    // }
-    // set new request attribute
-
-    request.createdBy = req.session.userid;
-    request.createdOn = Date.now();
-    request.status = 0;
-
-    if (req.body.action === 'submit') {
-      request.submittedBy = req.session.userid;
-      request.submittedOn = request.createdOn;
-      request.status = 1;
-    }
-    // console.log(request.inspect());
-    request.save(function(err, cableRequest) {
-      if (err) {
-        console.error(err.msg);
-        return res.send(500, 'something is wrong.');
+          requests.push(request);
+        }
+        Request.create(requests, function(err) {
+          if (err) {
+            console.err(err.msg);
+            res.send(500, err.msg);
+          } else {
+            res.send(201, '' + (arguments.length-1) + ' requests created');
+          }
+        });
       }
-      var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
-      res.set('Location', url);
-      res.json(201, {
-        location: '/requests/' + cableRequest.id
+
+    } else if (req.body.request && !util.isArray(req.body.request)) {
+      request = new Request(req.body.request);
+
+      if (req.body.action === 'clone') {
+        request.basic.quantity = 1;
+      }
+
+      request.createdBy = req.session.userid;
+      request.createdOn = Date.now();
+      request.status = 0;
+
+      if (req.body.action === 'submit') {
+        request.submittedBy = req.session.userid;
+        request.submittedOn = request.createdOn;
+        request.status = 1;
+      }
+      // console.log(request.inspect());
+      request.save(function(err, cableRequest) {
+        if (err) {
+          console.error(err.msg);
+          return res.send(500, 'something is wrong.');
+        }
+        var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+        res.set('Location', url);
+        res.json(201, {
+          location: '/requests/' + cableRequest.id
+        });
       });
-    });
+    } else {
+      res.send(400, 'need request description');
+    }
+
   });
 
   // get the request details
@@ -132,8 +150,8 @@ module.exports = function(app) {
   });
 
   app.delete('/requests/:id', auth.ensureAuthenticated, function(req, res) {
-    Request.findById(req.params.id).exec(function(err, request){
-      if(err) {
+    Request.findById(req.params.id).exec(function(err, request) {
+      if (err) {
         console.error(err.msg);
         return res.send(500, err.msg);
       }

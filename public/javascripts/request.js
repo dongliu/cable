@@ -244,18 +244,20 @@ $(function() {
       }
       // show action buttons
 
-      if (!json.hasOwnProperty('submittedBy')) {
-        $('#save').closest('.btn-group').show();
-        $('#submit').closest('.btn-group').show();
-        $('#reset').closest('.btn-group').show();
-      } else if (!json.hasOwnProperty('rejectedBy') && !json.hasOwnProperty('approvedBy')) {
-        $('#adjust').closest('.btn-group').show();
-        $('#reject').closest('.btn-group').show();
-        $('#approve').closest('.btn-group').show();
+      if (json.status === 0) {
+        $('#save').closest('.btn-group').removeClass('hide');
+        $('#submit').closest('.btn-group').removeClass('hide');
+        $('#reset').closest('.btn-group').removeClass('hide');
       }
 
-      if (json.hasOwnProperty('rejectedBy')) {
-        $('.form-actions').hide();
+      if (json.status === 1) {
+        $('#adjust').closest('.btn-group').removeClass('hide');
+        $('#reject').closest('.btn-group').removeClass('hide');
+        $('#approve').closest('.btn-group').removeClass('hide');
+      }
+
+      if (json.status === 3) {
+        // $('.form-actions').hide();
       }
 
     }).fail(function(jqXHR, status, error) {
@@ -268,7 +270,8 @@ $(function() {
     // validator.form();
     initModel = _.cloneDeep(binder.serialize());
 
-    $('#save').closest('.btn-group').show();
+    // $('#save').closest('.btn-group').show();
+    $('#save').closest('.btn-group').removeClass('hide');
     $('#submit').closest('.btn-group').show();
     $('#reset').closest('.btn-group').show();
   }
@@ -351,12 +354,12 @@ function sendRequest(data) {
       var timestamp = formRequest.getResponseHeader('Date');
       var dateObj = moment(timestamp);
       if (data.action == 'save' || data.action == 'adjust' ) {
-        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
+        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
         initModel = _.cloneDeep(binder.serialize());
       } else if ( data.action === 'clone') {
-        $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
+        $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
       }else {

@@ -189,6 +189,45 @@ $(function() {
     }
   });
 
+  $('#saved-clone').click(function(e) {
+    var selected = fnGetSelected(savedTable, 'row-selected');
+    if (selected.length) {
+      $('#saved-clone').prop('disabled', true);
+      var selectedData = selected.map(function(row) {
+        return savedTable.fnGetData(row);
+      });
+      var data = {
+        requests: selectedData,
+        action: 'clone'
+      };
+      $.ajax({
+        url: '/requests',
+        type: 'POST',
+        async: true,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        processData: false
+      }).done(function(data) {
+        initRequests(savedTable, submittedTable, rejectedTable);
+        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+
+      })
+        .fail(function(jqXHR, status, error) {
+          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
+        $(window).scrollTop($('#message div:last-child').offset().top - 40);
+
+        })
+        .always();
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
+  });
+
+
   var submitted = [];
   submittedTable = $('#submitted-table').dataTable({
     'aaData': submitted,
@@ -332,7 +371,7 @@ $(function() {
     }
 
   }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 
@@ -407,7 +446,7 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
       addClick($('#rejected-table'), rejectedTable, 6);
     }
   }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 }
