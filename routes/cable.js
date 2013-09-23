@@ -141,7 +141,7 @@ module.exports = function(app) {
         if (req.session.userid !== request.createdBy) {
           return res.send(403, 'current user is not allowed to delete this resource');
         }
-        if (request.status !== 0 || request.status !== 3) {
+        if (request.status === 1 || request.status === 2) {
           return res.send(400, 'this resource is not allowed to be deleted');
         }
         request.remove(function(err) {

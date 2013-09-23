@@ -1,12 +1,14 @@
 var savedTableColumns = {
-    from: [11, 12, 13, 14, 15, 16, 17, 18],
-    to: [19, 20, 21, 22, 23, 24, 25, 26],
-    comments:[27]
-  };
+  from: [11, 12, 13, 14, 15, 16, 17, 18],
+  to: [19, 20, 21, 22, 23, 24, 25, 26],
+  comments: [27]
+};
+
+var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
   // var saved = [];
-  var savedTable = $('#saved-table').dataTable({
+  savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: [{
@@ -18,7 +20,7 @@ $(function() {
       sTitle: '',
       mData: '_id',
       mRender: function(data, type, full) {
-        return '<a href="requests/'+data+'" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
       },
       bSortable: false
     }, {
@@ -158,26 +160,26 @@ $(function() {
     }
   });
 
-  $('#saved-show input:checkbox').change(function(e){
+  $('#saved-show input:checkbox').change(function(e) {
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#saved-select-none').click(function(e){
+  $('#saved-select-none').click(function(e) {
     fnDeselect(savedTable, 'row-selected', 'select-row');
     savedTable.fnAdjustColumnSizing();
   });
 
-  $('#saved-delete').click(function(e){
+  $('#saved-delete').click(function(e) {
     var selected = fnGetSelected(savedTable, 'row-selected');
     if (selected.length) {
       $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
       $('#modal .modal-body').empty();
-      selected.forEach(function(row){
+      selected.forEach(function(row) {
         var data = savedTable.fnGetData(row);
-        $('#modal .modal-body').append('<div>'+moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss')+'||'+data.basic.project+'||');
+        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       });
       // $('#modal .modal-body').html('test');
-      $('#modal .modal-footer').html('<button class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
       $('#modal').modal('show');
     } else {
       $('#modalLable').html('Alert');
@@ -188,7 +190,7 @@ $(function() {
   });
 
   var submitted = [];
-  var submittedTable = $('#submitted-table').dataTable({
+  submittedTable = $('#submitted-table').dataTable({
     'aaData': submitted,
     'aoColumns': [
       // {
@@ -230,7 +232,7 @@ $(function() {
 
 
   var rejected = [];
-  var rejectedTable = $('#rejected-table').dataTable({
+  rejectedTable = $('#rejected-table').dataTable({
     'aaData': rejected,
     'aoColumns': [
       // {
@@ -272,62 +274,9 @@ $(function() {
   });
 
   initRequests(savedTable, submittedTable, rejectedTable);
-  // $.ajax({
-  //   url: '/requests/json',
-  //   type: 'GET',
-  //   contentType: 'application/json',
-  //   dataType: 'json'
-  // }).done(function(json) {
-  //   var savedJson = json.filter(function(request) {
-  //     return (request.status === 0);
-  //   });
-  //   var submittedJson = json.filter(function(request) {
-  //     return (request.status === 1);
-  //   });
-  //   var rejectedJson = json.filter(function(request) {
-  //     return (request.status === 3);
-  //   });
-
-  //   if (savedJson.length) {
-
-  //     $('#saved-show input:checkbox').each(function(i){
-  //       fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-  //     });
-  //     saved = savedJson;
-  //     savedTable.fnClearTable();
-  //     savedTable.fnAddData(saved);
-
-  //     savedTable.fnDraw();
-  //   }
-
-  //   if (submittedJson.length) {
-  //     submitted = submittedJson.map(function(request) {
-  //       return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.updatedBy || '').concat(request.updatedOn ? moment(request.updatedOn).format('YYYY-MM-DD HH:mm:ss') : '').concat(request._id);
-  //     });
-  //     submittedTable.fnClearTable();
-  //     submittedTable.fnAddData(submitted);
-  //     submittedTable.fnDraw();
-  //     addClick($('#submitted-table'), submittedTable, 6);
-  //   }
-
-  //   if (rejectedJson.length) {
-  //     rejected = rejectedJson.map(function(request) {
-  //       // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-  //       return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-  //     });
-  //     rejectedTable.fnClearTable();
-  //     rejectedTable.fnAddData(rejected);
-  //     rejectedTable.fnDraw();
-  //     addClick($('#rejected-table'), rejectedTable, 6);
-  //   }
-  // }).fail(function(jqXHR, status, error) {
-  //   $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-  //   $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  // }).always();
-
 
   var approved = [];
-  var approvedTable = $('#approved-table').dataTable({
+  approvedTable = $('#approved-table').dataTable({
     'aaData': approved,
     'aoColumns': [{
       'sTitle': 'Number'
@@ -427,7 +376,7 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
 
     if (saved.length) {
 
-      $('#saved-show input:checkbox').each(function(i){
+      $('#saved-show input:checkbox').each(function(i) {
         fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       // saved = savedJson;
@@ -463,3 +412,30 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
   }).always();
 }
 
+function deleteFromModal() {
+  $('#delete').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + this.id,
+      type: 'Delete',
+      // contentType: 'application/json',
+      // dataType: 'json'
+    }).done(function() {
+      $(that).wrap('<del></del>');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).append(' : ' + jqXHR.reponseText);
+        // if (jqXHR.statusCode() === 410) {
+        //   $('#'+item.id).append(' : ' + jqXHR.reponseText);
+        // }
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          initRequests(savedTable, submittedTable, rejectedTable);
+        }
+      });
+  });
+}
