@@ -11,7 +11,7 @@ var request = new Schema({
     engineer: String,
     service: String,
     wbs: String,
-    quantity: Number
+    quantity: {type: Number, min: 1}
   },
 
   from: {
