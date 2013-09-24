@@ -4,7 +4,11 @@ var savedTableColumns = {
   comments: [27]
 };
 
-var submittedTableColumns = savedTableColumns;
+var submittedTableColumns = {
+  from: [12, 13, 14, 15, 16, 17, 18, 19],
+  to: [20, 21, 22, 23, 24, 25, 26, 27],
+  comments: [28]
+};
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
@@ -164,6 +168,16 @@ $(function() {
   //   }
   // });
 
+  $('#saved-wrap').click(function(e){
+    $('#saved-table td').removeClass('nowrap');
+    savedTable.fnAdjustColumnSizing();
+  });
+
+  $('#saved-unwrap').click(function(e){
+    $('#saved-table td').addClass('nowrap');
+    savedTable.fnAdjustColumnSizing();
+  });
+
   $('#saved-show input:checkbox').change(function(e) {
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
@@ -202,12 +216,17 @@ $(function() {
       selected.forEach(function(row) {
         var data = savedTable.fnGetData(row);
         $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-        requests[data._id] = {basic: data.basic, from: data.from, to: data.to, comments: data.comments};
+        requests[data._id] = {
+          basic: data.basic,
+          from: data.from,
+          to: data.to,
+          comments: data.comments
+        };
       });
       // $('#modal .modal-body').html('test');
       $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
       $('#modal').modal('show');
-      $('#submit').click(function(e){
+      $('#submit').click(function(e) {
         submitFromModal(requests);
       });
     } else {
@@ -240,12 +259,17 @@ $(function() {
       },
       bSortable: false
     }, {
+      sTitle: 'Submitted on',
+      mData: 'submittedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
       sTitle: 'Created on',
       mData: 'createdOn',
       mRender: function(data, type, full) {
         return formatDate(data);
       }
-      // ,asSorting: ['desc']
     }, {
       sTitle: 'Updated on',
       sDefaultContent: '',
@@ -369,7 +393,17 @@ $(function() {
     }
   });
 
-  $('#submitted-clone').click(function(e){
+  $('#submitted-wrap').click(function(e){
+    $('#submitted-table td').removeClass('nowrap');
+    submittedTable.fnAdjustColumnSizing();
+  });
+
+  $('#submitted-unwrap').click(function(e){
+    $('#submitted-table td').addClass('nowrap');
+    submittedTable.fnAdjustColumnSizing();
+  });
+
+  $('#submitted-clone').click(function(e) {
     cloneInTable(submittedTable, '#submitted-clone');
   });
 
@@ -611,7 +645,10 @@ function submitFromModal(requests) {
       url: '/requests/' + that.id,
       type: 'PUT',
       contentType: 'application/json',
-      data: JSON.stringify({action: 'submit', request: requests[that.id]}),
+      data: JSON.stringify({
+        action: 'submit',
+        request: requests[that.id]
+      }),
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
@@ -634,40 +671,40 @@ function submitFromModal(requests) {
 }
 
 
-function cloneInTable(table, button){
+function cloneInTable(table, button) {
   var selected = fnGetSelected(table, 'row-selected');
-    if (selected.length) {
-      $(button).prop('disabled', true);
-      var selectedData = selected.map(function(row) {
-        return table.fnGetData(row);
-      });
-      var data = {
-        requests: selectedData,
-        action: 'clone'
-      };
-      $.ajax({
-        url: '/requests',
-        type: 'POST',
-        async: true,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        processData: false
-      }).done(function(data) {
-        initRequests(savedTable, submittedTable, rejectedTable);
-        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+  if (selected.length) {
+    $(button).prop('disabled', true);
+    var selectedData = selected.map(function(row) {
+      return table.fnGetData(row);
+    });
+    var data = {
+      requests: selectedData,
+      action: 'clone'
+    };
+    $.ajax({
+      url: '/requests',
+      type: 'POST',
+      async: true,
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      processData: false
+    }).done(function(data) {
+      initRequests(savedTable, submittedTable, rejectedTable);
+      $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+      $(window).scrollTop($('#message div:last-child').offset().top - 40);
+
+    })
+      .fail(function(jqXHR, status, error) {
+        $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
 
       })
-        .fail(function(jqXHR, status, error) {
-          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
-          $(window).scrollTop($('#message div:last-child').offset().top - 40);
-
-        })
-        .always();
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+      .always();
+  } else {
+    $('#modalLable').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
 }

@@ -316,7 +316,7 @@ text {
   pointer-events: none;
 }
 
-.nowarp td { white-space: nowrap; }
+.nowrap { white-space: nowrap; text-overflow: ellipsis; overflow:hidden;}
 
 .row-selected td{
   background-color: #c09853 !important;

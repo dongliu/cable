@@ -259,7 +259,6 @@ $(function() {
       if (json.status === 3) {
         // $('.form-actions').hide();
       }
-
     }).fail(function(jqXHR, status, error) {
       alert('Cannot find the saved request.');
     }).always(function() {
@@ -316,7 +315,7 @@ $(function() {
       }
     }
 
-    if (action == 'clone') {
+    if (action == 'clone' || action == 'reject') {
       sendRequest(data);
     }
 

@@ -74,6 +74,10 @@ block content
               button.btn.btn-info#saved-select-none
                 i.icon-list.icon-light
                 | &nbsp;Clear selection
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#saved-wrap.active Wrap
+              button.btn.btn-info#saved-unwrap Unwrap
+
             #saved-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
                 i.icon-wrench
@@ -82,20 +86,20 @@ block content
               ul.dropdown-menu
                 li
                   label.checkbox
-                    input#saved-from(type='checkbox', value='from')
+                    input#saved-from(type='checkbox', value='from', checked)
                     | from
                 li
                   label.checkbox
-                    input#saved-to(type='checkbox', value='to')
+                    input#saved-to(type='checkbox', value='to', checked)
                     | to
                 li
                   label.checkbox
-                    input#saved-comments(type='checkbox', value='comments')
+                    input#saved-comments(type='checkbox', value='comments', checked)
                     | comments
                 //- li.divider
                 //- li
                 //-   a(href='#restore') restore
-          table#saved-table.table.table-bordered.table-hover.nowrap
+          table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           .btn-toolbar
             .btn-group
@@ -103,11 +107,14 @@ block content
                 i.icon-copy
                 | &nbsp;Clone
             .btn-group
-              button.btn#submitted-select-none
+              button.btn.btn-info#submitted-select-none
                 i.icon-list.icon-light
                 | &nbsp;Clear selection
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#submitted-wrap.active Wrap
+              button.btn.btn-info#submitted-unwrap Unwrap
             #submitted-show.btn-group
-              button.btn.dropdown-toggle(data-toggle='dropdown')
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
                 i.icon-wrench
                 | &nbsp;Show
                 span.caret
