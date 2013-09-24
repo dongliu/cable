@@ -193,43 +193,33 @@ $(function() {
     }
   });
 
+  $('#saved-submit').click(function(e) {
+    var selected = fnGetSelected(savedTable, 'row-selected');
+    var requests = {};
+    if (selected.length) {
+      $('#modalLable').html('Submit the following ' + selected.length + ' requests for approval? ');
+      $('#modal .modal-body').empty();
+      selected.forEach(function(row) {
+        var data = savedTable.fnGetData(row);
+        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+        requests[data._id] = {basic: data.basic, from: data.from, to: data.to, comments: data.comments};
+      });
+      // $('#modal .modal-body').html('test');
+      $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+      $('#submit').click(function(e){
+        submitFromModal(requests);
+      });
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
+  });
+
   $('#saved-clone').click(function(e) {
     cloneInTable(savedTable, '#save-clone');
-    // var selected = fnGetSelected(savedTable, 'row-selected');
-    // if (selected.length) {
-    //   $('#saved-clone').prop('disabled', true);
-    //   var selectedData = selected.map(function(row) {
-    //     return savedTable.fnGetData(row);
-    //   });
-    //   var data = {
-    //     requests: selectedData,
-    //     action: 'clone'
-    //   };
-    //   $.ajax({
-    //     url: '/requests',
-    //     type: 'POST',
-    //     async: true,
-    //     data: JSON.stringify(data),
-    //     contentType: 'application/json',
-    //     processData: false
-    //   }).done(function(data) {
-    //     initRequests(savedTable, submittedTable, rejectedTable);
-    //     $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
-    //     $(window).scrollTop($('#message div:last-child').offset().top - 40);
-
-    //   })
-    //     .fail(function(jqXHR, status, error) {
-    //       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
-    //       $(window).scrollTop($('#message div:last-child').offset().top - 40);
-
-    //     })
-    //     .always();
-    // } else {
-    //   $('#modalLable').html('Alert');
-    //   $('#modal .modal-body').html('No request has been selected!');
-    //   $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-    //   $('#modal').modal('show');
-    // }
   });
   /*saved tab ends*/
 
@@ -593,9 +583,43 @@ function deleteFromModal() {
       // dataType: 'json'
     }).done(function() {
       $(that).wrap('<del></del>');
+      $(that).addClass('text-success');
     })
       .fail(function(jqXHR, status, error) {
         $(that).append(' : ' + jqXHR.reponseText);
+        $(that).addClass('text-error');
+        // if (jqXHR.statusCode() === 410) {
+        //   $('#'+item.id).append(' : ' + jqXHR.reponseText);
+        // }
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          initRequests(savedTable, submittedTable, rejectedTable);
+        }
+      });
+  });
+}
+
+
+function submitFromModal(requests) {
+  $('#submit').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + that.id,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({action: 'submit', request: requests[that.id]}),
+    }).done(function() {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).prepend('<i class="icon-question"></i>');
+        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).addClass('text-error');
         // if (jqXHR.statusCode() === 410) {
         //   $('#'+item.id).append(' : ' + jqXHR.reponseText);
         // }

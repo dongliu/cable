@@ -59,6 +59,10 @@ block content
         #saved.tab-pane.active
           .btn-toolbar
             .btn-group
+              button.btn.btn-primary#saved-submit
+                i.icon-check-sign
+                | &nbsp;Submit for approval
+            .btn-group
               button.btn.btn-primary#saved-clone
                 i.icon-copy
                 | &nbsp;Clone
@@ -67,11 +71,11 @@ block content
                 i.icon-trash
                 | &nbsp;Delete
             .btn-group
-              button.btn#saved-select-none
+              button.btn.btn-info#saved-select-none
                 i.icon-list.icon-light
                 | &nbsp;Clear selection
             #saved-show.btn-group
-              button.btn.dropdown-toggle(data-toggle='dropdown')
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
                 i.icon-wrench
                 | &nbsp;Show
                 span.caret
@@ -91,7 +95,7 @@ block content
                 //- li.divider
                 //- li
                 //-   a(href='#restore') restore
-          table#saved-table.table.table-bordered.table-hover
+          table#saved-table.table.table-bordered.table-hover.nowrap
         #submitted.tab-pane
           .btn-toolbar
             .btn-group
