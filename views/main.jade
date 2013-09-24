@@ -86,15 +86,15 @@ block content
               ul.dropdown-menu
                 li
                   label.checkbox
-                    input#saved-from(type='checkbox', value='from', checked)
+                    input(type='checkbox', value='from', checked)
                     | from
                 li
                   label.checkbox
-                    input#saved-to(type='checkbox', value='to', checked)
+                    input(type='checkbox', value='to', checked)
                     | to
                 li
                   label.checkbox
-                    input#saved-comments(type='checkbox', value='comments', checked)
+                    input(type='checkbox', value='comments', checked)
                     | comments
                 //- li.divider
                 //- li
@@ -140,9 +140,42 @@ block content
         #rejected.tab-pane
           .btn-toolbar
             .btn-group
-              button.btn.btn-primary#saved-clone Clone
+              button.btn.btn-primary#rejected-clone
+                i.icon-copy
+                | &nbsp;Clone
             .btn-group
-              button.btn.btn-warning#saved-delete Delete
+              button.btn.btn-warning#rejected-delete
+                i.icon-trash
+                | &nbsp;Delete
+            .btn-group
+              button.btn.btn-info#rejected-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#rejected-wrap.active Wrap
+              button.btn.btn-info#rejected-unwrap Unwrap
+
+            #rejected-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+                //- li.divider
+                //- li
+                //-   a(href='#restore') restore
           table#rejected-table.table.table-bordered.table-hover
         #installed.tab-pane
           p the list of installed cables

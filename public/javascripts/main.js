@@ -10,6 +10,8 @@ var submittedTableColumns = {
   comments: [28]
 };
 
+var rejectedTableColumns = submittedTableColumns;
+
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
@@ -168,12 +170,12 @@ $(function() {
   //   }
   // });
 
-  $('#saved-wrap').click(function(e){
+  $('#saved-wrap').click(function(e) {
     $('#saved-table td').removeClass('nowrap');
     savedTable.fnAdjustColumnSizing();
   });
 
-  $('#saved-unwrap').click(function(e){
+  $('#saved-unwrap').click(function(e) {
     $('#saved-table td').addClass('nowrap');
     savedTable.fnAdjustColumnSizing();
   });
@@ -393,12 +395,12 @@ $(function() {
     }
   });
 
-  $('#submitted-wrap').click(function(e){
+  $('#submitted-wrap').click(function(e) {
     $('#submitted-table td').removeClass('nowrap');
     submittedTable.fnAdjustColumnSizing();
   });
 
-  $('#submitted-unwrap').click(function(e){
+  $('#submitted-unwrap').click(function(e) {
     $('#submitted-table td').addClass('nowrap');
     submittedTable.fnAdjustColumnSizing();
   });
@@ -419,36 +421,143 @@ $(function() {
 
   /*submitted tab ends*/
 
-
-  var rejected = [];
+  /*rejected tab starts*/
   rejectedTable = $('#rejected-table').dataTable({
-    'aaData': rejected,
-    'aoColumns': [
-      // {
-      //   'sTitle': 'Submitted by'
-      // },
-      {
-        'sTitle': 'Submitted on'
-      }, {
-        'sTitle': 'System'
-      }, {
-        'sTitle': 'Sub system'
-      }, {
-        'sTitle': 'Signal'
-      }, {
-        'sTitle': 'Rejected by'
-      }, {
-        'sTitle': 'Rejected on'
-      }, {
-        'sTitle': 'id',
-        "bVisible": false
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: [{
+      sTitle: '',
+      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+      sSortDataType: 'dom-checkbox',
+      asSorting: ['desc', 'asc']
+    }, {
+      sTitle: '',
+      mData: '_id',
+      mRender: function(data, type, full) {
+        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+      },
+      bSortable: false
+    }, {
+      sTitle: 'Rejected on',
+      mData: 'rejectedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
       }
-    ],
+    }, {
+      sTitle: 'Submitted on',
+      mData: 'submittedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
+      sTitle: 'Created on',
+      mData: 'createdOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
+      sTitle: 'project',
+      sDefaultContent: '',
+      mData: 'basic.project'
+    }, {
+      sTitle: 'SSS',
+      sDefaultContent: '',
+      mData: function(source, type, val) {
+        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+      }
+    }, {
+      sTitle: 'Cable type',
+      sDefaultContent: '',
+      mData: 'basic.cableType'
+    }, {
+      sTitle: 'Engineer',
+      sDefaultContent: '',
+      mData: 'basic.engineer'
+    }, {
+      sTitle: 'Service',
+      sDefaultContent: '',
+      mData: 'basic.service'
+    }, {
+      sTitle: 'WBS',
+      sDefaultContent: '',
+      mData: 'basic.wbs'
+    }, {
+      sTitle: 'Quantity',
+      sDefaultContent: '',
+      mData: 'basic.quantity'
+    }, {
+      sTitle: 'From building',
+      sDefaultContent: '',
+      mData: 'from.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'from.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'from.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'from.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'from.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'from.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'from.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'from.label'
+    }, {
+      sTitle: 'To building',
+      sDefaultContent: '',
+      mData: 'to.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'to.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'to.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'to.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'to.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'to.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'to.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'to.label'
+    }, {
+      sTitle: 'Comments',
+      sDefaultContent: '',
+      mData: 'comments'
+    }],
     'aaSorting': [
-      [5, 'desc']
+      [2, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    // 'bAutoWidth': false,
+    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
       "aButtons": [
@@ -461,6 +570,51 @@ $(function() {
       ]
     }
   });
+
+  $('#rejected-wrap').click(function(e) {
+    $('#rejected-table td').removeClass('nowrap');
+    rejectedTable.fnAdjustColumnSizing();
+  });
+
+  $('#rejected-unwrap').click(function(e) {
+    $('#rejected-table td').addClass('nowrap');
+    rejectedTable.fnAdjustColumnSizing();
+  });
+
+  $('#rejected-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#rejected-select-none').click(function(e) {
+    fnDeselect(rejectedTable, 'row-selected', 'select-row');
+    rejectedTable.fnAdjustColumnSizing();
+  });
+
+  $('#saved-delete').click(function(e) {
+    var selected = fnGetSelected(savedTable, 'row-selected');
+    if (selected.length) {
+      $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
+      $('#modal .modal-body').empty();
+      selected.forEach(function(row) {
+        var data = savedTable.fnGetData(row);
+        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+      });
+      // $('#modal .modal-body').html('test');
+      $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
+  });
+
+  $('#saved-clone').click(function(e) {
+    cloneInTable(savedTable, '#save-clone');
+  });
+
+  /*rejected table ends*/
 
   initRequests(savedTable, submittedTable, rejectedTable);
 
@@ -590,14 +744,12 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
     }
 
     if (rejected.length) {
-      // rejected = rejectedJson.map(function(request) {
-      //   // return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      //   return [].concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-      // });
-      // rejectedTable.fnClearTable();
-      // rejectedTable.fnAddData(rejected);
-      // rejectedTable.fnDraw();
-      // addClick($('#rejected-table'), rejectedTable, 6);
+      $('#rejected-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      rejectedTable.fnClearTable();
+      rejectedTable.fnAddData(rejected);
+      rejectedTable.fnDraw();
     }
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
