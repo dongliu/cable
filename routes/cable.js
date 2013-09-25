@@ -226,9 +226,33 @@ module.exports = function(app) {
 
   // update a request
   app.put('/requests/:id', auth.ensureAuthenticated, function(req, res) {
+    var roles = req.session.roles;
     var request = req.body.request;
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
+
+    if (req.body.action == 'save') {
+      Request.findOneAndUpdate({
+        _id: req.params.id,
+        status: 0
+      }, request, function(err, cableRequest) {
+        if (err) {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+        if (cableRequest) {
+          return res.send(204);
+        } else {
+          console.error(req.params.id + ' gone');
+          return res.json(410, {
+            error: req.params.id + ' gone'
+          });
+        }
+      });
+    }
+
     if (req.body.action == 'submit') {
       // cannot submitted twice
       request.submittedBy = req.session.userid;
@@ -249,22 +273,44 @@ module.exports = function(app) {
           return res.send(204);
         } else {
           console.error(req.params.id + ' gone');
-          return res.json(410, {error: req.params.id + ' gone'});
+          return res.json(410, {
+            error: req.params.id + ' gone'
+          });
         }
       });
-
     }
-    // if (req.body.action == 'adjust') {
-    //   // check if already submitted
-    //   request.adjustedBy = req.session.userid;
-    //   request.adjustedOn = Date.now();
-    // }
+    if (req.body.action == 'adjust') {
+      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+        res.send(403, "You are not authorized to access this resource. ");
+      }
+      Request.findOneAndUpdate({
+        _id: req.params.id,
+        status: 1
+      }, request, function(err, cableRequest) {
+        if (err) {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+        if (cableRequest) {
+          return res.send(204);
+        } else {
+          console.error(req.params.id + ' gone');
+          return res.json(410, {
+            error: req.params.id + ' gone'
+          });
+        }
+      });
+    }
     // if (req.body.action == 'request') {
     //   // check if already adjusted
     //   request.status = 2;
     // }
     if (req.body.action == 'reject') {
-      // check if already submitted
+      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+        res.send(403, "You are not authorized to access this resource. ");
+      }
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
       request.status = 3;
@@ -282,12 +328,16 @@ module.exports = function(app) {
           return res.send(204);
         } else {
           console.error(req.params.id + ' gone');
-          return res.json(410, {error: req.params.id + ' gone'});
+          return res.json(410, {
+            error: req.params.id + ' gone'
+          });
         }
       });
     }
     if (req.body.action == 'approve') {
-      // check if already request-approval
+      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+        res.send(403, "You are not authorized to access this resource. ");
+      }
       request.approvedBy = req.session.userid;
       request.approvedOn = Date.now();
       request.status = 2;
@@ -302,30 +352,15 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          // return res.send(204);
           createCable(cableRequest, req, res, cableRequest.basic.quantity);
         } else {
           console.error(req.params.id + ' gone');
-          return res.json(410, {error: req.params.id + ' gone'});
+          return res.json(410, {
+            error: req.params.id + ' gone'
+          });
         }
       });
     }
-
-    // Request.findByIdAndUpdate(req.params.id, request).lean().exec(function(err, cableRequest) {
-    //   if (err) {
-    //     console.error(err.msg);
-    //     return res.json(500, {
-    //       error: err.msg
-    //     });
-    //   }
-    //   if (req.body.action !== 'approve') {
-    //     res.send(204);
-    //   } else {
-    //     createCable(cableRequest, req, res, cableRequest.basic.quantity);
-    //   }
-    // //   request.requestedBy = req.session.userid;
-    // //   request.requestedOn = Date.now();
-    // });
   });
 
 
