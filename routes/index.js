@@ -9,13 +9,13 @@ exports.main = function(req, res) {
 };
 
 
-exports.switch2management = function(req, res) {
-  if (req.session.roles && req.session.roles.length) {
-    return res.render('manage', {roles: req.session.roles});
-  } else {
-    return res.send(403, 'Cannot switch to management view');
-  }
-};
+// exports.switch2management = function(req, res) {
+//   if (req.session.roles && req.session.roles.length) {
+//     return res.render('manage', {roles: req.session.roles});
+//   } else {
+//     return res.send(403, 'Cannot switch to management view');
+//   }
+// };
 
 exports.switch2normal = function(req, res) {
     return res.render('main', {roles: req.session.roles});

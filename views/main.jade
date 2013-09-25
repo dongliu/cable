@@ -33,8 +33,9 @@ block content
             a(href='./nscl/rooms', target='_blank') NSCL rooms
       .btn-group
         a.btn(href='/profile', target='_blank') Profile
-      .btn-group
-        a.btn.btn-warning(href='/switch-to-management') Switch to management view
+      if (roles.length)
+        .btn-group
+          a.btn.btn-warning(href='/') Switch to management view
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
