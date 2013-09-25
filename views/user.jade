@@ -13,7 +13,7 @@ block content
   script.
     var roles = !{JSON.stringify(user.roles)};
   .container(style="margin-top: 10px")
-    a.btn.btn-primary(href="/users") users
+    //- a.btn.btn-primary(href="/users") users
     #message
     #profile.well
       img(src="/adusers/#{user.id}/photo")
@@ -64,6 +64,5 @@ block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  //- script(type='text/javascript', src='/javascripts/util.js')
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/user.js')

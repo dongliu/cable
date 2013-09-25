@@ -16,7 +16,7 @@ var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
 
-  $('#reload').click(function(e){
+  $('#reload').click(function(e) {
     initRequests(savedTable, submittedTable, rejectedTable);
   });
 
@@ -599,13 +599,13 @@ $(function() {
     rejectedTable.fnAdjustColumnSizing();
   });
 
-  $('#saved-delete').click(function(e) {
-    var selected = fnGetSelected(savedTable, 'row-selected');
+  $('#rejected-delete').click(function(e) {
+    var selected = fnGetSelected(rejectedTable, 'row-selected');
     if (selected.length) {
       $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
       $('#modal .modal-body').empty();
       selected.forEach(function(row) {
-        var data = savedTable.fnGetData(row);
+        var data = rejectedTable.fnGetData(row);
         $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       });
       // $('#modal .modal-body').html('test');
@@ -619,8 +619,8 @@ $(function() {
     }
   });
 
-  $('#saved-clone').click(function(e) {
-    cloneInTable(savedTable, '#save-clone');
+  $('#rejected-clone').click(function(e) {
+    cloneInTable(rejectedTable, '#reject-clone');
   });
 
   /*rejected table ends*/
@@ -732,34 +732,27 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
       return (request.status === 3);
     });
 
-    if (saved.length) {
+    $('#saved-show input:checkbox').each(function(i) {
+      fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+    });
+    savedTable.fnClearTable();
+    savedTable.fnAddData(saved);
 
-      $('#saved-show input:checkbox').each(function(i) {
-        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
-      savedTable.fnClearTable();
-      savedTable.fnAddData(saved);
+    savedTable.fnDraw();
 
-      savedTable.fnDraw();
-    }
+    $('#submitted-show input:checkbox').each(function(i) {
+      fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
+    });
+    submittedTable.fnClearTable();
+    submittedTable.fnAddData(submitted);
+    submittedTable.fnDraw();
 
-    if (submitted.length) {
-      $('#submitted-show input:checkbox').each(function(i) {
-        fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
-      submittedTable.fnClearTable();
-      submittedTable.fnAddData(submitted);
-      submittedTable.fnDraw();
-    }
-
-    if (rejected.length) {
-      $('#rejected-show input:checkbox').each(function(i) {
-        fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
-      rejectedTable.fnClearTable();
-      rejectedTable.fnAddData(rejected);
-      rejectedTable.fnDraw();
-    }
+    $('#rejected-show input:checkbox').each(function(i) {
+      fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
+    });
+    rejectedTable.fnClearTable();
+    rejectedTable.fnAddData(rejected);
+    rejectedTable.fnDraw();
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
