@@ -14,9 +14,17 @@ block content
   .container-fluid
     .btn-toolbar
       .btn-group
-        a.btn.btn-primary#new(href='./requests/new', target='_blank') New Request
+        a.btn.btn-primary#new(href='./requests/new', target='_blank')
+          i.icon-file-alt
+          | &nbsp;New Request
+      .btn-group
+        button.btn.btn-primary#reload
+          i.icon-refresh
+          | &nbsp;Reload
       .btn-group.dropdown
-        a#meta.btn.dropdown-toggle(data-toggle='dropdown') Meta
+        a#meta.btn.dropdown-toggle(data-toggle='dropdown')
+          i.icon-gears
+          | &nbsp;Meta
           span.caret
         ul.dropdown-menu
           li#numbering
@@ -32,10 +40,12 @@ block content
           li#rooms
             a(href='./nscl/rooms', target='_blank') NSCL rooms
       .btn-group
-        a.btn(href='/profile', target='_blank') Profile
+        a.btn(href='/profile', target='_blank')
+          i.icon-user
+          | &nbsp;Profile
       if (roles.length)
         .btn-group
-          a.btn.btn-warning(href='/') Switch to management view
+          a.btn.btn-warning(href='/') Back to management view
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
