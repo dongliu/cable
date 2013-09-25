@@ -222,6 +222,8 @@ $(function() {
 
       setSSS(system, subsystem, signal);
 
+      rooms();
+
       $('form[name="request"]').fadeTo('slow', 1);
 
       if ($('#project').val()) {
@@ -597,5 +599,17 @@ function getLeaves(rooms, leaves) {
         leaves.push(rooms.children[i]);
       }
     }
+  }
+}
+
+function rooms() {
+  if ($('#from-building').val()) {
+    $('#from-room').prop('disabled', false);
+    setRooms('#from-building', '#from-room');
+  }
+
+  if ($('#to-building').val()) {
+    $('#to-room').prop('disabled', false);
+    setRooms('#to-building', '#to-room');
   }
 }
