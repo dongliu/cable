@@ -10,19 +10,18 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  //- script
-  //-   var user = !{JSON.stringify(user)};
   .container(style="margin-top: 10px")
     #message
     #profile.well
+      img(src="/adusers/#{user.id}/photo")
       dl
-        dt Name 
+        dt Name
         dd #{user.name}
-        dt Email 
+        dt Email
         dd #{user.email}
-        dt Office 
+        dt Office
         dd #{user.office}
-        dt Office phone 
+        dt Office phone
         dd #{user.phone}
         dt Mobile phone
         dd #{user.mobile}
@@ -31,13 +30,13 @@ block content
         dt Roles
         dd #{user.roles}
         dt Notice
-        dd           
-          form.form-inline  
+        dd
+          form.form-inline
             label.checkbox
               if (user.subscribe)
-                input#sub(type='checkbox', checked) 
+                input#sub(type='checkbox', checked)
               else
-                input#sub(type='checkbox') 
+                input#sub(type='checkbox')
               | subscibe &nbsp
             button#modify.btn(type='submit') Modify
 

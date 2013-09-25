@@ -16,6 +16,10 @@ var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
 
+  $('#reload').click(function(e){
+    initRequests(savedTable, submittedTable, rejectedTable);
+  });
+
   /*saved tab starts*/
   savedTable = $('#saved-table').dataTable({
     aaData: [],
@@ -146,7 +150,8 @@ $(function() {
       mData: 'comments'
     }],
     'aaSorting': [
-      [2, 'desc']
+      [2, 'desc'],
+      [3, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -267,15 +272,15 @@ $(function() {
         return formatDate(data);
       }
     }, {
-      sTitle: 'Created on',
-      mData: 'createdOn',
+      sTitle: 'Updated on',
+      sDefaultContent: '',
+      mData: 'updatedOn',
       mRender: function(data, type, full) {
         return formatDate(data);
       }
     }, {
-      sTitle: 'Updated on',
-      sDefaultContent: '',
-      mData: 'updatedOn',
+      sTitle: 'Created on',
+      mData: 'createdOn',
       mRender: function(data, type, full) {
         return formatDate(data);
       }
@@ -379,7 +384,9 @@ $(function() {
       mData: 'comments'
     }],
     'aaSorting': [
-      [2, 'desc']
+      [2, 'desc'],
+      [3, 'desc'],
+      [4, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
@@ -555,7 +562,9 @@ $(function() {
       mData: 'comments'
     }],
     'aaSorting': [
-      [2, 'desc']
+      [2, 'desc'],
+      [3, 'desc'],
+      [4, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
