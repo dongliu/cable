@@ -231,6 +231,10 @@ module.exports = function(app) {
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
 
+    if (!req.body.action) {
+      res.send(400, 'do not know you want to do');
+    }
+
     if (req.body.action == 'save') {
       Request.findOneAndUpdate({
         _id: req.params.id,
@@ -361,6 +365,7 @@ module.exports = function(app) {
         }
       });
     }
+
   });
 
 
