@@ -167,14 +167,6 @@ $(function() {
     }
   });
 
-  // $('#saved-table tbody').on('click', 'input.select-row', function(e) {
-  //   if ($(this).prop('checked')) {
-  //     $(e.target).closest('tr').addClass('row-selected');
-  //   } else {
-  //     $(e.target).closest('tr').removeClass('row-selected');
-  //   }
-  // });
-
   $('#saved-wrap').click(function(e) {
     $('#saved-table td').removeClass('nowrap');
     savedTable.fnAdjustColumnSizing();

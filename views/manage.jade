@@ -7,15 +7,20 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
   .container-fluid
     .btn-toolbar
-      //- .btn-group
-      //-   a.btn.btn-primary#new(href='./requests/new', target='_blank') New Request
+      .btn-group
+        button.btn.btn-primary#reload
+          i.icon-refresh
+          | &nbsp;Reload
       .btn-group.dropdown
-        a#meta.btn.dropdown-toggle(data-toggle='dropdown') Meta
+        a#meta.btn.dropdown-toggle(data-toggle='dropdown')
+          i.icon-gears
+          | &nbsp;Meta
           span.caret
         ul.dropdown-menu
           li#numbering
@@ -31,13 +36,20 @@ block content
           li#rooms
             a(href='./nscl/rooms', target='_blank') NSCL rooms
       .btn-group
-        a.btn.btn-primary(href='/users', target='_blank') Users
+        a.btn.btn-primary(href='/users', target='_blank')
+          i.icon-user
+          | &nbsp;Users
       .btn-group
         a.btn.btn-warning(href='/switch-to-normal') Switch to normal view
       .btn-group
         a.btn.btn-info(href='./about', target='_blank') About
     #message
-    .tabbable#tabs
+    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
+      .modal-header
+        h3#modalLable
+      .modal-body
+      .modal-footer
+    .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
           a(href='#approving', data-toggle='tab') To be approved
@@ -51,15 +63,49 @@ block content
           a(href='#installed', data-toggle='tab') Installed
       .tab-content
         #approving.tab-pane.active
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-primary#approving-approve
+                i.icon-check-sign
+                | &nbsp;Approve
+            .btn-group
+              button.btn.btn-info#approving-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#approving-wrap.active Wrap
+              button.btn.btn-info#approving-unwrap Unwrap
+
+            #approving-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+                //- li.divider
+                //- li
+                //-   a(href='#restore') restore
           table#approving-table.table.table-bordered.table-hover
         #rejected.tab-pane
           table#rejected-table.table.table-bordered.table-hover
         #procuring.tab-pane
           table#procuring-table.table.table-bordered.table-hover
         #installing.tab-pane
-          p the list of installed cables
+          table#installing-table.table.table-bordered.table-hover
         #installed.tab-pane
-          p the list of working cables
+          table#installed-table.table.table-bordered.table-hover
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
@@ -70,6 +116,7 @@ block js
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/lodash.js')
+  script(type='text/javascript', src='/javascripts/table.js')
   script(type='text/javascript', src='/javascripts/manage.js')
 
 
