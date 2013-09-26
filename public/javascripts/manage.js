@@ -207,6 +207,37 @@ $(function() {
     }
   });
 
+  $('#approving-reject').click(function(e) {
+    var selected = fnGetSelected(approvingTable, 'row-selected');
+    var requests = {};
+    if (selected.length) {
+      $('#modalLable').html('Reject the following ' + selected.length + ' requests? ');
+      $('#modal .modal-body').empty();
+      selected.forEach(function(row) {
+        var data = approvingTable.fnGetData(row);
+        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+        requests[data._id] = {
+          basic: data.basic,
+          from: data.from,
+          to: data.to,
+          comments: data.comments
+        };
+      });
+      // $('#modal .modal-body').html('test');
+      $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+      $('#reject').click(function(e) {
+        rejectFromModal(requests, approvingTable);
+      });
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
+  });
+
+
   initRequestTable(approvingTable, '/requests/statuses/1/json');
 
   /*approving tab ends*/
@@ -477,6 +508,37 @@ function approveFromModal(requests, approvingTable) {
       }),
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).prepend('<i class="icon-question"></i>');
+        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).addClass('text-error');
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          initRequestTable(approvingTable, '/requests/statuses/1/json');
+        }
+      });
+  });
+}
+
+function rejectFromModal(requests, approvingTable) {
+  $('#reject').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + that.id,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        action: 'reject',
+        request: requests[that.id]
+      }),
+    }).done(function() {
+      $(that).prepend('<i class="icon-remove"></i>');
       $(that).addClass('text-success');
     })
       .fail(function(jqXHR, status, error) {
