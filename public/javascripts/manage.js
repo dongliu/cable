@@ -177,6 +177,36 @@ $(function() {
     approvingTable.fnAdjustColumnSizing();
   });
 
+  $('#approving-approve').click(function(e) {
+    var selected = fnGetSelected(approvingTable, 'row-selected');
+    var requests = {};
+    if (selected.length) {
+      $('#modalLable').html('Approve the following ' + selected.length + ' requests? ');
+      $('#modal .modal-body').empty();
+      selected.forEach(function(row) {
+        var data = approvingTable.fnGetData(row);
+        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+        requests[data._id] = {
+          basic: data.basic,
+          from: data.from,
+          to: data.to,
+          comments: data.comments
+        };
+      });
+      // $('#modal .modal-body').html('test');
+      $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+      $('#approve').click(function(e) {
+        approveFromModal(requests, approvingTable);
+      });
+    } else {
+      $('#modalLable').html('Alert');
+      $('#modal .modal-body').html('No request has been selected!');
+      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+      $('#modal').modal('show');
+    }
+  });
+
   // $.ajax({
   //   url: '/requests/statuses/1/json',
   //   type: 'GET',
@@ -244,7 +274,7 @@ $(function() {
     rejectedTable.fnClearTable();
     rejectedTable.fnAddData(rejected);
     rejectedTable.fnDraw();
-    addClick($('#rejected-table'), rejectedTable, 7);
+    // addClick($('#rejected-table'), rejectedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
@@ -255,18 +285,19 @@ $(function() {
   var procuringTable = $('#procuring-table').dataTable({
     'aaData': procuring,
     'aoColumns': [{
-      'sTitle': 'Number'
-    }, {
-      'sTitle': 'Submitted by'
-    },
-    // {
-    //   'sTitle': 'Submitted on'
-    // },
-    {
-      'sTitle': 'Approved by'
-    }, {
-      'sTitle': 'Approved on'
-    }],
+        'sTitle': 'Number'
+      }, {
+        'sTitle': 'Submitted by'
+      },
+      // {
+      //   'sTitle': 'Submitted on'
+      // },
+      {
+        'sTitle': 'Approved by'
+      }, {
+        'sTitle': 'Approved on'
+      }
+    ],
     'aaSorting': [
       [4, 'desc']
     ],
@@ -304,7 +335,6 @@ $(function() {
   }).always();
 
   /*all tabs*/
-    /*all tabs*/
   $('tbody').on('click', 'input.select-row', function(e) {
     if ($(this).prop('checked')) {
       $(e.target).closest('tr').addClass('row-selected');
@@ -316,7 +346,7 @@ $(function() {
 });
 
 
-function initRequestTable(table, url){
+function initRequestTable(table, url) {
   $.ajax({
     url: url,
     type: 'GET',
@@ -332,3 +362,33 @@ function initRequestTable(table, url){
   }).always();
 }
 
+function approveFromModal(requests, approvingTable) {
+  $('#approve').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + that.id,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        action: 'approve',
+        request: requests[that.id]
+      }),
+    }).done(function() {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).prepend('<i class="icon-question"></i>');
+        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).addClass('text-error');
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          initRequestTable(approvingTable, '/requests/statuses/1/json');
+        }
+      });
+  });
+}
