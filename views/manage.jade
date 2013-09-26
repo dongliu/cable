@@ -103,6 +103,32 @@ block content
                 //-   a(href='#restore') restore
           table#approving-table.table.table-bordered.table-hover
         #rejected.tab-pane
+          .btn-toolbar
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#rejected-wrap.active Wrap
+              button.btn.btn-info#rejected-unwrap Unwrap
+
+            #rejected-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+                //- li.divider
+                //- li
+                //-   a(href='#restore') restore
           table#rejected-table.table.table-bordered.table-hover
         #procuring.tab-pane
           table#procuring-table.table.table-bordered.table-hover

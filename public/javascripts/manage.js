@@ -4,6 +4,8 @@ var approvingTableColumns = {
   comments: [28]
 };
 
+var rejectedTableColumns = approvingTableColumns;
+
 $(function() {
   /*approving table starts*/
   var approvingTable = $('#approving-table').dataTable({
@@ -272,10 +274,10 @@ $(function() {
         return formatDate(data);
       }
     }, {
-      sTitle: 'Created on',
-      mData: 'createdOn',
+      sTitle: 'Submitted by',
+      mData: 'submittedBy',
       mRender: function(data, type, full) {
-        return formatDate(data);
+        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
       }
     }, {
       sTitle: 'project',
@@ -395,21 +397,31 @@ $(function() {
     }
   });
   $.ajax({
-    url: '/requests/statuses/4/json',
+    url: '/requests/statuses/3/json',
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
-    rejected = json.map(function(request) {
-      return [].concat(request.submittedBy).concat(moment(request.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request.basic.system).concat(request.basic.subsystem).concat(request.basic.signal).concat(request.rejectedBy).concat(moment(request.rejectedOn).format('YYYY-MM-DD HH:mm:ss')).concat(request._id);
-    });
     rejectedTable.fnClearTable();
-    rejectedTable.fnAddData(rejected);
+    rejectedTable.fnAddData(json);
     rejectedTable.fnDraw();
-    // addClick($('#rejected-table'), rejectedTable, 7);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
+
+  $('#rejected-wrap').click(function(e) {
+    $('#rejected-table td').removeClass('nowrap');
+    rejectedTable.fnAdjustColumnSizing();
+  });
+
+  $('#rejected-unwrap').click(function(e) {
+    $('#rejected-table td').addClass('nowrap');
+    rejectedTable.fnAdjustColumnSizing();
+  });
+
+  $('#rejected-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
+  });
 
 
   var procuring = [];
