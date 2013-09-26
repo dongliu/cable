@@ -449,10 +449,10 @@ $(function() {
         return formatDate(data);
       }
     }, {
-      sTitle: 'Created on',
-      mData: 'createdOn',
+      sTitle: 'Rejected by',
+      mData: 'rejectedBy',
       mRender: function(data, type, full) {
-        return formatDate(data);
+        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
       }
     }, {
       sTitle: 'project',

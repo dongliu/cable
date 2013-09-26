@@ -273,8 +273,8 @@ $(function() {
 
     // $('#save').closest('.btn-group').show();
     $('#save').closest('.btn-group').removeClass('hide');
-    $('#submit').closest('.btn-group').show();
-    $('#reset').closest('.btn-group').show();
+    $('#submit').closest('.btn-group').removeClass('hide');
+    $('#reset').closest('.btn-group').removeClass('hide');
   }
 
   $('#reset').click(function(e) {

@@ -189,7 +189,7 @@ module.exports = function(app) {
   });
 
   // get the request list based on query
-  // a user can only view the requests created by her/him self
+  // a super user can only view the saved requests created by her/him self
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
     if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");

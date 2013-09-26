@@ -11,7 +11,7 @@ var Roles = ['manage', 'admin'];
 
 module.exports = function(app) {
   app.get('/users', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.indexOf('admin') !== -1) {
+    if (req.session.roles.length !== 0) {
       return res.render('users');
     } else {
       return res.send(403, 'only admin allowed');
@@ -59,7 +59,7 @@ module.exports = function(app) {
 
 
   app.get('/users/json', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.indexOf('admin') === -1) {
+    if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     User.find().lean().exec(function(err, users) {
@@ -75,9 +75,9 @@ module.exports = function(app) {
 
 
   app.get('/users/:id', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.indexOf('admin') === -1) {
-      return res.send(403, "You are not authorized to access this resource. ");
-    }
+    // if (req.session.roles.indexOf('admin') === -1) {
+    //   return res.send(403, "You are not authorized to access this resource. ");
+    // }
     User.findOne({
       id: req.params.id
     }).lean().exec(function(err, user) {
@@ -88,7 +88,8 @@ module.exports = function(app) {
       if (user) {
 
       return res.render('user', {
-        user: user
+        user: user,
+        myRoles: req.session.roles
       });
       } else {
         return res.send(404, req.params.id + ' not found');
