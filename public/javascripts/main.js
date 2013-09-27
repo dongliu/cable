@@ -12,12 +12,14 @@ var submittedTableColumns = {
 
 var rejectedTableColumns = submittedTableColumns;
 
+var approved = [];
+
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
 
   $('#reload').click(function(e) {
-    initRequests(savedTable, submittedTable, rejectedTable);
+    initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
   });
 
   /*saved tab starts*/
@@ -617,27 +619,137 @@ $(function() {
 
   /*rejected table ends*/
 
-  initRequests(savedTable, submittedTable, rejectedTable);
-
-  var approved = [];
+  /*approved tab starts*/
   approvedTable = $('#approved-table').dataTable({
-    'aaData': approved,
-    'aoColumns': [{
-      'sTitle': 'Number'
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: [{
+      sTitle: '',
+      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+      sSortDataType: 'dom-checkbox',
+      asSorting: ['desc', 'asc']
     }, {
-      'sTitle': 'Submitted on'
+      sTitle: '',
+      mData: 'number',
+      mRender: function(data, type, full) {
+        return '<a href="cables/' + data + '" target="_blank">' + data + '</a>';
+      }
     }, {
-      'sTitle': 'Approved by'
+      sTitle: 'Status',
+      mData: 'status',
+      // mRender: function(data, type, full) {
+      //   return formatCableStatus(data);
+      // }
     }, {
-      'sTitle': 'Approved on'
+      sTitle: 'Approved on',
+      mData: 'approvedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
     }, {
-      'sTitle': 'id',
-      "bVisible": false
+      sTitle: 'Submitted by',
+      mData: 'request.submittedBy',
+      mRender: function(data, type, full) {
+        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
+      }
+    }, {
+      sTitle: 'project',
+      sDefaultContent: '',
+      mData: 'request.basic.project'
+    }, {
+      sTitle: 'Cable type',
+      sDefaultContent: '',
+      mData: 'request.basic.cableType'
+    }, {
+      sTitle: 'Engineer',
+      sDefaultContent: '',
+      mData: 'request.basic.engineer'
+    }, {
+      sTitle: 'Service',
+      sDefaultContent: '',
+      mData: 'request.basic.service'
+    }, {
+      sTitle: 'WBS',
+      sDefaultContent: '',
+      mData: 'request.basic.wbs'
+    }, {
+      sTitle: 'Quantity',
+      sDefaultContent: '',
+      mData: 'request.basic.quantity'
+    }, {
+      sTitle: 'From building',
+      sDefaultContent: '',
+      mData: 'request.from.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'request.from.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'request.from.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'request.from.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'request.from.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'request.from.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'request.from.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'request.from.label'
+    }, {
+      sTitle: 'To building',
+      sDefaultContent: '',
+      mData: 'request.to.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'request.to.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'request.to.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'request.to.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'request.to.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'request.to.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'request.to.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'request.to.label'
+    }, {
+      sTitle: 'Comments',
+      sDefaultContent: '',
+      mData: 'request.comments'
     }],
     'aaSorting': [
-      [4, 'desc']
+      [3, 'desc'],
+      [1, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
     "oTableTools": {
       "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
       "aButtons": [
@@ -651,34 +763,8 @@ $(function() {
     }
   });
 
-  $.ajax({
-    url: '/cables/json',
-    type: 'GET',
-    contentType: 'application/json',
-    dataType: 'json'
-  }).done(function(json) {
-    var approvedJson = json.filter(function(cable) {
-      return (cable.status === 0);
-    });
 
-
-    if (approvedJson.length) {
-      approved = approvedJson.map(function(cable) {
-        return [].concat(cable.number).concat(cable.submittedBy).concat(moment(cable.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(cable.approvedBy).concat(moment(cable.approvedOn).format('YYYY-MM-DD HH:mm:ss'));
-      });
-      approvedTable.fnClearTable();
-      approvedTable.fnAddData(approved);
-      approvedTable.fnDraw();
-      $('tbody tr', $('#approved-table')).click(function(e) {
-        var id = approvedTable.fnGetData(this, 0);
-        window.open('/cables/' + id);
-      });
-    }
-
-  }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
+  initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
 
   /*all tabs*/
   $('tbody').on('click', 'input.select-row', function(e) {
@@ -691,12 +777,6 @@ $(function() {
 });
 
 
-// function addClick(div, table, position) {
-//   $('tbody tr', div).click(function(e) {
-//     var id = table.fnGetData(this, position);
-//     window.open('/requests/' + id);
-//   });
-// }
 
 function formatRequest(requests) {
   for (var i = 0; i < requests.length; i += 1) {
@@ -707,21 +787,36 @@ function formatRequest(requests) {
   }
 }
 
-function initRequests(savedTable, submittedTable, rejectedTable) {
+function initRequests(savedTable, submittedTable, rejectedTable, approvedTable) {
   $.ajax({
     url: '/requests/json',
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
   }).done(function(json) {
-    var saved = json.filter(function(request) {
-      return (request.status === 0);
-    });
-    var submitted = json.filter(function(request) {
-      return (request.status === 1);
-    });
-    var rejected = json.filter(function(request) {
-      return (request.status === 3);
+    var saved = [];
+    var submitted = [];
+    var rejected = [];
+
+    requests = [];
+
+    json.forEach(function(r) {
+      if (r.status === 0) {
+        saved.push(r);
+        return;
+      }
+      if (r.status === 1) {
+        submitted.push(r);
+        return;
+      }
+      if (r.status === 2) {
+        approved.push(r);
+        return;
+      }
+      if (r.status === 3) {
+        rejected.push(r);
+        return;
+      }
     });
 
     $('#saved-show input:checkbox').each(function(i) {
@@ -745,6 +840,33 @@ function initRequests(savedTable, submittedTable, rejectedTable) {
     rejectedTable.fnClearTable();
     rejectedTable.fnAddData(rejected);
     rejectedTable.fnDraw();
+
+    initCable(approvedTable);
+  }).fail(function(jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  }).always();
+}
+
+function initCable(approvedTable){
+  $.ajax({
+    url: '/cables/json',
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'json'
+  }).done(function(json) {
+    approved.forEach(function(r) {
+      for(i = 0; i < json.length; i += 1) {
+        if (r._id === json[i].request_id) {
+          (json[i])['request'] = r;
+        }
+      }
+    });
+
+    approvedTable.fnClearTable();
+    approvedTable.fnAddData(json);
+    approvedTable.fnDraw();
+
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
@@ -759,8 +881,6 @@ function deleteFromModal() {
     $.ajax({
       url: '/requests/' + this.id,
       type: 'Delete',
-      // contentType: 'application/json',
-      // dataType: 'json'
     }).done(function() {
       $(that).wrap('<del></del>');
       $(that).addClass('text-success');
@@ -768,14 +888,11 @@ function deleteFromModal() {
       .fail(function(jqXHR, status, error) {
         $(that).append(' : ' + jqXHR.reponseText);
         $(that).addClass('text-error');
-        // if (jqXHR.statusCode() === 410) {
-        //   $('#'+item.id).append(' : ' + jqXHR.reponseText);
-        // }
       })
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
         }
       });
   });
@@ -803,14 +920,11 @@ function submitFromModal(requests) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.reponseText);
         $(that).addClass('text-error');
-        // if (jqXHR.statusCode() === 410) {
-        //   $('#'+item.id).append(' : ' + jqXHR.reponseText);
-        // }
       })
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
         }
       });
   });
@@ -836,7 +950,7 @@ function cloneInTable(table, button) {
       contentType: 'application/json',
       processData: false
     }).done(function(data) {
-      initRequests(savedTable, submittedTable, rejectedTable);
+      initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
       $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
 

@@ -483,8 +483,8 @@ function createCable(cableRequest, req, res, quantity) {
         // to: cableRequest.to,
         // routing: cableRequest.routing,
         // other: cableRequest.other,
-        submittedBy: cableRequest.submittedBy,
-        submittedOn: cableRequest.submittedOn,
+        // submittedBy: cableRequest.submittedBy,
+        // submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });
