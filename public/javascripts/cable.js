@@ -11,5 +11,4 @@ $(function(){
       alert('Cannot find the cable.');
     }).always(function() {
     });
-
 });

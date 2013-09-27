@@ -12,6 +12,14 @@ var submittedTableColumns = {
 
 var rejectedTableColumns = submittedTableColumns;
 
+var approvedTableColumns = submittedTableColumns;
+
+var cablesTableColumns = {
+  from: [11, 12, 13, 14, 15, 16, 17, 18],
+  to: [19, 20, 21, 22, 23, 24, 25, 26],
+  comments: [27]
+};
+
 var approved = [];
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
@@ -19,7 +27,7 @@ var savedTable, submittedTable, rejectedTable, approvedTable;
 $(function() {
 
   $('#reload').click(function(e) {
-    initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+    initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
   });
 
   /*saved tab starts*/
@@ -239,7 +247,7 @@ $(function() {
   });
 
   $('#saved-clone').click(function(e) {
-    cloneInTable(savedTable, '#save-clone');
+    cloneInTable(savedTable, '#saved-clone');
   });
   /*saved tab ends*/
 
@@ -614,10 +622,10 @@ $(function() {
   });
 
   $('#rejected-clone').click(function(e) {
-    cloneInTable(rejectedTable, '#reject-clone');
+    cloneInTable(rejectedTable, '#rejected-clone');
   });
 
-  /*rejected table ends*/
+  /*rejected tab ends*/
 
   /*approved tab starts*/
   approvedTable = $('#approved-table').dataTable({
@@ -630,6 +638,177 @@ $(function() {
       asSorting: ['desc', 'asc']
     }, {
       sTitle: '',
+      mData: '_id',
+      mRender: function(data, type, full) {
+        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+      },
+      bSortable: false
+    }, {
+      sTitle: 'Approved on',
+      mData: 'approvedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
+      sTitle: 'Submitted on',
+      mData: 'submittedOn',
+      mRender: function(data, type, full) {
+        return formatDate(data);
+      }
+    }, {
+      sTitle: 'Approved by',
+      mData: 'approvedBy',
+      mRender: function(data, type, full) {
+        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
+      }
+    }, {
+      sTitle: 'project',
+      sDefaultContent: '',
+      mData: 'basic.project'
+    }, {
+      sTitle: 'SSS',
+      sDefaultContent: '',
+      mData: function(source, type, val) {
+        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+      }
+    }, {
+      sTitle: 'Cable type',
+      sDefaultContent: '',
+      mData: 'basic.cableType'
+    }, {
+      sTitle: 'Engineer',
+      sDefaultContent: '',
+      mData: 'basic.engineer'
+    }, {
+      sTitle: 'Service',
+      sDefaultContent: '',
+      mData: 'basic.service'
+    }, {
+      sTitle: 'WBS',
+      sDefaultContent: '',
+      mData: 'basic.wbs'
+    }, {
+      sTitle: 'Quantity',
+      sDefaultContent: '',
+      mData: 'basic.quantity'
+    }, {
+      sTitle: 'From building',
+      sDefaultContent: '',
+      mData: 'from.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'from.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'from.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'from.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'from.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'from.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'from.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'from.label'
+    }, {
+      sTitle: 'To building',
+      sDefaultContent: '',
+      mData: 'to.building'
+    }, {
+      sTitle: 'room',
+      sDefaultContent: '',
+      mData: 'to.room'
+    }, {
+      sTitle: 'elevation',
+      sDefaultContent: '',
+      mData: 'to.elevation'
+    }, {
+      sTitle: 'unit',
+      sDefaultContent: '',
+      mData: 'to.unit'
+    }, {
+      sTitle: 'term. device',
+      sDefaultContent: '',
+      mData: 'to.terminationDevice'
+    }, {
+      sTitle: 'term. type',
+      sDefaultContent: '',
+      mData: 'to.terminationType'
+    }, {
+      sTitle: 'wiring drawing',
+      sDefaultContent: '',
+      mData: 'to.wiringDrawing'
+    }, {
+      sTitle: 'lebel',
+      sDefaultContent: '',
+      mData: 'to.label'
+    }, {
+      sTitle: 'Comments',
+      sDefaultContent: '',
+      mData: 'comments'
+    }],
+    'aaSorting': [
+      [2, 'desc'],
+      [3, 'desc']
+    ],
+    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+    "oTableTools": {
+      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
+      "aButtons": [
+        "copy",
+        "print", {
+          "sExtends": "collection",
+          "sButtonText": 'Save <span class="caret" />',
+          "aButtons": ["csv", "xls", "pdf"]
+        }
+      ]
+    }
+  });
+
+  $('#approved-wrap').click(function(e) {
+    $('#approved-table td').removeClass('nowrap');
+    approvedTable.fnAdjustColumnSizing();
+  });
+
+  $('#approved-unwrap').click(function(e) {
+    $('#approved-table td').addClass('nowrap');
+    approvedTable.fnAdjustColumnSizing();
+  });
+
+  $('#approved-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(applicable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#approved-clone').click(function(e) {
+    cloneInTable(approvedTable, '#approved-clone');
+  });
+
+  /*approved tab ends*/
+
+  /*cables tab starts*/
+  cablesTable = $('#cables-table').dataTable({
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: [{
+      sTitle: '',
+      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+      sSortDataType: 'dom-checkbox',
+      asSorting: ['desc', 'asc']
+    }, {
+      sTitle: 'Number',
       mData: 'number',
       mRender: function(data, type, full) {
         return '<a href="cables/' + data + '" target="_blank">' + data + '</a>';
@@ -637,9 +816,9 @@ $(function() {
     }, {
       sTitle: 'Status',
       mData: 'status',
-      // mRender: function(data, type, full) {
-      //   return formatCableStatus(data);
-      // }
+      mRender: function(data, type, full) {
+        return formatCableStatus(data);
+      }
     }, {
       sTitle: 'Approved on',
       mData: 'approvedOn',
@@ -763,8 +942,23 @@ $(function() {
     }
   });
 
+  $('#cables-wrap').click(function(e) {
+    $('#cables-table td').removeClass('nowrap');
+    cablesTable.fnAdjustColumnSizing();
+  });
 
-  initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+  $('#cables-unwrap').click(function(e) {
+    $('#cables-table td').addClass('nowrap');
+    cablesTable.fnAdjustColumnSizing();
+  });
+
+  $('#cables-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(cablesTable, cablesTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  /*cables tab ends*/
+
+  initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
 
   /*all tabs*/
   $('tbody').on('click', 'input.select-row', function(e) {
@@ -787,7 +981,7 @@ function formatRequest(requests) {
   }
 }
 
-function initRequests(savedTable, submittedTable, rejectedTable, approvedTable) {
+function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable) {
   $.ajax({
     url: '/requests/json',
     type: 'GET',
@@ -798,7 +992,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable) 
     var submitted = [];
     var rejected = [];
 
-    requests = [];
+    approved = [];
 
     json.forEach(function(r) {
       if (r.status === 0) {
@@ -841,14 +1035,21 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable) 
     rejectedTable.fnAddData(rejected);
     rejectedTable.fnDraw();
 
-    initCable(approvedTable);
+    $('#approved-show input:checkbox').each(function(i) {
+      fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
+    });
+    approvedTable.fnClearTable();
+    approvedTable.fnAddData(approved);
+    approvedTable.fnDraw();
+
+    initCable(cablesTable);
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 }
 
-function initCable(approvedTable){
+function initCable(cablesTable) {
   $.ajax({
     url: '/cables/json',
     type: 'GET',
@@ -856,16 +1057,16 @@ function initCable(approvedTable){
     dataType: 'json'
   }).done(function(json) {
     approved.forEach(function(r) {
-      for(i = 0; i < json.length; i += 1) {
+      for (i = 0; i < json.length; i += 1) {
         if (r._id === json[i].request_id) {
           (json[i])['request'] = r;
         }
       }
     });
 
-    approvedTable.fnClearTable();
-    approvedTable.fnAddData(json);
-    approvedTable.fnDraw();
+    cablesTable.fnClearTable();
+    cablesTable.fnAddData(json);
+    cablesTable.fnDraw();
 
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
@@ -892,7 +1093,7 @@ function deleteFromModal() {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
         }
       });
   });
@@ -924,7 +1125,7 @@ function submitFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
         }
       });
   });
@@ -949,22 +1150,31 @@ function cloneInTable(table, button) {
       data: JSON.stringify(data),
       contentType: 'application/json',
       processData: false
-    }).done(function(data) {
-      initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
-      $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + data + '.</div>');
+    }).done(function(response) {
+      initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
+      $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + response + '.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
 
     })
       .fail(function(jqXHR, status, error) {
         $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
-
       })
-      .always();
+      .always(function() {
+        $(button).prop('disabled', false);
+      });
   } else {
     $('#modalLable').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
   }
+}
+
+function formatCableStatus(s) {
+  var status = ['approved', 'ordered', 'received', 'accepted', 'labeled', 'bench terminated', 'bench tested', 'pulled', 'field terminated', 'tested'];
+  if (0 <= s && s <= 9) {
+    return status[s];
+  }
+  return 'unknown';
 }

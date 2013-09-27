@@ -65,7 +65,7 @@ block content
         li
           a(href='#approved', data-toggle='tab') Approved
         li
-          a(href='#installed', data-toggle='tab') Installed
+          a(href='#cables', data-toggle='tab') Cables
       .tab-content
         #saved.tab-pane.active
           .btn-toolbar
@@ -146,7 +146,35 @@ block content
                 //- li
                 //-   a(href='#restore') restore
           table#submitted-table.table.table-bordered.table-hover
+
         #approved.tab-pane
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-primary#approved-clone
+                i.icon-copy
+                | &nbsp;Clone
+            .btn-group(data-toggle='buttons-radio')
+                button.btn.btn-info#approved-wrap.active Wrap
+                button.btn.btn-info#approved-unwrap Unwrap
+            #approved-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+
           table#approved-table.table.table-bordered.table-hover
         #rejected.tab-pane
           .btn-toolbar
@@ -188,8 +216,31 @@ block content
                 //- li
                 //-   a(href='#restore') restore
           table#rejected-table.table.table-bordered.table-hover
-        #installed.tab-pane
-          p the list of installed cables
+
+        #cables.tab-pane
+          .btn-toolbar
+            .btn-group(data-toggle='buttons-radio')
+                button.btn.btn-info#cables-wrap.active Wrap
+                button.btn.btn-info#cables-unwrap Unwrap
+            #cables-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from', checked)
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to', checked)
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments', checked)
+                    | comments
+          table#cables-table.table.table-bordered.table-hover
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')

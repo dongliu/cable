@@ -423,9 +423,24 @@ module.exports = function(app) {
   });
 
   app.get('/cables/:id', function(req, res) {
-    return res.render('cable', {
-      id: req.params.id
+    Cable.findOne({
+      number: req.params.id
+    }).lean().exec(function(err, cable) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      if (cable) {
+        return res.render('cable', {
+          cable: cable
+        });
+      } else {
+        return res.send(403, 'cannot find cable ' + req.params.id);
+      }
     });
+
   });
 
   app.get('/cables/:id/json', auth.ensureAuthenticated, function(req, res) {
