@@ -19,6 +19,8 @@ var auth = require('../lib/auth');
 // 5: bench terminated 6: bench tested 7: pulled 8: field terminated
 // 9: tested
 
+// 3: to be installed
+// 9: installed
 
 //TODO need a server side validation in the future
 
@@ -498,8 +500,8 @@ function createCable(cableRequest, req, res, quantity) {
         // to: cableRequest.to,
         // routing: cableRequest.routing,
         // other: cableRequest.other,
-        // submittedBy: cableRequest.submittedBy,
-        // submittedOn: cableRequest.submittedOn,
+        submittedBy: cableRequest.submittedBy,
+        submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });

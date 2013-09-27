@@ -26,6 +26,10 @@ var savedTable, submittedTable, rejectedTable, approvedTable;
 
 $(function() {
 
+  // $.ajaxSetup({
+  //   cache: false
+  // });
+
   $('#reload').click(function(e) {
     initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
   });
