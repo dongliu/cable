@@ -47,7 +47,7 @@ $(function() {
       sTitle: '',
       mData: '_id',
       mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+        return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
       },
       bSortable: false
     }, {

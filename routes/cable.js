@@ -190,6 +190,18 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/requests/:id/details', auth.ensureAuthenticated, function(req, res) {
+    Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      res.render('requestdetails', {request: cableRequest});
+    });
+  });
+
   // get the request list based on query
   // a super user can only view the saved requests created by her/him self
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
