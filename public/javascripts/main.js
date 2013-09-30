@@ -201,53 +201,11 @@ $(function() {
   });
 
   $('#saved-delete').click(function(e) {
-    var selected = fnGetSelected(savedTable, 'row-selected');
-    if (selected.length) {
-      $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
-      $('#modal .modal-body').empty();
-      selected.forEach(function(row) {
-        var data = savedTable.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      });
-      // $('#modal .modal-body').html('test');
-      $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+    batchDelete(savedTable);
   });
 
   $('#saved-submit').click(function(e) {
-    var selected = fnGetSelected(savedTable, 'row-selected');
-    var requests = {};
-    if (selected.length) {
-      $('#modalLable').html('Submit the following ' + selected.length + ' requests for approval? ');
-      $('#modal .modal-body').empty();
-      selected.forEach(function(row) {
-        var data = savedTable.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-        requests[data._id] = {
-          basic: data.basic,
-          from: data.from,
-          to: data.to,
-          comments: data.comments
-        };
-      });
-      // $('#modal .modal-body').html('test');
-      $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-      $('#submit').click(function(e) {
-        submitFromModal(requests);
-      });
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+    batchSubmit(savedTable);
   });
 
   $('#saved-clone').click(function(e) {
@@ -419,7 +377,7 @@ $(function() {
   });
 
   $('#submitted-clone').click(function(e) {
-    cloneInTable(submittedTable, '#submitted-clone');
+    batchClone(submittedTable);
   });
 
   $('#submitted-show input:checkbox').change(function(e) {
@@ -606,27 +564,11 @@ $(function() {
   });
 
   $('#rejected-delete').click(function(e) {
-    var selected = fnGetSelected(rejectedTable, 'row-selected');
-    if (selected.length) {
-      $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
-      $('#modal .modal-body').empty();
-      selected.forEach(function(row) {
-        var data = rejectedTable.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      });
-      // $('#modal .modal-body').html('test');
-      $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+    batchDelete(rejectedTable);
   });
 
   $('#rejected-clone').click(function(e) {
-    cloneInTable(rejectedTable, '#rejected-clone');
+    batchClone(rejectedTable);
   });
 
   /*rejected tab ends*/
@@ -797,7 +739,7 @@ $(function() {
   });
 
   $('#approved-clone').click(function(e) {
-    cloneInTable(approvedTable, '#approved-clone');
+    batchClone(approvedTable);
   });
 
   /*approved tab ends*/
@@ -1135,35 +1077,66 @@ function submitFromModal(requests) {
   });
 }
 
+function batchSubmit(table) {
+  var selected = fnGetSelected(table, 'row-selected');
+  var requests = {};
+  if (selected.length) {
+    $('#modalLable').html('Submit the following ' + selected.length + ' requests for approval? ');
+    $('#modal .modal-body').empty();
+    selected.forEach(function(row) {
+      var data = table.fnGetData(row);
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+      requests[data._id] = {
+        basic: data.basic,
+        from: data.from,
+        to: data.to,
+        comments: data.comments
+      };
+    });
+    // $('#modal .modal-body').html('test');
+    $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+    $('#submit').click(function(e) {
+      submitFromModal(requests);
+    });
+  } else {
+    $('#modalLable').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
+}
+
 function batchClone(table) {
   var selected = fnGetSelected(table, 'row-selected');
-    var requests = {};
-    if (selected.length) {
-      $('#modalLable').html('Clone the following ' + selected.length + ' requests? ');
-      $('#modal .modal-body').empty();
-      selected.forEach(function(row) {
-        var data = table.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1>' + '</div>');
-        requests[data._id] = {
-          basic: data.basic,
-          from: data.from,
-          to: data.to,
-          comments: data.comments
-        };
-      });
-      // $('#modal .modal-body').html('test');
-      $('#modal .modal-footer').html('<button id="clone" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-      $('#clone').click(function(e) {
-        cloneFromModal(requests);
-      });
-    } else {
-      $('#modalLable').html('Alert');
-      $('#modal .modal-body').html('No request has been selected!');
-      $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-      $('#modal').modal('show');
-    }
+  var requests = {};
+  if (selected.length) {
+    $('#modalLable').html('Clone the following ' + selected.length + ' requests? ');
+    $('#modal .modal-body').empty();
+    selected.forEach(function(row) {
+      var data = table.fnGetData(row);
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1>' + '</div>');
+      requests[data._id] = {
+        basic: data.basic,
+        from: data.from,
+        to: data.to,
+        comments: data.comments
+      };
+    });
+    // $('#modal .modal-body').html('test');
+    $('#modal .modal-footer').html('<button id="clone" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+    $('#clone').click(function(e) {
+      cloneFromModal(requests);
+    });
+  } else {
+    $('#modalLable').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
 }
+
 
 function cloneFromModal(requests) {
   $('#clone').prop('disabled', true);
@@ -1198,44 +1171,24 @@ function cloneFromModal(requests) {
 }
 
 
-// function cloneInTable(table, button) {
-//   var selected = fnGetSelected(table, 'row-selected');
-//   if (selected.length) {
-//     $(button).prop('disabled', true);
-//     var selectedData = selected.map(function(row) {
-//       return table.fnGetData(row);
-//     });
-//     var data = {
-//       requests: selectedData,
-//       action: 'clone'
-//     };
-//     $.ajax({
-//       url: '/requests',
-//       type: 'POST',
-//       async: true,
-//       data: JSON.stringify(data),
-//       contentType: 'application/json',
-//       processData: false
-//     }).done(function(response) {
-//       initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
-//       $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + response + '.</div>');
-//       $(window).scrollTop($('#message div:last-child').offset().top - 40);
-
-//     })
-//       .fail(function(jqXHR, status, error) {
-//         $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot clone the requests.</div>');
-//         $(window).scrollTop($('#message div:last-child').offset().top - 40);
-//       })
-//       .always(function() {
-//         $(button).prop('disabled', false);
-//       });
-//   } else {
-//     $('#modalLable').html('Alert');
-//     $('#modal .modal-body').html('No request has been selected!');
-//     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-//     $('#modal').modal('show');
-//   }
-// }
+function batchDelete(table) {
+  var selected = fnGetSelected(table, 'row-selected');
+  if (selected.length) {
+    $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
+    $('#modal .modal-body').empty();
+    selected.forEach(function(row) {
+      var data = table.fnGetData(row);
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+    });
+    $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  } else {
+    $('#modalLable').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
+}
 
 function formatCableStatus(s) {
   var status = ['approved', 'ordered', 'received', 'accepted', 'labeled', 'bench terminated', 'bench tested', 'pulled', 'field terminated', 'tested'];
