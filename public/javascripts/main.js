@@ -959,7 +959,9 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     savedTable.fnClearTable();
     savedTable.fnAddData(saved);
-
+    if ($('#saved-unwrap').hasClass('active')) {
+      fnUnwrap(savedTable);
+    }
     savedTable.fnDraw();
 
     $('#submitted-show input:checkbox').each(function(i) {
@@ -967,6 +969,9 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     submittedTable.fnClearTable();
     submittedTable.fnAddData(submitted);
+    if ($('#submitted-unwrap').hasClass('active')) {
+      fnUnwrap(submittedTable);
+    }
     submittedTable.fnDraw();
 
     $('#rejected-show input:checkbox').each(function(i) {
@@ -974,6 +979,9 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     rejectedTable.fnClearTable();
     rejectedTable.fnAddData(rejected);
+        if ($('#rejected-unwrap').hasClass('active')) {
+      fnUnwrap(rejectedTable);
+    }
     rejectedTable.fnDraw();
 
     $('#approved-show input:checkbox').each(function(i) {
@@ -981,6 +989,9 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     approvedTable.fnClearTable();
     approvedTable.fnAddData(approved);
+        if ($('#approved-unwrap').hasClass('active')) {
+      fnUnwrap(approvedTable);
+    }
     approvedTable.fnDraw();
 
     initCable(cablesTable);
@@ -1007,6 +1018,9 @@ function initCable(cablesTable) {
 
     cablesTable.fnClearTable();
     cablesTable.fnAddData(json);
+        if ($('#cables-unwrap').hasClass('active')) {
+      fnUnwrap(cablesTable);
+    }
     cablesTable.fnDraw();
 
   }).fail(function(jqXHR, status, error) {
