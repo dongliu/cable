@@ -123,7 +123,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'from.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'from.label'
     }, {
@@ -155,7 +155,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'to.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'to.label'
     }, {
@@ -182,22 +182,25 @@ $(function() {
   });
 
   $('#saved-wrap').click(function(e) {
-    $('#saved-table td').removeClass('nowrap');
-    savedTable.fnAdjustColumnSizing();
+    fnWrap(savedTable);
   });
 
   $('#saved-unwrap').click(function(e) {
-    $('#saved-table td').addClass('nowrap');
-    savedTable.fnAdjustColumnSizing();
+    fnUnwrap(savedTable);
   });
 
   $('#saved-show input:checkbox').change(function(e) {
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
+  $('#saved-select-all').click(function(e) {
+    fnSelectAll(savedTable, 'row-selected', 'select-row', true);
+    // savedTable.fnAdjustColumnSizing();
+  });
+
   $('#saved-select-none').click(function(e) {
     fnDeselect(savedTable, 'row-selected', 'select-row');
-    savedTable.fnAdjustColumnSizing();
+    // savedTable.fnAdjustColumnSizing();
   });
 
   $('#saved-delete').click(function(e) {
@@ -226,7 +229,7 @@ $(function() {
       sTitle: '',
       mData: '_id',
       mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
       },
       bSortable: false
     }, {
@@ -307,7 +310,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'from.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'from.label'
     }, {
@@ -339,7 +342,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'to.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'to.label'
     }, {
@@ -367,13 +370,11 @@ $(function() {
   });
 
   $('#submitted-wrap').click(function(e) {
-    $('#submitted-table td').removeClass('nowrap');
-    submittedTable.fnAdjustColumnSizing();
+    fnWrap(submittedTable);
   });
 
   $('#submitted-unwrap').click(function(e) {
-    $('#submitted-table td').addClass('nowrap');
-    submittedTable.fnAdjustColumnSizing();
+    fnUnwrap(submittedTable);
   });
 
   $('#submitted-clone').click(function(e) {
@@ -405,7 +406,7 @@ $(function() {
       sTitle: '',
       mData: '_id',
       mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
       },
       bSortable: false
     }, {
@@ -485,7 +486,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'from.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'from.label'
     }, {
@@ -517,7 +518,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'to.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'to.label'
     }, {
@@ -545,13 +546,11 @@ $(function() {
   });
 
   $('#rejected-wrap').click(function(e) {
-    $('#rejected-table td').removeClass('nowrap');
-    rejectedTable.fnAdjustColumnSizing();
+    fnWrap(rejectedTable);
   });
 
   $('#rejected-unwrap').click(function(e) {
-    $('#rejected-table td').addClass('nowrap');
-    rejectedTable.fnAdjustColumnSizing();
+    fnUnwrap(rejectedTable);
   });
 
   $('#rejected-show input:checkbox').change(function(e) {
@@ -586,7 +585,7 @@ $(function() {
       sTitle: '',
       mData: '_id',
       mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '" target="_blank"><i class="icon-file-text icon-large"></i></a>';
+        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
       },
       bSortable: false
     }, {
@@ -666,7 +665,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'from.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'from.label'
     }, {
@@ -698,7 +697,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'to.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'to.label'
     }, {
@@ -725,13 +724,11 @@ $(function() {
   });
 
   $('#approved-wrap').click(function(e) {
-    $('#approved-table td').removeClass('nowrap');
-    approvedTable.fnAdjustColumnSizing();
+    fnWrap(approvedTable);
   });
 
   $('#approved-unwrap').click(function(e) {
-    $('#approved-table td').addClass('nowrap');
-    approvedTable.fnAdjustColumnSizing();
+    fnUnwrap(approvedTable);
   });
 
   $('#approved-show input:checkbox').change(function(e) {
@@ -830,7 +827,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'request.from.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'request.from.label'
     }, {
@@ -862,7 +859,7 @@ $(function() {
       sDefaultContent: '',
       mData: 'request.to.wiringDrawing'
     }, {
-      sTitle: 'lebel',
+      sTitle: 'label',
       sDefaultContent: '',
       mData: 'request.to.label'
     }, {
@@ -889,13 +886,11 @@ $(function() {
   });
 
   $('#cables-wrap').click(function(e) {
-    $('#cables-table td').removeClass('nowrap');
-    cablesTable.fnAdjustColumnSizing();
+    fnWrap(cablesTable);
   });
 
   $('#cables-unwrap').click(function(e) {
-    $('#cables-table td').addClass('nowrap');
-    cablesTable.fnAdjustColumnSizing();
+    fnUnwrap(cablesTable);
   });
 
   $('#cables-show input:checkbox').change(function(e) {

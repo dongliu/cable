@@ -1,3 +1,19 @@
+function fnWrap(oTableLocal){
+  $(oTableLocal.fnSettings().aoData).each(function(){
+      $(this.nTr).removeClass('nowrap');
+    });
+    oTableLocal.fnAdjustColumnSizing();
+}
+
+function fnUnwrap(oTableLocal){
+  $(oTableLocal.fnSettings().aoData).each(function(){
+      $(this.nTr).addClass('nowrap');
+    });
+    oTableLocal.fnAdjustColumnSizing();
+}
+
+
+
 function fnGetSelected(oTableLocal, selectedClass) {
   var aReturn = [];
   var aTrs = oTableLocal.fnGetNodes();
@@ -8,6 +24,17 @@ function fnGetSelected(oTableLocal, selectedClass) {
     }
   }
   return aReturn;
+}
+
+function fnSelectAll(oTableLocal, selectedClass, checkboxClass, filtered) {
+  fnDeselect(oTableLocal, selectedClass, checkboxClass);
+  var settings = oTableLocal.fnSettings();
+  var indexes = (filtered === true) ? settings.aiDisplay : settings.aiDisplayMaster;
+  indexes.forEach(function(i){
+    var r = oTableLocal.fnGetNodes(i);
+    $(r).addClass(selectedClass);
+    $(r).find('input.'+checkboxClass).prop('checked', true);
+  });
 }
 
 function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
