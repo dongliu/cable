@@ -360,7 +360,7 @@ function sendRequest(data) {
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
         initModel = _.cloneDeep(binder.serialize());
       } else if ( data.action === 'clone') {
-        $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
+        $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
       }else {

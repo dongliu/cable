@@ -11,6 +11,7 @@ var request = new Schema({
     engineer: String,
     service: String,
     wbs: String,
+    workPackage: [String],
     quantity: {type: Number, min: 1}
   },
 
@@ -70,6 +71,7 @@ var request = new Schema({
 var cable = new Schema({
   request_id: String,
   number: String,
+  workPackage: [String],
   status: Number,
   submittedBy: String,
   submittedOn: Date,

@@ -68,13 +68,14 @@ module.exports = function(app) {
       return res.send(415, 'json request expected.');
     }
     var request = {};
+    var requests = [];
+    var i;
     if (req.body.requests) {
       // console.log(req.body.requests);
       if (!util.isArray(req.body.requests)) {
         res.send(400, 'requests should be an array');
       } else {
-        var requests = [];
-        for (var i = 0; i < req.body.requests.length; i += 1) {
+        for (i = 0; i < req.body.requests.length; i += 1) {
           // request = new Request(req.body.request);
           request.basic = req.body.requests[i].basic;
           request.from = req.body.requests[i].from;
@@ -98,7 +99,7 @@ module.exports = function(app) {
         }
         Request.create(requests, function(err) {
           if (err) {
-            console.err(err.msg);
+            console.error(err.msg);
             res.send(500, err.msg);
           } else {
             res.send(201, '' + (arguments.length - 1) + ' requests created');
@@ -107,7 +108,10 @@ module.exports = function(app) {
       }
 
     } else if (req.body.request && !util.isArray(req.body.request)) {
-      request = new Request(req.body.request);
+
+      // Here is the problem
+      // request = new Request(req.body.request);
+      request = req.body.request;
 
       if (req.body.action === 'clone') {
         request.basic.quantity = 1;
@@ -123,17 +127,31 @@ module.exports = function(app) {
         request.status = 1;
       }
       // console.log(request.inspect());
-      request.save(function(err, cableRequest) {
-        if (err) {
-          console.error(err.msg);
-          return res.send(500, 'something is wrong.');
+      if (req.body.quantity > 1) {
+        for (i = 0; i < req.body.quantity; i += 1) {
+          requests.push(request);
         }
-        var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
-        res.set('Location', url);
-        res.json(201, {
-          location: '/requests/' + cableRequest.id
+        Request.create(requests, function(err) {
+          if (err) {
+            console.dir(err);
+            res.send(500, err.msg);
+          } else {
+            res.send(201, '' + req.body.quantity + ' requests created');
+          }
         });
-      });
+      } else {
+        (new Request(request)).save(function(err, cableRequest) {
+          if (err) {
+            console.error(err.msg);
+            return res.send(500, 'something is wrong.');
+          }
+          var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+          res.set('Location', url);
+          res.json(201, {
+            location: '/requests/' + cableRequest.id
+          });
+        });
+      }
     } else {
       res.send(400, 'need request description');
     }
