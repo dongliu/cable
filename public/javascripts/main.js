@@ -24,6 +24,166 @@ var approved = [];
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
+var selectColumn = {
+  sTitle: '',
+  sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+  sSortDataType: 'dom-checkbox',
+  asSorting: ['desc', 'asc']
+};
+
+var editLinkColumn = {
+  sTitle: '',
+  mData: '_id',
+  mRender: function(data, type, full) {
+    return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
+  },
+  bSortable: false
+};
+
+var createdOnColumn = {
+  sTitle: 'Created on',
+  mData: 'createdOn',
+  mRender: function(data, type, full) {
+    return formatDate(data);
+  }
+};
+
+var updatedOnColumn = {
+  sTitle: 'Updated on',
+  sDefaultContent: '',
+  mData: 'updatedOn',
+  mRender: function(data, type, full) {
+    return formatDate(data);
+  }
+};
+
+var commentsColumn = {
+  sTitle: 'Comments',
+  sDefaultContent: '',
+  mData: 'comments'
+};
+
+var basicColumns = [{
+  sTitle: 'project',
+  sDefaultContent: '',
+  mData: 'basic.project'
+}, {
+  sTitle: 'SSS',
+  sDefaultContent: '',
+  mData: function(source, type, val) {
+    return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+  }
+}, {
+  sTitle: 'Cable type',
+  sDefaultContent: '',
+  mData: 'basic.cableType'
+}, {
+  sTitle: 'Engineer',
+  sDefaultContent: '',
+  mData: 'basic.engineer'
+}, {
+  sTitle: 'Service',
+  sDefaultContent: '',
+  mData: 'basic.service'
+}, {
+  sTitle: 'WBS',
+  sDefaultContent: '',
+  mData: 'basic.wbs'
+}, {
+  sTitle: 'Tags',
+  sDefaultContent: '',
+  mData: function(source, type, val) {
+    if (source.basic.tags) {
+      return source.basic.tags.join();
+    } else {
+      return '';
+    }
+  }
+}, {
+  sTitle: 'Quantity',
+  sDefaultContent: '',
+  mData: 'basic.quantity'
+}];
+var fromColumns = [{
+  sTitle: 'From building',
+  sDefaultContent: '',
+  mData: 'from.building'
+}, {
+  sTitle: 'room',
+  sDefaultContent: '',
+  mData: 'from.room'
+}, {
+  sTitle: 'elevation',
+  sDefaultContent: '',
+  mData: 'from.elevation'
+}, {
+  sTitle: 'unit',
+  sDefaultContent: '',
+  mData: 'from.unit'
+}, {
+  sTitle: 'term. device',
+  sDefaultContent: '',
+  mData: 'from.terminationDevice'
+}, {
+  sTitle: 'term. type',
+  sDefaultContent: '',
+  mData: 'from.terminationType'
+}, {
+  sTitle: 'wiring drawing',
+  sDefaultContent: '',
+  mData: 'from.wiringDrawing'
+}, {
+  sTitle: 'label',
+  sDefaultContent: '',
+  mData: 'from.label'
+}];
+
+var toColumns = [{
+  sTitle: 'To building',
+  sDefaultContent: '',
+  mData: 'to.building'
+}, {
+  sTitle: 'room',
+  sDefaultContent: '',
+  mData: 'to.room'
+}, {
+  sTitle: 'elevation',
+  sDefaultContent: '',
+  mData: 'to.elevation'
+}, {
+  sTitle: 'unit',
+  sDefaultContent: '',
+  mData: 'to.unit'
+}, {
+  sTitle: 'term. device',
+  sDefaultContent: '',
+  mData: 'to.terminationDevice'
+}, {
+  sTitle: 'term. type',
+  sDefaultContent: '',
+  mData: 'to.terminationType'
+}, {
+  sTitle: 'wiring drawing',
+  sDefaultContent: '',
+  mData: 'to.wiringDrawing'
+}, {
+  sTitle: 'label',
+  sDefaultContent: '',
+  mData: 'to.label'
+}];
+
+var oTableTools = {
+  "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
+  "aButtons": [
+    "copy",
+    "print", {
+      "sExtends": "collection",
+      "sButtonText": 'Save <span class="caret" />',
+      "aButtons": ["csv", "xls", "pdf"]
+    }
+  ]
+};
+
 $(function() {
 
   // $.ajaxSetup({
@@ -38,147 +198,148 @@ $(function() {
   savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [{
-      sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox',
-      asSorting: ['desc', 'asc']
-    }, {
-      sTitle: '',
-      mData: '_id',
-      mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
-      },
-      bSortable: false
-    }, {
-      sTitle: 'Created on',
-      mData: 'createdOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-      // ,asSorting: ['desc']
-    }, {
-      sTitle: 'Updated on',
-      sDefaultContent: '',
-      mData: 'updatedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'project',
-      sDefaultContent: '',
-      mData: 'basic.project'
-    }, {
-      sTitle: 'SSS',
-      sDefaultContent: '',
-      mData: function(source, type, val) {
-        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-      }
-    }, {
-      sTitle: 'Cable type',
-      sDefaultContent: '',
-      mData: 'basic.cableType'
-    }, {
-      sTitle: 'Engineer',
-      sDefaultContent: '',
-      mData: 'basic.engineer'
-    }, {
-      sTitle: 'Service',
-      sDefaultContent: '',
-      mData: 'basic.service'
-    }, {
-      sTitle: 'WBS',
-      sDefaultContent: '',
-      mData: 'basic.wbs'
-    }, {
-      sTitle: 'Quantity',
-      sDefaultContent: '',
-      mData: 'basic.quantity'
-    }, {
-      sTitle: 'From building',
-      sDefaultContent: '',
-      mData: 'from.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'from.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'from.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'from.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'from.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'from.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'from.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'from.label'
-    }, {
-      sTitle: 'To building',
-      sDefaultContent: '',
-      mData: 'to.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'to.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'to.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'to.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'to.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'to.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'to.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'to.label'
-    }, {
-      sTitle: 'Comments',
-      sDefaultContent: '',
-      mData: 'comments'
-    }],
+    // aoColumns: [{
+    //   sTitle: '',
+    //   sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
+    //   sSortDataType: 'dom-checkbox',
+    //   asSorting: ['desc', 'asc']
+    // }, {
+    //   sTitle: '',
+    //   mData: '_id',
+    //   mRender: function(data, type, full) {
+    //     return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
+    //   },
+    //   bSortable: false
+    // }, {
+    //   sTitle: 'Created on',
+    //   mData: 'createdOn',
+    //   mRender: function(data, type, full) {
+    //     return formatDate(data);
+    //   }
+    //   // ,asSorting: ['desc']
+    // }, {
+    //   sTitle: 'Updated on',
+    //   sDefaultContent: '',
+    //   mData: 'updatedOn',
+    //   mRender: function(data, type, full) {
+    //     return formatDate(data);
+    //   }
+    // }, {
+    //   sTitle: 'project',
+    //   sDefaultContent: '',
+    //   mData: 'basic.project'
+    // }, {
+    //   sTitle: 'SSS',
+    //   sDefaultContent: '',
+    //   mData: function(source, type, val) {
+    //     return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
+    //   }
+    // }, {
+    //   sTitle: 'Cable type',
+    //   sDefaultContent: '',
+    //   mData: 'basic.cableType'
+    // }, {
+    //   sTitle: 'Engineer',
+    //   sDefaultContent: '',
+    //   mData: 'basic.engineer'
+    // }, {
+    //   sTitle: 'Service',
+    //   sDefaultContent: '',
+    //   mData: 'basic.service'
+    // }, {
+    //   sTitle: 'WBS',
+    //   sDefaultContent: '',
+    //   mData: 'basic.wbs'
+    // }, {
+    //   sTitle: 'Tags',
+    //   sDefaultContent: '',
+    //   mData: function(source, type, val) {
+    //     if (source.basic.tags) {
+    //       return source.basic.tags.join();
+    //     } else {
+    //       return '';
+    //     }
+    //   }
+    // }, {
+    //   sTitle: 'Quantity',
+    //   sDefaultContent: '',
+    //   mData: 'basic.quantity'
+    // }, {
+    //   sTitle: 'From building',
+    //   sDefaultContent: '',
+    //   mData: 'from.building'
+    // }, {
+    //   sTitle: 'room',
+    //   sDefaultContent: '',
+    //   mData: 'from.room'
+    // }, {
+    //   sTitle: 'elevation',
+    //   sDefaultContent: '',
+    //   mData: 'from.elevation'
+    // }, {
+    //   sTitle: 'unit',
+    //   sDefaultContent: '',
+    //   mData: 'from.unit'
+    // }, {
+    //   sTitle: 'term. device',
+    //   sDefaultContent: '',
+    //   mData: 'from.terminationDevice'
+    // }, {
+    //   sTitle: 'term. type',
+    //   sDefaultContent: '',
+    //   mData: 'from.terminationType'
+    // }, {
+    //   sTitle: 'wiring drawing',
+    //   sDefaultContent: '',
+    //   mData: 'from.wiringDrawing'
+    // }, {
+    //   sTitle: 'label',
+    //   sDefaultContent: '',
+    //   mData: 'from.label'
+    // }, {
+    //   sTitle: 'To building',
+    //   sDefaultContent: '',
+    //   mData: 'to.building'
+    // }, {
+    //   sTitle: 'room',
+    //   sDefaultContent: '',
+    //   mData: 'to.room'
+    // }, {
+    //   sTitle: 'elevation',
+    //   sDefaultContent: '',
+    //   mData: 'to.elevation'
+    // }, {
+    //   sTitle: 'unit',
+    //   sDefaultContent: '',
+    //   mData: 'to.unit'
+    // }, {
+    //   sTitle: 'term. device',
+    //   sDefaultContent: '',
+    //   mData: 'to.terminationDevice'
+    // }, {
+    //   sTitle: 'term. type',
+    //   sDefaultContent: '',
+    //   mData: 'to.terminationType'
+    // }, {
+    //   sTitle: 'wiring drawing',
+    //   sDefaultContent: '',
+    //   mData: 'to.wiringDrawing'
+    // }, {
+    //   sTitle: 'label',
+    //   sDefaultContent: '',
+    //   mData: 'to.label'
+    // }, {
+    //   sTitle: 'Comments',
+    //   sDefaultContent: '',
+    //   mData: 'comments'
+    // }],
+    aoColumns: [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
     'aaSorting': [
       [2, 'desc'],
       [3, 'desc']
     ],
     "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    "oTableTools": oTableTools
   });
 
   $('#saved-wrap').click(function(e) {
@@ -979,7 +1140,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     rejectedTable.fnClearTable();
     rejectedTable.fnAddData(rejected);
-        if ($('#rejected-unwrap').hasClass('active')) {
+    if ($('#rejected-unwrap').hasClass('active')) {
       fnUnwrap(rejectedTable);
     }
     rejectedTable.fnDraw();
@@ -989,7 +1150,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     approvedTable.fnClearTable();
     approvedTable.fnAddData(approved);
-        if ($('#approved-unwrap').hasClass('active')) {
+    if ($('#approved-unwrap').hasClass('active')) {
       fnUnwrap(approvedTable);
     }
     approvedTable.fnDraw();
@@ -1018,7 +1179,7 @@ function initCable(cablesTable) {
 
     cablesTable.fnClearTable();
     cablesTable.fnAddData(json);
-        if ($('#cables-unwrap').hasClass('active')) {
+    if ($('#cables-unwrap').hasClass('active')) {
       fnUnwrap(cablesTable);
     }
     cablesTable.fnDraw();
