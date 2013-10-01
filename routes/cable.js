@@ -525,6 +525,7 @@ function createCable(cableRequest, req, res, quantity) {
         number: nextNumber,
         status: 0,
         request_id: cableRequest._id,
+        tags: cableRequest.basic.tags,
         // basic: cableRequest.basic,
         // from: cableRequest.from,
         // to: cableRequest.to,

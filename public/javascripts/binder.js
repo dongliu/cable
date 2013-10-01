@@ -144,6 +144,14 @@ Binder.TypeRegistry = {
       return value ? value : null;
     }
   },
+  'stringArray': {
+    format: function(value) {
+      return value.join();
+    },
+    parse: function(value) {
+      return value ? value.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*,\s*/) : [];
+    }
+  },
   'number': {
     format: function(value) {
       return String(value);
@@ -197,6 +205,9 @@ Binder.FormBinder.prototype = {
   _format: function(path, value, element) {
     var type = this._getType(element);
     var handler = Binder.TypeRegistry[type];
+    if (type === 'stringArray') {
+      return handler.format(value);
+    }
     if (Binder.Util.isArray(value) && handler) {
       var nv = [];
       for (var i = 0; i < value.length; i++) {

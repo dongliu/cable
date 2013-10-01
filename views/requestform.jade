@@ -53,6 +53,11 @@ fieldset
     .controls
       input#function(type='text', name='basic.service')
   .control-group
+    .control-label Tags
+    .controls
+      input#tags(type='text', name='basic.tags', class='type[stringArray]')
+      span.help-inline Seperate tags by ","
+  .control-group
     .control-label Quantity
     .controls
       input#quantity(type='text', name='basic.quantity', class='type[number]', value=1, required, min=1)
