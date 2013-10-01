@@ -40,22 +40,26 @@ var editLinkColumn = {
   bSortable: false
 };
 
-var createdOnColumn = {
-  sTitle: 'Created on',
-  mData: 'createdOn',
+var detailsLinkColumn = {
+  sTitle: '',
+  mData: '_id',
   mRender: function(data, type, full) {
-    return formatDate(data);
-  }
+    return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
+  },
+  bSortable: false
 };
 
-var updatedOnColumn = {
-  sTitle: 'Updated on',
-  sDefaultContent: '',
-  mData: 'updatedOn',
-  mRender: function(data, type, full) {
-    return formatDate(data);
-  }
-};
+var createdOnColumn = dateColumn('Created on', 'createdOn');
+
+var updatedOnColumn = dateColumn('Updated on', 'updatedOn');
+
+var submittedOnColumn = dateColumn('Submitted on', 'submittedOn');
+
+var approvedOnColumn = dateColumn('Approved on', 'approvedOn');
+var approvedByColumn = personColumn('Approved by', 'approvedBy');
+
+var rejectedOnColumn = dateColumn('Rejected on', 'rejectedOn');
+var rejectedByColumn = personColumn('Rejected by', 'rejectedBy');
 
 var commentsColumn = {
   sTitle: 'Comments',
@@ -184,6 +188,8 @@ var oTableTools = {
   ]
 };
 
+var sDom = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
+
 $(function() {
 
   // $.ajaxSetup({
@@ -198,148 +204,13 @@ $(function() {
   savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    // aoColumns: [{
-    //   sTitle: '',
-    //   sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-    //   sSortDataType: 'dom-checkbox',
-    //   asSorting: ['desc', 'asc']
-    // }, {
-    //   sTitle: '',
-    //   mData: '_id',
-    //   mRender: function(data, type, full) {
-    //     return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
-    //   },
-    //   bSortable: false
-    // }, {
-    //   sTitle: 'Created on',
-    //   mData: 'createdOn',
-    //   mRender: function(data, type, full) {
-    //     return formatDate(data);
-    //   }
-    //   // ,asSorting: ['desc']
-    // }, {
-    //   sTitle: 'Updated on',
-    //   sDefaultContent: '',
-    //   mData: 'updatedOn',
-    //   mRender: function(data, type, full) {
-    //     return formatDate(data);
-    //   }
-    // }, {
-    //   sTitle: 'project',
-    //   sDefaultContent: '',
-    //   mData: 'basic.project'
-    // }, {
-    //   sTitle: 'SSS',
-    //   sDefaultContent: '',
-    //   mData: function(source, type, val) {
-    //     return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-    //   }
-    // }, {
-    //   sTitle: 'Cable type',
-    //   sDefaultContent: '',
-    //   mData: 'basic.cableType'
-    // }, {
-    //   sTitle: 'Engineer',
-    //   sDefaultContent: '',
-    //   mData: 'basic.engineer'
-    // }, {
-    //   sTitle: 'Service',
-    //   sDefaultContent: '',
-    //   mData: 'basic.service'
-    // }, {
-    //   sTitle: 'WBS',
-    //   sDefaultContent: '',
-    //   mData: 'basic.wbs'
-    // }, {
-    //   sTitle: 'Tags',
-    //   sDefaultContent: '',
-    //   mData: function(source, type, val) {
-    //     if (source.basic.tags) {
-    //       return source.basic.tags.join();
-    //     } else {
-    //       return '';
-    //     }
-    //   }
-    // }, {
-    //   sTitle: 'Quantity',
-    //   sDefaultContent: '',
-    //   mData: 'basic.quantity'
-    // }, {
-    //   sTitle: 'From building',
-    //   sDefaultContent: '',
-    //   mData: 'from.building'
-    // }, {
-    //   sTitle: 'room',
-    //   sDefaultContent: '',
-    //   mData: 'from.room'
-    // }, {
-    //   sTitle: 'elevation',
-    //   sDefaultContent: '',
-    //   mData: 'from.elevation'
-    // }, {
-    //   sTitle: 'unit',
-    //   sDefaultContent: '',
-    //   mData: 'from.unit'
-    // }, {
-    //   sTitle: 'term. device',
-    //   sDefaultContent: '',
-    //   mData: 'from.terminationDevice'
-    // }, {
-    //   sTitle: 'term. type',
-    //   sDefaultContent: '',
-    //   mData: 'from.terminationType'
-    // }, {
-    //   sTitle: 'wiring drawing',
-    //   sDefaultContent: '',
-    //   mData: 'from.wiringDrawing'
-    // }, {
-    //   sTitle: 'label',
-    //   sDefaultContent: '',
-    //   mData: 'from.label'
-    // }, {
-    //   sTitle: 'To building',
-    //   sDefaultContent: '',
-    //   mData: 'to.building'
-    // }, {
-    //   sTitle: 'room',
-    //   sDefaultContent: '',
-    //   mData: 'to.room'
-    // }, {
-    //   sTitle: 'elevation',
-    //   sDefaultContent: '',
-    //   mData: 'to.elevation'
-    // }, {
-    //   sTitle: 'unit',
-    //   sDefaultContent: '',
-    //   mData: 'to.unit'
-    // }, {
-    //   sTitle: 'term. device',
-    //   sDefaultContent: '',
-    //   mData: 'to.terminationDevice'
-    // }, {
-    //   sTitle: 'term. type',
-    //   sDefaultContent: '',
-    //   mData: 'to.terminationType'
-    // }, {
-    //   sTitle: 'wiring drawing',
-    //   sDefaultContent: '',
-    //   mData: 'to.wiringDrawing'
-    // }, {
-    //   sTitle: 'label',
-    //   sDefaultContent: '',
-    //   mData: 'to.label'
-    // }, {
-    //   sTitle: 'Comments',
-    //   sDefaultContent: '',
-    //   mData: 'comments'
-    // }],
     aoColumns: [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
-    'aaSorting': [
+    aaSorting: [
       [2, 'desc'],
       [3, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": oTableTools
+    sDom: sDom,
+    oTableTools: oTableTools
   });
 
   $('#saved-wrap').click(function(e) {
@@ -381,153 +252,14 @@ $(function() {
   submittedTable = $('#submitted-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [{
-      sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox',
-      asSorting: ['desc', 'asc']
-    }, {
-      sTitle: '',
-      mData: '_id',
-      mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
-      },
-      bSortable: false
-    }, {
-      sTitle: 'Submitted on',
-      mData: 'submittedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Updated on',
-      sDefaultContent: '',
-      mData: 'updatedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Created on',
-      mData: 'createdOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'project',
-      sDefaultContent: '',
-      mData: 'basic.project'
-    }, {
-      sTitle: 'SSS',
-      sDefaultContent: '',
-      mData: function(source, type, val) {
-        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-      }
-    }, {
-      sTitle: 'Cable type',
-      sDefaultContent: '',
-      mData: 'basic.cableType'
-    }, {
-      sTitle: 'Engineer',
-      sDefaultContent: '',
-      mData: 'basic.engineer'
-    }, {
-      sTitle: 'Service',
-      sDefaultContent: '',
-      mData: 'basic.service'
-    }, {
-      sTitle: 'WBS',
-      sDefaultContent: '',
-      mData: 'basic.wbs'
-    }, {
-      sTitle: 'Quantity',
-      sDefaultContent: '',
-      mData: 'basic.quantity'
-    }, {
-      sTitle: 'From building',
-      sDefaultContent: '',
-      mData: 'from.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'from.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'from.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'from.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'from.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'from.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'from.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'from.label'
-    }, {
-      sTitle: 'To building',
-      sDefaultContent: '',
-      mData: 'to.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'to.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'to.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'to.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'to.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'to.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'to.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'to.label'
-    }, {
-      sTitle: 'Comments',
-      sDefaultContent: '',
-      mData: 'comments'
-    }],
+    aoColumns: [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn, createdOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
     'aaSorting': [
       [2, 'desc'],
       [3, 'desc'],
       [4, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    sDom: sDom,
+    oTableTools: oTableTools
   });
 
   $('#submitted-wrap').click(function(e) {
@@ -558,152 +290,14 @@ $(function() {
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [{
-      sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox',
-      asSorting: ['desc', 'asc']
-    }, {
-      sTitle: '',
-      mData: '_id',
-      mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
-      },
-      bSortable: false
-    }, {
-      sTitle: 'Rejected on',
-      mData: 'rejectedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Submitted on',
-      mData: 'submittedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Rejected by',
-      mData: 'rejectedBy',
-      mRender: function(data, type, full) {
-        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
-      }
-    }, {
-      sTitle: 'project',
-      sDefaultContent: '',
-      mData: 'basic.project'
-    }, {
-      sTitle: 'SSS',
-      sDefaultContent: '',
-      mData: function(source, type, val) {
-        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-      }
-    }, {
-      sTitle: 'Cable type',
-      sDefaultContent: '',
-      mData: 'basic.cableType'
-    }, {
-      sTitle: 'Engineer',
-      sDefaultContent: '',
-      mData: 'basic.engineer'
-    }, {
-      sTitle: 'Service',
-      sDefaultContent: '',
-      mData: 'basic.service'
-    }, {
-      sTitle: 'WBS',
-      sDefaultContent: '',
-      mData: 'basic.wbs'
-    }, {
-      sTitle: 'Quantity',
-      sDefaultContent: '',
-      mData: 'basic.quantity'
-    }, {
-      sTitle: 'From building',
-      sDefaultContent: '',
-      mData: 'from.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'from.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'from.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'from.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'from.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'from.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'from.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'from.label'
-    }, {
-      sTitle: 'To building',
-      sDefaultContent: '',
-      mData: 'to.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'to.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'to.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'to.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'to.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'to.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'to.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'to.label'
-    }, {
-      sTitle: 'Comments',
-      sDefaultContent: '',
-      mData: 'comments'
-    }],
-    'aaSorting': [
+    aoColumns: [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aaSorting: [
       [2, 'desc'],
       [3, 'desc'],
       [4, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    sDom: sDom,
+    oTableTools: oTableTools
   });
 
   $('#rejected-wrap').click(function(e) {
@@ -737,151 +331,13 @@ $(function() {
   approvedTable = $('#approved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [{
-      sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox',
-      asSorting: ['desc', 'asc']
-    }, {
-      sTitle: '',
-      mData: '_id',
-      mRender: function(data, type, full) {
-        return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
-      },
-      bSortable: false
-    }, {
-      sTitle: 'Approved on',
-      mData: 'approvedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Submitted on',
-      mData: 'submittedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Approved by',
-      mData: 'approvedBy',
-      mRender: function(data, type, full) {
-        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
-      }
-    }, {
-      sTitle: 'project',
-      sDefaultContent: '',
-      mData: 'basic.project'
-    }, {
-      sTitle: 'SSS',
-      sDefaultContent: '',
-      mData: function(source, type, val) {
-        return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-      }
-    }, {
-      sTitle: 'Cable type',
-      sDefaultContent: '',
-      mData: 'basic.cableType'
-    }, {
-      sTitle: 'Engineer',
-      sDefaultContent: '',
-      mData: 'basic.engineer'
-    }, {
-      sTitle: 'Service',
-      sDefaultContent: '',
-      mData: 'basic.service'
-    }, {
-      sTitle: 'WBS',
-      sDefaultContent: '',
-      mData: 'basic.wbs'
-    }, {
-      sTitle: 'Quantity',
-      sDefaultContent: '',
-      mData: 'basic.quantity'
-    }, {
-      sTitle: 'From building',
-      sDefaultContent: '',
-      mData: 'from.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'from.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'from.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'from.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'from.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'from.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'from.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'from.label'
-    }, {
-      sTitle: 'To building',
-      sDefaultContent: '',
-      mData: 'to.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'to.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'to.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'to.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'to.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'to.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'to.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'to.label'
-    }, {
-      sTitle: 'Comments',
-      sDefaultContent: '',
-      mData: 'comments'
-    }],
-    'aaSorting': [
+    aoColumns: [selectColumn, detailsLinkColumn, approvedOnColumn, submittedOnColumn, approvedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aaSorting: [
       [2, 'desc'],
       [3, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    sDom: sDom,
+    oTableTools: oTableTools
   });
 
   $('#approved-wrap').click(function(e) {
@@ -1074,14 +530,14 @@ $(function() {
 
 
 
-function formatRequest(requests) {
-  for (var i = 0; i < requests.length; i += 1) {
-    formatDate(requests[i].createdOn);
-    formatDate(requests[i].updatedOn);
-    formatDate(requests[i].submittedOn);
-    formatDate(requests[i].rejectedOn);
-  }
-}
+// function formatRequest(requests) {
+//   for (var i = 0; i < requests.length; i += 1) {
+//     formatDate(requests[i].createdOn);
+//     formatDate(requests[i].updatedOn);
+//     formatDate(requests[i].submittedOn);
+//     formatDate(requests[i].rejectedOn);
+//   }
+// }
 
 function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable) {
   $.ajax({
@@ -1366,4 +822,28 @@ function formatCableStatus(s) {
     return status[s];
   }
   return 'unknown';
+}
+
+
+function dateColumn(title, key) {
+  return {
+    sTitle: title,
+    mData: key,
+    sDefaultContent: '',
+    mRender: function(data, type, full) {
+      return formatDate(data);
+    }
+  };
+}
+
+
+function personColumn(title, key) {
+  return {
+    sTitle: title,
+    mData: key,
+    sDefaultContent: '',
+    mRender: function(data, type, full) {
+      return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
+    }
+  };
 }
