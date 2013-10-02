@@ -233,7 +233,7 @@ $(function() {
   savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aoColumns: savedAoColumns,
     aaSorting: [
       [2, 'desc'],
       [3, 'desc']
@@ -277,10 +277,13 @@ $(function() {
   /*saved tab ends*/
 
   /*submitted tab starts*/
+  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn, createdOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#submitted-table', submittedAoColumns);
+
   submittedTable = $('#submitted-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn, createdOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aoColumns: submittedAoColumns,
     'aaSorting': [
       [2, 'desc'],
       [3, 'desc'],
@@ -315,10 +318,13 @@ $(function() {
   /*submitted tab ends*/
 
   /*rejected tab starts*/
+
+  var rejectedAoColumns = [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aoColumns: rejectedAoColumns,
     aaSorting: [
       [2, 'desc'],
       [3, 'desc'],
@@ -356,10 +362,12 @@ $(function() {
   /*rejected tab ends*/
 
   /*approved tab starts*/
+  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, submittedOnColumn, approvedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [selectColumn, detailsLinkColumn, approvedOnColumn, submittedOnColumn, approvedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]),
+    aoColumns: approvedAoColumns,
     aaSorting: [
       [2, 'desc'],
       [3, 'desc']
