@@ -1,7 +1,7 @@
 var savedTableColumns = {
-  from: [11, 12, 13, 14, 15, 16, 17, 18],
-  to: [19, 20, 21, 22, 23, 24, 25, 26],
-  comments: [27]
+  from: [12, 13, 14, 15, 16, 17, 18, 19],
+  to: [20, 21, 22, 23, 24, 25, 26, 27],
+  comments: [28]
 };
 
 var submittedTableColumns = {
@@ -64,35 +64,42 @@ var rejectedByColumn = personColumn('Rejected by', 'rejectedBy');
 var commentsColumn = {
   sTitle: 'Comments',
   sDefaultContent: '',
-  mData: 'comments'
+  mData: 'comments',
+  bFilter: true
 };
 
 var basicColumns = [{
   sTitle: 'project',
   sDefaultContent: '',
-  mData: 'basic.project'
+  mData: 'basic.project',
+  bFilter: true
 }, {
   sTitle: 'SSS',
   sDefaultContent: '',
   mData: function(source, type, val) {
     return (source.basic.system ? source.basic.system : '?') + (source.basic.subsystem ? source.basic.subsystem : '?') + (source.basic.signal ? source.basic.signal : '?');
-  }
+  },
+  bFilter: true
 }, {
   sTitle: 'Cable type',
   sDefaultContent: '',
-  mData: 'basic.cableType'
+  mData: 'basic.cableType',
+  bFilter: true
 }, {
   sTitle: 'Engineer',
   sDefaultContent: '',
-  mData: 'basic.engineer'
+  mData: 'basic.engineer',
+  bFilter: true
 }, {
   sTitle: 'Service',
   sDefaultContent: '',
-  mData: 'basic.service'
+  mData: 'basic.service',
+  bFilter: true
 }, {
   sTitle: 'WBS',
   sDefaultContent: '',
-  mData: 'basic.wbs'
+  mData: 'basic.wbs',
+  bFilter: true
 }, {
   sTitle: 'Tags',
   sDefaultContent: '',
@@ -102,78 +109,96 @@ var basicColumns = [{
     } else {
       return '';
     }
-  }
+  },
+  bFilter: true
 }, {
   sTitle: 'Quantity',
   sDefaultContent: '',
-  mData: 'basic.quantity'
+  mData: 'basic.quantity',
+  bFilter: true
 }];
 var fromColumns = [{
   sTitle: 'From building',
   sDefaultContent: '',
-  mData: 'from.building'
+  mData: 'from.building',
+  bFilter: true
 }, {
   sTitle: 'room',
   sDefaultContent: '',
-  mData: 'from.room'
+  mData: 'from.room',
+  bFilter: true
 }, {
   sTitle: 'elevation',
   sDefaultContent: '',
-  mData: 'from.elevation'
+  mData: 'from.elevation',
+  bFilter: true
 }, {
   sTitle: 'unit',
   sDefaultContent: '',
-  mData: 'from.unit'
+  mData: 'from.unit',
+  bFilter: true
 }, {
   sTitle: 'term. device',
   sDefaultContent: '',
-  mData: 'from.terminationDevice'
+  mData: 'from.terminationDevice',
+  bFilter: true
 }, {
   sTitle: 'term. type',
   sDefaultContent: '',
-  mData: 'from.terminationType'
+  mData: 'from.terminationType',
+  bFilter: true
 }, {
   sTitle: 'wiring drawing',
   sDefaultContent: '',
-  mData: 'from.wiringDrawing'
+  mData: 'from.wiringDrawing',
+  bFilter: true
 }, {
   sTitle: 'label',
   sDefaultContent: '',
-  mData: 'from.label'
+  mData: 'from.label',
+  bFilter: true
 }];
 
 var toColumns = [{
   sTitle: 'To building',
   sDefaultContent: '',
-  mData: 'to.building'
+  mData: 'to.building',
+  bFilter: true
 }, {
   sTitle: 'room',
   sDefaultContent: '',
-  mData: 'to.room'
+  mData: 'to.room',
+  bFilter: true
 }, {
   sTitle: 'elevation',
   sDefaultContent: '',
-  mData: 'to.elevation'
+  mData: 'to.elevation',
+  bFilter: true
 }, {
   sTitle: 'unit',
   sDefaultContent: '',
-  mData: 'to.unit'
+  mData: 'to.unit',
+  bFilter: true
 }, {
   sTitle: 'term. device',
   sDefaultContent: '',
-  mData: 'to.terminationDevice'
+  mData: 'to.terminationDevice',
+  bFilter: true
 }, {
   sTitle: 'term. type',
   sDefaultContent: '',
-  mData: 'to.terminationType'
+  mData: 'to.terminationType',
+  bFilter: true
 }, {
   sTitle: 'wiring drawing',
   sDefaultContent: '',
-  mData: 'to.wiringDrawing'
+  mData: 'to.wiringDrawing',
+  bFilter: true
 }, {
   sTitle: 'label',
   sDefaultContent: '',
-  mData: 'to.label'
+  mData: 'to.label',
+  bFilter: true
 }];
 
 var oTableTools = {
@@ -201,6 +226,10 @@ $(function() {
   });
 
   /*saved tab starts*/
+  // add footer first
+  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+
+  fnAddFilterFoot('#saved-table', savedAoColumns);
   savedTable = $('#saved-table').dataTable({
     aaData: [],
     bAutoWidth: false,
@@ -222,17 +251,16 @@ $(function() {
   });
 
   $('#saved-show input:checkbox').change(function(e) {
+    // fnSetFooterVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#saved-select-all').click(function(e) {
     fnSelectAll(savedTable, 'row-selected', 'select-row', true);
-    // savedTable.fnAdjustColumnSizing();
   });
 
   $('#saved-select-none').click(function(e) {
     fnDeselect(savedTable, 'row-selected', 'select-row');
-    // savedTable.fnAdjustColumnSizing();
   });
 
   $('#saved-delete').click(function(e) {
@@ -412,9 +440,15 @@ $(function() {
       sDefaultContent: '',
       mData: 'request.basic.wbs'
     }, {
-      sTitle: 'Quantity',
+      sTitle: 'Tags',
       sDefaultContent: '',
-      mData: 'request.basic.quantity'
+      mData: function(source, type, val) {
+        if (source.tags) {
+          return source.tags.join();
+        } else {
+          return '';
+        }
+      }
     }, {
       sTitle: 'From building',
       sDefaultContent: '',
@@ -488,18 +522,8 @@ $(function() {
       [3, 'desc'],
       [1, 'desc']
     ],
-    "sDom": "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    sDom: sDom,
+    oTableTools: oTableTools
   });
 
   $('#cables-wrap').click(function(e) {
@@ -525,6 +549,13 @@ $(function() {
     } else {
       $(e.target).closest('tr').removeClass('row-selected');
     }
+  });
+
+  $('tfoot').on('keyup', 'input', function(e) {
+    var table = $(this).closest('table');
+    var th = $(this).closest('th');
+    table.dataTable().fnFilter(this.value, $('tfoot th', table).index(th));
+
   });
 });
 
@@ -576,6 +607,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
     savedTable.fnClearTable();
     savedTable.fnAddData(saved);
+
     if ($('#saved-unwrap').hasClass('active')) {
       fnUnwrap(savedTable);
     }
@@ -832,10 +864,10 @@ function dateColumn(title, key) {
     sDefaultContent: '',
     mRender: function(data, type, full) {
       return formatDate(data);
-    }
+    },
+    sType: 'date'
   };
 }
-
 
 function personColumn(title, key) {
   return {
@@ -846,4 +878,12 @@ function personColumn(title, key) {
       return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
     }
   };
+}
+
+function createNullArray(size) {
+  var out = [];
+  for (var i = 0; i < size; i += 1) {
+    out.push(null);
+  }
+  return out;
 }

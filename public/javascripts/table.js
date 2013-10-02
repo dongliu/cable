@@ -56,21 +56,15 @@ function fnSetColumnsVis(oTableLocal, columns, show) {
 }
 
 function fnAddFilterFoot(sTable, aoColumns) {
-  // var size = $(sTable + ' thead th').length;
-  var foot = $(document.createElement('tfoot'));
-  foot.append('<tr role="row"></tr>');
-
-  // $(sTable + ' thead th').each(function(index){
-    // if (indexes.indexOf(index) !== -1) {
+  var tr = $('<tr role="row">');
   aoColumns.forEach(function(c){
     if (c.bFilter){
-      $('tr', foot).append('<th><input type="text" placeholder="'+c.sTitle+'" class="input-mini" autocomplete="off"></th>');
-      // foot.append('<th><input type="text" class="input-mini" autocomplete="off"></th>');
+      tr.append('<th><input type="text" placeholder="'+c.sTitle+'" class="input-mini" autocomplete="off"></th>');
     } else {
-      $('tr', foot).append('<th></th>');
+      tr.append('<th></th>');
     }
   });
-  $(sTable).append(foot);
+  $(sTable).append($('<tfoot>').append(tr));
 }
 
 function formatDate(date) {

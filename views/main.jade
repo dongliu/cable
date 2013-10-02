@@ -117,6 +117,18 @@ block content
                 //- li.divider
                 //- li
                 //-   a(href='#restore') restore
+            button#saved-filter.btn.btn-primary(type='button',data-toggle='collapse',data-target='#saved-filters') Filter by date
+          #saved-filters.collapse
+            .control-group
+              .control-label Created date
+              .controls
+                input.input-small(placeholder='from')
+                input.input-small(placeholder='to')
+            .control-group
+              .control-label Updated date
+              .controls
+                input.input-small(placeholder='from')
+                input.input-small(placeholder='to')
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           .btn-toolbar
@@ -255,6 +267,7 @@ block js
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
   script(type='text/javascript', src='/datatables/js/TableTools.js')
+  script(type='text/javascript', src='/datatables/js/jquery.dataTables.columnFilter.js')
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/moment.js')
   script(type='text/javascript', src='/javascripts/lodash.js')
