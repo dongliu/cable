@@ -76,6 +76,10 @@ block content
               button.btn.btn-info#approving-select-none
                 i.icon-list.icon-light
                 | &nbsp;Clear selection
+            .btn-group
+              button.btn.btn-info#approving-select-all
+                i.icon-list.icon-dark
+                | &nbsp;Select all
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#approving-wrap.active Wrap
               button.btn.btn-info#approving-unwrap Unwrap
@@ -108,24 +112,24 @@ block content
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
 
-            #rejected-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
+            //- #rejected-show.btn-group
+            //-   button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+            //-     i.icon-wrench
+            //-     | &nbsp;Show
+            //-     span.caret
+            //-   ul.dropdown-menu
+            //-     li
+            //-       label.checkbox
+            //-         input(type='checkbox', value='from', checked)
+            //-         | from
+            //-     li
+            //-       label.checkbox
+            //-         input(type='checkbox', value='to', checked)
+            //-         | to
+            //-     li
+            //-       label.checkbox
+            //-         input(type='checkbox', value='comments', checked)
+            //-         | comments
                 //- li.divider
                 //- li
                 //-   a(href='#restore') restore
