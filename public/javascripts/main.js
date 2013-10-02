@@ -54,6 +54,7 @@ var createdOnColumn = dateColumn('Created on', 'createdOn');
 var updatedOnColumn = dateColumn('Updated on', 'updatedOn');
 
 var submittedOnColumn = dateColumn('Submitted on', 'submittedOn');
+var submittedByColumn = personColumn('Submitted by', 'submittedBy');
 
 var approvedOnColumn = dateColumn('Approved on', 'approvedOn');
 var approvedByColumn = personColumn('Approved by', 'approvedBy');
@@ -200,6 +201,27 @@ var toColumns = [{
   mData: 'to.label',
   bFilter: true
 }];
+
+var numberColumn = {
+  sTitle: 'Number',
+  mData: 'number',
+  mRender: function(data, type, full) {
+    return '<a href="cables/' + data + '" target="_blank">' + data + '</a>';
+  },
+  bFilter: true
+};
+
+var statusColumn = {
+  sTitle: 'Status',
+  // mData: 'status',
+  // mRender: function(data, type, full) {
+  //   return formatCableStatus(data);
+  // },
+  mData: function(source, type, val) {
+    return formatCableStatus(source.status);
+  },
+  bFilter: true
+};
 
 var oTableTools = {
   "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
@@ -395,137 +417,13 @@ $(function() {
   /*approved tab ends*/
 
   /*cables tab starts*/
+  var cableAoCulumns = [numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
+
+  fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
     aaData: [],
     bAutoWidth: false,
-    aoColumns: [{
-      sTitle: '',
-      sDefaultContent: '<label class="checkbox"><input type="checkbox" class="select-row"></label>',
-      sSortDataType: 'dom-checkbox',
-      asSorting: ['desc', 'asc']
-    }, {
-      sTitle: 'Number',
-      mData: 'number',
-      mRender: function(data, type, full) {
-        return '<a href="cables/' + data + '" target="_blank">' + data + '</a>';
-      }
-    }, {
-      sTitle: 'Status',
-      mData: 'status',
-      mRender: function(data, type, full) {
-        return formatCableStatus(data);
-      }
-    }, {
-      sTitle: 'Approved on',
-      mData: 'approvedOn',
-      mRender: function(data, type, full) {
-        return formatDate(data);
-      }
-    }, {
-      sTitle: 'Submitted by',
-      mData: 'request.submittedBy',
-      mRender: function(data, type, full) {
-        return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
-      }
-    }, {
-      sTitle: 'project',
-      sDefaultContent: '',
-      mData: 'request.basic.project'
-    }, {
-      sTitle: 'Cable type',
-      sDefaultContent: '',
-      mData: 'request.basic.cableType'
-    }, {
-      sTitle: 'Engineer',
-      sDefaultContent: '',
-      mData: 'request.basic.engineer'
-    }, {
-      sTitle: 'Service',
-      sDefaultContent: '',
-      mData: 'request.basic.service'
-    }, {
-      sTitle: 'WBS',
-      sDefaultContent: '',
-      mData: 'request.basic.wbs'
-    }, {
-      sTitle: 'Tags',
-      sDefaultContent: '',
-      mData: function(source, type, val) {
-        if (source.tags) {
-          return source.tags.join();
-        } else {
-          return '';
-        }
-      }
-    }, {
-      sTitle: 'From building',
-      sDefaultContent: '',
-      mData: 'request.from.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'request.from.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'request.from.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'request.from.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'request.from.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'request.from.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'request.from.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'request.from.label'
-    }, {
-      sTitle: 'To building',
-      sDefaultContent: '',
-      mData: 'request.to.building'
-    }, {
-      sTitle: 'room',
-      sDefaultContent: '',
-      mData: 'request.to.room'
-    }, {
-      sTitle: 'elevation',
-      sDefaultContent: '',
-      mData: 'request.to.elevation'
-    }, {
-      sTitle: 'unit',
-      sDefaultContent: '',
-      mData: 'request.to.unit'
-    }, {
-      sTitle: 'term. device',
-      sDefaultContent: '',
-      mData: 'request.to.terminationDevice'
-    }, {
-      sTitle: 'term. type',
-      sDefaultContent: '',
-      mData: 'request.to.terminationType'
-    }, {
-      sTitle: 'wiring drawing',
-      sDefaultContent: '',
-      mData: 'request.to.wiringDrawing'
-    }, {
-      sTitle: 'label',
-      sDefaultContent: '',
-      mData: 'request.to.label'
-    }, {
-      sTitle: 'Comments',
-      sDefaultContent: '',
-      mData: 'request.comments'
-    }],
+    aoColumns: cableAoCulumns,
     'aaSorting': [
       [3, 'desc'],
       [1, 'desc']
@@ -668,7 +566,12 @@ function initCable(cablesTable) {
     approved.forEach(function(r) {
       for (i = 0; i < json.length; i += 1) {
         if (r._id === json[i].request_id) {
-          (json[i])['request'] = r;
+
+          (json[i])['basic'] = r.basic;
+          (json[i])['from'] = r.from;
+          (json[i])['to'] = r.to;
+          (json[i])['comments'] = r.comments;
+          // (json[i])['request'] = r;
         }
       }
     });
@@ -884,7 +787,8 @@ function personColumn(title, key) {
     sDefaultContent: '',
     mRender: function(data, type, full) {
       return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
-    }
+    },
+    bFilter: true
   };
 }
 
