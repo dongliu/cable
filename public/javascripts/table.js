@@ -234,9 +234,26 @@ function addEvents() {
 }
 
 function formatCableStatus(s) {
-  var status = ['approved', 'ordered', 'received', 'accepted', 'labeled', 'bench terminated', 'bench tested', 'pulled', 'field terminated', 'tested'];
-  if (0 <= s && s <= 9) {
-    return status[s];
+  var status = {
+    '100': 'approved',
+    '101': 'ordered',
+    '102': 'received',
+    '103': 'accepted',
+    '200': 'ready for installation',
+    '201': 'labeled',
+    '202': 'bench terminated',
+    '203': 'bench tested',
+    '249': 'ready for pull',
+    '250': 'pulled',
+    '251': 'field terminated',
+    '252': 'field tested',
+    '300': 'working',
+    '400': 'failed',
+    '500': 'aborted'
+  };
+  // var status = ['approved', 'procuring', 'installing', 'working', 'failed'];
+  if (status[''+s]) {
+    return status[''+s];
   }
   return 'unknown';
 }
@@ -245,11 +262,16 @@ function formatCableStatus(s) {
 function dateColumn(title, key) {
   return {
     sTitle: title,
-    mData: key,
-    sDefaultContent: '',
-    mRender: function(data, type, full) {
-      return formatDate(data);
+    mData: function(source, type, val) {
+      if (type === 'sort') {
+        return formatDateLong(source[key]);
+      }
+      return formatDate(source[key]);
     },
+    sDefaultContent: '',
+    // mRender: function(data, type, full) {
+    //   return formatDate(data);
+    // },
     sType: 'date'
   };
 }
@@ -346,7 +368,13 @@ function fnAddFilterFoot(sTable, aoColumns) {
 }
 
 function formatDate(date) {
+  // return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
+  return date ? moment(date).format('YY-MM-DD') : '';
+}
+
+function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
+  // return date ? moment(date).format('YY-MM-DD') : '';
 }
 
 $.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {

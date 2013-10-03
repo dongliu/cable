@@ -313,7 +313,9 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     }
     approvedTable.fnDraw();
 
-    initCable(cablesTable);
+    if (cablesTable) {
+      initCable(cablesTable);
+    }
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
@@ -372,7 +374,7 @@ function deleteFromModal() {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
         }
       });
   });
@@ -404,7 +406,7 @@ function submitFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
         }
       });
   });
@@ -496,7 +498,7 @@ function cloneFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
         }
       });
   });

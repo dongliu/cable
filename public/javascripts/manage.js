@@ -4,7 +4,9 @@ var approvingTableColumns = {
   comments: [29]
 };
 
-var rejectedTableColumns = approvingTableColumns;
+// var rejectedTableColumns = approvingTableColumns;
+
+var approved = [];
 
 $(function() {
   /*approving table starts*/
@@ -24,6 +26,7 @@ $(function() {
     oTableTools: oTableTools
   });
 
+  initRequestTable(approvingTable, '/requests/statuses/1/json');
   $('#approving-wrap').click(function(e) {
     $('#approving-table td').removeClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
@@ -51,11 +54,8 @@ $(function() {
   });
 
   $('#approving-reject').click(function(e) {
-    batchReject(approvingTable);
+    batchReject(approvingTable, rejectedTable);
   });
-
-
-  initRequestTable(approvingTable, '/requests/statuses/1/json');
 
   /*approving tab ends*/
 
@@ -68,9 +68,9 @@ $(function() {
     bAutoWidth: false,
     aoColumns: rejectedAoColumns,
     aaSorting: [
+      [1, 'desc'],
       [2, 'desc'],
-      [3, 'desc'],
-      [4, 'desc']
+      [3, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
@@ -92,82 +92,103 @@ $(function() {
   //   fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
   // });
 
+  /*rejected tab ends*/
 
-  var procuring = [];
+  /*procuring tab starts*/
+
+  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0,1), basicColumns.slice(2,7), fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#procuring-table', procuringAoColumns);
   var procuringTable = $('#procuring-table').dataTable({
-    'aaData': procuring,
-    'aoColumns': [{
-        'sTitle': 'Number'
-      }, {
-        'sTitle': 'Submitted by'
-      },
-      // {
-      //   'sTitle': 'Submitted on'
-      // },
-      {
-        'sTitle': 'Approved by'
-      }, {
-        'sTitle': 'Approved on'
-      }
+    aaData: [],
+    aoColumns: procuringAoColumns,
+    aaSorting: [
+      [3, 'desc'],
+      [1, 'desc']
     ],
-    'aaSorting': [
-      [4, 'desc']
-    ],
-    "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-    "oTableTools": {
-      "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
-      "aButtons": [
-        "copy",
-        "print", {
-          "sExtends": "collection",
-          "sButtonText": 'Save <span class="caret" />',
-          "aButtons": ["csv", "xls", "pdf"]
-        }
-      ]
-    }
+    sDom: sDom,
+    oTableTools: oTableTools
   });
-  $.ajax({
-    url: '/cables/statuses/0/json',
-    type: 'GET',
-    dataType: 'json'
-  }).done(function(json) {
-    procuring = json.map(function(cable) {
-      return [].concat(cable.number).concat(cable.submittedBy).concat(moment(cable.submittedOn).format('YYYY-MM-DD HH:mm:ss')).concat(cable.approvedBy).concat(moment(cable.approvedOn).format('YYYY-MM-DD HH:mm:ss'));
-    });
-    procuringTable.fnClearTable();
-    procuringTable.fnAddData(procuring);
-    procuringTable.fnDraw();
-    $('tbody tr', $('#procuring-table')).click(function(e) {
-      var id = procuringTable.fnGetData(this, 0);
-      window.open('/cables/' + id);
-    });
-  }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
 
   /*all tabs*/
-  addEvents();
 
+  addEvents();
+  initCableTables(procuringTable);
 });
 
 
-function initRequestTable(table, url) {
+function initRequestTable(oTable, url) {
   $.ajax({
     url: url,
     type: 'GET',
     dataType: 'json'
   }).done(function(json) {
-    table.fnClearTable();
-    table.fnAddData(json);
-    table.fnDraw();
+    oTable.fnClearTable();
+    oTable.fnAddData(json);
+    oTable.fnDraw();
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 }
 
-// function
+
+function initCableTables(procuringTable, installingTable, installedTable) {
+  $.ajax({
+    url: '/requests/statuses/2/json',
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'json'
+  }).done(function(json) {
+    approved = json;
+    if (procuringTable) {
+      initCableTable(procuringTable, '/cables/statuses/0/json');
+    }
+    if (installingTable) {
+      initCableTable(installingTable, '/cables/statuses/0/json');
+    }
+    if (installedTable) {
+      initCableTable(installedTable, '/cables/statuses/0/json');
+    }
+
+  }).fail(function(jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  }).always();
+}
+
+
+function initCableTable(oTable, url){
+  $.ajax({
+    url: url,
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'json'
+  }).done(function(json) {
+    approved.forEach(function(r) {
+      for (i = 0; i < json.length; i += 1) {
+        if (r._id === json[i].request_id) {
+
+          (json[i])['basic'] = r.basic;
+          (json[i])['from'] = r.from;
+          (json[i])['to'] = r.to;
+          (json[i])['comments'] = r.comments;
+        }
+      }
+    });
+
+    oTable.fnClearTable();
+    oTable.fnAddData(json);
+    if ($('#cables-unwrap').hasClass('active')) {
+      fnUnwrap(oTable);
+    }
+    oTable.fnDraw();
+
+  }).fail(function(jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $(window).scrollTop($('#message div:last-child').offset().top - 40);
+  }).always();
+}
+
 
 function batchApprove(oTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
@@ -231,7 +252,7 @@ function approveFromModal(requests, approvingTable) {
   });
 }
 
-function batchReject(oTable) {
+function batchReject(oTable, rejectedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = {};
   if (selected.length) {
@@ -251,7 +272,7 @@ function batchReject(oTable) {
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
     $('#reject').click(function(e) {
-      rejectFromModal(requests, oTable);
+      rejectFromModal(requests, oTable, rejectedTable);
     });
   } else {
     $('#modalLable').html('Alert');
@@ -261,7 +282,7 @@ function batchReject(oTable) {
   }
 }
 
-function rejectFromModal(requests, approvingTable) {
+function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#reject').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function(index) {

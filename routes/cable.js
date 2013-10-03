@@ -15,12 +15,12 @@ var auth = require('../lib/auth');
 // 0: saved 1: submitted 2: approved 3: rejected
 
 // cable status
-// 0: approved 1: ordered 2: received 3: accepted 4: labeled
-// 5: bench terminated 6: bench tested 7: pulled 8: field terminated
-// 9: tested
+// procuring: 100: approved 101: ordered 102: received 103: accepted
+// installing: 200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
+// working: 300
+// failed: 400
+// aborted: 500
 
-// 3: to be installed
-// 9: installed
 
 //TODO need a server side validation in the future
 
@@ -430,20 +430,25 @@ module.exports = function(app) {
     });
   });
 
+
+  // status: 1 for procuring, 2 for installing
+
   app.get('/cables/statuses/:s/json', function(req, res) {
     if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var status = parseInt(req.params.s, 10);
-    if (status < 0 || status > 3) {
+    if (status < 0 || status > 5) {
       return res.json(400, {
         error: 'wrong status'
       });
     }
-    var query = {
-      status: status
-    };
-    Cable.find(query).lean().exec(function(err, docs) {
+    var low = status*100;
+    var up = status*100+99;
+    // var query = {
+    //   status: status
+    // };
+    Cable.where('status').gte(low).lte(up).lean().exec(function(err, docs) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -489,7 +494,10 @@ module.exports = function(app) {
     });
   });
 
-  app.put('/cables/:id', function(req, res) {
+  app.put('/cables/:id', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.length === 0) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
 
   });
 };
@@ -523,7 +531,7 @@ function createCable(cableRequest, req, res, quantity) {
       console.log(nextNumber);
       var newCable = new Cable({
         number: nextNumber,
-        status: 0,
+        status: 100,
         request_id: cableRequest._id,
         tags: cableRequest.basic.tags,
         // basic: cableRequest.basic,
