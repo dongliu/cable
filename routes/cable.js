@@ -556,6 +556,11 @@ module.exports = function(app) {
         update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
+      case "use":
+        update['status'] = 300;
+        // update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        // update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
       default:
         inValidaAction = true;
     }

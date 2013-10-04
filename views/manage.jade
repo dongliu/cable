@@ -163,22 +163,6 @@ block content
           table#procuring-table.table.table-bordered.table-hover
         #installing.tab-pane
           .btn-toolbar
-            //- .btn-group
-            //-   button.btn#installing-order(value='order')
-            //-     i.icon-check-sign
-            //-     | &nbsp;Order
-            //- .btn-group
-            //-   button.btn#installing-receive(value='receive')
-            //-     i.icon-check-sign
-            //-     | &nbsp;Receive
-            //- .btn-group
-            //-   button.btn#installing-accept(value='accept')
-            //-     i.icon-check-sign
-            //-     | &nbsp;Accept
-            //- .btn-group
-            //-   button.btn.btn-primary#installing-to-install(value='install')
-            //-     i.icon-check-sign
-            //-     | &nbsp;Ready to install
             .btn-group
               button.btn.btn-info#installing-select-none
                 i.icon-list.icon-light
@@ -208,6 +192,39 @@ block content
                   label.checkbox
                     input(type='checkbox', value='comments')
                     | comments
+          .btn-toolbar
+            .btn-group
+              button.btn#installing-label(value='label')
+                i.icon-check-sign
+                | &nbsp;Label
+            .btn-group
+              button.btn#installing-benchTerm(value='benchTerm')
+                i.icon-check-sign
+                | &nbsp;Bench terminate
+            .btn-group
+              button.btn#installing-benchTest(value='benchTest')
+                i.icon-check-sign
+                | &nbsp;Bench test
+            .btn-group
+              button.btn.btn-primary#installing-to-pull(value='pull')
+                i.icon-check-sign
+                | &nbsp;Ready to pull
+            .btn-group
+              button.btn#installing-pull(value='pulled')
+                i.icon-check-sign
+                | &nbsp;Pull
+            .btn-group
+              button.btn#installing-fieldTerm(value='fieldTerm')
+                i.icon-check-sign
+                | &nbsp;Field terminate
+            .btn-group
+              button.btn#installing-fieldTest(value='fieldTest')
+                i.icon-check-sign
+                | &nbsp;Field test
+            .btn-group
+              button.btn.btn-primary#installing-to-use(value='use')
+                i.icon-check-sign
+                | &nbsp;Ready to use
           table#installing-table.table.table-bordered.table-hover
         #installed.tab-pane
           table#installed-table.table.table-bordered.table-hover

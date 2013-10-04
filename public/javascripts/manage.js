@@ -182,13 +182,13 @@ $(function() {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
-  // $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e){
-  //   batchCableAction(procuringTable, $(this).val(), procuringTable);
-  // });
+  $('#installing-label, #installing-benchTerm, #installing-Test, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e){
+    batchCableAction(installingTable, $(this).val(), null, installingTable);
+  });
 
-  // $('#procuring-to-install').click(function(e){
-  //   batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
-  // });
+  $('#installing-to-use').click(function(e){
+    batchCableAction(procuringTable, $(this).val(), null, installingTable, installedTable);
+  });
 
   /*all tabs*/
 
@@ -406,7 +406,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
 }
 
 
-function batchCableAction(oTable, action, procuringTable, installingTable) {
+function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = {};
   if (selected.length) {
@@ -433,7 +433,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable) {
   }
 }
 
-function actionFromModal(oTable, action, procuringTable, installingTable) {
+function actionFromModal(oTable, action, procuringTable, installingTable, installedTable) {
   $('#action').prop('disabled', true);
   var number = $('#modal .modal-body .cable').length;
   $('#modal .modal-body .cable').each(function(index) {
@@ -459,11 +459,12 @@ function actionFromModal(oTable, action, procuringTable, installingTable) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          if (action == 'install' && installingTable){
-            initCableTables(procuringTable, installingTable);
-          } else {
-            initCableTables(procuringTable);
-          }
+          // if (action == 'install' && installingTable){
+          //   initCableTables(procuringTable, installingTable);
+          // } else {
+          //   initCableTables(procuringTable);
+          // }
+          initCableTables(procuringTable, installingTable, installedTable);
         }
       });
   });
