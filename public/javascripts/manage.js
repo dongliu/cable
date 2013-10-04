@@ -10,6 +10,7 @@ var procuringTableColumns = {
   comments: [27]
 };
 
+var installingTableColumns = procuringTableColumns;
 var nameCache = {};
 
 var approved = [];
@@ -144,10 +145,55 @@ $(function() {
     batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
   });
 
+  /*procuring tab ends*/
+
+  /*installing tab starts*/
+  var installingAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#installing-table', installingAoColumns);
+  var installingTable = $('#installing-table').dataTable({
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: installingAoColumns,
+    aaSorting: [
+      [3, 'desc'],
+      [1, 'desc']
+    ],
+    sDom: sDom,
+    oTableTools: oTableTools
+  });
+
+  $('#installing-wrap').click(function(e) {
+    fnWrap(installingTable);
+  });
+
+  $('#installing-unwrap').click(function(e) {
+    fnUnwrap(installingTable);
+  });
+
+  $('#installing-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(installingTable, installingAoColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#installing-select-all').click(function(e) {
+    fnSelectAll(installingTable, 'row-selected', 'select-row', true);
+  });
+
+  $('#installing-select-none').click(function(e) {
+    fnDeselect(installingTable, 'row-selected', 'select-row');
+  });
+
+  // $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e){
+  //   batchCableAction(procuringTable, $(this).val(), procuringTable);
+  // });
+
+  // $('#procuring-to-install').click(function(e){
+  //   batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
+  // });
+
   /*all tabs*/
 
   addEvents();
-  initCableTables(procuringTable);
+  initCableTables(procuringTable, installingTable);
 });
 
 
@@ -183,7 +229,11 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       });
     }
     if (installingTable) {
-      initCableTable(installingTable, '/cables/statuses/2/json');
+      initCableTable(installingTable, '/cables/statuses/2/json', function() {
+        $('#installing-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
+        });
+      });
     }
     if (installedTable) {
       initCableTable(installedTable, '/cables/statuses/3/json');

@@ -162,6 +162,52 @@ block content
                     | comments
           table#procuring-table.table.table-bordered.table-hover
         #installing.tab-pane
+          .btn-toolbar
+            //- .btn-group
+            //-   button.btn#installing-order(value='order')
+            //-     i.icon-check-sign
+            //-     | &nbsp;Order
+            //- .btn-group
+            //-   button.btn#installing-receive(value='receive')
+            //-     i.icon-check-sign
+            //-     | &nbsp;Receive
+            //- .btn-group
+            //-   button.btn#installing-accept(value='accept')
+            //-     i.icon-check-sign
+            //-     | &nbsp;Accept
+            //- .btn-group
+            //-   button.btn.btn-primary#installing-to-install(value='install')
+            //-     i.icon-check-sign
+            //-     | &nbsp;Ready to install
+            .btn-group
+              button.btn.btn-info#installing-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            .btn-group
+              button.btn.btn-info#installing-select-all
+                i.icon-list.icon-dark
+                | &nbsp;Select all
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#installing-wrap.active Wrap
+              button.btn.btn-info#installing-unwrap Unwrap
+            #installing-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from')
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to')
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments')
+                    | comments
           table#installing-table.table.table-bordered.table-hover
         #installed.tab-pane
           table#installed-table.table.table-bordered.table-hover
