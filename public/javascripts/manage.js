@@ -361,13 +361,13 @@ function batchCableAction(oTable, action) {
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data.number + '">' + data.number + '||' + data.status + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
+      $('#modal .modal-body').append('<div id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#username').autocomplete(nameAuto('#username', nameCache));
     $('#date').datepicker();
     $('#modal').modal('show');
-    $('#username').autocomplete("option", "appendTo", "#modalform");
+    // $('#username').autocomplete("option", "appendTo", "#modalform");
     $('#approve').click(function(e) {
       actionFromModal(requests, oTable);
     });
