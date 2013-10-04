@@ -2,36 +2,7 @@ $(function() {
   var users = [];
   var nameCache = {};
 
-  $('#user-name').autocomplete({
-    minLength: 1,
-    source: function(req, res) {
-      var term = req.term.toLowerCase();
-      var output = [];
-      var key = term.charAt(0);
-      if (key in nameCache) {
-        for (var i = 0; i < nameCache[key].length; i += 1) {
-          if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
-            output.push(nameCache[key][i]);
-          }
-        }
-        res(output);
-        return;
-      }
-      $.getJSON('/adusernames', req, function(data, status, xhr) {
-        var names = [];
-        for (var i = 0; i < data.length; i += 1) {
-          if (data[i].displayName.indexOf(',') !== -1) {
-            names.push(data[i].displayName);
-          }
-        }
-        nameCache[term] = names;
-        res(names);
-      });
-    },
-    select: function(event, ui) {
-      $('#user-name').val(ui.item.value);
-    }
-  });
+  $('#user-name').autocomplete(nameAuto('#user-name', nameCache));
 
   var userTable = $('#users').dataTable({
     'aaData': users,
