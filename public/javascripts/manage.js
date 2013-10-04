@@ -11,11 +11,20 @@ var procuringTableColumns = {
 };
 
 var installingTableColumns = procuringTableColumns;
+
+var installedTableColumns = procuringTableColumns;
+
 var nameCache = {};
 
 var approved = [];
 
 $(function() {
+  $('#reload').click(function(e){
+    initRequestTable(approvingTable, '/requests/statuses/1/json');
+    initRequestTable(rejectedTable, 'requests/statuses/3/json');
+    initCableTables(procuringTable, installingTable, installedTable);
+  });
+
   /*approving table starts*/
 
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, updatedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
@@ -187,13 +196,51 @@ $(function() {
   });
 
   $('#installing-to-use').click(function(e){
-    batchCableAction(procuringTable, $(this).val(), null, installingTable, installedTable);
+    batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
   });
+
+  /*installing tab ends*/
+
+  /*installed tab starts*/
+  var installedAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
+  fnAddFilterFoot('#installed-table', installedAoColumns);
+  var installedTable = $('#installed-table').dataTable({
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: installedAoColumns,
+    aaSorting: [
+      [3, 'desc'],
+      [1, 'desc']
+    ],
+    sDom: sDom,
+    oTableTools: oTableTools
+  });
+
+  $('#installed-wrap').click(function(e) {
+    fnWrap(installedTable);
+  });
+
+  $('#installed-unwrap').click(function(e) {
+    fnUnwrap(installedTable);
+  });
+
+  $('#installed-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(installedTable, installedAoColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#installed-select-all').click(function(e) {
+    fnSelectAll(installedTable, 'row-selected', 'select-row', true);
+  });
+
+  $('#installed-select-none').click(function(e) {
+    fnDeselect(installedTable, 'row-selected', 'select-row');
+  });
+
 
   /*all tabs*/
 
   addEvents();
-  initCableTables(procuringTable, installingTable);
+  initCableTables(procuringTable, installingTable, installedTable);
 });
 
 
@@ -236,7 +283,11 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       });
     }
     if (installedTable) {
-      initCableTable(installedTable, '/cables/statuses/3/json');
+      initCableTable(installedTable, '/cables/statuses/3/json', function() {
+        $('#installed-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
+        });
+      });
     }
 
   }).fail(function(jqXHR, status, error) {
@@ -423,7 +474,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
     $('#modal').modal('show');
     // $('#username').autocomplete("option", "appendTo", "#modalform");
     $('#action').click(function(e) {
-      actionFromModal(oTable, action, procuringTable, installingTable);
+      actionFromModal(oTable, action, procuringTable, installingTable, installedTable);
     });
   } else {
     $('#modalLable').html('Alert');
@@ -459,11 +510,6 @@ function actionFromModal(oTable, action, procuringTable, installingTable, instal
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          // if (action == 'install' && installingTable){
-          //   initCableTables(procuringTable, installingTable);
-          // } else {
-          //   initCableTables(procuringTable);
-          // }
           initCableTables(procuringTable, installingTable, installedTable);
         }
       });

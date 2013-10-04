@@ -227,7 +227,38 @@ block content
                 | &nbsp;Ready to use
           table#installing-table.table.table-bordered.table-hover
         #installed.tab-pane
+          .btn-toolbar
+            .btn-group
+              button.btn.btn-info#installed-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            .btn-group
+              button.btn.btn-info#installed-select-all
+                i.icon-list.icon-dark
+                | &nbsp;Select all
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#installed-wrap.active Wrap
+              button.btn.btn-info#installed-unwrap Unwrap
+            #installed-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from')
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to')
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments')
+                    | comments
           table#installed-table.table.table-bordered.table-hover
+
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
