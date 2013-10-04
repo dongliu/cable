@@ -77,6 +77,8 @@ var cable = new Schema({
   submittedOn: Date,
   approvedBy: String,
   approvedOn: Date,
+  updatedOn: Date,
+  updatedBy: String,
   orderedBy: String,
   orderedOn: Date,
   receivedBy: String,
@@ -93,8 +95,8 @@ var cable = new Schema({
   pulledOn: Date,
   fieldTerminatedBy: String,
   fieldTerminatedOn: Date,
-  testedBy: String,
-  testedOn: Date
+  fieldTestedBy: String,
+  fieldTestedOn: Date
 });
 
 var Request = mongoose.model('Request', request);

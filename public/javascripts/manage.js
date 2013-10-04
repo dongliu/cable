@@ -136,8 +136,12 @@ $(function() {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-  $('#procuring-order, procuring-recieve, procuring-accept, procuring-to-install').click(function(e){
-    batchCableAction(procuringTable, $(this).val());
+  $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e){
+    batchCableAction(procuringTable, $(this).val(), procuringTable);
+  });
+
+  $('#procuring-to-install').click(function(e){
+    batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
   });
 
   /*all tabs*/
@@ -172,17 +176,17 @@ function initCableTables(procuringTable, installingTable, installedTable) {
   }).done(function(json) {
     approved = json;
     if (procuringTable) {
-      initCableTable(procuringTable, '/cables/statuses/0/json', function() {
+      initCableTable(procuringTable, '/cables/statuses/1/json', function() {
         $('#procuring-show input:checkbox').each(function(i) {
           fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
         });
       });
     }
     if (installingTable) {
-      initCableTable(installingTable, '/cables/statuses/0/json');
+      initCableTable(installingTable, '/cables/statuses/2/json');
     }
     if (installedTable) {
-      initCableTable(installedTable, '/cables/statuses/0/json');
+      initCableTable(installedTable, '/cables/statuses/3/json');
     }
 
   }).fail(function(jqXHR, status, error) {
@@ -352,7 +356,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
 }
 
 
-function batchCableAction(oTable, action) {
+function batchCableAction(oTable, action, procuringTable, installingTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = {};
   if (selected.length) {
@@ -361,15 +365,15 @@ function batchCableAction(oTable, action) {
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
+      $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#username').autocomplete(nameAuto('#username', nameCache));
     $('#date').datepicker();
     $('#modal').modal('show');
     // $('#username').autocomplete("option", "appendTo", "#modalform");
-    $('#approve').click(function(e) {
-      actionFromModal(requests, oTable);
+    $('#action').click(function(e) {
+      actionFromModal(oTable, action, procuringTable, installingTable);
     });
   } else {
     $('#modalLable').html('Alert');
@@ -377,4 +381,40 @@ function batchCableAction(oTable, action) {
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
   }
+}
+
+function actionFromModal(oTable, action, procuringTable, installingTable) {
+  $('#action').prop('disabled', true);
+  var number = $('#modal .modal-body .cable').length;
+  $('#modal .modal-body .cable').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/cables/' + that.id,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        action: action,
+        name: $('#username').val(),
+        date: $('#date').val()
+      }),
+    }).done(function() {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).prepend('<i class="icon-question"></i>');
+        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).addClass('text-error');
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          if (action == 'install' && installingTable){
+            initCableTables(procuringTable, installingTable);
+          } else {
+            initCableTables(procuringTable);
+          }
+        }
+      });
+  });
 }

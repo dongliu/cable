@@ -216,7 +216,9 @@ module.exports = function(app) {
           error: err.msg
         });
       }
-      res.render('requestdetails', {request: cableRequest});
+      res.render('requestdetails', {
+        request: cableRequest
+      });
     });
   });
 
@@ -414,7 +416,7 @@ module.exports = function(app) {
   });
 
 
-  // get the current user's cables
+  // get the user's cables
   app.get('/cables/json', function(req, res) {
     Cable.find({
       submittedBy: req.session.userid
@@ -441,8 +443,8 @@ module.exports = function(app) {
         error: 'wrong status'
       });
     }
-    var low = status*100;
-    var up = status*100+99;
+    var low = status * 100;
+    var up = status * 100 + 99;
     // var query = {
     //   status: status
     // };
@@ -496,6 +498,90 @@ module.exports = function(app) {
     if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
+    var update = {};
+    var inValidaAction = false;
+    switch (req.body.action) {
+      case "order":
+        update['status'] = 101;
+        update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "receive":
+        update['status'] = 102;
+        update['receivedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['receivedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "accept":
+        update['status'] = 103;
+        update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "install":
+        update['status'] = 200;
+        // update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        // update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "label":
+        update['status'] = 201;
+        update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "benchTerm":
+        update['status'] = 202;
+        update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "benchTest":
+        update['status'] = 203;
+        update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "pull":
+        update['status'] = 249;
+        // update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        // update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "pulled":
+        update['status'] = 250;
+        update['pulledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "fieldTerm":
+        update['status'] = 251;
+        update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      case "fieldTest":
+        update['status'] = 252;
+        update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+        update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+        break;
+      default:
+        inValidaAction = true;
+    }
+    if (inValidaAction) {
+      res.send(400, 'invalid action');
+    }
+    update['updatedOn'] = Date.now();
+    update['updatedBy'] = req.session.username;
+    Cable.findOneAndUpdate({
+      number: req.params.id
+    }, update, function(err, cable) {
+      if (err) {
+        console.error(err.msg);
+        return res.json(500, {
+          error: err.msg
+        });
+      }
+      if (cable) {
+        return res.send(204);
+      } else {
+        console.error(req.params.id + ' gone');
+        return res.json(410, {
+          error: req.params.id + ' gone'
+        });
+      }
+    });
 
   });
 };

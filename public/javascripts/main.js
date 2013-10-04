@@ -204,7 +204,7 @@ $(function() {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, approvedOnColumn, updatedOnColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
@@ -213,7 +213,7 @@ $(function() {
     aoColumns: cableAoCulumns,
     'aaSorting': [
       [3, 'desc'],
-      [1, 'desc']
+      [2, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
