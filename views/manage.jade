@@ -7,6 +7,7 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
@@ -115,19 +116,19 @@ block content
         #procuring.tab-pane
           .btn-toolbar
             .btn-group
-              button.btn#procuring-order
+              button.btn#procuring-order(value='order')
                 i.icon-check-sign
                 | &nbsp;Order
             .btn-group
-              button.btn#procuring-receive
+              button.btn#procuring-receive(value='receive')
                 i.icon-check-sign
                 | &nbsp;Receive
             .btn-group
-              button.btn#procuring-accept
+              button.btn#procuring-accept(value='accept')
                 i.icon-check-sign
                 | &nbsp;Accept
             .btn-group
-              button.btn.btn-primary#procuring-to-install
+              button.btn.btn-primary#procuring-to-install(value='install')
                 i.icon-check-sign
                 | &nbsp;Ready to install
             .btn-group
@@ -167,6 +168,7 @@ block content
 
 block js
   script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')

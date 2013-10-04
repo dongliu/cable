@@ -339,10 +339,7 @@ module.exports = function(app) {
         }
       });
     }
-    // if (req.body.action == 'request') {
-    //   // check if already adjusted
-    //   request.status = 2;
-    // }
+
     if (req.body.action == 'reject') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
         res.send(403, "You are not authorized to access this resource. ");
@@ -370,6 +367,7 @@ module.exports = function(app) {
         }
       });
     }
+
     if (req.body.action == 'approve') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
         res.send(403, "You are not authorized to access this resource. ");
