@@ -4,7 +4,11 @@ var approvingTableColumns = {
   comments: [29]
 };
 
-// var rejectedTableColumns = approvingTableColumns;
+var procuringTableColumns = {
+  from: [11, 12, 13, 14, 15, 16, 17, 18],
+  to: [19, 20, 21, 22, 23, 24, 25, 26],
+  comments: [27]
+};
 
 var approved = [];
 
@@ -96,10 +100,11 @@ $(function() {
 
   /*procuring tab starts*/
 
-  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0,1), basicColumns.slice(2,7), fromColumns, toColumns).concat([commentsColumn]);
+  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   var procuringTable = $('#procuring-table').dataTable({
     aaData: [],
+    bAutoWidth: false,
     aoColumns: procuringAoColumns,
     aaSorting: [
       [3, 'desc'],
@@ -107,6 +112,26 @@ $(function() {
     ],
     sDom: sDom,
     oTableTools: oTableTools
+  });
+
+  $('#procuring-wrap').click(function(e) {
+    fnWrap(procuringTable);
+  });
+
+  $('#procuring-unwrap').click(function(e) {
+    fnUnwrap(procuringTable);
+  });
+
+  $('#procuring-show input:checkbox').change(function(e) {
+    fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  $('#procuring-select-all').click(function(e) {
+    fnSelectAll(procuringTable, 'row-selected', 'select-row', true);
+  });
+
+  $('#procuring-select-none').click(function(e) {
+    fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
   /*all tabs*/
@@ -141,7 +166,11 @@ function initCableTables(procuringTable, installingTable, installedTable) {
   }).done(function(json) {
     approved = json;
     if (procuringTable) {
-      initCableTable(procuringTable, '/cables/statuses/0/json');
+      initCableTable(procuringTable, '/cables/statuses/0/json', function() {
+        $('#procuring-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
+        });
+      });
     }
     if (installingTable) {
       initCableTable(installingTable, '/cables/statuses/0/json');
@@ -157,7 +186,7 @@ function initCableTables(procuringTable, installingTable, installedTable) {
 }
 
 
-function initCableTable(oTable, url){
+function initCableTable(oTable, url, cb) {
   $.ajax({
     url: url,
     type: 'GET',
@@ -182,7 +211,9 @@ function initCableTable(oTable, url){
       fnUnwrap(oTable);
     }
     oTable.fnDraw();
-
+    if (cb) {
+      cb();
+    }
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);

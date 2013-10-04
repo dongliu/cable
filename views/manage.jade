@@ -52,13 +52,13 @@ block content
     .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
         li.active
-          a(href='#approving', data-toggle='tab') To be approved
+          a(href='#approving', data-toggle='tab') To approve
         li
           a(href='#rejected', data-toggle='tab') Rejected
         li
-          a(href='#procuring', data-toggle='tab') To be procured
+          a(href='#procuring', data-toggle='tab') To procure
         li
-          a(href='#installing', data-toggle='tab') To be installed
+          a(href='#installing', data-toggle='tab') To install
         li
           a(href='#installed', data-toggle='tab') Installed
       .tab-content
@@ -111,30 +111,54 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
-
-            //- #rejected-show.btn-group
-            //-   button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-            //-     i.icon-wrench
-            //-     | &nbsp;Show
-            //-     span.caret
-            //-   ul.dropdown-menu
-            //-     li
-            //-       label.checkbox
-            //-         input(type='checkbox', value='from', checked)
-            //-         | from
-            //-     li
-            //-       label.checkbox
-            //-         input(type='checkbox', value='to', checked)
-            //-         | to
-            //-     li
-            //-       label.checkbox
-            //-         input(type='checkbox', value='comments', checked)
-            //-         | comments
-                //- li.divider
-                //- li
-                //-   a(href='#restore') restore
           table#rejected-table.table.table-bordered.table-hover
         #procuring.tab-pane
+          .btn-toolbar
+            .btn-group
+              button.btn#procuring-order
+                i.icon-check-sign
+                | &nbsp;Order
+            .btn-group
+              button.btn#procuring-receive
+                i.icon-check-sign
+                | &nbsp;Receive
+            .btn-group
+              button.btn#procuring-accept
+                i.icon-check-sign
+                | &nbsp;Accept
+            .btn-group
+              button.btn.btn-primary#procuring-to-install
+                i.icon-check-sign
+                | &nbsp;Ready to install
+            .btn-group
+              button.btn.btn-info#procuring-select-none
+                i.icon-list.icon-light
+                | &nbsp;Clear selection
+            .btn-group
+              button.btn.btn-info#procuring-select-all
+                i.icon-list.icon-dark
+                | &nbsp;Select all
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#procuring-wrap.active Wrap
+              button.btn.btn-info#procuring-unwrap Unwrap
+            #procuring-show.btn-group
+              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
+                i.icon-wrench
+                | &nbsp;Show
+                span.caret
+              ul.dropdown-menu
+                li
+                  label.checkbox
+                    input(type='checkbox', value='from')
+                    | from
+                li
+                  label.checkbox
+                    input(type='checkbox', value='to')
+                    | to
+                li
+                  label.checkbox
+                    input(type='checkbox', value='comments')
+                    | comments
           table#procuring-table.table.table-bordered.table-hover
         #installing.tab-pane
           table#installing-table.table.table-bordered.table-hover
