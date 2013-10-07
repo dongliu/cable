@@ -1,3 +1,11 @@
+/*checkbox sorting*/
+$.fn.dataTableExt.afnSortData['dom-checkbox'] = function(oSettings, iColumn) {
+  return $.map(oSettings.oApi._fnGetTrNodes(oSettings), function(tr, i) {
+    return $('td:eq(' + iColumn + ') input', tr).prop('checked') ? '1' : '0';
+  });
+};
+
+
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
 	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
