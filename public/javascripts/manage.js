@@ -180,7 +180,7 @@ $(function() {
   });
 
   $('#installing-show input:checkbox').change(function(e) {
-    fnSetColumnsVis(installingTable, installingAoColumns[$(this).val()], $(this).prop('checked'));
+    fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#installing-select-all').click(function(e) {
@@ -225,7 +225,7 @@ $(function() {
   });
 
   $('#installed-show input:checkbox').change(function(e) {
-    fnSetColumnsVis(installedTable, installedAoColumns[$(this).val()], $(this).prop('checked'));
+    fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#installed-select-all').click(function(e) {
