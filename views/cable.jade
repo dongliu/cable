@@ -43,7 +43,7 @@ block content
       if (cable.updatedOn)
         dt updated by
         dd
-          a(href='/users?#{fs.encodeName(cable.updatedBy)}', target='_blank') #{cable.updatedBy}
+          a(href='/users/#{cable.updatedBy}', target='_blank') #{cable.updatedBy}
         dt updated on
         dd #{cable.updatedOn}
       if (cable.orderedOn)

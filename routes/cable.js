@@ -500,7 +500,6 @@ module.exports = function(app) {
               return 'unknown';
             },
             encodeName: function(s) {
-              console.log(querystring.stringify({name: s}));
               return querystring.stringify({name: s});
             }
 
@@ -601,7 +600,7 @@ module.exports = function(app) {
       res.send(400, 'invalid action');
     }
     update['updatedOn'] = Date.now();
-    update['updatedBy'] = req.session.username;
+    update['updatedBy'] = req.session.userid;
     Cable.findOneAndUpdate({
       number: req.params.id
     }, update, function(err, cable) {

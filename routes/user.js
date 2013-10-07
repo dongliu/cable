@@ -13,7 +13,6 @@ module.exports = function(app) {
 
   app.get('/users', auth.ensureAuthenticated, function(req, res) {
     if (req.query.name) {
-      console.log(req.query.name);
       User.findOne({
         name: req.query.name
       }).lean().exec(function(err, user) {
