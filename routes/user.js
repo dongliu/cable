@@ -10,12 +10,34 @@ var auth = require('../lib/auth');
 var Roles = ['manage', 'admin'];
 
 module.exports = function(app) {
+
   app.get('/users', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.length !== 0) {
-      return res.render('users');
+    if (req.query.name) {
+      console.log(req.query.name);
+      User.findOne({
+        name: req.query.name
+      }).lean().exec(function(err, user) {
+        if (err) {
+          console.error(err.msg);
+          return res.send(500, err.msg);
+        }
+        if (user) {
+          return res.render('user', {
+            user: user,
+            myRoles: req.session.roles
+          });
+        } else {
+          return res.send(404, req.query.name + ' not found');
+        }
+      });
     } else {
-      return res.send(403, 'only admin allowed');
+      if (req.session.roles.length !== 0) {
+        return res.render('users');
+      } else {
+        return res.send(403, 'only admin allowed');
+      }
     }
+
   });
 
   // app.get('/users/new', auth.ensureAuthenticated, function(req, res) {
@@ -87,10 +109,10 @@ module.exports = function(app) {
       }
       if (user) {
 
-      return res.render('user', {
-        user: user,
-        myRoles: req.session.roles
-      });
+        return res.render('user', {
+          user: user,
+          myRoles: req.session.roles
+        });
       } else {
         return res.send(404, req.params.id + ' not found');
       }
