@@ -10,6 +10,8 @@ var util = require('util');
 
 var auth = require('../lib/auth');
 
+var querystring = require('querystring');
+
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -471,7 +473,38 @@ module.exports = function(app) {
       }
       if (cable) {
         return res.render('cable', {
-          cable: cable
+          cable: cable,
+          fs: {
+            formatCableStatus: function(s) {
+              var status = {
+                '100': 'approved',
+                '101': 'ordered',
+                '102': 'received',
+                '103': 'accepted',
+                '200': 'to install',
+                '201': 'labeled',
+                '202': 'bench terminated',
+                '203': 'bench tested',
+                '249': 'to pull',
+                '250': 'pulled',
+                '251': 'field terminated',
+                '252': 'field tested',
+                '300': 'working',
+                '400': 'failed',
+                '500': 'aborted'
+              };
+              // var status = ['approved', 'procuring', 'installing', 'working', 'failed'];
+              if (status['' + s]) {
+                return status['' + s];
+              }
+              return 'unknown';
+            },
+            encodeName: function(s) {
+              console.log(querystring.stringify({name: s}));
+              return querystring.stringify({name: s});
+            }
+
+          }
         });
       } else {
         return res.send(403, 'cannot find cable ' + req.params.id);

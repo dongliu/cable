@@ -9,6 +9,7 @@ block head
   link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
+
 block content
   .container
     #message
@@ -27,19 +28,84 @@ block content
       dd
         a(href='/requests/#{cable.request_id}/details', target='_blank') #{cable.request_id}
       dt status
-      dd #{cable.status}
+      //- dd#status #{cable.status}
+      dd#status #{fs.formatCableStatus(cable.status)}
+      dt submitted by
+      dd
+        a(href='/users/#{cable.submittedBy}', target='_blank') #{cable.submittedBy}
+      dt submitted on
+      dd #{cable.submittedOn}
       dt approved by
       dd
         a(href='/users/#{cable.approvedBy}', target='_blank') #{cable.approvedBy}
       dt approved on
       dd #{cable.approvedOn}
+      if (cable.updatedOn)
+        dt updated by
+        dd
+          a(href='/users?#{fs.encodeName(cable.updatedBy)}', target='_blank') #{cable.updatedBy}
+        dt updated on
+        dd #{cable.updatedOn}
+      if (cable.orderedOn)
+        dt ordered by
+        dd
+          a(href='/users?#{fs.encodeName(cable.orderedBy)}', target='_blank') #{cable.updatedBy}
+        dt ordered on
+        dd #{cable.orderedOn}
+      if (cable.receivedOn)
+        dt received by
+        dd
+          a(href='/users?#{fs.encodeName(cable.receivedBy)}', target='_blank') #{cable.receivedBy}
+        dt received on
+        dd #{cable.receivedOn}
+      if (cable.acceptedOn)
+        dt accepted by
+        dd
+          a(href='/users?#{fs.encodeName(cable.acceptedBy)}', target='_blank') #{cable.acceptedOn}
+        dt accepted on
+        dd #{cable.acceptedOn}
+      if (cable.labeledOn)
+        dt labeled by
+        dd
+          a(href='/users?#{fs.encodeName(cable.labeledBy)}', target='_blank') #{cable.labeledBy}
+        dt labeled on
+        dd #{cable.labeledOn}
+      if (cable.benchTerminatedOn)
+        dt bench terminated by
+        dd
+          a(href='/users?#{fs.encodeName(cable.benchTerminatedBy)}', target='_blank') #{cable.benchTerminatedBy}
+        dt bench terminated on
+        dd #{cable.benchTerminatedOn}
+      if (cable.benchTestedOn)
+        dt bench tested by
+        dd
+          a(href='/users?#{fs.encodeName(cable.benchTestedBy)}', target='_blank') #{cable.benchTestedBy}
+        dt bench tested on
+        dd #{cable.benchTestedOn}
+      if (cable.pulledOn)
+        dt pulled by
+        dd
+          a(href='/users?#{fs.encodeName(cable.pulledBy)}', target='_blank') #{cable.pulledBy}
+        dt pulled on
+        dd #{cable.pulledOn}
+      if (cable.benchTerminatedOn)
+        dt field terminated by
+        dd
+          a(href='/users?#{fs.encodeName(cable.fieldTerminatedBy)}', target='_blank') #{cable.fieldTerminatedBy}
+        dt field terminated on
+        dd #{cable.fieldTerminatedOn}
+      if (cable.fieldTestedOn)
+        dt field tested by
+        dd
+          a(href='/users?#{fs.encodeName(cable.fieldTestedBy)}', target='_blank') #{cable.fieldTestedBy}
+        dt field tested on
+        dd #{cable.fieldTestedOn}
+
 block js
-  //- script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
+  script(type='text/javascript', src='/javascripts/jquery-1.9.1.js')
   //- script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  //- script(type='text/javascript', src='/javascripts/jquery.validate.js')
-  //- script(type='text/javascript', src='/javascripts/binder.js')
-  //- script(type='text/javascript', src='/javascripts/moment.js')
   //- script(type='text/javascript', src='/javascripts/lodash.js')
   //- script(type='text/javascript', src='/javascripts/util.js')
+  //- script(type='text/javascript', src='/javascripts/table.js')
   //- script(type='text/javascript', src='/javascripts/cable.js')
