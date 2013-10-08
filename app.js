@@ -10,7 +10,6 @@ var express = require('express'),
   numbering = require('./routes/numbering'),
   http = require('http'),
   fs = require('fs'),
-  // role = require(__dirname + '/config/role.json'),
   sysSub = require(__dirname + '/config/sys-sub.json'),
   signal = require(__dirname + '/config/signal.json'),
   penetration = require(__dirname + '/config/penetration.json'),
@@ -43,7 +42,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({secret: 'cable_secret',cookie: { maxAge: 14400000 }}));
-  // app.use(express.session());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -55,7 +53,6 @@ app.configure('development', function(){
 
 app.get('/about', about.index);
 app.get('/', auth.ensureAuthenticated, routes.main);
-// app.get('/switch-to-management', auth.ensureAuthenticated, routes.switch2management);
 app.get('/switch-to-normal', auth.ensureAuthenticated, routes.switch2normal);
 
 // init the user service
