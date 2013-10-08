@@ -138,7 +138,7 @@ Binder.PropertyAccessor.bindTo = function(obj) {
 Binder.TypeRegistry = {
   'string': {
     format: function(value) {
-      return String(value);
+      return value ? String(value) : '';
     },
     parse: function(value) {
       return value ? value : null;
@@ -154,7 +154,7 @@ Binder.TypeRegistry = {
   },
   'number': {
     format: function(value) {
-      return String(value);
+      return value ? String(value) : '';
     },
     parse: function(value) {
       return value ? Number(value) : null;
@@ -162,6 +162,9 @@ Binder.TypeRegistry = {
   },
   'boolean': {
     format: function(value) {
+      if (value == null) {
+        return '';
+      }
       return String(value);
     },
     parse: function(value) {
@@ -286,8 +289,8 @@ Binder.FormBinder.prototype = {
   deserializeField: function(element, obj) {
     var accessor = this._getAccessor(obj);
     var value = accessor.get(element.name);
-    // do not serialize undefined or null
-    if (value && typeof value != 'undefined') {
+    // do not deserialize undefined
+    if (typeof value != 'undefined') {
       value = this._format(element.name, value, element);
       if (element.type == "radio" || element.type == "checkbox") {
         element.checked = this._isSelected(element.value, value);
