@@ -485,7 +485,7 @@ function cloneFromModal(requests) {
         action: 'clone',
         request: requests[that.id],
         quantity: parseInt($('input', that).val(), 10)
-      }),
+      })
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
