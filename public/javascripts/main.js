@@ -362,7 +362,7 @@ function deleteFromModal() {
     var that = this;
     $.ajax({
       url: '/requests/' + this.id,
-      type: 'Delete',
+      type: 'Delete'
     }).done(function() {
       $(that).wrap('<del></del>');
       $(that).addClass('text-success');
