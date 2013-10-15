@@ -368,7 +368,7 @@ function deleteFromModal() {
       $(that).addClass('text-success');
     })
       .fail(function(jqXHR, status, error) {
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {
@@ -400,7 +400,7 @@ function submitFromModal(requests) {
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {
@@ -492,7 +492,7 @@ function cloneFromModal(requests) {
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {

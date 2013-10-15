@@ -382,7 +382,7 @@ function approveFromModal(requests, approvingTable) {
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {
@@ -443,7 +443,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {
@@ -504,7 +504,7 @@ function actionFromModal(oTable, action, procuringTable, installingTable, instal
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.reponseText);
+        $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
       .always(function() {
