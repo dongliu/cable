@@ -30,7 +30,7 @@ block content
       if (typeof id == 'undefined')
         h3 New Cable Request
       else
-        h3 Cable Request &nbsp
+        h3 Cable Request &nbsp;
           span#cableId #{id}
       include requestform
       include request_action
@@ -41,7 +41,6 @@ block js
   script(type='text/javascript', src='/javascripts/jquery.validate.js')
   script(type='text/javascript', src='/javascripts/binder.js')
   script(type='text/javascript', src='/javascripts/moment.js')
-  //- script(type='text/javascript', src='/javascripts/underscore.js')
   script(type='text/javascript', src='/javascripts/lodash.js')
   script(type='text/javascript', src='/javascripts/util.js')
   script(type='text/javascript', src='/javascripts/request.js')
