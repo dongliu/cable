@@ -393,7 +393,7 @@ function submitFromModal(requests) {
       data: JSON.stringify({
         action: 'submit',
         request: requests[that.id]
-      }),
+      })
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
