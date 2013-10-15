@@ -6,7 +6,7 @@ var fribrooms = [];
 var nsclrooms = [];
 
 $(function() {
-  $('input').keypress(function(e){
+  $('input').keypress(function(e) {
     if (e.which == 13) {
       return false;
     }
@@ -47,66 +47,19 @@ $(function() {
   // snapshot the initial form model
 
   $('#project').change(function() {
-    $('#wbs').prop('disabled', false);
-    wbs = {};
-    var link;
-    if ($('#project option:selected').val() == 'frib') {
-      $('#fribwbs').show();
-      $('#rea6wbs').hide();
-      link = '/frib/wbs/json';
-    }
-    if ($('#project option:selected').val() == 'rea6') {
-      $('#fribwbs').hide();
-      $('#rea6wbs').show();
-      link = '/rea6/wbs/json';
-    }
-    $('#wbs').autocomplete({
-      minLength: 2,
-      source: function(req, res) {
-        var term = req.term;
-        var output = [];
-
-        if (term.indexOf('.', term.length - 1) == -1) {
-          return;
-        }
-
-        term = term.substring(0, term.length - 1);
-        if (wbs && wbs.children) {
-          output = getChildren(wbs, term);
-          if (output.length === 0) {
-            return;
-          }
-          res(output);
-        } else {
-          $.getJSON(link, function(data, status, xhr) {
-            wbs = data;
-            output = getChildren(wbs, term);
-            if (output.length === 0) {
-              return;
-            }
-            res(output);
-          });
-        }
-      },
-      focus: function(event, ui) {
-        $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
-      },
-      select: function(event, ui) {
-        var value = ui.item.value;
-      }
-    });
+    initwbs();
   });
 
-  $.getJSON('/frib/rooms/json', function(json){
+  $.getJSON('/frib/rooms/json', function(json) {
     // fribrooms = json;
     getLeaves(json, fribrooms);
   });
-  $.getJSON('/nscl/rooms/json', function(json){
+  $.getJSON('/nscl/rooms/json', function(json) {
     // nsclrooms = json;
     getLeaves(json, nsclrooms);
   });
 
-  $('#from-building').change(function(){
+  $('#from-building').change(function() {
     $('#from-room').prop('disabled', false);
     setRooms('#from-building', '#from-room');
     // if ($(this).val() === 'frib') {
@@ -116,7 +69,7 @@ $(function() {
     // }
   });
 
-  $('#to-building').change(function(){
+  $('#to-building').change(function() {
     $('#to-room').prop('disabled', false);
     setRooms('#to-building', '#to-room');
   });
@@ -227,7 +180,7 @@ $(function() {
       $('form[name="request"]').fadeTo('slow', 1);
 
       if ($('#project').val()) {
-        $('#wbs').prop('disabled', false);
+        initwbs();
       }
 
       validator.form();
@@ -354,16 +307,16 @@ function sendRequest(data) {
     } else {
       var timestamp = formRequest.getResponseHeader('Date');
       var dateObj = moment(timestamp);
-      if (data.action == 'save' || data.action == 'adjust' ) {
+      if (data.action == 'save' || data.action == 'adjust') {
         $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>The changes were saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
         initModel = _.cloneDeep(binder.serialize());
-      } else if ( data.action === 'clone') {
+      } else if (data.action === 'clone') {
         $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>You can access the cloned request at <a href="' + json.location + '" target="_blank">' + json.location + '.</div>');
         // move the focus to the message
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
-      }else {
+      } else {
         $('form[name="request"]').hide();
         $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
         if (json && json.location) {
@@ -568,10 +521,10 @@ function setRooms(building, room) {
     },
     focus: function(event, ui) {
       $(room).siblings('.help-inline').text(
-        _.find(rooms,function(room){
+        _.find(rooms, function(room) {
           return room.number == ui.item.value;
         }).name);
-        // getRoomName(rooms, ui.item.value));
+      // getRoomName(rooms, ui.item.value));
     },
     select: function(event, ui) {
       var value = ui.item.value;
@@ -584,7 +537,7 @@ function getRooms(rooms, term) {
   var result = _.filter(rooms, function(room) {
     return (room.number.indexOf(upper) === 0);
   });
-  return _.map(result, function(room){
+  return _.map(result, function(room) {
     return room.number;
   });
 }
@@ -612,4 +565,55 @@ function rooms() {
     $('#to-room').prop('disabled', false);
     setRooms('#to-building', '#to-room');
   }
+}
+
+function initwbs() {
+  $('#wbs').prop('disabled', false);
+  wbs = {};
+  var link;
+  if ($('#project option:selected').val() == 'frib') {
+    $('#fribwbs').show();
+    $('#rea6wbs').hide();
+    link = '/frib/wbs/json';
+  }
+  if ($('#project option:selected').val() == 'rea6') {
+    $('#fribwbs').hide();
+    $('#rea6wbs').show();
+    link = '/rea6/wbs/json';
+  }
+  $('#wbs').autocomplete({
+    minLength: 2,
+    source: function(req, res) {
+      var term = req.term;
+      var output = [];
+
+      if (term.indexOf('.', term.length - 1) == -1) {
+        return;
+      }
+
+      term = term.substring(0, term.length - 1);
+      if (wbs && wbs.children) {
+        output = getChildren(wbs, term);
+        if (output.length === 0) {
+          return;
+        }
+        res(output);
+      } else {
+        $.getJSON(link, function(data, status, xhr) {
+          wbs = data;
+          output = getChildren(wbs, term);
+          if (output.length === 0) {
+            return;
+          }
+          res(output);
+        });
+      }
+    },
+    focus: function(event, ui) {
+      $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
+    },
+    select: function(event, ui) {
+      var value = ui.item.value;
+    }
+  });
 }
