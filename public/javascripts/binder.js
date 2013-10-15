@@ -190,7 +190,6 @@ Binder.FormBinder.prototype = {
           return true;
         }
       }
-    // } else if (value != "" && value != "on") {
     } else if (value != "on") {
       return value == options;
     } else {

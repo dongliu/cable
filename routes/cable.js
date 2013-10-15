@@ -321,7 +321,7 @@ module.exports = function(app) {
     }
     if (req.body.action == 'adjust') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
-        res.send(403, "You are not authorized to access this resource. ");
+        return res.send(403, "You are not authorized to access this resource. ");
       }
       Request.findOneAndUpdate({
         _id: req.params.id,
@@ -346,7 +346,7 @@ module.exports = function(app) {
 
     if (req.body.action == 'reject') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
-        res.send(403, "You are not authorized to access this resource. ");
+        return res.send(403, "You are not authorized to access this resource. ");
       }
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
@@ -374,7 +374,7 @@ module.exports = function(app) {
 
     if (req.body.action == 'approve') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
-        res.send(403, "You are not authorized to access this resource. ");
+        return res.send(403, "You are not authorized to access this resource. ");
       }
       request.approvedBy = req.session.userid;
       request.approvedOn = Date.now();
@@ -527,7 +527,7 @@ module.exports = function(app) {
   });
 
   app.put('/cables/:id', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.length === 0) {
+    if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var update = {};
