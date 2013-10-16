@@ -66,7 +66,7 @@ $(function() {
   });
 
   $('#approving-approve').click(function(e) {
-    batchApprove(approvingTable);
+    batchApprove(approvingTable, procuringTable);
   });
 
   $('#approving-reject').click(function(e) {
@@ -332,7 +332,7 @@ function initCableTable(oTable, url, cb) {
 }
 
 
-function batchApprove(oTable) {
+function batchApprove(oTable, procuringTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = {};
   if (selected.length) {
@@ -351,7 +351,7 @@ function batchApprove(oTable) {
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
     $('#approve').click(function(e) {
-      approveFromModal(requests, oTable);
+      approveFromModal(requests, oTable, procuringTable);
     });
   } else {
     $('#modalLable').html('Alert');
@@ -363,7 +363,7 @@ function batchApprove(oTable) {
 
 
 
-function approveFromModal(requests, approvingTable) {
+function approveFromModal(requests, approvingTable, procuringTable) {
   $('#approve').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function(index) {
@@ -389,6 +389,7 @@ function approveFromModal(requests, approvingTable) {
         number = number - 1;
         if (number === 0) {
           initRequestTable(approvingTable, '/requests/statuses/1/json');
+          initCableTables(procuringTable);
         }
       });
   });
