@@ -12,7 +12,10 @@ var request = new Schema({
     service: String,
     wbs: String,
     tags: [String],
-    quantity: {type: Number, min: 1}
+    quantity: {
+      type: Number,
+      min: 1
+    }
   },
 
   from: {
@@ -48,9 +51,9 @@ var request = new Schema({
   // },
 
   // other: {
-    // fabricatedBy: String,
-    // terminatedBy: String,
-    // comments: String
+  // fabricatedBy: String,
+  // terminatedBy: String,
+  // comments: String
   // },
   comments: String,
   status: Number,
@@ -70,7 +73,10 @@ var request = new Schema({
 
 var cable = new Schema({
   request_id: String,
-  number: String,
+  number: {
+    type: String,
+    unique: true
+  },
   tags: [String],
   status: Number,
   submittedBy: String,
