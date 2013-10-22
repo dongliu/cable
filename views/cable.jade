@@ -88,7 +88,7 @@ block content
           a(href='/users?#{fs.encodeName(cable.pulledBy)}', target='_blank') #{cable.pulledBy}
         dt pulled on
         dd #{cable.pulledOn}
-      if (cable.benchTerminatedOn)
+      if (cable.fieldTerminatedOn)
         dt field terminated by
         dd
           a(href='/users?#{fs.encodeName(cable.fieldTerminatedBy)}', target='_blank') #{cable.fieldTerminatedBy}
