@@ -218,9 +218,13 @@ module.exports = function(app) {
           error: err.msg
         });
       }
-      res.render('requestdetails', {
-        request: cableRequest
-      });
+      if (cableRequest) {
+        res.render('requestdetails', {
+          request: cableRequest
+        });
+      } else {
+        res.send(410, 'The request ' + req.params.id + ' is gone.');
+      }
     });
   });
 
@@ -550,8 +554,6 @@ module.exports = function(app) {
         break;
       case "install":
         update['status'] = 200;
-        // update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        // update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "label":
         update['status'] = 201;
@@ -570,8 +572,6 @@ module.exports = function(app) {
         break;
       case "pull":
         update['status'] = 249;
-        // update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        // update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "pulled":
         update['status'] = 250;
@@ -590,8 +590,6 @@ module.exports = function(app) {
         break;
       case "use":
         update['status'] = 300;
-        // update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        // update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       default:
         inValidaAction = true;
