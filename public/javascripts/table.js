@@ -265,7 +265,8 @@ function dateColumn(title, key) {
     sTitle: title,
     mData: function(source, type, val) {
       if (type === 'sort') {
-        return formatDateLong(source[key]);
+        // return formatDateLong(source[key]);
+        return source[key];
       }
       return formatDate(source[key]);
     },
