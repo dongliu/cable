@@ -449,20 +449,31 @@ module.exports = function(app) {
         error: 'wrong status'
       });
     }
-    var low = status * 100;
-    var up = status * 100 + 99;
-    // var query = {
-    //   status: status
-    // };
-    Cable.where('status').gte(low).lte(up).lean().exec(function(err, docs) {
-      if (err) {
-        console.error(err.msg);
-        return res.json(500, {
-          error: err.msg
-        });
-      }
-      return res.json(docs);
-    });
+
+    if (status === 0) {
+      // get all the cables
+      Cable.find({}).lean().exec(function(err, docs) {
+        if (err) {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+        return res.json(docs);
+      });
+    } else {
+      var low = status * 100;
+      var up = status * 100 + 99;
+      Cable.where('status').gte(low).lte(up).lean().exec(function(err, docs) {
+        if (err) {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+        return res.json(docs);
+      });
+    }
   });
 
   app.get('/cables/:id', function(req, res) {
@@ -504,7 +515,9 @@ module.exports = function(app) {
               return 'unknown';
             },
             encodeName: function(s) {
-              return querystring.stringify({name: s});
+              return querystring.stringify({
+                name: s
+              });
             }
 
           }
