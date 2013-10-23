@@ -19,7 +19,7 @@ var nameCache = {};
 var approved = [];
 
 $(function() {
-  $('#reload').click(function(e){
+  $('#reload').click(function(e) {
     initRequestTable(approvingTable, '/requests/statuses/1/json');
     initRequestTable(rejectedTable, 'requests/statuses/3/json');
     initCableTables(procuringTable, installingTable, installedTable);
@@ -146,11 +146,11 @@ $(function() {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-  $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e){
+  $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable);
   });
 
-  $('#procuring-to-install').click(function(e){
+  $('#procuring-to-install').click(function(e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
   });
 
@@ -191,11 +191,11 @@ $(function() {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
-  $('#installing-label, #installing-benchTerm, #installing-Test, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e){
+  $('#installing-label, #installing-benchTerm, #installing-Test, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable);
   });
 
-  $('#installing-to-use').click(function(e){
+  $('#installing-to-use').click(function(e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
   });
 
@@ -254,7 +254,7 @@ function initRequestTable(oTable, url) {
     oTable.fnAddData(json);
     oTable.fnDraw();
   }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
 }
@@ -268,27 +268,56 @@ function initCableTables(procuringTable, installingTable, installedTable) {
     dataType: 'json'
   }).done(function(json) {
     approved = json;
-    if (procuringTable) {
-      initCableTable(procuringTable, '/cables/statuses/1/json', function() {
-        $('#procuring-show input:checkbox').each(function(i) {
-          fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
-        });
+    $.ajax({
+      url: '/cables/statuses/0/json',
+      type: 'GET',
+      dataType: 'json'
+    }).done(function(cables) {
+      var procuringCables = [];
+      var installingCables = [];
+      var installedCables = [];
+
+      cables.forEach(function(c) {
+        if (procuringTable && c.status >= 100 && c.status <= 199) {
+          procuringCables.push(c);
+          return;
+        }
+        if (installingTable && c.status >= 200 && c.status <= 299) {
+          installingCables.push(c);
+          return;
+        }
+        if (installedTable && c.status >= 300 && c.status <= 399) {
+          installedCables.push(c);
+          return;
+        }
       });
-    }
-    if (installingTable) {
-      initCableTable(installingTable, '/cables/statuses/2/json', function() {
-        $('#installing-show input:checkbox').each(function(i) {
-          fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
+
+      if (procuringTable) {
+        initCableTableFromData(procuringTable, procuringCables, function() {
+          $('#procuring-show input:checkbox').each(function(i) {
+            fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
+          });
         });
-      });
-    }
-    if (installedTable) {
-      initCableTable(installedTable, '/cables/statuses/3/json', function() {
-        $('#installed-show input:checkbox').each(function(i) {
-          fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
+      }
+      if (installingTable) {
+        initCableTableFromData(installingTable, installingCables, function() {
+          $('#installing-show input:checkbox').each(function(i) {
+            fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
+          });
         });
-      });
-    }
+      }
+      if (installedTable) {
+        initCableTableFromData(installedTable, installedCables, function() {
+          $('#installed-show input:checkbox').each(function(i) {
+            fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
+          });
+        });
+      }
+
+    }).fail(function(jqXHR, status, error) {
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
+      $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    }).always();
 
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
@@ -296,6 +325,28 @@ function initCableTables(procuringTable, installingTable, installedTable) {
   }).always();
 }
 
+function initCableTableFromData(oTable, data, cb) {
+  approved.forEach(function(r) {
+    for (i = 0; i < data.length; i += 1) {
+      if (r._id === data[i].request_id) {
+        (data[i])['basic'] = r.basic;
+        (data[i])['from'] = r.from;
+        (data[i])['to'] = r.to;
+        (data[i])['comments'] = r.comments;
+      }
+    }
+  });
+
+  oTable.fnClearTable();
+  oTable.fnAddData(data);
+  if ($('#cables-unwrap').hasClass('active')) {
+    fnUnwrap(oTable);
+  }
+  oTable.fnDraw();
+  if (cb) {
+    cb();
+  }
+}
 
 function initCableTable(oTable, url, cb) {
   $.ajax({
@@ -462,7 +513,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = {};
   if (selected.length) {
-    $('#modalLable').html( action + ' the following ' + selected.length + ' cables? ');
+    $('#modalLable').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function(row) {
