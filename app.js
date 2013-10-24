@@ -19,6 +19,7 @@ var express = require('express'),
 
 
 var mongoose = require('mongoose');
+mongoose.connection.close();
 var CableType = require('./model/meta.js').CableType;
 var Request = require('./model/request.js').Request;
 var User = require('./model/user.js').User;
