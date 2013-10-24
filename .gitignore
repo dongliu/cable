@@ -1,10 +1,11 @@
 # Node modules #
 node_modules/
 
-# logs #
+# special folders #
 logs/
 doc/
-config/
+# config/
+config/ad.json
 
 # Git related files. #
 *.orig
