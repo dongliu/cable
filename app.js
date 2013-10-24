@@ -25,6 +25,17 @@ var Request = require('./model/request.js').Request;
 var User = require('./model/user.js').User;
 mongoose.connect('mongodb://localhost/cable');
 
+mongoose.connection.on('connected', function () {
+  console.log('Mongoose default connection opened.');
+});
+
+mongoose.connection.on('error',function (err) {
+  console.log('Mongoose default connection error: ' + err);
+});
+
+mongoose.connection.on('disconnected', function () {
+  console.log('Mongoose default connection disconnected');
+});
 
 var auth = require('./lib/auth');
 
@@ -112,7 +123,26 @@ app.get('/signal', function(req, res) {
 
 app.get('/logout', routes.logout);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
+
+function cleanup () {
+  server._connections = 0;
+  server.close( function () {
+    console.log( "Closed out remaining connections.");
+    // Close db connections, other chores, etc.
+    mongoose.connection.close();
+    process.exit();
+  });
+
+  setTimeout( function () {
+   console.error("Could not close connections in time, forcing shut down");
+   process.exit(1);
+  }, 30*1000);
+
+}
+
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
