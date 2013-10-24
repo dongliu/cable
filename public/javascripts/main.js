@@ -114,6 +114,10 @@ $(function() {
     batchClone(submittedTable);
   });
 
+  $('#submitted-revert').click(function(e){
+    batchRevert(submittedTable);
+  });
+
   $('#submitted-show input:checkbox').change(function(e) {
     fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
   });
@@ -504,6 +508,66 @@ function cloneFromModal(requests) {
   });
 }
 
+function batchRevert(table) {
+  var selected = fnGetSelected(table, 'row-selected');
+  // var requests = {};
+  if (selected.length) {
+    $('#modalLable').html('Revert the following ' + selected.length + ' requests? ');
+    $('#modal .modal-body').empty();
+    selected.forEach(function(row) {
+      var data = table.fnGetData(row);
+      $('#modal .modal-body').append('<div id="' + data._id + '">submitted on ' + moment(data.submittedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs  + '</div>');
+      // requests[data._id] = {
+        // basic: data.basic,
+        // from: data.from,
+        // to: data.to,
+        // comments: data.comments
+      // };
+    });
+    // $('#modal .modal-body').html('test');
+    $('#modal .modal-footer').html('<button id="revert" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+    $('#revert').click(function(e) {
+      revertFromModal();
+    });
+  } else {
+    $('#modalLable').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
+}
+
+function revertFromModal(requests) {
+  $('#revert').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function(index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + that.id,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        action: 'revert',
+        request: {}
+      })
+    }).done(function() {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+    })
+      .fail(function(jqXHR, status, error) {
+        $(that).prepend('<i class="icon-question"></i>');
+        $(that).append(' : ' + jqXHR.responseText);
+        $(that).addClass('text-error');
+      })
+      .always(function() {
+        number = number - 1;
+        if (number === 0) {
+          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+        }
+      });
+  });
+}
 
 function batchDelete(table) {
   var selected = fnGetSelected(table, 'row-selected');

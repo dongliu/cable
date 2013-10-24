@@ -316,13 +316,43 @@ module.exports = function(app) {
         if (cableRequest) {
           return res.send(204);
         } else {
-          console.error(req.params.id + ' gone');
+          console.error(req.params.id + ' cannot be submitted');
           return res.json(410, {
-            error: req.params.id + ' gone'
+            error: req.params.id + ' cannot be submitted'
           });
         }
       });
     }
+
+    if (req.body.action == 'revert') {
+      request.revertedBy = req.session.userid;
+      request.revertedOn = Date.now();
+      // request.testChange = 'done';
+      request.status = 0;
+
+
+      console.dir(request);
+      Request.findOneAndUpdate({
+        _id: req.params.id,
+        status: 1
+      }, request, function(err, cableRequest) {
+        if (err) {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+        if (cableRequest) {
+          return res.send(204);
+        } else {
+          console.error(req.params.id + ' cannot be reverted');
+          return res.json(400, {
+            error: req.params.id + ' cannot be reverted'
+          });
+        }
+      });
+    }
+
     if (req.body.action == 'adjust') {
       if (roles.length === 0 || roles.indexOf('manage') === -1) {
         return res.send(403, "You are not authorized to access this resource. ");
