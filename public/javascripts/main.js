@@ -24,6 +24,12 @@ var approved = [];
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
+$(document).ajaxError(function(event, jqxhr){
+  if (jqxhr.status == 401) {
+    document.location.href = window.location.pathname;
+  }
+});
+
 $(function() {
 
   // $.ajaxSetup({

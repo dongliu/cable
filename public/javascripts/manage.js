@@ -18,6 +18,12 @@ var nameCache = {};
 
 var approved = [];
 
+$(document).ajaxError(function(event, jqxhr){
+  if (jqxhr.status == 401) {
+    document.location.href = window.location.pathname;
+  }
+});
+
 $(function() {
   $('#reload').click(function(e) {
     initRequestTable(approvingTable, '/requests/statuses/1/json');
