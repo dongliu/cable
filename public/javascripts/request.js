@@ -4,6 +4,7 @@ var requestForm;
 
 var fribrooms = [];
 var nsclrooms = [];
+var srfrooms = [];
 
 $(function() {
   $('input').keypress(function(e) {
@@ -51,22 +52,19 @@ $(function() {
   });
 
   $.getJSON('/frib/rooms/json', function(json) {
-    // fribrooms = json;
     getLeaves(json, fribrooms);
   });
   $.getJSON('/nscl/rooms/json', function(json) {
-    // nsclrooms = json;
     getLeaves(json, nsclrooms);
   });
+  $.getJSON('/srf/rooms/json', function(json) {
+    getLeaves(json, srfrooms);
+  });
+
 
   $('#from-building').change(function() {
     $('#from-room').prop('disabled', false);
     setRooms('#from-building', '#from-room');
-    // if ($(this).val() === 'frib') {
-    //   $('#from-area').show();
-    // } else {
-    //   $('#from-area').hide();
-    // }
   });
 
   $('#to-building').change(function() {
@@ -505,6 +503,8 @@ function setRooms(building, room) {
     rooms = fribrooms;
   } else if ($(building + ' option:selected').val() === 'nscl') {
     rooms = nsclrooms;
+  } else if ($(building + ' option:selected').val() === 'srf') {
+    rooms = srfrooms;
   }
   $(room).autocomplete({
     minLength: 1,
