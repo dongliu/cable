@@ -398,12 +398,13 @@ function batchApprove(oTable, procuringTable) {
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      requests[data._id] = {
-        basic: data.basic,
-        from: data.from,
-        to: data.to,
-        comments: data.comments
-      };
+      // requests[data._id] = {
+      //   basic: data.basic,
+      //   from: data.from,
+      //   to: data.to,
+      //   required: data.required,
+      //   comments: data.comments
+      // };
     });
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -430,8 +431,8 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
-        action: 'approve',
-        request: requests[that.id]
+        action: 'approve'
+        // ,request: requests[that.id]
       }),
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
@@ -461,12 +462,12 @@ function batchReject(oTable, rejectedTable) {
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      requests[data._id] = {
-        basic: data.basic,
-        from: data.from,
-        to: data.to,
-        comments: data.comments
-      };
+      // requests[data._id] = {
+      //   basic: data.basic,
+      //   from: data.from,
+      //   to: data.to,
+      //   comments: data.comments
+      // };
     });
     // $('#modal .modal-body').html('test');
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
@@ -492,8 +493,8 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
-        action: 'reject',
-        request: requests[that.id]
+        action: 'reject'
+        // ,request: requests[that.id]
       }),
     }).done(function() {
       $(that).prepend('<i class="icon-remove"></i>');

@@ -401,8 +401,8 @@ function submitFromModal(requests) {
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
-        action: 'submit',
-        request: requests[that.id]
+        action: 'submit'
+        // ,request: requests[that.id]
       })
     }).done(function() {
       $(that).prepend('<i class="icon-check"></i>');
@@ -431,12 +431,12 @@ function batchSubmit(table) {
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      requests[data._id] = {
-        basic: data.basic,
-        from: data.from,
-        to: data.to,
-        comments: data.comments
-      };
+      // requests[data._id] = {
+      //   basic: data.basic,
+      //   from: data.from,
+      //   to: data.to,
+      //   comments: data.comments
+      // };
     });
     $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -459,11 +459,12 @@ function batchClone(table) {
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1>' + '</div>');
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1 max=20>' + '</div>');
       requests[data._id] = {
         basic: data.basic,
         from: data.from,
         to: data.to,
+        required: data.required,
         comments: data.comments
       };
     });
