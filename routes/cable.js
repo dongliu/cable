@@ -583,8 +583,14 @@ module.exports = function(app) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
+    var conditions = {
+      number: req.params.id
+    };
     var update = {};
     var inValidaAction = false;
+
+    var required = req.body.cable.required;
+
     switch (req.body.action) {
       case "order":
         update['status'] = 101;
@@ -620,6 +626,17 @@ module.exports = function(app) {
         update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "pull":
+        // check required steps
+        conditions['status'] = {$gte: 200};
+        if (required && required.label) {
+          conditions['labeledBy'] = {$exists: true};
+        }
+        if (required && required.benchTerm) {
+          conditions['benchTerminatedBy'] = {$exists: true};
+        }
+        if (required && required.benchTest) {
+          conditions['benchTestedBy'] = {$exists: true};
+        }
         update['status'] = 249;
         break;
       case "pulled":
@@ -638,6 +655,12 @@ module.exports = function(app) {
         update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "use":
+        // check required steps
+        conditions['status'] = {$gte: 250};
+        if (required && required.fieldTerm) {
+          conditions['fieldTerminatedBy'] = {$exists: true};
+        }
+        conditions['fieldTestedBy'] = {$exists: true};
         update['status'] = 300;
         break;
       default:
@@ -648,9 +671,7 @@ module.exports = function(app) {
     }
     update['updatedOn'] = Date.now();
     update['updatedBy'] = req.session.userid;
-    Cable.findOneAndUpdate({
-      number: req.params.id
-    }, update, function(err, cable) {
+    Cable.findOneAndUpdate(conditions, update, function(err, cable) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -660,10 +681,8 @@ module.exports = function(app) {
       if (cable) {
         return res.send(204);
       } else {
-        console.error(req.params.id + ' gone');
-        return res.json(410, {
-          error: req.params.id + ' gone'
-        });
+        console.error(req.params.id + ' with conditions for the update cannot be found');
+        return res.send(409, req.params.id + ' conditions and the update conflicted');
       }
     });
 
