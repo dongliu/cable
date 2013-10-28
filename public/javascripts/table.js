@@ -370,12 +370,10 @@ function fnAddFilterFoot(sTable, aoColumns) {
 }
 
 function formatDate(date) {
-  // return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
-  return date ? moment(date).format('YY-MM-DD') : '';
+  return date ? moment(date).fromNow() : '';
 }
 
 function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
-  // return date ? moment(date).format('YY-MM-DD') : '';
 }
 
