@@ -44,6 +44,13 @@ var request = new Schema({
     label: String
   },
 
+  required: {
+    label: Boolean,
+    benchTerm: Boolean,
+    benchTest: Boolean,
+    fieldTerm: Boolean
+  },
+
   // routing: {
   //   trayGroup: String,
   //   penetration: String,

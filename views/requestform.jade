@@ -198,6 +198,23 @@ legend Destination(to)
   //-   .controls
   //-     input#term(type='text', name='other.terminatedBy')
 //- fieldset
+legend Required steps
+p.text-info Steps like pull and firld test are always required
+.control-group
+  .controls
+    label.checkbox
+      input(type='checkbox', name='required.label')
+      | Label
+    label.checkbox
+      input(type='checkbox', name='required.benchTerm')
+      | Bench termination
+    label.checkbox
+      input(type='checkbox', name='required.benchTest')
+      | Bench test
+    label.checkbox
+      input(type='checkbox', name='required.fieldTerm')
+      | Field termination
+
 legend Other
 .control-group
   .control-label Comments
