@@ -82,6 +82,8 @@ module.exports = function(app) {
           request.basic = req.body.requests[i].basic;
           request.from = req.body.requests[i].from;
           request.to = req.body.requests[i].to;
+          request.required = req.body.requests[i].required;
+          request.comments = req.body.requests[i].comments;
 
           if (req.body.action === 'clone') {
             request.basic.quantity = 1;
@@ -128,8 +130,8 @@ module.exports = function(app) {
         request.submittedOn = request.createdOn;
         request.status = 1;
       }
-      // console.log(request.inspect());
-      if (req.body.quantity > 1) {
+      // limit the max number of a clone request to 21
+      if (req.body.quantity && req.body.quantity > 1 && req.body.quantity < 21) {
         for (i = 0; i < req.body.quantity; i += 1) {
           requests.push(request);
         }
@@ -141,6 +143,8 @@ module.exports = function(app) {
             res.send(201, '' + req.body.quantity + ' requests created');
           }
         });
+      } else if (req.body.quantity && req.body.quantity >= 21) {
+        res.send(400, 'the quantity is too large');
       } else {
         (new Request(request)).save(function(err, cableRequest) {
           if (err) {
@@ -267,7 +271,7 @@ module.exports = function(app) {
   // update a request
   app.put('/requests/:id', auth.ensureAuthenticated, function(req, res) {
     var roles = req.session.roles;
-    var request = req.body.request;
+    var request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
 
@@ -416,22 +420,24 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function(err, cableRequest) {
-        if (err) {
-          console.error(err.msg);
-          return res.json(500, {
-            error: err.msg
-          });
+      }, request).lean().exec(
+        function(err, cableRequest) {
+          if (err) {
+            console.error(err.msg);
+            return res.json(500, {
+              error: err.msg
+            });
+          }
+          if (cableRequest) {
+            createCable(cableRequest, req, res, cableRequest.basic.quantity);
+          } else {
+            console.error(req.params.id + ' gone');
+            return res.json(410, {
+              error: req.params.id + ' gone'
+            });
+          }
         }
-        if (cableRequest) {
-          createCable(cableRequest, req, res, cableRequest.basic.quantity);
-        } else {
-          console.error(req.params.id + ' gone');
-          return res.json(410, {
-            error: req.params.id + ' gone'
-          });
-        }
-      });
+      );
     }
 
   });
@@ -696,16 +702,13 @@ function createCable(cableRequest, req, res, quantity) {
         status: 100,
         request_id: cableRequest._id,
         tags: cableRequest.basic.tags,
-        // basic: cableRequest.basic,
-        // from: cableRequest.from,
-        // to: cableRequest.to,
-        // routing: cableRequest.routing,
-        // other: cableRequest.other,
+        required: cableRequest.required,
         submittedBy: cableRequest.submittedBy,
         submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });
+      // console.dir(newCable);
       newCable.save(function(err, doc) {
         if (err && err.code) {
           console.dir(err);

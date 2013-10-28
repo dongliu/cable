@@ -86,6 +86,12 @@ var cable = new Schema({
   },
   tags: [String],
   status: Number,
+  required: {
+    label: Boolean,
+    benchTerm: Boolean,
+    benchTest: Boolean,
+    fieldTerm: Boolean
+  },
   submittedBy: String,
   submittedOn: Date,
   approvedBy: String,
