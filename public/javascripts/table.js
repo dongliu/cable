@@ -199,6 +199,24 @@ var statusColumn = {
   bFilter: true
 };
 
+var requiredColumn = {
+  sTitle: 'Required',
+  mData: function(source, type, val) {
+    if (source.required) {
+      var result = [];
+      for (var i in source.required) {
+        if (source.required.hasOwnProperty(i) && source.required[i]) {
+          result.push(i);
+        }
+      }
+      return result.join();
+    } else {
+      return '';
+    }
+  },
+  bFilter: true
+};
+
 var oTableTools = {
   "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
   "aButtons": [

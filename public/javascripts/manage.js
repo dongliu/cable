@@ -163,7 +163,7 @@ $(function() {
   /*procuring tab ends*/
 
   /*installing tab starts*/
-  var installingAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
+  var installingAoColumns = [selectColumn, numberColumn, statusColumn, approvedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#installing-table', installingAoColumns);
   var installingTable = $('#installing-table').dataTable({
     aaData: [],
