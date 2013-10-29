@@ -217,6 +217,73 @@ var requiredColumn = {
   bFilter: true
 };
 
+var typeColumns = [{
+    sTitle: 'Name',
+    mData: 'name',
+    bFilter: true
+  }, {
+    sTitle: 'Characteristics',
+    mData: 'characteristics',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Diameter',
+    mData: 'diameter',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Function/Service',
+    mData: 'service',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Voltage',
+    mData: 'voltage',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Insulation',
+    mData: 'insulation',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Jacket',
+    mData: 'jacket',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Raceway',
+    mData: 'raceway',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'TID',
+    mData: 'tid',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Model',
+    mData: 'model',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Comments',
+    mData: 'comments',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Characteristics',
+    mData: 'characteristics',
+    sDefaultContent: '',
+    bFilter: true
+  }, {
+    sTitle: 'Spec',
+    mData: 'spec',
+    sDefaultContent: '',
+    bFilter: true
+  }
+];
+
 var oTableTools = {
   "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
   "aButtons": [
@@ -271,8 +338,8 @@ function formatCableStatus(s) {
     '500': 'aborted'
   };
   // var status = ['approved', 'procuring', 'installing', 'working', 'failed'];
-  if (status[''+s]) {
-    return status[''+s];
+  if (status['' + s]) {
+    return status['' + s];
   }
   return 'unknown';
 }
@@ -394,4 +461,3 @@ function formatDate(date) {
 function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
-
