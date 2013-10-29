@@ -10,7 +10,11 @@ var procuringTableColumns = {
   comments: [27]
 };
 
-var installingTableColumns = procuringTableColumns;
+var installingTableColumns = {
+  from: [12, 13, 14, 15, 16, 17, 18, 19],
+  to: [20, 21, 22, 23, 24, 25, 26, 27],
+  comments: [28]
+};
 
 var installedTableColumns = procuringTableColumns;
 
