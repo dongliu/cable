@@ -1,13 +1,13 @@
 var savedTableColumns = {
-  from: [12, 13, 14, 15, 16, 17, 18, 19],
-  to: [20, 21, 22, 23, 24, 25, 26, 27],
-  comments: [28]
+  from: [13, 14, 15, 16, 17, 18, 19, 20],
+  to: [21, 22, 23, 24, 25, 26, 27, 28],
+  comments: [29]
 };
 
 var submittedTableColumns = {
-  from: [12, 13, 14, 15, 16, 17, 18, 19],
-  to: [20, 21, 22, 23, 24, 25, 26, 27],
-  comments: [28]
+  from: [13, 14, 15, 16, 17, 18, 19, 20],
+  to: [21, 22, 23, 24, 25, 26, 27, 28],
+  comments: [29]
 };
 
 var rejectedTableColumns = submittedTableColumns;
@@ -42,7 +42,7 @@ $(function() {
 
   /*saved tab starts*/
   // add footer first
-  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn, requiredColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
 
   fnAddFilterFoot('#saved-table', savedAoColumns);
   savedTable = $('#saved-table').dataTable({
@@ -92,7 +92,7 @@ $(function() {
   /*saved tab ends*/
 
   /*submitted tab starts*/
-  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn, createdOnColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn, requiredColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#submitted-table', submittedAoColumns);
 
   submittedTable = $('#submitted-table').dataTable({
@@ -101,8 +101,7 @@ $(function() {
     aoColumns: submittedAoColumns,
     'aaSorting': [
       [2, 'desc'],
-      [3, 'desc'],
-      [4, 'desc']
+      [3, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
@@ -146,8 +145,7 @@ $(function() {
     aoColumns: rejectedAoColumns,
     aaSorting: [
       [2, 'desc'],
-      [3, 'desc'],
-      [4, 'desc']
+      [3, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
@@ -181,7 +179,7 @@ $(function() {
   /*rejected tab ends*/
 
   /*approved tab starts*/
-  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, submittedOnColumn, approvedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, submittedOnColumn, requiredColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     aaData: [],
@@ -214,7 +212,7 @@ $(function() {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, approvedOnColumn, updatedOnColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn, requiredColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
@@ -222,8 +220,8 @@ $(function() {
     bAutoWidth: false,
     aoColumns: cableAoCulumns,
     'aaSorting': [
-      [3, 'desc'],
-      [2, 'desc']
+      [2, 'desc'],
+      [0, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
