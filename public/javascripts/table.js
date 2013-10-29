@@ -25,17 +25,17 @@ var detailsLinkColumn = {
   bSortable: false
 };
 
-var createdOnColumn = dateColumn('Created on', 'createdOn');
+var createdOnColumn = dateColumn('Created', 'createdOn');
 
-var updatedOnColumn = dateColumn('Updated on', 'updatedOn');
+var updatedOnColumn = dateColumn('Updated', 'updatedOn');
 
-var submittedOnColumn = dateColumn('Submitted on', 'submittedOn');
+var submittedOnColumn = dateColumn('Submitted', 'submittedOn');
 var submittedByColumn = personColumn('Submitted by', 'submittedBy');
 
-var approvedOnColumn = dateColumn('Approved on', 'approvedOn');
+var approvedOnColumn = dateColumn('Approved', 'approvedOn');
 var approvedByColumn = personColumn('Approved by', 'approvedBy');
 
-var rejectedOnColumn = dateColumn('Rejected on', 'rejectedOn');
+var rejectedOnColumn = dateColumn('Rejected', 'rejectedOn');
 var rejectedByColumn = personColumn('Rejected by', 'rejectedBy');
 
 var commentsColumn = {

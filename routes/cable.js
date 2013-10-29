@@ -611,16 +611,19 @@ module.exports = function(app) {
         update['status'] = 200;
         break;
       case "label":
+        conditions['status'] = {$gte: 200};
         update['status'] = 201;
         update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "benchTerm":
+        conditions['status'] = {$gte: 200};
         update['status'] = 202;
         update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "benchTest":
+        conditions['status'] = {$gte: 200};
         update['status'] = 203;
         update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
@@ -640,23 +643,29 @@ module.exports = function(app) {
         update['status'] = 249;
         break;
       case "pulled":
+        conditions['status'] = 249;
         update['status'] = 250;
         update['pulledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "fieldTerm":
+        conditions['status'] = {$gte: 250};
         update['status'] = 251;
         update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "fieldTest":
+        conditions['status'] = {$gte: 250};
+        if (required && required.fieldTerm) {
+          conditions['fieldTerminatedBy'] = {$exists: true};
+        }
         update['status'] = 252;
         update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "use":
         // check required steps
-        conditions['status'] = {$gte: 250};
+        conditions['status'] = 252;
         if (required && required.fieldTerm) {
           conditions['fieldTerminatedBy'] = {$exists: true};
         }
@@ -682,7 +691,7 @@ module.exports = function(app) {
         return res.send(204);
       } else {
         console.error(req.params.id + ' with conditions for the update cannot be found');
-        return res.send(409, req.params.id + ' conditions and the update conflicted');
+        return res.send(409, req.params.id + ' state, requirements and the update conflicted');
       }
     });
 
