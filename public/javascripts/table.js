@@ -227,7 +227,7 @@ var typeColumns = [{
     sDefaultContent: '',
     bFilter: true
   }, {
-    sTitle: 'Diameter',
+    sTitle: 'Diameter(inch)',
     mData: 'diameter',
     sDefaultContent: '',
     bFilter: true
@@ -257,7 +257,7 @@ var typeColumns = [{
     sDefaultContent: '',
     bFilter: true
   }, {
-    sTitle: 'TID',
+    sTitle: 'TID(Mrad)',
     mData: 'tid',
     sDefaultContent: '',
     bFilter: true
@@ -272,11 +272,6 @@ var typeColumns = [{
     sDefaultContent: '',
     bFilter: true
   }, {
-    sTitle: 'Characteristics',
-    mData: 'characteristics',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
     sTitle: 'Spec',
     mData: 'spec',
     sDefaultContent: '',
@@ -285,7 +280,7 @@ var typeColumns = [{
 ];
 
 var oTableTools = {
-  "sSwfPath": "datatables/swf/copy_csv_xls_pdf.swf",
+  "sSwfPath": "/datatables/swf/copy_csv_xls_pdf.swf",
   "aButtons": [
     "copy",
     "print", {

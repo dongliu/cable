@@ -1,4 +1,5 @@
 $(function() {
+  fnAddFilterFoot('#cable-type', typeColumns);
   var cabletype = $('#cable-type').dataTable({
     aaData: [],
     bAutoWidth: false,
@@ -6,7 +7,9 @@ $(function() {
     sDom: sDom,
     oTableTools: oTableTools
   });
-  fnAddFilterFoot('#cable-type', typeColumns);
+
+  addEvents();
+
   $.ajax({
     url: '/cabletypes/json',
     type: 'GET',
@@ -16,6 +19,6 @@ $(function() {
     cabletype.fnAddData(json);
     cabletype.fnDraw();
   }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for user information.</div>');
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
   }).always();
 });
