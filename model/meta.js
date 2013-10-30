@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var cableType = new Schema({
-  name : {type: String, index: true, unique: true},
+  name : {type: String, unique: true},
   characteristics : String,
   diameter: String,
   service : String,

@@ -6,7 +6,6 @@
 var express = require('express'),
   routes = require('./routes'),
   about = require('./routes/about'),
-  admin = require('./routes/admin'),
   numbering = require('./routes/numbering'),
   http = require('http'),
   fs = require('fs'),
@@ -103,8 +102,6 @@ require('./routes/cabletype')(app);
 // GET /profile
 require('./routes/profile')(app);
 
-app.get('/admin', auth.ensureAuthenticated, auth.verifyRole('admin'), admin.index);
-app.get('/testrole', auth.ensureAuthenticated, auth.verifyRole('testrole'), admin.index);
 app.get('/numbering', numbering.index);
 
 
