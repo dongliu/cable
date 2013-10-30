@@ -7,17 +7,17 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
   .container-fluid(style="margin-top: 10px")
     #message
-    if (roles && roles.indexOf('admin') !== -1)
-      .btn-toolbar
-        .btn-group
-          a.btn.btn-primary#manage(href='cabletypes/manage')
-            i.icon-edit
-            | &nbsp;Manage cable types
+    .btn-toolbar
+      .btn-group
+        button.btn.btn-primary#add
+          Add.icon-file-alt
+          | &nbsp;Add a new type
     table#cable-type.table.table-bordered.table-hover
 
 block js
@@ -28,4 +28,4 @@ block js
   script(type='text/javascript', src='/datatables/js/TableTools.js')
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/javascripts/table.js')
-  script(type='text/javascript', src='/javascripts/cable-type.js')
+  script(type='text/javascript', src='/javascripts/cable-type-manage.js')
