@@ -14,9 +14,11 @@ var cableType = new Schema({
   model : String,
   comments: String,
   spec: String,
-  request: String,
-  revision: String,
-  date : String
+  updatedOn: Date,
+  updatedBy: String
+  // request: String,
+  // revision: String,
+  // date : String
 });
 
 

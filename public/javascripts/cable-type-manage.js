@@ -1,3 +1,9 @@
+$(document).ajaxError(function(event, jqxhr){
+  if (jqxhr.status == 401) {
+    document.location.href = window.location.pathname;
+  }
+});
+
 $(function() {
   // var columns = [idColumn].concat(typeColumns);
   var columns = typeColumns;
@@ -22,20 +28,36 @@ $(function() {
     cabletype.fnDraw();
 
     $('td', cabletype.fnGetNodes()).editable(function(value, settings) {
-      console.log(this);
-      console.log(value);
-      console.log(cabletype.fnGetData(this));
-      console.log(cabletype.fnGetData(this.parentNode)._id);
-      console.log(columns[cabletype.fnGetPosition( this )[2]].mData);
-      console.log(settings);
-      var aPos = cabletype.fnGetPosition(this);
-      cabletype.fnUpdate(value, aPos[0], aPos[1]);
-      return (value);
+      var that = this;
+      if (value == cabletype.fnGetData(that)) {
+        return value;
+      }
+      var data = {};
+      data['target'] = [columns[cabletype.fnGetPosition(that)[2]].mData];
+      data['update'] = value;
+      data['original'] = cabletype.fnGetData(that);
+      var ajax = $.ajax({
+        url: '/cabletypes/'+cabletype.fnGetData(that.parentNode)._id,
+        type: 'PUT',
+        async: false, // have to make this sync in order to sync the client state and server state
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(data) {
+          var aPos = cabletype.fnGetPosition(that);
+          cabletype.fnUpdate(value, aPos[0], aPos[1]);
+        },
+        error: function(jqXHR, status, error) {
+          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot update the cable type</div>');
+          $(window).scrollTop($('#message div:last-child').offset().top - 40);
+        }
+      });
+      return cabletype.fnGetData(that);
     }, {
       type: 'textarea',
       cancel: 'Cancel',
       submit: 'Update',
-      tooltip: 'Click to edit ... '
+      indicator: 'Updating...',
+      placeholder: ''
     });
   }).fail(function(jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
