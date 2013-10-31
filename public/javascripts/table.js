@@ -7,6 +7,12 @@ var selectColumn = {
   asSorting: ['desc', 'asc']
 };
 
+var idColumn = {
+  sTitle: '',
+  mData: '_id',
+  bVisible: false
+};
+
 var editLinkColumn = {
   sTitle: '',
   mData: '_id',
