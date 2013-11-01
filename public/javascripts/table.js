@@ -17,7 +17,7 @@ var editLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function(data, type, full) {
-    return '<a href="requests/' + data + '" target="_blank"><i class="icon-edit icon-large"></i></a>';
+    return '<a href="requests/' + data + '" target="_blank"><i class="fa fa-edit fa-lg"></i></a>';
   },
   bSortable: false
 };
@@ -26,7 +26,7 @@ var detailsLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function(data, type, full) {
-    return '<a href="requests/' + data + '/details" target="_blank"><i class="icon-file-text-alt icon-large"></i></a>';
+    return '<a href="requests/' + data + '/details" target="_blank"><i class="fa fa-file-text-o fa-lg"></i></a>';
   },
   bSortable: false
 };

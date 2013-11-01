@@ -7,7 +7,7 @@ block head
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
-  link(rel='stylesheet', href='/font-awesome/css/font-awesome.css')
+  link(rel='stylesheet', href='/font-awesome-4.0.1/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
@@ -15,15 +15,15 @@ block content
     .btn-toolbar
       .btn-group
         a.btn.btn-primary#new(href='./requests/new', target='_blank')
-          i.icon-file-alt
+          i.fa.fa-file-o.fa-lg
           | &nbsp;New Request
       .btn-group
         button.btn.btn-primary#reload
-          i.icon-refresh
+          i.fa.fa-refresh.fa-lg
           | &nbsp;Reload
       .btn-group.dropdown
         a#meta.btn.dropdown-toggle(data-toggle='dropdown')
-          i.icon-gears
+          i.fa.fa-gears.fa-lg
           | &nbsp;Meta
           span.caret
         ul.dropdown-menu
@@ -46,13 +46,15 @@ block content
           //-   a(href='/workpackages', target='_blank') Work packages
       .btn-group
         a.btn(href='/profile', target='_blank')
-          i.icon-user
+          i.fa.fa-user.fa-lg
           | &nbsp;Profile
       if (roles.length)
         .btn-group
           a.btn.btn-warning(href='/') Back to management view
       .btn-group
-        a.btn.btn-info(href='./about', target='_blank') About
+        a.btn.btn-info(href='./about', target='_blank')
+          i.fa.fa-info.fa-lg.fa-fw
+          |About
     #message
     #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
       .modal-header
@@ -76,23 +78,23 @@ block content
           .btn-toolbar
             .btn-group
               button.btn.btn-primary#saved-submit
-                i.icon-check-sign
+                i.fa.fa-check-square-o.fa-lg
                 | &nbsp;Submit for approval
             .btn-group
               button.btn.btn-primary#saved-clone
-                i.icon-copy
+                i.fa.fa-copy.fa-lg
                 | &nbsp;Clone
             .btn-group
               button.btn.btn-warning#saved-delete
-                i.icon-trash
+                i.fa.fa-trash-o.fa-lg
                 | &nbsp;Delete
             .btn-group
               button.btn.btn-info#saved-select-all
-                i.icon-list.icon-dark
+                i.fa.fa-list.fa-lg
                 | &nbsp;Select all
             .btn-group
               button.btn.btn-info#saved-select-none
-                i.icon-list.icon-light
+                i.fa.fa-square-o.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#saved-wrap.active Wrap
@@ -100,7 +102,7 @@ block content
 
             #saved-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
+                i.fa.fa-wrench.fa-lg
                 | &nbsp;Show
                 span.caret
               ul.dropdown-menu
@@ -133,22 +135,22 @@ block content
           .btn-toolbar
             .btn-group
               button.btn.btn-primary#submitted-clone
-                i.icon-copy
+                i.fa.fa-copy.fa-lg
                 | &nbsp;Clone
             .btn-group
               button.btn.btn-warning#submitted-revert
-                i.icon-step-backward
+                i.fa.fa-step-backward.fa-lg
                 | &nbsp;Revert to saved
             .btn-group
               button.btn.btn-info#submitted-select-none
-                i.icon-list.icon-light
+                i.fa.fa-list.fa-light.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#submitted-wrap.active Wrap
               button.btn.btn-info#submitted-unwrap Unwrap
             #submitted-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
+                i.fa.fa-wrench.fa-lg
                 | &nbsp;Show
                 span.caret
               ul.dropdown-menu
@@ -173,14 +175,14 @@ block content
           .btn-toolbar
             .btn-group
               button.btn.btn-primary#approved-clone
-                i.icon-copy
+                i.fa.fa-copy.fa-lg
                 | &nbsp;Clone
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#approved-wrap.active Wrap
                 button.btn.btn-info#approved-unwrap Unwrap
             #approved-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
+                i.fa.fa-wrench.fa-lg
                 | &nbsp;Show
                 span.caret
               ul.dropdown-menu
@@ -202,15 +204,15 @@ block content
           .btn-toolbar
             .btn-group
               button.btn.btn-primary#rejected-clone
-                i.icon-copy
+                i.fa.fa-copy.fa-lg
                 | &nbsp;Clone
             .btn-group
               button.btn.btn-warning#rejected-delete
-                i.icon-trash
+                i.fa.fa-trash.fa-lg
                 | &nbsp;Delete
             .btn-group
               button.btn.btn-info#rejected-select-none
-                i.icon-list.icon-light
+                i.fa.fa-list.fa-light.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#rejected-wrap.active Wrap
@@ -218,7 +220,7 @@ block content
 
             #rejected-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
+                i.fa.fa-wrench.fa-lg
                 | &nbsp;Show
                 span.caret
               ul.dropdown-menu
@@ -246,7 +248,7 @@ block content
                 button.btn.btn-info#cables-unwrap Unwrap
             #cables-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.icon-wrench
+                i.fa.fa-wrench.fa-lg
                 | &nbsp;Show
                 span.caret
               ul.dropdown-menu
