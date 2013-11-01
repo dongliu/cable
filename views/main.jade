@@ -50,11 +50,13 @@ block content
           | &nbsp;Profile
       if (roles.length)
         .btn-group
-          a.btn.btn-warning(href='/') Back to management view
+          a.btn.btn-warning(href='/')
+            i.fa.fa-exchange.fa-lg
+            |&nbsp;Switch to management view
       .btn-group
         a.btn.btn-info(href='./about', target='_blank')
-          i.fa.fa-info.fa-lg.fa-fw
-          |About
+          i.fa.fa-info.fa-lg
+          |&nbsp;About
     #message
     #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
       .modal-header

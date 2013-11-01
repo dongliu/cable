@@ -33,25 +33,27 @@ $(function() {
         return value;
       }
       var data = {};
-      data['target'] = [columns[cabletype.fnGetPosition(that)[2]].mData];
+      data['target'] = columns[cabletype.fnGetPosition(that)[2]].mData;
       data['update'] = value;
       data['original'] = cabletype.fnGetData(that);
       var ajax = $.ajax({
         url: '/cabletypes/'+cabletype.fnGetData(that.parentNode)._id,
         type: 'PUT',
-        async: false, // have to make this sync in order to sync the client state and server state
+        async: true, // have to make this sync in order to sync the client state and server state
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function(data) {
           var aPos = cabletype.fnGetPosition(that);
           cabletype.fnUpdate(value, aPos[0], aPos[1]);
+          // $(that).text(value);
         },
         error: function(jqXHR, status, error) {
-          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot update the cable type</div>');
+          $(that).text(cabletype.fnGetData(that));
+          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot update the cable type : ' + jqXHR.responseText + '</div>');
           $(window).scrollTop($('#message div:last-child').offset().top - 40);
         }
       });
-      return cabletype.fnGetData(that);
+      return value;
     }, {
       type: 'textarea',
       cancel: 'Cancel',

@@ -38,13 +38,16 @@ module.exports = function(app) {
     update[req.body.target] = req.body.update;
     update['updatedOn'] = Date.now();
     update['updatedBy'] = req.session.userid;
-    CableType.findOneAndUpdate(conditions, update).lean().exec(function(err, type) {
-      if (err && err.code) {
-        console.error(err.msg);
-        if (err.code == 11000) {
-          return res.send(400, 'cable name needs to be unique');
+    CableType.findOneAndUpdate(conditions, update, function(err, type) {
+      // the err is not a mongoose error
+      if (err) {
+        if (err.errmsg) {
+          console.dir(err.errmsg);
+        }
+        if (err.lastErrorObject && err.lastErrorObject.code == 11001) {
+          return res.send(400, req.body.update + ' is used');
         } else {
-          return res.send(500, err.msg);
+          return res.send(500, err.msg | err.errmsg);
         }
       }
       if (type) {
