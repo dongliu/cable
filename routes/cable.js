@@ -739,7 +739,7 @@ function createCable(cableRequest, req, res, quantity) {
       // console.dir(newCable);
       newCable.save(function(err, doc) {
         if (err && err.code) {
-          console.dir(err);
+          // console.dir(err);
           // see test/duplicatedCableNumber.js for a test of this case
           if (err.code == 11000) {
             console.log(nextNumber + ' already existed, try again ...');

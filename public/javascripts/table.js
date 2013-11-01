@@ -224,66 +224,65 @@ var requiredColumn = {
 };
 
 var typeColumns = [{
-    sTitle: 'Name',
-    mData: 'name',
-    bFilter: true
-  }, {
-    sTitle: 'Characteristics',
-    mData: 'characteristics',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Diameter(inch)',
-    mData: 'diameter',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Function/Service',
-    mData: 'service',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Voltage',
-    mData: 'voltage',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Insulation',
-    mData: 'insulation',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Jacket',
-    mData: 'jacket',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Raceway',
-    mData: 'raceway',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'TID(Mrad)',
-    mData: 'tid',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Model',
-    mData: 'model',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Comments',
-    mData: 'comments',
-    sDefaultContent: '',
-    bFilter: true
-  }, {
-    sTitle: 'Spec',
-    mData: 'spec',
-    sDefaultContent: '',
-    bFilter: true
-  }
-];
+  sTitle: 'Name',
+  mData: 'name',
+  bFilter: true
+}, {
+  sTitle: 'Characteristics',
+  mData: 'characteristics',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Diameter(inch)',
+  mData: 'diameter',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Function/Service',
+  mData: 'service',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Voltage',
+  mData: 'voltage',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Insulation',
+  mData: 'insulation',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Jacket',
+  mData: 'jacket',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Raceway',
+  mData: 'raceway',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'TID(Mrad)',
+  mData: 'tid',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Model',
+  mData: 'model',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Comments',
+  mData: 'comments',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Spec',
+  mData: 'spec',
+  sDefaultContent: '',
+  bFilter: true
+}];
 
 var oTableTools = {
   "sSwfPath": "/datatables/swf/copy_csv_xls_pdf.swf",
@@ -462,3 +461,60 @@ function formatDate(date) {
 function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
+
+$.fn.dataTableExt.oApi.fnAddDataAndDisplay = function(oSettings, aData) {
+  /* Add the data */
+  var iAdded = this.oApi._fnAddData(oSettings, aData);
+  var nAdded = oSettings.aoData[iAdded].nTr;
+
+  /* Need to re-filter and re-sort the table to get positioning correct, not perfect
+   * as this will actually redraw the table on screen, but the update should be so fast (and
+   * possibly not alter what is already on display) that the user will not notice
+   */
+  this.oApi._fnReDraw(oSettings);
+
+  /* Find it's position in the table */
+  var iPos = -1;
+  for (var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
+    if (oSettings.aoData[oSettings.aiDisplay[i]].nTr == nAdded) {
+      iPos = i;
+      break;
+    }
+  }
+
+  /* Get starting point, taking account of paging */
+  if (iPos >= 0) {
+    oSettings._iDisplayStart = (Math.floor(i / oSettings._iDisplayLength)) * oSettings._iDisplayLength;
+    this.oApi._fnCalculateEnd(oSettings);
+  }
+
+  this.oApi._fnDraw(oSettings);
+  return {
+    "nTr": nAdded,
+    "iPos": iAdded
+  };
+};
+
+$.fn.dataTableExt.oApi.fnDisplayRow = function(oSettings, nRow) {
+  // Account for the "display" all case - row is already displayed
+  if (oSettings._iDisplayLength == -1) {
+    return;
+  }
+
+  // Find the node in the table
+  var iPos = -1;
+  for (var i = 0, iLen = oSettings.aiDisplay.length; i < iLen; i++) {
+    if (oSettings.aoData[oSettings.aiDisplay[i]].nTr == nRow) {
+      iPos = i;
+      break;
+    }
+  }
+
+  // Alter the start point of the paging display
+  if (iPos >= 0) {
+    oSettings._iDisplayStart = (Math.floor(i / oSettings._iDisplayLength)) * oSettings._iDisplayLength;
+    this.oApi._fnCalculateEnd(oSettings);
+  }
+
+  this.oApi._fnDraw(oSettings);
+};

@@ -28,11 +28,49 @@ module.exports = function(app) {
     });
   });
 
+  app.post('/cabletypes', auth.ensureAuthenticated, function(req, res) {
+    if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    var newType = {
+      name: req.body.name || 'updateme',
+      characteristics: req.body.characteristics || '',
+      diameter: req.diameter || '',
+      service: req.service || '',
+      voltage: req.voltage || '',
+      insulation: req.insulation || '',
+      jacket: req.jacket || '',
+      raceway: req.raceway || '',
+      tid: req.tid || '',
+      model: req.model || '',
+      comments: req.comments || '',
+      spec: req.spec || ''
+    };
+    (new CableType(newType)).save(function(err, type) {
+      if (err && err.code) {
+        // console.dir(err);
+        // see test/duplicatedCableNumber.js for a test of this case
+        if (err.code == 11000) {
+          console.log(err.msg || err.errmsg);
+          return res.send(400, 'please update the cable type named 0updateme');
+        } else {
+          console.error(err.msg || err.errmsg);
+          return res.send(500, err.msg || err.errmsg);
+        }
+      }
+      var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
+      res.set('Location', url);
+      return res.json(201, type);
+    });
+  });
+
   app.put('/cabletypes/:id', auth.ensureAuthenticated, function(req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
-    var conditions = {_id: req.params.id};
+    var conditions = {
+      _id: req.params.id
+    };
     conditions[req.body.target] = req.body.original;
     var update = {};
     update[req.body.target] = req.body.update;
@@ -47,7 +85,7 @@ module.exports = function(app) {
         if (err.lastErrorObject && err.lastErrorObject.code == 11001) {
           return res.send(400, req.body.update + ' is used');
         } else {
-          return res.send(500, err.msg | err.errmsg);
+          return res.send(500, err.msg || err.errmsg);
         }
       }
       if (type) {
