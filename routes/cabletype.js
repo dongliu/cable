@@ -33,7 +33,7 @@ module.exports = function(app) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var newType = {
-      name: req.body.name || 'updateme',
+      name: req.body.name || req.session.userid+'_updateme',
       characteristics: req.body.characteristics || '',
       diameter: req.diameter || '',
       service: req.service || '',
@@ -50,7 +50,7 @@ module.exports = function(app) {
       if (err && err.code) {
         console.dir(err);
         if (err.code == 11000) {
-          console.err(err.msg || err.err);
+          console.error(err.msg || err.err);
           return res.send(400, 'please update the cable type named ' + newType.name);
         } else {
           console.error(err.msg || err.err);

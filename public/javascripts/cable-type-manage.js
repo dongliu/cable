@@ -22,9 +22,7 @@ $(function() {
       url: '/cabletypes',
       type: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({
-        name: 'newtype'
-      }),
+      data: JSON.stringify({}),
       dataType: 'json'
     }).done(function(json) {
       var newType = cabletype.fnAddDataAndDisplay(json);
@@ -33,7 +31,6 @@ $(function() {
     }).fail(function(jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot create a new cable type : ' + jqXHR.responseText + '</div>');
     }).always();
-    // tdEdit(cabletype);
   });
 
   $.ajax({
