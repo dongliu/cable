@@ -49,13 +49,12 @@ module.exports = function(app) {
     (new CableType(newType)).save(function(err, type) {
       if (err && err.code) {
         console.dir(err);
-        // see test/duplicatedCableNumber.js for a test of this case
         if (err.code == 11000) {
-          console.log(err.msg || err.errmsg);
+          console.err(err.msg || err.err);
           return res.send(400, 'please update the cable type named ' + newType.name);
         } else {
-          console.error(err.msg || err.errmsg);
-          return res.send(500, err.msg || err.errmsg);
+          console.error(err.msg || err.err);
+          return res.send(500, err.msg || err.err);
         }
       }
       var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
