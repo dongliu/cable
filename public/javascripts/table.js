@@ -435,6 +435,12 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
   }
 }
 
+function fnSetDeselect(nTr, selectedClass, checkboxClass) {
+  if ($(nTr).hasClass(selectedClass)) {
+    $(nTr).removeClass(selectedClass);
+    $(nTr).find('input.' + checkboxClass + ':checked').prop('checked', false);
+  }
+}
 
 function fnSetColumnsVis(oTableLocal, columns, show) {
   columns.forEach(function(e, i, a) {

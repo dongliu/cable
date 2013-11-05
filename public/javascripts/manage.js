@@ -150,7 +150,7 @@ $(function() {
   });
 
   $('#procuring-select-none').click(function(e) {
-    fnDeselect(procuringTable, 'row-selected', 'select-row');
+    fnSetDeselect(cables[index], 'row-selected', 'select-row');
   });
 
   $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e) {
@@ -195,7 +195,7 @@ $(function() {
   });
 
   $('#installing-select-none').click(function(e) {
-    fnDeselect(installingTable, 'row-selected', 'select-row');
+
   });
 
   $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e) {
@@ -526,18 +526,16 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
     }).done(function(cable) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
+      fnSetDeselect(cables[index], 'row-selected', 'select-row');
       switch (action) {
         case 'order':
           procuringTable.fnUpdate(cable, cables[index]);
-          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'receive':
           procuringTable.fnUpdate(cable, cables[index]);
-          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'accept':
           procuringTable.fnUpdate(cable, cables[index]);
-          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'install':
           procuringTable.fnDeleteRow(cables[index]);
@@ -545,31 +543,24 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
           break;
         case 'label':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'benchTerm':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'benchTest':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'pull':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'pulled':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'fieldTerm':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'fieldTest':
           installingTable.fnUpdate(cable, cables[index]);
-          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
         case 'use':
           installingTable.fnDeleteRow(cables[index]);
