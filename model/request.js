@@ -82,6 +82,7 @@ var cable = new Schema({
   request_id: String,
   number: {
     type: String,
+    index: true,
     unique: true
   },
   // tags: [String],
