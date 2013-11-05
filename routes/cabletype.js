@@ -47,9 +47,9 @@ module.exports = function(app) {
       spec: req.spec || ''
     };
     (new CableType(newType)).save(function(err, type) {
-      if (err && err.code) {
+      if (err) {
         console.dir(err);
-        if (err.code == 11000) {
+        if (err.code && err.code == 11000) {
           console.error(err.msg || err.err);
           return res.send(400, 'please update the cable type named ' + newType.name);
         } else {
@@ -82,7 +82,7 @@ module.exports = function(app) {
           console.dir(err.errmsg);
         }
         if (err.lastErrorObject && err.lastErrorObject.code == 11001) {
-          return res.send(400, req.body.update + ' is used');
+          return res.send(400, req.body.update + ' is already taken');
         } else {
           return res.send(500, err.msg || err.errmsg);
         }
