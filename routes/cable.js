@@ -291,7 +291,7 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          return res.send(204);
+          return res.json(200, cableRequest.toJSON());
         } else {
           console.error(req.params.id + ' gone');
           return res.json(410, {
@@ -318,7 +318,7 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          return res.send(204);
+          return res.json(200, cableRequest.toJSON());
         } else {
           console.error(req.params.id + ' cannot be submitted');
           return res.json(410, {
@@ -347,7 +347,7 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          return res.send(204);
+          return res.json(200, cableRequest.toJSON());
         } else {
           console.error(req.params.id + ' cannot be reverted');
           return res.json(400, {
@@ -372,7 +372,7 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          return res.send(204);
+          return res.json(200, cableRequest.toJSON());
         } else {
           console.error(req.params.id + ' gone');
           return res.json(410, {
@@ -400,7 +400,7 @@ module.exports = function(app) {
           });
         }
         if (cableRequest) {
-          return res.send(204);
+          return res.json(200, cableRequest.toJSON());
         } else {
           console.error(req.params.id + ' gone');
           return res.json(410, {
@@ -429,7 +429,7 @@ module.exports = function(app) {
             });
           }
           if (cableRequest) {
-            createCable(cableRequest, req, res, cableRequest.basic.quantity);
+            createCable(cableRequest, req, res, cableRequest.basic.quantity, []);
           } else {
             console.error(req.params.id + ' gone');
             return res.json(410, {
@@ -688,7 +688,7 @@ module.exports = function(app) {
         });
       }
       if (cable) {
-        return res.send(204);
+        return res.json(200, cable.toJSON());
       } else {
         console.error(req.params.id + ' with conditions for the update cannot be found');
         return res.send(409, req.params.id + ' state, requirements and the update conflicted');
@@ -699,7 +699,7 @@ module.exports = function(app) {
 };
 
 
-function createCable(cableRequest, req, res, quantity) {
+function createCable(cableRequest, req, res, quantity, cables) {
   var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
   Cable.findOne({
     number: {
@@ -718,7 +718,6 @@ function createCable(cableRequest, req, res, quantity) {
         error: err.msg
       });
     } else {
-      console.dir(cable);
       if (cable) {
         nextNumber = increment(cable.number);
       } else {
@@ -739,14 +738,13 @@ function createCable(cableRequest, req, res, quantity) {
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });
-      // console.dir(newCable);
       newCable.save(function(err, doc) {
-        if (err && err.code) {
-          // console.dir(err);
+        if (err) {
+          console.dir(err);
           // see test/duplicatedCableNumber.js for a test of this case
-          if (err.code == 11000) {
+          if (err.code && err.code == 11000) {
             console.log(nextNumber + ' already existed, try again ...');
-            createCable(cableRequest, req, res, quantity);
+            createCable(cableRequest, req, res, quantity, cables);
           } else {
             console.error(err.msg);
             return res.json(500, {
@@ -754,14 +752,13 @@ function createCable(cableRequest, req, res, quantity) {
             });
           }
         } else {
+          cables.push(doc.toJSON());
           if (quantity === 1) {
             var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
             res.set('Location', url);
-            return res.json(201, {
-              location: '/cables/' + nextNumber
-            });
+            return res.json(201, cables);
           } else {
-            createCable(cableRequest, req, res, quantity - 1);
+            createCable(cableRequest, req, res, quantity - 1, cables);
           }
         }
       });
