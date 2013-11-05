@@ -24,7 +24,7 @@ var cablesTableColumns = {
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
-$(document).ajaxError(function(event, jqxhr){
+$(document).ajaxError(function(event, jqxhr) {
   if (jqxhr.status == 401) {
     document.location.href = window.location.pathname;
   }
@@ -119,7 +119,7 @@ $(function() {
     batchClone(submittedTable);
   });
 
-  $('#submitted-revert').click(function(e){
+  $('#submitted-revert').click(function(e) {
     batchRevert(submittedTable);
   });
 
@@ -212,7 +212,7 @@ $(function() {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn, requiredColumn].concat(basicColumns.slice(0,7), fromColumns, toColumns).concat([commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn, requiredColumn].concat(basicColumns.slice(0, 7), fromColumns, toColumns).concat([commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
@@ -262,65 +262,77 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     var approved = [];
 
     json.forEach(function(r) {
-      if (r.status === 0) {
-        saved.push(r);
-        return;
+      if (savedTable) {
+        if (r.status === 0) {
+          saved.push(r);
+          return;
+        }
       }
-      if (r.status === 1) {
-        submitted.push(r);
-        return;
+      if (submittedTable) {
+        if (r.status === 1) {
+          submitted.push(r);
+          return;
+        }
       }
-      if (r.status === 2) {
-        approved.push(r);
-        return;
+      if (approvedTable) {
+        if (r.status === 2) {
+          approved.push(r);
+          return;
+        }
       }
-      if (r.status === 3) {
-        rejected.push(r);
-        return;
+      if (rejectedTable) {
+        if (r.status === 3) {
+          rejected.push(r);
+          return;
+        }
       }
     });
 
-    $('#saved-show input:checkbox').each(function(i) {
-      fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-    });
-    savedTable.fnClearTable();
-    savedTable.fnAddData(saved);
+    if (savedTable) {
+      $('#saved-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      savedTable.fnClearTable();
+      savedTable.fnAddData(saved);
 
-    if ($('#saved-unwrap').hasClass('active')) {
-      fnUnwrap(savedTable);
+      if ($('#saved-unwrap').hasClass('active')) {
+        fnUnwrap(savedTable);
+      }
+      savedTable.fnDraw();
     }
-    savedTable.fnDraw();
-
-    $('#submitted-show input:checkbox').each(function(i) {
-      fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
-    });
-    submittedTable.fnClearTable();
-    submittedTable.fnAddData(submitted);
-    if ($('#submitted-unwrap').hasClass('active')) {
-      fnUnwrap(submittedTable);
+    if (submittedTable) {
+      $('#submitted-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      submittedTable.fnClearTable();
+      submittedTable.fnAddData(submitted);
+      if ($('#submitted-unwrap').hasClass('active')) {
+        fnUnwrap(submittedTable);
+      }
+      submittedTable.fnDraw();
     }
-    submittedTable.fnDraw();
-
-    $('#rejected-show input:checkbox').each(function(i) {
-      fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
-    });
-    rejectedTable.fnClearTable();
-    rejectedTable.fnAddData(rejected);
-    if ($('#rejected-unwrap').hasClass('active')) {
-      fnUnwrap(rejectedTable);
+    if (rejectedTable) {
+      $('#rejected-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      rejectedTable.fnClearTable();
+      rejectedTable.fnAddData(rejected);
+      if ($('#rejected-unwrap').hasClass('active')) {
+        fnUnwrap(rejectedTable);
+      }
+      rejectedTable.fnDraw();
     }
-    rejectedTable.fnDraw();
-
-    $('#approved-show input:checkbox').each(function(i) {
-      fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
-    });
-    approvedTable.fnClearTable();
-    approvedTable.fnAddData(approved);
-    if ($('#approved-unwrap').hasClass('active')) {
-      fnUnwrap(approvedTable);
+    if (approvedTable) {
+      $('#approved-show input:checkbox').each(function(i) {
+        fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
+      });
+      approvedTable.fnClearTable();
+      approvedTable.fnAddData(approved);
+      if ($('#approved-unwrap').hasClass('active')) {
+        fnUnwrap(approvedTable);
+      }
+      approvedTable.fnDraw();
     }
-    approvedTable.fnDraw();
-
     if (cablesTable) {
       initCable(cablesTable);
     }
@@ -382,7 +394,7 @@ function deleteFromModal() {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable);
         }
       });
   });
@@ -414,7 +426,7 @@ function submitFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable, submittedTable);
         }
       });
   });
@@ -422,7 +434,7 @@ function submitFromModal(requests) {
 
 function batchSubmit(table) {
   var selected = fnGetSelected(table, 'row-selected');
-  var requests = {};
+  // var requests = {};
   if (selected.length) {
     $('#modalLable').html('Submit the following ' + selected.length + ' requests for approval? ');
     $('#modal .modal-body').empty();
@@ -439,7 +451,8 @@ function batchSubmit(table) {
     $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
     $('#submit').click(function(e) {
-      submitFromModal(requests);
+      // submitFromModal(requests);
+      submitFromModal();
     });
   } else {
     $('#modalLable').html('Alert');
@@ -507,7 +520,7 @@ function cloneFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable);
         }
       });
   });
@@ -521,12 +534,12 @@ function batchRevert(table) {
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data._id + '">submitted on ' + moment(data.submittedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs  + '</div>');
+      $('#modal .modal-body').append('<div id="' + data._id + '">submitted on ' + moment(data.submittedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       // requests[data._id] = {
-        // basic: data.basic,
-        // from: data.from,
-        // to: data.to,
-        // comments: data.comments
+      // basic: data.basic,
+      // from: data.from,
+      // to: data.to,
+      // comments: data.comments
       // };
     });
     // $('#modal .modal-body').html('test');
@@ -568,7 +581,7 @@ function revertFromModal(requests) {
       .always(function() {
         number = number - 1;
         if (number === 0) {
-          initRequests(savedTable, submittedTable, rejectedTable, approvedTable);
+          initRequests(savedTable, submittedTable);
         }
       });
   });
@@ -592,4 +605,3 @@ function batchDelete(table) {
     $('#modal').modal('show');
   }
 }
-
