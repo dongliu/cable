@@ -530,11 +530,15 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
         case 'order':
           procuringTable.fnUpdate(cable, cables[index]);
           break;
-        case 'order':
+        case 'receive':
+          procuringTable.fnUpdate(cable, cables[index]);
           break;
-        case 'order':
+        case 'accept':
+          procuringTable.fnUpdate(cable, cables[index]);
           break;
-        case 'order':
+        case 'install':
+          procuringTable.fnDeleteRow(cables[index]);
+          installingTable.fnAddData(cable);
           break;
         case 'order':
           break;
