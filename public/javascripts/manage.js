@@ -332,57 +332,51 @@ function initCableTableFromData(oTable, data, cb) {
   }
 }
 
-function initCableTable(oTable, url, cb) {
-  $.ajax({
-    url: url,
-    type: 'GET',
-    contentType: 'application/json',
-    dataType: 'json'
-  }).done(function(json) {
-    approved.forEach(function(r) {
-      for (i = 0; i < json.length; i += 1) {
-        if (r._id === json[i].request_id) {
+// function initCableTable(oTable, url, cb) {
+//   $.ajax({
+//     url: url,
+//     type: 'GET',
+//     contentType: 'application/json',
+//     dataType: 'json'
+//   }).done(function(json) {
+//     approved.forEach(function(r) {
+//       for (i = 0; i < json.length; i += 1) {
+//         if (r._id === json[i].request_id) {
 
-          (json[i])['basic'] = r.basic;
-          (json[i])['from'] = r.from;
-          (json[i])['to'] = r.to;
-          (json[i])['comments'] = r.comments;
-        }
-      }
-    });
+//           (json[i])['basic'] = r.basic;
+//           (json[i])['from'] = r.from;
+//           (json[i])['to'] = r.to;
+//           (json[i])['comments'] = r.comments;
+//         }
+//       }
+//     });
 
-    oTable.fnClearTable();
-    oTable.fnAddData(json);
-    if ($('#cables-unwrap').hasClass('active')) {
-      fnUnwrap(oTable);
-    }
-    oTable.fnDraw();
-    if (cb) {
-      cb();
-    }
-  }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
-}
+//     oTable.fnClearTable();
+//     oTable.fnAddData(json);
+//     if ($('#cables-unwrap').hasClass('active')) {
+//       fnUnwrap(oTable);
+//     }
+//     oTable.fnDraw();
+//     if (cb) {
+//       cb();
+//     }
+//   }).fail(function(jqXHR, status, error) {
+//     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
+//     $(window).scrollTop($('#message div:last-child').offset().top - 40);
+//   }).always();
+// }
 
 
 function batchApprove(oTable, procuringTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
-  var requests = {};
+  var requests = [];
   if (selected.length) {
     $('#modalLable').html('Approve the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      // requests[data._id] = {
-      //   basic: data.basic,
-      //   from: data.from,
-      //   to: data.to,
-      //   required: data.required,
-      //   comments: data.comments
-      // };
+      requests.push(row);
     });
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -408,26 +402,25 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       url: '/requests/' + that.id,
       type: 'PUT',
       contentType: 'application/json',
+      dataType: 'json',
       data: JSON.stringify({
         action: 'approve'
-        // ,request: requests[that.id]
       }),
-    }).done(function() {
+    }).done(function(cables) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
+      // remove the request row
+      approvingTable.fnDeleteRow(requests[index]);
+      // add the new cables to the procuring table
+      procuringTable.fnAddData(cables);
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
-        number = number - 1;
-        if (number === 0) {
-          initRequestTable(approvingTable, '/requests/statuses/1/json');
-          initCableTables(procuringTable);
-        }
-      });
+      .always(
+      );
   });
 }
 
