@@ -419,28 +419,21 @@ function approveFromModal(requests, approvingTable, procuringTable) {
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(
-      );
+      .always();
   });
 }
 
 function batchReject(oTable, rejectedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
-  var requests = {};
+  var requests = [];
   if (selected.length) {
     $('#modalLable').html('Reject the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
-      // requests[data._id] = {
-      //   basic: data.basic,
-      //   from: data.from,
-      //   to: data.to,
-      //   comments: data.comments
-      // };
+      requests.push(row);
     });
-    // $('#modal .modal-body').html('test');
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
     $('#reject').click(function(e) {
@@ -465,24 +458,22 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
       contentType: 'application/json',
       data: JSON.stringify({
         action: 'reject'
-        // ,request: requests[that.id]
       }),
-    }).done(function() {
+      dataType: 'json'
+    }).done(function(request) {
       $(that).prepend('<i class="icon-remove"></i>');
       $(that).addClass('text-success');
+      // remove the request row
+      approvingTable.fnDeleteRow(requests[index]);
+      // add the new cables to the procuring table
+      rejectedTable.fnAddData(request);
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
-        number = number - 1;
-        if (number === 0) {
-          initRequestTable(approvingTable, '/requests/statuses/1/json');
-          initRequestTable(rejectedTable, 'requests/statuses/3/json');
-        }
-      });
+      .always();
   });
 }
 
