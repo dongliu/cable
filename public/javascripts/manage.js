@@ -529,35 +529,55 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
       switch (action) {
         case 'order':
           procuringTable.fnUpdate(cable, cables[index]);
+          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'receive':
           procuringTable.fnUpdate(cable, cables[index]);
+          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'accept':
           procuringTable.fnUpdate(cable, cables[index]);
+          fnDeselect(approvingTable, 'row-selected', 'select-row');
           break;
         case 'install':
           procuringTable.fnDeleteRow(cables[index]);
           installingTable.fnAddData(cable);
           break;
-        case 'order':
+        case 'label':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-        case 'order':
+        case 'benchTerm':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-        case 'order':
+        case 'benchTest':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-        case 'order':
+        case 'pull':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-        case 'order':
+        case 'pulled':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-        case 'order':
+        case 'fieldTerm':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
           break;
-
+        case 'fieldTest':
+          installingTable.fnUpdate(cable, cables[index]);
+          fnDeselect(installingTable, 'row-selected', 'select-row');
+          break;
+        case 'use':
+          installingTable.fnDeleteRow(cables[index]);
+          installedTable.fnAddData(cable);
+          break;
         default:
           // do nothing
       }
-
-
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
