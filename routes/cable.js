@@ -473,7 +473,7 @@ module.exports = function(app) {
   });
 
 
-  // status: 1 for procuring, 2 for installing
+  // status: 1 for procuring, 2 for installing, 3 for installed
 
   app.get('/cables/statuses/:s/json', function(req, res) {
     if (req.session.roles.length === 0) {

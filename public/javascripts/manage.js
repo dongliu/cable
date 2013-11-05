@@ -20,9 +20,7 @@ var installedTableColumns = procuringTableColumns;
 
 var nameCache = {};
 
-var approved = [];
-
-$(document).ajaxError(function(event, jqxhr){
+$(document).ajaxError(function(event, jqxhr) {
   if (jqxhr.status == 401) {
     document.location.href = window.location.pathname;
   }
@@ -270,82 +268,59 @@ function initRequestTable(oTable, url) {
 
 
 function initCableTables(procuringTable, installingTable, installedTable) {
-  $.ajax({
-    url: '/requests/statuses/2/json',
-    type: 'GET',
-    contentType: 'application/json',
-    dataType: 'json'
-  }).done(function(json) {
-    approved = json;
+  if (procuringTable) {
     $.ajax({
-      url: '/cables/statuses/0/json',
+      url: '/cables/statuses/1/json',
       type: 'GET',
       dataType: 'json'
     }).done(function(cables) {
-      var procuringCables = [];
-      var installingCables = [];
-      var installedCables = [];
-
-      cables.forEach(function(c) {
-        if (procuringTable && c.status >= 100 && c.status <= 199) {
-          procuringCables.push(c);
-          return;
-        }
-        if (installingTable && c.status >= 200 && c.status <= 299) {
-          installingCables.push(c);
-          return;
-        }
-        if (installedTable && c.status >= 300 && c.status <= 399) {
-          installedCables.push(c);
-          return;
-        }
+      initCableTableFromData(procuringTable, cables, function() {
+        $('#procuring-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
+        });
       });
-
-      if (procuringTable) {
-        initCableTableFromData(procuringTable, procuringCables, function() {
-          $('#procuring-show input:checkbox').each(function(i) {
-            fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
-          });
-        });
-      }
-      if (installingTable) {
-        initCableTableFromData(installingTable, installingCables, function() {
-          $('#installing-show input:checkbox').each(function(i) {
-            fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
-          });
-        });
-      }
-      if (installedTable) {
-        initCableTableFromData(installedTable, installedCables, function() {
-          $('#installed-show input:checkbox').each(function(i) {
-            fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
-          });
-        });
-      }
-
     }).fail(function(jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }).always();
+  }
 
-  }).fail(function(jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
+  if (installingTable) {
+    $.ajax({
+      url: '/cables/statuses/2/json',
+      type: 'GET',
+      dataType: 'json'
+    }).done(function(cables) {
+      initCableTableFromData(installingTable, cables, function() {
+        $('#installing-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
+        });
+      });
+    }).fail(function(jqXHR, status, error) {
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
+      $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    }).always();
+  }
+
+  if (installedTable) {
+    $.ajax({
+      url: '/cables/statuses/3/json',
+      type: 'GET',
+      dataType: 'json'
+    }).done(function(cables) {
+      initCableTableFromData(installedTable, cables, function() {
+        $('#installed-show input:checkbox').each(function(i) {
+          fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
+        });
+      });
+    }).fail(function(jqXHR, status, error) {
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
+      $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    }).always();
+  }
 }
 
 function initCableTableFromData(oTable, data, cb) {
-  approved.forEach(function(r) {
-    for (i = 0; i < data.length; i += 1) {
-      if (r._id === data[i].request_id) {
-        (data[i])['basic'] = r.basic;
-        (data[i])['from'] = r.from;
-        (data[i])['to'] = r.to;
-        (data[i])['comments'] = r.comments;
-      }
-    }
-  });
-
   oTable.fnClearTable();
   oTable.fnAddData(data);
   if ($('#cables-unwrap').hasClass('active')) {
