@@ -84,7 +84,7 @@ var cable = new Schema({
     type: String,
     unique: true
   },
-  tags: [String],
+  // tags: [String],
   status: Number,
   basic: {
     project: String,

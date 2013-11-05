@@ -20,7 +20,7 @@ var cablesTableColumns = {
   comments: [27]
 };
 
-var approved = [];
+// var approved = [];
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
@@ -259,7 +259,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     var submitted = [];
     var rejected = [];
 
-    approved = [];
+    var approved = [];
 
     json.forEach(function(r) {
       if (r.status === 0) {
@@ -337,18 +337,18 @@ function initCable(cablesTable) {
     contentType: 'application/json',
     dataType: 'json'
   }).done(function(json) {
-    approved.forEach(function(r) {
-      for (i = 0; i < json.length; i += 1) {
-        if (r._id === json[i].request_id) {
+    // approved.forEach(function(r) {
+    //   for (i = 0; i < json.length; i += 1) {
+    //     if (r._id === json[i].request_id) {
 
-          (json[i])['basic'] = r.basic;
-          (json[i])['from'] = r.from;
-          (json[i])['to'] = r.to;
-          (json[i])['comments'] = r.comments;
-          // (json[i])['request'] = r;
-        }
-      }
-    });
+    //       (json[i])['basic'] = r.basic;
+    //       (json[i])['from'] = r.from;
+    //       (json[i])['to'] = r.to;
+    //       (json[i])['comments'] = r.comments;
+    //       // (json[i])['request'] = r;
+    //     }
+    //   }
+    // });
 
     cablesTable.fnClearTable();
     cablesTable.fnAddData(json);
