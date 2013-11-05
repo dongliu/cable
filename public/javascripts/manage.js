@@ -480,23 +480,24 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
 
 function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
-  var cables = {};
+  var cables = [];
+  var required = [];
   if (selected.length) {
     $('#modalLable').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
-      cables[data.number] = data;
+      cables.push(row);
+      required.push(data.required);
       $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#username').autocomplete(nameAuto('#username', nameCache));
     $('#date').datepicker();
     $('#modal').modal('show');
-    // $('#username').autocomplete("option", "appendTo", "#modalform");
     $('#action').click(function(e) {
-      actionFromModal(cables, action, procuringTable, installingTable, installedTable);
+      actionFromModal(cables, required, action, procuringTable, installingTable, installedTable);
     });
   } else {
     $('#modalLable').html('Alert');
@@ -506,7 +507,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
   }
 }
 
-function actionFromModal(cables, action, procuringTable, installingTable, installedTable) {
+function actionFromModal(cables, required, action, procuringTable, installingTable, installedTable) {
   $('#action').prop('disabled', true);
   var number = $('#modal .modal-body .cable').length;
   $('#modal .modal-body .cable').each(function(index) {
@@ -517,24 +518,48 @@ function actionFromModal(cables, action, procuringTable, installingTable, instal
       contentType: 'application/json',
       data: JSON.stringify({
         action: action,
-        cable: cables[that.id],
+        required: required[index],
         name: $('#username').val(),
         date: $('#date').val()
       }),
-    }).done(function() {
+      dataType: 'json'
+    }).done(function(cable) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
+      switch (action) {
+        case 'order':
+          procuringTable.fnUpdate(cable, cables[index]);
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+        case 'order':
+          break;
+
+        default:
+          // do nothing
+      }
+
+
     })
       .fail(function(jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
-        number = number - 1;
-        if (number === 0) {
-          initCableTables(procuringTable, installingTable, installedTable);
-        }
-      });
+      .always();
   });
 }

@@ -589,7 +589,7 @@ module.exports = function(app) {
     var update = {};
     var inValidaAction = false;
 
-    var required = req.body.cable.required;
+    var required = req.body.required;
 
     switch (req.body.action) {
       case "order":
