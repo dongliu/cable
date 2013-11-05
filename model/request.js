@@ -86,6 +86,47 @@ var cable = new Schema({
   },
   tags: [String],
   status: Number,
+  basic: {
+    project: String,
+    system: String,
+    subsystem: String,
+    signal: String,
+    cableType: String,
+    engineer: String,
+    service: String,
+    wbs: String,
+    tags: [String]
+    // ,quantity: {
+    //   type: Number,
+    //   min: 1
+    // }
+  },
+
+  from: {
+    building: String,
+    area: String,
+    room: String,
+    rack: String,
+    elevation: Number,
+    unit: String,
+    terminationDevice: String,
+    terminationType: String,
+    wiringDrawing: String,
+    label: String
+  },
+
+  to: {
+    building: String,
+    area: String,
+    room: String,
+    rack: String,
+    elevation: Number,
+    unit: String,
+    terminationDevice: String,
+    terminationType: String,
+    wiringDrawing: String,
+    label: String
+  },
   required: {
     label: Boolean,
     benchTerm: Boolean,
