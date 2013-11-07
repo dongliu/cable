@@ -299,7 +299,7 @@ function sendRequest(data) {
     dataType: 'json'
   }).done(function(json) {
     // var location = formRequest.getResponseHeader('Location');
-    $('form[name="request"]').fadeTo('slow', 1);
+    // $('form[name="request"]').fadeTo('slow', 1);
     if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
