@@ -13,13 +13,6 @@ block head
 block content
   .container
     #message
-    //- #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLable',aria-hidden='true')
-    //-   .modal-header
-    //-     h3#modalLable
-    //-   .modal-body
-    //-   .modal-footer
-    //-     button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
-    //- h3 Cable &nbsp
     h3 Cable
       =' '
       span#cableId #{cable.number}
@@ -28,8 +21,18 @@ block content
       dd
         a(href='/requests/#{cable.request_id}/details', target='_blank') #{cable.request_id}
       dt status
-      //- dd#status #{cable.status}
       dd#status #{fs.formatCableStatus(cable.status)}
+      dt basic
+      dd
+        != fs.json2List(cable.basic)
+      dt from
+      dd
+        != fs.json2List(cable.from)
+      dt to
+      dd
+        != fs.json2List(cable.to)
+      dt comments
+      dd #{cable.comments}
       dt submitted by
       dd
         a(href='/users/#{cable.submittedBy}', target='_blank') #{cable.submittedBy}

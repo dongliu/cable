@@ -554,8 +554,17 @@ module.exports = function(app) {
               return querystring.stringify({
                 name: s
               });
+            },
+            json2List: function(json) {
+              var output = '<dl>';
+              for (var k in json) {
+                if (json.hasOwnProperty(k)) {
+                  output = output + '<p>' + k + ' : ' + json[k] + '</p>';
+                }
+              }
+              output = output + '</dl>';
+              return output;
             }
-
           }
         });
       } else {
@@ -611,34 +620,48 @@ module.exports = function(app) {
         update['status'] = 200;
         break;
       case "label":
-        conditions['status'] = {$gte: 200};
+        conditions['status'] = {
+          $gte: 200
+        };
         update['status'] = 201;
         update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "benchTerm":
-        conditions['status'] = {$gte: 200};
+        conditions['status'] = {
+          $gte: 200
+        };
         update['status'] = 202;
         update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "benchTest":
-        conditions['status'] = {$gte: 200};
+        conditions['status'] = {
+          $gte: 200
+        };
         update['status'] = 203;
         update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "pull":
         // check required steps
-        conditions['status'] = {$gte: 200};
+        conditions['status'] = {
+          $gte: 200
+        };
         if (required && required.label) {
-          conditions['labeledBy'] = {$exists: true};
+          conditions['labeledBy'] = {
+            $exists: true
+          };
         }
         if (required && required.benchTerm) {
-          conditions['benchTerminatedBy'] = {$exists: true};
+          conditions['benchTerminatedBy'] = {
+            $exists: true
+          };
         }
         if (required && required.benchTest) {
-          conditions['benchTestedBy'] = {$exists: true};
+          conditions['benchTestedBy'] = {
+            $exists: true
+          };
         }
         update['status'] = 249;
         break;
@@ -649,15 +672,21 @@ module.exports = function(app) {
         update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "fieldTerm":
-        conditions['status'] = {$gte: 250};
+        conditions['status'] = {
+          $gte: 250
+        };
         update['status'] = 251;
         update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
         update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
         break;
       case "fieldTest":
-        conditions['status'] = {$gte: 250};
+        conditions['status'] = {
+          $gte: 250
+        };
         if (required && required.fieldTerm) {
-          conditions['fieldTerminatedBy'] = {$exists: true};
+          conditions['fieldTerminatedBy'] = {
+            $exists: true
+          };
         }
         update['status'] = 252;
         update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
@@ -667,9 +696,13 @@ module.exports = function(app) {
         // check required steps
         conditions['status'] = 252;
         if (required && required.fieldTerm) {
-          conditions['fieldTerminatedBy'] = {$exists: true};
+          conditions['fieldTerminatedBy'] = {
+            $exists: true
+          };
         }
-        conditions['fieldTestedBy'] = {$exists: true};
+        conditions['fieldTestedBy'] = {
+          $exists: true
+        };
         update['status'] = 300;
         break;
       default:
