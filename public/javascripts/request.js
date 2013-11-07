@@ -248,7 +248,7 @@ $(function() {
     if (action == 'save' || action == 'adjust') {
       if (_.isEqual(initModel, currentModel)) {
 
-        $('#modalLable').html('The request cannot be sent');
+        $('#modalLabel').html('The request cannot be sent');
         $('#modal .modal-body').html('No change has been made in the form');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
@@ -261,7 +261,7 @@ $(function() {
       if ($(requestForm).valid()) {
         sendRequest(data);
       } else {
-        $('#modalLable').html('The request cannot be sent');
+        $('#modalLabel').html('The request cannot be sent');
         $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
@@ -316,7 +316,7 @@ function sendRequest(data) {
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
       } else {
         $('form[name="request"]').hide();
-        $('#modalLable').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
+        $('#modalLabel').html('The request was submitted at ' + dateObj.format('HH:mm:ss'));
         if (json && json.location) {
           $('#modal .modal-body').html('You can access it at <a href ="' + json.location + '">' + json.location + '</a>');
         } else {

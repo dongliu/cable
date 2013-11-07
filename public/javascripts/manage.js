@@ -371,7 +371,7 @@ function batchApprove(oTable, procuringTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = [];
   if (selected.length) {
-    $('#modalLable').html('Approve the following ' + selected.length + ' requests? ');
+    $('#modalLabel').html('Approve the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
@@ -384,7 +384,7 @@ function batchApprove(oTable, procuringTable) {
       approveFromModal(requests, oTable, procuringTable);
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -427,7 +427,7 @@ function batchReject(oTable, rejectedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var requests = [];
   if (selected.length) {
-    $('#modalLable').html('Reject the following ' + selected.length + ' requests? ');
+    $('#modalLabel').html('Reject the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = oTable.fnGetData(row);
@@ -440,7 +440,7 @@ function batchReject(oTable, rejectedTable) {
       rejectFromModal(requests, oTable, rejectedTable);
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -483,7 +483,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
   var cables = [];
   var required = [];
   if (selected.length) {
-    $('#modalLable').html(action + ' the following ' + selected.length + ' cables? ');
+    $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function(row) {
@@ -500,7 +500,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
       actionFromModal(cables, required, action, procuringTable, installingTable, installedTable);
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');

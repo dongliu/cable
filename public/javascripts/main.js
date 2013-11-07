@@ -450,7 +450,7 @@ function batchSubmit(table) {
   var selected = fnGetSelected(table, 'row-selected');
   // var requests = {};
   if (selected.length) {
-    $('#modalLable').html('Submit the following ' + selected.length + ' requests for approval? ');
+    $('#modalLabel').html('Submit the following ' + selected.length + ' requests for approval? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
@@ -469,7 +469,7 @@ function batchSubmit(table) {
       submitFromModal();
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -480,7 +480,7 @@ function batchClone(table) {
   var selected = fnGetSelected(table, 'row-selected');
   var requests = {};
   if (selected.length) {
-    $('#modalLable').html('Clone the following ' + selected.length + ' requests? ');
+    $('#modalLabel').html('Clone the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
@@ -500,7 +500,7 @@ function batchClone(table) {
       cloneFromModal(requests);
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -544,7 +544,7 @@ function batchRevert(table) {
   var selected = fnGetSelected(table, 'row-selected');
   // var requests = {};
   if (selected.length) {
-    $('#modalLable').html('Revert the following ' + selected.length + ' requests? ');
+    $('#modalLabel').html('Revert the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
@@ -563,7 +563,7 @@ function batchRevert(table) {
       revertFromModal();
     });
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
@@ -604,7 +604,7 @@ function revertFromModal(requests) {
 function batchDelete(table) {
   var selected = fnGetSelected(table, 'row-selected');
   if (selected.length) {
-    $('#modalLable').html('Delete the following ' + selected.length + ' requests? ');
+    $('#modalLabel').html('Delete the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
     selected.forEach(function(row) {
       var data = table.fnGetData(row);
@@ -613,7 +613,7 @@ function batchDelete(table) {
     $('#modal .modal-footer').html('<button id="delete" class="btn btn-primary" onclick="deleteFromModal()">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
   } else {
-    $('#modalLable').html('Alert');
+    $('#modalLabel').html('Alert');
     $('#modal .modal-body').html('No request has been selected!');
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
