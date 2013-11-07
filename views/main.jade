@@ -144,8 +144,12 @@ block content
                 i.fa.fa-step-backward.fa-lg
                 | &nbsp;Revert to saved
             .btn-group
+              button.btn.btn-info#submitted-select-all
+                i.fa.fa-list.fa-lg
+                | &nbsp;Selection all
+            .btn-group
               button.btn.btn-info#submitted-select-none
-                i.fa.fa-list.fa-light.fa-lg
+                i.fa.fa-square-o.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#submitted-wrap.active Wrap
@@ -179,6 +183,14 @@ block content
               button.btn.btn-primary#approved-clone
                 i.fa.fa-copy.fa-lg
                 | &nbsp;Clone
+            .btn-group
+              button.btn.btn-info#approved-select-all
+                i.fa.fa-list.fa-lg
+                | &nbsp;Selection all
+            .btn-group
+              button.btn.btn-info#approved-select-none
+                i.fa.fa-square-o.fa-lg
+                | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#approved-wrap.active Wrap
                 button.btn.btn-info#approved-unwrap Unwrap
@@ -213,8 +225,12 @@ block content
                 i.fa.fa-trash.fa-lg
                 | &nbsp;Delete
             .btn-group
+              button.btn.btn-info#rejected-select-all
+                i.fa.fa-list.fa-lg
+                | &nbsp;Selection all
+            .btn-group
               button.btn.btn-info#rejected-select-none
-                i.fa.fa-list.fa-light.fa-lg
+                i.fa.fa-square-o.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#rejected-wrap.active Wrap

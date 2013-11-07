@@ -127,9 +127,12 @@ $(function() {
     fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
+  $('#submitted-select-all').click(function(e) {
+    fnSelectAll(submittedTable, 'row-selected', 'select-row', true);
+  });
+
   $('#submitted-select-none').click(function(e) {
     fnDeselect(submittedTable, 'row-selected', 'select-row');
-    submittedTable.fnAdjustColumnSizing();
   });
 
 
@@ -163,9 +166,12 @@ $(function() {
     fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
+  $('#rejected-select-all').click(function(e) {
+    fnSelectAll(rejectedTable, 'row-selected', 'select-row', true);
+  });
+
   $('#rejected-select-none').click(function(e) {
     fnDeselect(rejectedTable, 'row-selected', 'select-row');
-    rejectedTable.fnAdjustColumnSizing();
   });
 
   $('#rejected-delete').click(function(e) {
@@ -191,6 +197,14 @@ $(function() {
     ],
     sDom: sDom,
     oTableTools: oTableTools
+  });
+
+  $('#approved-select-all').click(function(e) {
+    fnSelectAll(approvedTable, 'row-selected', 'select-row', true);
+  });
+
+  $('#approved-select-none').click(function(e) {
+    fnDeselect(approvedTable, 'row-selected', 'select-row');
   });
 
   $('#approved-wrap').click(function(e) {
