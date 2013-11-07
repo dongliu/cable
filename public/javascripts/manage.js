@@ -150,7 +150,7 @@ $(function() {
   });
 
   $('#procuring-select-none').click(function(e) {
-    fnSetDeselect(cables[index], 'row-selected', 'select-row');
+    fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
   $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e) {
@@ -195,7 +195,7 @@ $(function() {
   });
 
   $('#installing-select-none').click(function(e) {
-
+    fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
   $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e) {
