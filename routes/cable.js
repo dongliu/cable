@@ -149,7 +149,7 @@ module.exports = function(app) {
         (new Request(request)).save(function(err, cableRequest) {
           if (err) {
             console.error(err.msg);
-            return res.send(500, 'something is wrong.');
+            return res.send(500, err.msg);
           }
           var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
           res.set('Location', url);
@@ -196,7 +196,7 @@ module.exports = function(app) {
           return res.send(200, 'deleted');
         });
       } else {
-        return res.send(410, 'already gone');
+        return res.send(410, 'gone');
       }
 
     });
@@ -733,6 +733,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
         from: cableRequest.from,
         to: cableRequest.to,
         required: cableRequest.required,
+        comments: cableRequest.comments,
         submittedBy: cableRequest.submittedBy,
         submittedOn: cableRequest.submittedOn,
         approvedBy: req.session.userid,

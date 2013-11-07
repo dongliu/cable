@@ -115,7 +115,6 @@ var cable = new Schema({
     wiringDrawing: String,
     label: String
   },
-
   to: {
     building: String,
     area: String,
@@ -134,6 +133,7 @@ var cable = new Schema({
     benchTest: Boolean,
     fieldTerm: Boolean
   },
+  comments: String,
   submittedBy: String,
   submittedOn: Date,
   approvedBy: String,
