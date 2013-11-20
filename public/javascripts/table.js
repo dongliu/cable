@@ -355,11 +355,7 @@ function dateColumn(title, key) {
       }
       return formatDate(source[key]);
     },
-    sDefaultContent: '',
-    // mRender: function(data, type, full) {
-    //   return formatDate(data);
-    // },
-    sType: 'date'
+    sDefaultContent: ''
   };
 }
 
