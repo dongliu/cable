@@ -257,7 +257,7 @@ function addUser(req, res) {
 
   ldapClient.search(ad.searchBase, opts, false, function(err, result) {
     if (err) {
-      console.err(err.name + ' : ' + err.message);
+      console.error(err.name + ' : ' + err.message);
       return res.json(500, err);
     }
 
@@ -280,7 +280,7 @@ function addUser(req, res) {
 
     user.save(function(err, newUser) {
       if (err) {
-        console.err(err.msg);
+        console.error(err.msg);
         return res.send(500, err.msg);
       }
 
