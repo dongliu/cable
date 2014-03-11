@@ -119,13 +119,14 @@ $(function() {
 
   /*procuring tab starts*/
 
-  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
+  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   var procuringTable = $('#procuring-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: procuringAoColumns,
     aaSorting: [
+      [4, 'desc'],
       [3, 'desc'],
       [1, 'desc']
     ],
