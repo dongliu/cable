@@ -17,8 +17,10 @@ var querystring = require('querystring');
 // 0: saved 1: submitted 2: approved 3: rejected
 
 // cable status
-// procuring: 100: approved 101: ordered 102: received 103: accepted
-// installing: 200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
+// procuring
+//   100: approved 101: ordered 102: received 103: accepted
+// installing
+//   200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
 // working: 300
 // failed: 400
 // aborted: 500
