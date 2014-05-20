@@ -1,7 +1,3 @@
-var ad = require('../config/ad.json');
-
-var ldapClient = require('../lib/ldap-client');
-
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
@@ -39,14 +35,8 @@ module.exports = function(app) {
 
   });
 
-  // app.get('/users/new', auth.ensureAuthenticated, function(req, res) {
-  //   res.render('user');
-  // });
 
   app.post('/users', auth.ensureAuthenticated, function(req, res) {
-    // if (!req.is('json')) {
-    //   return res.send(415, 'json request expected.');
-    // }
 
     if (req.session.roles.indexOf('admin') == -1) {
       return res.send(403, 'only admin allowed');
@@ -161,133 +151,19 @@ module.exports = function(app) {
   // resource /adusers
 
   app.get('/adusers/:id', auth.ensureAuthenticated, function(req, res) {
-
-    var searchFilter = ad.searchFilter.replace('_id', req.params.id);
-    var opts = {
-      filter: searchFilter,
-      attributes: ad.objAttributes,
-      scope: 'sub'
-    };
-    ldapClient.search(ad.searchBase, opts, false, function(err, result) {
-      if (err) {
-        return res.json(500, err);
-      }
-      if (result.length === 0) {
-        return res.json(500, {
-          error: req.params.id + ' is not found!'
-        });
-      }
-      if (result.length > 1) {
-        return res.json(500, {
-          error: req.params.id + ' is not unique!'
-        });
-      }
-
-      return res.json(result[0]);
-    });
-
+    res.send(410, 'cannot find user');
   });
 
 
   app.get('/adusers/:id/photo', auth.ensureAuthenticated, function(req, res) {
-
-    var searchFilter = ad.searchFilter.replace('_id', req.params.id);
-    var opts = {
-      filter: searchFilter,
-      attributes: ad.rawAttributes,
-      scope: 'sub'
-    };
-    ldapClient.search(ad.searchBase, opts, true, function(err, result) {
-      if (err) {
-        return res.json(500, err);
-      }
-      if (result.length === 0) {
-        return res.json(500, {
-          error: req.params.id + ' is not found!'
-        });
-      }
-      if (result.length > 1) {
-        return res.json(500, {
-          error: req.params.id + ' is not unique!'
-        });
-      }
-      res.set('Content-Type', 'image/jpeg');
-      return res.send(result[0].thumbnailPhoto);
-    });
-
+    res.send(410, 'cannot find user');
   });
 
   app.get('/adusernames', auth.ensureAuthenticated, function(req, res) {
-    // var query = req.param('term');
-    var query = req.query.term;
-    var nameFilter, opts;
-    if (query && query.length > 0) {
-      nameFilter = ad.nameFilter.replace('_name', query + '*');
-      opts = {
-        filter: nameFilter,
-        attributes: ['displayName'],
-        scope: 'sub'
-      };
-      ldapClient.search(ad.searchBase, opts, false, function(err, result) {
-        if (err) {
-          return res.json(500, JSON.stringify(err));
-        }
-        if (result.length === 0) {
-          return res.json(500, {
-            error: 'Names starting with ' + query + ' are not found!'
-          });
-        }
-        return res.json(result);
-      });
-    } else {
-      return res.json(500, {
-        error: 'query term is required.'
-      });
-    }
+    res.json([]);
   });
 };
 
 function addUser(req, res) {
-  var nameFilter = ad.nameFilter.replace('_name', req.body.name);
-  var opts = {
-    filter: nameFilter,
-    attributes: ad.objAttributes,
-    scope: 'sub'
-  };
-
-  ldapClient.search(ad.searchBase, opts, false, function(err, result) {
-    if (err) {
-      console.error(err.name + ' : ' + err.message);
-      return res.json(500, err);
-    }
-
-    if (result.length === 0) {
-      return res.send(404, req.body.name + ' is not found in AD!');
-    }
-
-    if (result.length > 1) {
-      return res.send(400, req.body.name + ' is not unique!');
-    }
-
-    var user = new User({
-      id: result[0].sAMAccountName,
-      name: result[0].displayName,
-      email: result[0].mail,
-      office: result[0].physicalDeliveryOfficeName,
-      phone: result[0].telephoneNumber,
-      mobile: result[0].mobile
-    });
-
-    user.save(function(err, newUser) {
-      if (err) {
-        console.error(err.msg);
-        return res.send(500, err.msg);
-      }
-
-      var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.id;
-      res.set('Location', url);
-      res.send(303, 'The new user is at ' + url);
-    });
-
-  });
+  res.send(500);
 }
