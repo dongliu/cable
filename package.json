@@ -1,16 +1,17 @@
 {
   "name": "cable",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "start": "node app"
   },
   "dependencies": {
     "express": "3.1.0",
-    "jade": "*",
-    "cas.js": "*",
+    "jade": "1.2.0",
+    "cas.js": "0.0.1",
     "csv": "0.3",
-    "mongoose": "*",
-    "ldapjs": "*"
+    "express-slash": "1.0.0",
+    "mongoose": "3.8.8",
+    "ldapjs": "0.7.0"
   }
 }
