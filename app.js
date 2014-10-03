@@ -1,7 +1,4 @@
 /*jslint es5:true*/
-/**
- * Module dependencies.
- */
 
 var express = require('express'),
   slash = require('express-slash'),

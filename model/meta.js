@@ -1,3 +1,5 @@
+/*jslint es5:true*/
+
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
@@ -7,22 +9,25 @@ var cableType = new Schema({
     index: true,
     unique: true
   },
-  characteristics: String,
-  diameter: String,
   service: String,
-  voltage: String,
+  conductorNumber: Number,
+  conductorSize: String,
+  type: {
+    type: String,
+    enum: {
+      values: ['Multi', 'PwrDC', 'ArmPwrDC', 'Coax', 'HardlineCoax', 'Cat6', 'TCtypeK', 'Sfib', 'Mfib', 'Unknown'],
+      message: 'enum validator failed for "{PATH}" with value "{VALUE}"'
+    }
+  },
+  pairing: String,
+  shielding: String,
+  outerDiameter: String,
+  voltageRating: Number,
+  raceway: String,
   insulation: String,
   jacket: String,
-  raceway: String,
-  tid: String,
-  model: String,
-  comments: String,
-  spec: String,
-  updatedOn: Date,
-  updatedBy: String
-  // request: String,
-  // revision: String,
-  // date : String
+  tunnelHotcell: Boolean,
+  otherRequirements: String
 });
 
 
