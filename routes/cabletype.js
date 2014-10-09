@@ -3,24 +3,24 @@ var CableType = mongoose.model('CableType');
 
 var auth = require('../lib/auth');
 
+var util = require('../lib/util');
 
-module.exports = function(app) {
-  app.get('/cabletypes', auth.ensureAuthenticated, function(req, res) {
+module.exports = function (app) {
+  app.get('/cabletypes', auth.ensureAuthenticated, function (req, res) {
     res.render('cabletype', {
       roles: req.session.roles
     });
   });
 
-  app.get('/cabletypes/manage', auth.ensureAuthenticated, function(req, res) {
+  app.get('/cabletypes/manage', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('cabletypemgmt');
-    } else {
-      return res.send(403, 'You are not authorized to access this resource');
     }
+    return res.send(403, 'You are not authorized to access this resource');
   });
 
-  app.get('/cabletypes/json', auth.ensureAuthenticated, function(req, res) {
-    CableType.find(function(err, docs) {
+  app.get('/cabletypes/json', auth.ensureAuthenticated, function (req, res) {
+    CableType.find(function (err, docs) {
       if (err) {
         return res.send(500, err.message);
       }
@@ -28,34 +28,35 @@ module.exports = function(app) {
     });
   });
 
-  app.post('/cabletypes', auth.ensureAuthenticated, function(req, res) {
+  app.post('/cabletypes', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var newType = {
-      name: req.body.name || req.session.userid+'_updateme',
-      characteristics: req.body.characteristics || '',
-      diameter: req.diameter || '',
-      service: req.service || '',
-      voltage: req.voltage || '',
-      insulation: req.insulation || '',
-      jacket: req.jacket || '',
+      service: req.body.service || '',
+      conductorNumber: req.conductorNumber || '',
+      conductorSize: req.conductorSize || '',
+      fribType: req.fribType || 'Unknown',
+      pairing: req.pairing || '',
+      shielding: req.shielding || '',
+      outerDiameter: req.outerDiameter || '',
+      voltageRating: req.voltageRating || '',
       raceway: req.raceway || '',
-      tid: req.tid || '',
-      model: req.model || '',
-      comments: req.comments || '',
-      spec: req.spec || ''
+      tunnelHotcell: req.tunnelHotcell || '',
+      otherRequirements: req.otherRequirements || '',
+      createBy: req.session.userid,
+      createdOn: Date.now()
     };
-    (new CableType(newType)).save(function(err, type) {
+    // generate the type name here
+    newType.name = newType(new CableType(newType)).save(function (err, type) {
       if (err) {
         console.dir(err);
-        if (err.code && err.code == 11000) {
+        if (err.code && err.code === 11000) {
           console.error(err.msg || err.err);
           return res.send(400, 'please update the cable type named ' + newType.name);
-        } else {
-          console.error(err.msg || err.err);
-          return res.send(500, err.msg || err.err);
         }
+        console.error(err.msg || err.err);
+        return res.send(500, err.msg || err.err);
       }
       var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
       res.set('Location', url);
@@ -63,7 +64,7 @@ module.exports = function(app) {
     });
   });
 
-  app.put('/cabletypes/:id', auth.ensureAuthenticated, function(req, res) {
+  app.put('/cabletypes/:id', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
@@ -73,25 +74,23 @@ module.exports = function(app) {
     conditions[req.body.target] = req.body.original;
     var update = {};
     update[req.body.target] = req.body.update;
-    update['updatedOn'] = Date.now();
-    update['updatedBy'] = req.session.userid;
-    CableType.findOneAndUpdate(conditions, update, function(err, type) {
+    update.updatedOn = Date.now();
+    update.updatedBy = req.session.userid;
+    CableType.findOneAndUpdate(conditions, update, function (err, type) {
       // the err is not a mongoose error
       if (err) {
         if (err.errmsg) {
           console.dir(err.errmsg);
         }
-        if (err.lastErrorObject && err.lastErrorObject.code == 11001) {
+        if (err.lastErrorObject && err.lastErrorObject.code === 11001) {
           return res.send(400, req.body.update + ' is already taken');
-        } else {
-          return res.send(500, err.msg || err.errmsg);
         }
+        return res.send(500, err.msg || err.errmsg);
       }
       if (type) {
         return res.send(204);
-      } else {
-        return res.send(410, 'cannot find type ' + req.params.id);
       }
+      return res.send(410, 'cannot find type ' + req.params.id);
     });
   });
 };
