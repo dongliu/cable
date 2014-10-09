@@ -12,7 +12,7 @@ var cableType = new Schema({
   service: String,
   conductorNumber: Number,
   conductorSize: String,
-  type: {
+  fribType: {
     type: String,
     enum: {
       values: ['Multi', 'PwrDC', 'ArmPwrDC', 'Coax', 'HardlineCoax', 'Cat6', 'TCtypeK', 'Sfib', 'Mfib', 'Unknown'],
@@ -24,10 +24,12 @@ var cableType = new Schema({
   outerDiameter: String,
   voltageRating: Number,
   raceway: String,
-  insulation: String,
-  jacket: String,
   tunnelHotcell: Boolean,
-  otherRequirements: String
+  otherRequirements: String,
+  createdBy: String,
+  createdOn: Date,
+  updatedBy: String,
+  updatedOn: Date
 });
 
 
