@@ -28,39 +28,44 @@ module.exports = function (app) {
     });
   });
 
-  app.post('/cabletypes', auth.ensureAuthenticated, function (req, res) {
+  app.post('/cabletypes', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber']), function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var newType = {
-      service: req.body.service || '',
-      conductorNumber: req.conductorNumber || '',
-      conductorSize: req.conductorSize || '',
-      fribType: req.fribType || 'Unknown',
-      pairing: req.pairing || '',
-      shielding: req.shielding || '',
-      outerDiameter: req.outerDiameter || '',
-      voltageRating: req.voltageRating || '',
-      raceway: req.raceway || '',
-      tunnelHotcell: req.tunnelHotcell || '',
-      otherRequirements: req.otherRequirements || '',
+      service: req.body.service,
+      conductorNumber: req.conductorNumber,
+      conductorSize: req.conductorSize,
+      fribType: req.fribType,
+      typeNumber: req.typeNumber,
+      pairing: req.pairing,
+      shielding: req.shielding,
+      outerDiameter: req.outerDiameter,
+      voltageRating: req.voltageRating,
+      raceway: req.raceway,
+      tunnelHotcell: req.tunnelHotcell,
+      otherRequirements: req.otherRequirements,
       createBy: req.session.userid,
       createdOn: Date.now()
     };
+
+
     // generate the type name here
-    newType.name = newType(new CableType(newType)).save(function (err, type) {
+    newType.name = newType.conductorNumber + 'C_' + newType.conductorSize + '_' + newType.fribType + '_' + newType.typeNumber;
+
+    (new CableType(newType)).save(function (err, type) {
       if (err) {
         console.dir(err);
         if (err.code && err.code === 11000) {
           console.error(err.msg || err.err);
-          return res.send(400, 'please update the cable type named ' + newType.name);
+          return res.send(400, 'The type name ' + newType.name + ' was already used.');
         }
         console.error(err.msg || err.err);
         return res.send(500, err.msg || err.err);
       }
       var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
       res.set('Location', url);
-      return res.json(201, type);
+      return res.send(201, 'A new cable type is created at <a href="' + url + '"">' + url + '</a>');
     });
   });
 
