@@ -1,0 +1,67 @@
+Cable Type Listing v0.6,,,,,,,,,,,,,
+Group used by,Type #,Name,Function/Service,# conductors,conductor size,type,pairing,shielding,O.D. (max),voltage rating,raceway,Tunnel/HotCell usage,Other requirements
+"LLC, RF",001,2C_22AWG_Multi_001,,2,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+"PPS, LLC",002,2C_22AWG_Multi_002,,2,22AWG,Multi,unpaired,unshielded,,300,"Cable Tray, Conduit",yes,
+cryogenics,003,2C_14AWG_Multi_003,,2,14AWG,Multi,unpaired,overall shielded,,300,"Cable Tray, Conduit",yes,
+Vacuum,004,3C_20AWG_Multi_004,,3,20AWG,Multi,triad,overall shielded,,300,"Cable Tray, Conduit",yes,
+CFD-PPS,005,3C_20AWG_Multi_005,,3,20AWG,Multi,unpaired,unshielded,,300,"Cable Tray, Conduit",yes,
+"LCC, CFD-PPS",006,4C_22AWG_Multi_006,,4,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+cryogenics,007,4C_22AWG_Multi_007,,4,22AWG,Multi,twisted pair,overall shielded,,300,"Cable Tray, Conduit",yes,
+LLC,008,4C_22AWG_Multi_008,,4,22AWG,Multi,unpaired,unshielded,,300,"Cable Tray, Conduit",yes,
+CFD-PPS,009,4C_18AWG_Multi_009,,4,18AWG,Multi,twisted pair,unshielded,,300,"Cable Tray, Conduit",yes,
+LLC,010,6C_22AWG_Multi_010,,6,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+cryogenics,011,6C_22AWG_Multi_011,,6,22AWG,Multi,twisted pair,"individually shielded pairs, overall shielded",,300,"Cable Tray, Conduit",yes,
+"LLC, PPS",012,6C_22AWG_Multi_012,,6,22AWG,Multi,unpaired,unshielded,,300,"Cable Tray, Conduit",yes,
+LLC,013,6C_22AWG_Multi_013,,6,22AWG,Multi,unpaired,overall shielded,,300,"Cable Tray, Conduit",yes,
+"vacuum, LLC",014,6C_18AWG_Multi_014,,6,18AWG,Multi,twisted pair,overall shielded,,300,"Cable Tray, Conduit",yes,
+vacuum,015,6C_16AWG_Multi_015,,6,16AWG,Multi,twisted pair,overall shielded,,600,"Cable Tray, Conduit",yes,
+LLC,016,8C_22AWG_Multi_016,,8,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+"LLC, cryogenics",017,8C_18AWG_Multi_017,,8,18AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+"LLC, PPS",018,12C_22AWG_Multi_018,,12,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+RF,019,16C_22AWG_Multi_019,,16,22AWG,Multi,twisted pair,unshielded,,300,"Cable Tray, Conduit",yes,
+LLC,020,18C_22AWG_Multi_020,,18,22AWG,Multi,twisted pair,individually shielded pairs,,300,"Cable Tray, Conduit",yes,
+PS,021,6C_10AWG_PwrDC_021,Power supply leads,6,10AWG,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,022,2C_4AWG_PwrDC_022,Power supply leads,2,4AWG,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,023,2C_2AWG_PwrDC_023,Power supply leads,2,2AWG,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,024,1C_2/0AWG_PwrDC_024,Power supply leads,1,2/0AWG,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,025,1C_4/0AWG_PwrDC_025,Power supply leads,1,4/0AWG,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,026,1C_250MCM_PwrDC_026,Power supply leads,1,250MCM,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,027,1C_300MCM_PwrDC_027,Power supply leads,1,300MCM,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,028,1C_350MCM_PwrDC_028,Power supply leads,1,350MCM,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,029,1C_500MCM_PwrDC_029,Power supply leads,1,500MCM,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,030,1C_500MCM_ArmPwrDC_030,Power supply leads,1,500MCM,ArmPwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,Armored
+PS,031,1C_650MCM_PwrDC_031,Power supply leads,1,650MCM,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,032,1C_TypeC_PwrDC_032,Power supply leads,1,TypeC,PwrDC,unpaired,unshielded,,600,"Cable Tray, Conduit",yes,
+PS,033,2C_RG-8_Coax_033,,2,RG-8,Coax,N/A,N/A,,,"Cable Tray, Conduit",yes,
+"LLC, Vacuum",034,2C_RG-58_Coax_034,,2,RG-58,Coax,N/A,single shield,,,"Cable Tray, Conduit",yes,
+"Vacuum, diag, LLC",035,2C_RG-59_Coax_035,,2,RG-59,Coax,N/A,single shield,,,"Cable Tray, Conduit",yes,Red Jacket required
+RF,036,2C_1/4in_Hardline_036,,2,1/4in,Hardline,N/A,N/A,,,"Cable Tray, Conduit",yes,
+RF,037,2C_7/8in_Hardline_037,,2,7/8in,Hardline,N/A,N/A,,,"Cable Tray, Conduit",yes,"solid inner and outer conductors, helical or corrugated copper, jacketed, PE insulator"
+RF,038,2C_1-5/8in_Hardline_038,,2,1-5/8in,Hardline,N/A,N/A,,,"Cable Tray, Conduit",yes,"solid inner and outer conductors, helical or corrugated copper, jacketed, PE insulator"
+RF,039,2C_3-1/8in_RigidLine_039,,2,3-1/8in,RigidLine,N/A,N/A,,,none,yes,"solid inner and outer conductors, made from copper tubes, no jacket, flange connectors, PE insulator "
+RF,040,2C_4-1/16in_RigidLine_040,,2,4-1/16in,RigidLine,N/A,N/A,,,none,yes,"solid inner and outer conductors, made from copper tubes, no jacket, flange connectors, PE insulator "
+RF,041,2C_6-1/8in_RigidLine_041,,2,6-1/8in,RigidLine,N/A,N/A,,,none,yes,"solid inner and outer conductors, made from copper tubes, no jacket, flange connectors, PE insulator "
+RF,042,2C_RG-142_Coax_042,,2,RG-142,Coax,N/A,double-braided shield,,,"Cable Tray, Conduit",no,"double braided outer conductor, solid inner conductor, jacketed, PTFE insulator for use in service building"
+RF,043,1C_2mm_PMMfiberRAD_043,,1,2mm,PMMfiberRAD,N/A,N/A,,,"Cable Tray, Conduit",yes,"3mm jacket, radiation hard"
+RF,044,1C_2mm_MMfiber_044,,1,2mm,MMfiber,N/A,N/A,,,"Cable Tray, Conduit",no,"3mm jacket, low loss"
+MPS,045,12C_OM3_MMfiber_045,Fiberoptic network cable,12,OM3,MMfiber,N/A,N/A,,,"Cable Tray, Conduit",yes,
+"cryogenics, PPS",046,8C_23AWG_Cat6_046,CAT6 Network Cable,8,23AWG,Cat6,twisted pair,overall shielded,,,"Cable Tray, Conduit",yes,CAT 6 cable with standard color scheme.
+LLC,047,2C_??AWG_TCtypeK_047,Type K thermocouple,2,??AWG,TCtypeK,paired,unshielded,,,"Cable Tray, Conduit",yes,extension grade thermocouple wire.
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
