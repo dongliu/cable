@@ -10,15 +10,17 @@ var cableType = new Schema({
     unique: true
   },
   service: String,
-  conductorNumber: Number,
-  conductorSize: String,
+  conductorNumber: {type: Number, required: true},
+  conductorSize: {type: String, required: true},
   fribType: {
     type: String,
     enum: {
       values: ['Multi', 'PwrDC', 'ArmPwrDC', 'Coax', 'HardlineCoax', 'Cat6', 'TCtypeK', 'Sfib', 'Mfib', 'Unknown'],
       message: 'enum validator failed for "{PATH}" with value "{VALUE}"'
-    }
+    },
+    required: true
   },
+  typeNumber: {type: String, required: true},
   pairing: String,
   shielding: String,
   outerDiameter: String,
