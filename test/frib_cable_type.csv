@@ -42,9 +42,9 @@ RF,039,2C_3-1/8in_RigidLine_039,,2,3-1/8in,RigidLine,N/A,N/A,,,none,yes,"solid i
 RF,040,2C_4-1/16in_RigidLine_040,,2,4-1/16in,RigidLine,N/A,N/A,,,none,yes,"solid inner and outer conductors, made from copper tubes, no jacket, flange connectors, PE insulator "
 RF,041,2C_6-1/8in_RigidLine_041,,2,6-1/8in,RigidLine,N/A,N/A,,,none,yes,"solid inner and outer conductors, made from copper tubes, no jacket, flange connectors, PE insulator "
 RF,042,2C_RG-142_Coax_042,,2,RG-142,Coax,N/A,double-braided shield,,,"Cable Tray, Conduit",no,"double braided outer conductor, solid inner conductor, jacketed, PTFE insulator for use in service building"
-RF,043,1C_2mm_PMMfiberRAD_043,,1,2mm,PMMfiberRAD,N/A,N/A,,,"Cable Tray, Conduit",yes,"3mm jacket, radiation hard"
-RF,044,1C_2mm_MMfiber_044,,1,2mm,MMfiber,N/A,N/A,,,"Cable Tray, Conduit",no,"3mm jacket, low loss"
-MPS,045,12C_OM3_MMfiber_045,Fiberoptic network cable,12,OM3,MMfiber,N/A,N/A,,,"Cable Tray, Conduit",yes,
+RF,043,1C_2mm_PMMfiberRAD_043,,1,2mm,PMMFiberRAD,N/A,N/A,,,"Cable Tray, Conduit",yes,"3mm jacket, radiation hard"
+RF,044,1C_2mm_MMfiber_044,,1,2mm,MMFiber,N/A,N/A,,,"Cable Tray, Conduit",no,"3mm jacket, low loss"
+MPS,045,12C_OM3_MMfiber_045,Fiberoptic network cable,12,OM3,MMFiber,N/A,N/A,,,"Cable Tray, Conduit",yes,
 "cryogenics, PPS",046,8C_23AWG_Cat6_046,CAT6 Network Cable,8,23AWG,Cat6,twisted pair,overall shielded,,,"Cable Tray, Conduit",yes,CAT 6 cable with standard color scheme.
 LLC,047,2C_??AWG_TCtypeK_047,Type K thermocouple,2,??AWG,TCtypeK,paired,unshielded,,,"Cable Tray, Conduit",yes,extension grade thermocouple wire.
 ,,,,,,,,,,,,,
