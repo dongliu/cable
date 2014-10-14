@@ -11,6 +11,7 @@
     "cas.js": "0.0.1",
     "csv": "0.4.0",
     "express-slash": "1.0.0",
+    "pause": "0.0.1",
     "mongoose": "3.8.8",
     "ldapjs": "0.7.0"
   }
