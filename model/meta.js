@@ -15,7 +15,7 @@ var cableType = new Schema({
   fribType: {
     type: String,
     enum: {
-      values: ['Multi', 'PwrDC', 'ArmPwrDC', 'Coax', 'HardlineCoax', 'Cat6', 'TCtypeK', 'Sfib', 'Mfib', 'Unknown'],
+      values: ['Multi', 'PwrDC', 'ArmPwrDC', 'Coax', 'Hardline', 'RigidLine', 'Cat6', 'TCtypeK', 'Sfib', 'MMFiber', 'PMMFiberRAD', 'Unknown'],
       message: 'enum validator failed for "{PATH}" with value "{VALUE}"'
     },
     required: true
