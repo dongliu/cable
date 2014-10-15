@@ -39,7 +39,7 @@ $(function() {
     dataType: 'json'
   }).done(function(json) {
     users = json.map(function(user) {
-      return [].concat(user.id).concat(user.name).concat(user.roles.join()).concat(user.lastVisitedOn ? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '');
+      return [].concat(user.adid).concat(user.name).concat(user.roles.join()).concat(user.lastVisitedOn ? moment(user.lastVisitedOn).format('YYYY-MM-DD HH:mm:ss') : '');
     });
     userTable.fnClearTable();
     userTable.fnAddData(users);
