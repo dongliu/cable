@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
 var user = new Schema({
   adid: {
     type: String,
+    lowercase: true,
     index: true,
     unique: true
   },
