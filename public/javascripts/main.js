@@ -28,7 +28,7 @@ var savedTable, submittedTable, rejectedTable, approvedTable;
 $(function () {
 
   $(document).ajaxError(function (event, jqxhr) {
-    if (jqXHR.status == 401) {
+    if (jqxhr.status == 401) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }

@@ -35,6 +35,8 @@ var auth = require('./lib/auth');
 
 var app = express();
 
+app.enable('strict routing');
+
 var access_logfile = fs.createWriteStream('./logs/access.log', {
   flags: 'a'
 });
