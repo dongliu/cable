@@ -24,19 +24,17 @@ var cablesTableColumns = {
 
 var savedTable, submittedTable, rejectedTable, approvedTable;
 
-$(document).ajaxError(function(event, jqxhr) {
-  if (jqxhr.status == 401) {
-    document.location.href = window.location.pathname;
-  }
-});
 
-$(function() {
+$(function () {
 
-  // $.ajaxSetup({
-  //   cache: false
-  // });
+  $(document).ajaxError(function (event, jqxhr) {
+    if (jqXHR.status == 401) {
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
+      $(window).scrollTop($('#message div:last-child').offset().top - 40);
+    }
+  });
 
-  $('#reload').click(function(e) {
+  $('#reload').click(function (e) {
     initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
   });
 
@@ -57,36 +55,36 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#saved-wrap').click(function(e) {
+  $('#saved-wrap').click(function (e) {
     fnWrap(savedTable);
   });
 
-  $('#saved-unwrap').click(function(e) {
+  $('#saved-unwrap').click(function (e) {
     fnUnwrap(savedTable);
   });
 
-  $('#saved-show input:checkbox').change(function(e) {
+  $('#saved-show input:checkbox').change(function (e) {
     // fnSetFooterVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
     fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#saved-select-all').click(function(e) {
+  $('#saved-select-all').click(function (e) {
     fnSelectAll(savedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#saved-select-none').click(function(e) {
+  $('#saved-select-none').click(function (e) {
     fnDeselect(savedTable, 'row-selected', 'select-row');
   });
 
-  $('#saved-delete').click(function(e) {
+  $('#saved-delete').click(function (e) {
     batchDelete(savedTable);
   });
 
-  $('#saved-submit').click(function(e) {
+  $('#saved-submit').click(function (e) {
     batchSubmit(savedTable);
   });
 
-  $('#saved-clone').click(function(e) {
+  $('#saved-clone').click(function (e) {
     batchClone(savedTable);
   });
   /*saved tab ends*/
@@ -107,31 +105,31 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#submitted-wrap').click(function(e) {
+  $('#submitted-wrap').click(function (e) {
     fnWrap(submittedTable);
   });
 
-  $('#submitted-unwrap').click(function(e) {
+  $('#submitted-unwrap').click(function (e) {
     fnUnwrap(submittedTable);
   });
 
-  $('#submitted-clone').click(function(e) {
+  $('#submitted-clone').click(function (e) {
     batchClone(submittedTable);
   });
 
-  $('#submitted-revert').click(function(e) {
+  $('#submitted-revert').click(function (e) {
     batchRevert(submittedTable);
   });
 
-  $('#submitted-show input:checkbox').change(function(e) {
+  $('#submitted-show input:checkbox').change(function (e) {
     fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#submitted-select-all').click(function(e) {
+  $('#submitted-select-all').click(function (e) {
     fnSelectAll(submittedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#submitted-select-none').click(function(e) {
+  $('#submitted-select-none').click(function (e) {
     fnDeselect(submittedTable, 'row-selected', 'select-row');
   });
 
@@ -154,31 +152,31 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#rejected-wrap').click(function(e) {
+  $('#rejected-wrap').click(function (e) {
     fnWrap(rejectedTable);
   });
 
-  $('#rejected-unwrap').click(function(e) {
+  $('#rejected-unwrap').click(function (e) {
     fnUnwrap(rejectedTable);
   });
 
-  $('#rejected-show input:checkbox').change(function(e) {
+  $('#rejected-show input:checkbox').change(function (e) {
     fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#rejected-select-all').click(function(e) {
+  $('#rejected-select-all').click(function (e) {
     fnSelectAll(rejectedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#rejected-select-none').click(function(e) {
+  $('#rejected-select-none').click(function (e) {
     fnDeselect(rejectedTable, 'row-selected', 'select-row');
   });
 
-  $('#rejected-delete').click(function(e) {
+  $('#rejected-delete').click(function (e) {
     batchDelete(rejectedTable);
   });
 
-  $('#rejected-clone').click(function(e) {
+  $('#rejected-clone').click(function (e) {
     batchClone(rejectedTable);
   });
 
@@ -199,27 +197,27 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#approved-select-all').click(function(e) {
+  $('#approved-select-all').click(function (e) {
     fnSelectAll(approvedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#approved-select-none').click(function(e) {
+  $('#approved-select-none').click(function (e) {
     fnDeselect(approvedTable, 'row-selected', 'select-row');
   });
 
-  $('#approved-wrap').click(function(e) {
+  $('#approved-wrap').click(function (e) {
     fnWrap(approvedTable);
   });
 
-  $('#approved-unwrap').click(function(e) {
+  $('#approved-unwrap').click(function (e) {
     fnUnwrap(approvedTable);
   });
 
-  $('#approved-show input:checkbox').change(function(e) {
+  $('#approved-show input:checkbox').change(function (e) {
     fnSetColumnsVis(applicable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#approved-clone').click(function(e) {
+  $('#approved-clone').click(function (e) {
     batchClone(approvedTable);
   });
 
@@ -241,15 +239,15 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#cables-wrap').click(function(e) {
+  $('#cables-wrap').click(function (e) {
     fnWrap(cablesTable);
   });
 
-  $('#cables-unwrap').click(function(e) {
+  $('#cables-unwrap').click(function (e) {
     fnUnwrap(cablesTable);
   });
 
-  $('#cables-show input:checkbox').change(function(e) {
+  $('#cables-show input:checkbox').change(function (e) {
     fnSetColumnsVis(cablesTable, cablesTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
@@ -268,14 +266,14 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
-  }).done(function(json) {
+  }).done(function (json) {
     var saved = [];
     var submitted = [];
     var rejected = [];
 
     var approved = [];
 
-    json.forEach(function(r) {
+    json.forEach(function (r) {
       if (savedTable) {
         if (r.status === 0) {
           saved.push(r);
@@ -303,7 +301,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
 
     if (savedTable) {
-      $('#saved-show input:checkbox').each(function(i) {
+      $('#saved-show input:checkbox').each(function (i) {
         fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       savedTable.fnClearTable();
@@ -315,7 +313,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       savedTable.fnDraw();
     }
     if (submittedTable) {
-      $('#submitted-show input:checkbox').each(function(i) {
+      $('#submitted-show input:checkbox').each(function (i) {
         fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       submittedTable.fnClearTable();
@@ -326,7 +324,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       submittedTable.fnDraw();
     }
     if (rejectedTable) {
-      $('#rejected-show input:checkbox').each(function(i) {
+      $('#rejected-show input:checkbox').each(function (i) {
         fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       rejectedTable.fnClearTable();
@@ -337,7 +335,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       rejectedTable.fnDraw();
     }
     if (approvedTable) {
-      $('#approved-show input:checkbox').each(function(i) {
+      $('#approved-show input:checkbox').each(function (i) {
         fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
       });
       approvedTable.fnClearTable();
@@ -350,7 +348,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     if (cablesTable) {
       initCable(cablesTable);
     }
-  }).fail(function(jqXHR, status, error) {
+  }).fail(function (jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
@@ -362,7 +360,7 @@ function initCable(cablesTable) {
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
-  }).done(function(json) {
+  }).done(function (json) {
     // approved.forEach(function(r) {
     //   for (i = 0; i < json.length; i += 1) {
     //     if (r._id === json[i].request_id) {
@@ -383,7 +381,7 @@ function initCable(cablesTable) {
     }
     cablesTable.fnDraw();
 
-  }).fail(function(jqXHR, status, error) {
+  }).fail(function (jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
@@ -392,20 +390,20 @@ function initCable(cablesTable) {
 function deleteFromModal() {
   $('#delete').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/' + this.id,
       type: 'Delete'
-    }).done(function() {
+    }).done(function () {
       $(that).wrap('<del></del>');
       $(that).addClass('text-success');
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
+      .always(function () {
         number = number - 1;
         if (number === 0) {
           initRequests(savedTable);
@@ -418,7 +416,7 @@ function deleteFromModal() {
 function submitFromModal(requests) {
   $('#submit').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id,
@@ -428,16 +426,16 @@ function submitFromModal(requests) {
         action: 'submit'
         // ,request: requests[that.id]
       })
-    }).done(function() {
+    }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
+      .always(function () {
         number = number - 1;
         if (number === 0) {
           initRequests(savedTable, submittedTable);
@@ -452,7 +450,7 @@ function batchSubmit(table) {
   if (selected.length) {
     $('#modalLabel').html('Submit the following ' + selected.length + ' requests for approval? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = table.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       // requests[data._id] = {
@@ -464,7 +462,7 @@ function batchSubmit(table) {
     });
     $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#submit').click(function(e) {
+    $('#submit').click(function (e) {
       // submitFromModal(requests);
       submitFromModal();
     });
@@ -482,7 +480,7 @@ function batchClone(table) {
   if (selected.length) {
     $('#modalLabel').html('Clone the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = table.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1 max=20>' + '</div>');
       requests[data._id] = {
@@ -496,7 +494,7 @@ function batchClone(table) {
     // $('#modal .modal-body').html('test');
     $('#modal .modal-footer').html('<button id="clone" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#clone').click(function(e) {
+    $('#clone').click(function (e) {
       cloneFromModal(requests);
     });
   } else {
@@ -511,7 +509,7 @@ function batchClone(table) {
 function cloneFromModal(requests) {
   $('#clone').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/',
@@ -522,16 +520,16 @@ function cloneFromModal(requests) {
         request: requests[that.id],
         quantity: parseInt($('input', that).val(), 10)
       })
-    }).done(function() {
+    }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
+      .always(function () {
         number = number - 1;
         if (number === 0) {
           initRequests(savedTable);
@@ -546,7 +544,7 @@ function batchRevert(table) {
   if (selected.length) {
     $('#modalLabel').html('Revert the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = table.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">submitted on ' + moment(data.submittedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       // requests[data._id] = {
@@ -559,7 +557,7 @@ function batchRevert(table) {
     // $('#modal .modal-body').html('test');
     $('#modal .modal-footer').html('<button id="revert" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#revert').click(function(e) {
+    $('#revert').click(function (e) {
       revertFromModal();
     });
   } else {
@@ -573,7 +571,7 @@ function batchRevert(table) {
 function revertFromModal(requests) {
   $('#revert').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id,
@@ -583,16 +581,16 @@ function revertFromModal(requests) {
         action: 'revert',
         request: {}
       })
-    }).done(function() {
+    }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
       })
-      .always(function() {
+      .always(function () {
         number = number - 1;
         if (number === 0) {
           initRequests(savedTable, submittedTable);
@@ -606,7 +604,7 @@ function batchDelete(table) {
   if (selected.length) {
     $('#modalLabel').html('Delete the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = table.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
     });
