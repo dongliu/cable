@@ -55,7 +55,7 @@ app.configure(function () {
   app.use(express.session({
     secret: 'cable_secret',
     cookie: {
-      maxAge: 14400000
+      maxAge: 36 * 60 * 60 * 1000
     }
   }));
   // app.use(multer({
