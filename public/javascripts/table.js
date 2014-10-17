@@ -157,7 +157,8 @@ function fnAddFilterFoot(sTable, aoColumns) {
   var tr = $('<tr role="row">');
   aoColumns.forEach(function (c) {
     if (c.bFilter) {
-      tr.append('<th><input type="text" placeholder="' + c.sTitle + '" class="input-mini" autocomplete="off"></th>');
+      // tr.append('<th><input type="text" placeholder="' + c.sTitle + '" class="input-mini" autocomplete="off"></th>');
+      tr.append('<th><input type="text" placeholder="' + c.sTitle + '" style="width:80%;" autocomplete="off"></th>');
     } else {
       tr.append('<th></th>');
     }
