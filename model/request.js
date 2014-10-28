@@ -1,16 +1,43 @@
+/*jslint es5:true*/
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Mixed = Schema.Types.Mixed;
 
 var request = new Schema({
   basic: {
-    project: String,
-    system: String,
-    subsystem: String,
-    signal: String,
-    cableType: String,
+    project: {
+      type: String,
+      enum: ['FRIB', 'REA'],
+      uppercase: true,
+      required: true
+    },
     engineer: String,
+    wbs: {
+      type: String,
+      required: true
+    },
+    originCategory: {
+      type: String,
+      enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      required: true
+    },
+    originSubcategory: {
+      type: String,
+      enum: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      required: true
+    },
+    signalClassification: {
+      type: String,
+      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+      required: true
+    },
+    cableType: String,
     service: String,
-    wbs: String,
+    traySection: {
+      type: String,
+      enum: ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS']
+    },
     tags: [String],
     quantity: {
       type: Number,
@@ -19,12 +46,7 @@ var request = new Schema({
   },
 
   from: {
-    building: String,
-    area: String,
-    room: String,
     rack: String,
-    elevation: Number,
-    unit: String,
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
@@ -32,12 +54,7 @@ var request = new Schema({
   },
 
   to: {
-    building: String,
-    area: String,
-    room: String,
     rack: String,
-    elevation: Number,
-    unit: String,
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
@@ -51,17 +68,8 @@ var request = new Schema({
     fieldTerm: Boolean
   },
 
-  // routing: {
-  //   trayGroup: String,
-  //   penetration: String,
-  //   penetrationZ: String
-  // },
+  routing: [Mixed],
 
-  // other: {
-  // fabricatedBy: String,
-  // terminatedBy: String,
-  // comments: String
-  // },
   comments: String,
   status: Number,
   createdBy: String,
