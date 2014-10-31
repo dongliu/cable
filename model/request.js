@@ -68,6 +68,7 @@ var request = new Schema({
     fieldTerm: Boolean
   },
 
+  conduit: String,
   routing: [Mixed],
 
   comments: String,
