@@ -285,10 +285,15 @@ var basicColumns = [{
   mData: 'basic.project',
   bFilter: true
 }, {
-  sTitle: 'SSS',
+  sTitle: 'WBS',
+  sDefaultContent: '',
+  mData: 'basic.wbs',
+  bFilter: true
+}, {
+  sTitle: 'Category',
   sDefaultContent: '',
   mData: function (source, type, val) {
-    return (source.basic.system || '?') + (source.basic.subsystem || '?') + (source.basic.signal || '?');
+    return (source.basic.originCategory || '?') + (source.basic.originSubcategory || '?') + (source.basic.signalClassification || '?');
   },
   bFilter: true
 }, {
@@ -302,14 +307,9 @@ var basicColumns = [{
   mData: 'basic.engineer',
   bFilter: true
 }, {
-  sTitle: 'Service',
+  sTitle: 'Function',
   sDefaultContent: '',
   mData: 'basic.service',
-  bFilter: true
-}, {
-  sTitle: 'WBS',
-  sDefaultContent: '',
-  mData: 'basic.wbs',
   bFilter: true
 }, {
   sTitle: 'Tags',
@@ -328,32 +328,17 @@ var basicColumns = [{
   bFilter: true
 }];
 var fromColumns = [{
-  sTitle: 'From building',
+  sTitle: 'From rack',
   sDefaultContent: '',
-  mData: 'from.building',
+  mData: 'from.rack',
   bFilter: true
 }, {
-  sTitle: 'room',
-  sDefaultContent: '',
-  mData: 'from.room',
-  bFilter: true
-}, {
-  sTitle: 'elevation',
-  sDefaultContent: '',
-  mData: 'from.elevation',
-  bFilter: true
-}, {
-  sTitle: 'unit',
-  sDefaultContent: '',
-  mData: 'from.unit',
-  bFilter: true
-}, {
-  sTitle: 'term. device',
+  sTitle: 'termination device',
   sDefaultContent: '',
   mData: 'from.terminationDevice',
   bFilter: true
 }, {
-  sTitle: 'term. type',
+  sTitle: 'termination type',
   sDefaultContent: '',
   mData: 'from.terminationType',
   bFilter: true
@@ -362,40 +347,20 @@ var fromColumns = [{
   sDefaultContent: '',
   mData: 'from.wiringDrawing',
   bFilter: true
-}, {
-  sTitle: 'label',
-  sDefaultContent: '',
-  mData: 'from.label',
-  bFilter: true
 }];
 
 var toColumns = [{
-  sTitle: 'To building',
+  sTitle: 'To rack',
   sDefaultContent: '',
-  mData: 'to.building',
+  mData: 'to.rack',
   bFilter: true
 }, {
-  sTitle: 'room',
-  sDefaultContent: '',
-  mData: 'to.room',
-  bFilter: true
-}, {
-  sTitle: 'elevation',
-  sDefaultContent: '',
-  mData: 'to.elevation',
-  bFilter: true
-}, {
-  sTitle: 'unit',
-  sDefaultContent: '',
-  mData: 'to.unit',
-  bFilter: true
-}, {
-  sTitle: 'term. device',
+  sTitle: 'termination device',
   sDefaultContent: '',
   mData: 'to.terminationDevice',
   bFilter: true
 }, {
-  sTitle: 'term. type',
+  sTitle: 'termination type',
   sDefaultContent: '',
   mData: 'to.terminationType',
   bFilter: true
@@ -404,12 +369,14 @@ var toColumns = [{
   sDefaultContent: '',
   mData: 'to.wiringDrawing',
   bFilter: true
-}, {
-  sTitle: 'label',
-  sDefaultContent: '',
-  mData: 'to.label',
-  bFilter: true
 }];
+
+var conduitColumn = {
+  sTitle: 'Conduit',
+  sDefaultContent: '',
+  mData: 'conduit',
+  bFilter: true
+};
 
 var numberColumn = {
   sTitle: 'Number',

@@ -1,7 +1,7 @@
 var approvingTableColumns = {
-  from: [14, 15, 16, 17, 18, 19, 20, 21],
-  to: [22, 23, 24, 25, 26, 27, 28, 29],
-  comments: [30]
+  from: [12, 13, 14, 15],
+  to: [16, 17, 18, 19],
+  comments: [21]
 };
 
 var procuringTableColumns = {
@@ -20,14 +20,14 @@ var installedTableColumns = procuringTableColumns;
 
 var nameCache = {};
 
-$(document).ajaxError(function(event, jqxhr) {
+$(document).ajaxError(function (event, jqxhr) {
   if (jqxhr.status == 401) {
     document.location.href = window.location.pathname;
   }
 });
 
-$(function() {
-  $('#reload').click(function(e) {
+$(function () {
+  $('#reload').click(function (e) {
     initRequestTable(approvingTable, '/requests/statuses/1/json');
     initRequestTable(rejectedTable, 'requests/statuses/3/json');
     initCableTables(procuringTable, installingTable, installedTable);
@@ -35,7 +35,7 @@ $(function() {
 
   /*approving table starts*/
 
-  var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn, updatedOnColumn, requiredColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
+  var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
   var approvingTable = $('#approving-table').dataTable({
     aaData: [],
@@ -43,40 +43,40 @@ $(function() {
     aoColumns: approvingAoCulumns,
     aaSorting: [
       [2, 'desc'],
-      [4, 'desc']
+      [5, 'desc']
     ],
     sDom: sDom,
     oTableTools: oTableTools
   });
 
   initRequestTable(approvingTable, '/requests/statuses/1/json');
-  $('#approving-wrap').click(function(e) {
+  $('#approving-wrap').click(function (e) {
     $('#approving-table td').removeClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
   });
 
-  $('#approving-unwrap').click(function(e) {
+  $('#approving-unwrap').click(function (e) {
     $('#approving-table td').addClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
   });
 
-  $('#approving-show input:checkbox').change(function(e) {
+  $('#approving-show input:checkbox').change(function (e) {
     fnSetColumnsVis(approvingTable, approvingTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#approving-select-none').click(function(e) {
+  $('#approving-select-none').click(function (e) {
     fnDeselect(approvingTable, 'row-selected', 'select-row');
   });
 
-  $('#approving-select-all').click(function(e) {
+  $('#approving-select-all').click(function (e) {
     fnSelectAll(approvingTable, 'row-selected', 'select-row', true);
   });
 
-  $('#approving-approve').click(function(e) {
+  $('#approving-approve').click(function (e) {
     batchApprove(approvingTable, procuringTable);
   });
 
-  $('#approving-reject').click(function(e) {
+  $('#approving-reject').click(function (e) {
     batchReject(approvingTable, rejectedTable);
   });
 
@@ -101,12 +101,12 @@ $(function() {
 
   initRequestTable(rejectedTable, 'requests/statuses/3/json');
 
-  $('#rejected-wrap').click(function(e) {
+  $('#rejected-wrap').click(function (e) {
     $('#rejected-table td').removeClass('nowrap');
     rejectedTable.fnAdjustColumnSizing();
   });
 
-  $('#rejected-unwrap').click(function(e) {
+  $('#rejected-unwrap').click(function (e) {
     $('#rejected-table td').addClass('nowrap');
     rejectedTable.fnAdjustColumnSizing();
   });
@@ -134,31 +134,31 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#procuring-wrap').click(function(e) {
+  $('#procuring-wrap').click(function (e) {
     fnWrap(procuringTable);
   });
 
-  $('#procuring-unwrap').click(function(e) {
+  $('#procuring-unwrap').click(function (e) {
     fnUnwrap(procuringTable);
   });
 
-  $('#procuring-show input:checkbox').change(function(e) {
+  $('#procuring-show input:checkbox').change(function (e) {
     fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#procuring-select-all').click(function(e) {
+  $('#procuring-select-all').click(function (e) {
     fnSelectAll(procuringTable, 'row-selected', 'select-row', true);
   });
 
-  $('#procuring-select-none').click(function(e) {
+  $('#procuring-select-none').click(function (e) {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-  $('#procuring-order, #procuring-receive, #procuring-accept').click(function(e) {
+  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable);
   });
 
-  $('#procuring-to-install').click(function(e) {
+  $('#procuring-to-install').click(function (e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
   });
 
@@ -179,31 +179,31 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#installing-wrap').click(function(e) {
+  $('#installing-wrap').click(function (e) {
     fnWrap(installingTable);
   });
 
-  $('#installing-unwrap').click(function(e) {
+  $('#installing-unwrap').click(function (e) {
     fnUnwrap(installingTable);
   });
 
-  $('#installing-show input:checkbox').change(function(e) {
+  $('#installing-show input:checkbox').change(function (e) {
     fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#installing-select-all').click(function(e) {
+  $('#installing-select-all').click(function (e) {
     fnSelectAll(installingTable, 'row-selected', 'select-row', true);
   });
 
-  $('#installing-select-none').click(function(e) {
+  $('#installing-select-none').click(function (e) {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
-  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function(e) {
+  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable);
   });
 
-  $('#installing-to-use').click(function(e) {
+  $('#installing-to-use').click(function (e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
   });
 
@@ -224,23 +224,23 @@ $(function() {
     oTableTools: oTableTools
   });
 
-  $('#installed-wrap').click(function(e) {
+  $('#installed-wrap').click(function (e) {
     fnWrap(installedTable);
   });
 
-  $('#installed-unwrap').click(function(e) {
+  $('#installed-unwrap').click(function (e) {
     fnUnwrap(installedTable);
   });
 
-  $('#installed-show input:checkbox').change(function(e) {
+  $('#installed-show input:checkbox').change(function (e) {
     fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
-  $('#installed-select-all').click(function(e) {
+  $('#installed-select-all').click(function (e) {
     fnSelectAll(installedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#installed-select-none').click(function(e) {
+  $('#installed-select-none').click(function (e) {
     fnDeselect(installedTable, 'row-selected', 'select-row');
   });
 
@@ -257,11 +257,11 @@ function initRequestTable(oTable, url) {
     url: url,
     type: 'GET',
     dataType: 'json'
-  }).done(function(json) {
+  }).done(function (json) {
     oTable.fnClearTable();
     oTable.fnAddData(json);
     oTable.fnDraw();
-  }).fail(function(jqXHR, status, error) {
+  }).fail(function (jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
@@ -274,13 +274,13 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       url: '/cables/statuses/1/json',
       type: 'GET',
       dataType: 'json'
-    }).done(function(cables) {
-      initCableTableFromData(procuringTable, cables, function() {
-        $('#procuring-show input:checkbox').each(function(i) {
+    }).done(function (cables) {
+      initCableTableFromData(procuringTable, cables, function () {
+        $('#procuring-show input:checkbox').each(function (i) {
           fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
         });
       });
-    }).fail(function(jqXHR, status, error) {
+    }).fail(function (jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }).always();
@@ -291,13 +291,13 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       url: '/cables/statuses/2/json',
       type: 'GET',
       dataType: 'json'
-    }).done(function(cables) {
-      initCableTableFromData(installingTable, cables, function() {
-        $('#installing-show input:checkbox').each(function(i) {
+    }).done(function (cables) {
+      initCableTableFromData(installingTable, cables, function () {
+        $('#installing-show input:checkbox').each(function (i) {
           fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
         });
       });
-    }).fail(function(jqXHR, status, error) {
+    }).fail(function (jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }).always();
@@ -308,13 +308,13 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       url: '/cables/statuses/3/json',
       type: 'GET',
       dataType: 'json'
-    }).done(function(cables) {
-      initCableTableFromData(installedTable, cables, function() {
-        $('#installed-show input:checkbox').each(function(i) {
+    }).done(function (cables) {
+      initCableTableFromData(installedTable, cables, function () {
+        $('#installed-show input:checkbox').each(function (i) {
           fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
         });
       });
-    }).fail(function(jqXHR, status, error) {
+    }).fail(function (jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }).always();
@@ -374,14 +374,14 @@ function batchApprove(oTable, procuringTable) {
   if (selected.length) {
     $('#modalLabel').html('Approve the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       requests.push(row);
     });
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#approve').click(function(e) {
+    $('#approve').click(function (e) {
       approveFromModal(requests, oTable, procuringTable);
     });
   } else {
@@ -397,7 +397,7 @@ function batchApprove(oTable, procuringTable) {
 function approveFromModal(requests, approvingTable, procuringTable) {
   $('#approve').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id,
@@ -407,7 +407,7 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       data: JSON.stringify({
         action: 'approve'
       }),
-    }).done(function(cables) {
+    }).done(function (cables) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
       // remove the request row
@@ -415,7 +415,7 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       // add the new cables to the procuring table
       procuringTable.fnAddData(cables);
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
@@ -430,14 +430,14 @@ function batchReject(oTable, rejectedTable) {
   if (selected.length) {
     $('#modalLabel').html('Reject the following ' + selected.length + ' requests? ');
     $('#modal .modal-body').empty();
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
       $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
       requests.push(row);
     });
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#reject').click(function(e) {
+    $('#reject').click(function (e) {
       rejectFromModal(requests, oTable, rejectedTable);
     });
   } else {
@@ -451,7 +451,7 @@ function batchReject(oTable, rejectedTable) {
 function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#reject').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function(index) {
+  $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id,
@@ -461,7 +461,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
         action: 'reject'
       }),
       dataType: 'json'
-    }).done(function(request) {
+    }).done(function (request) {
       $(that).prepend('<i class="icon-remove"></i>');
       $(that).addClass('text-success');
       // remove the request row
@@ -469,7 +469,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
       // add the new cables to the procuring table
       rejectedTable.fnAddData(request);
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
@@ -487,7 +487,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
     $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
     $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
-    selected.forEach(function(row) {
+    selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
       cables.push(row);
       required.push(data.required);
@@ -497,7 +497,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
     $('#username').autocomplete(nameAuto('#username', nameCache));
     $('#date').datepicker();
     $('#modal').modal('show');
-    $('#action').click(function(e) {
+    $('#action').click(function (e) {
       actionFromModal(cables, required, action, procuringTable, installingTable, installedTable);
     });
   } else {
@@ -511,7 +511,7 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
 function actionFromModal(cables, required, action, procuringTable, installingTable, installedTable) {
   $('#action').prop('disabled', true);
   var number = $('#modal .modal-body .cable').length;
-  $('#modal .modal-body .cable').each(function(index) {
+  $('#modal .modal-body .cable').each(function (index) {
     var that = this;
     $.ajax({
       url: '/cables/' + that.id,
@@ -524,54 +524,54 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
         date: $('#date').val()
       }),
       dataType: 'json'
-    }).done(function(cable) {
+    }).done(function (cable) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
       fnSetDeselect(cables[index], 'row-selected', 'select-row');
       switch (action) {
-        case 'order':
-          procuringTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'receive':
-          procuringTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'accept':
-          procuringTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'install':
-          procuringTable.fnDeleteRow(cables[index]);
-          installingTable.fnAddData(cable);
-          break;
-        case 'label':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'benchTerm':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'benchTest':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'pull':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'pulled':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'fieldTerm':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'fieldTest':
-          installingTable.fnUpdate(cable, cables[index]);
-          break;
-        case 'use':
-          installingTable.fnDeleteRow(cables[index]);
-          installedTable.fnAddData(cable);
-          break;
-        default:
-          // do nothing
+      case 'order':
+        procuringTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'receive':
+        procuringTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'accept':
+        procuringTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'install':
+        procuringTable.fnDeleteRow(cables[index]);
+        installingTable.fnAddData(cable);
+        break;
+      case 'label':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'benchTerm':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'benchTest':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'pull':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'pulled':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'fieldTerm':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'fieldTest':
+        installingTable.fnUpdate(cable, cables[index]);
+        break;
+      case 'use':
+        installingTable.fnDeleteRow(cables[index]);
+        installedTable.fnAddData(cable);
+        break;
+      default:
+        // do nothing
       }
     })
-      .fail(function(jqXHR, status, error) {
+      .fail(function (jqXHR, status, error) {
         $(that).prepend('<i class="icon-question"></i>');
         $(that).append(' : ' + jqXHR.responseText);
         $(that).addClass('text-error');
