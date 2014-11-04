@@ -5,11 +5,6 @@
       "0": "Access Control",
       "1": "ODH",
       "2": "Radiation Monitor System",
-      "3": null,
-      "4": null,
-      "5": null,
-      "6": null,
-      "7": null,
       "8": "PLC",
       "9": "IOC"
     },
@@ -17,8 +12,6 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -94,14 +87,11 @@
     "subcategory": {
       "0": "Magnets",
       "1": "SRF Cryomodules",
-      "2": null,
-      "3": null,
       "4": "Diagnostics",
       "5": "Vacuum",
       "6": "Cryogenics",
       "7": "Cooling",
-      "8": "RF",
-      "9": null
+      "8": "RF"
     },
     "signal": {
       "A": {
@@ -145,8 +135,7 @@
       "5": "Vacuum",
       "6": "Cryogenics",
       "7": "Cooling",
-      "8": "RF",
-      "9": null
+      "8": "RF"
     },
     "signal": {
       "A": {
@@ -189,9 +178,7 @@
       "4": "Diagnostics",
       "5": "Vacuum",
       "6": "Cryogenics",
-      "7": "Cooling (incl. hot off gas)",
-      "8": null,
-      "9": null
+      "7": "Cooling (incl. hot off gas)"
     },
     "signal": {
       "A": {
@@ -231,20 +218,15 @@
       "0": "Magnets",
       "1": "Wedges/Slits",
       "2": "Remote Handling",
-      "3": null,
       "4": "Diagnostics",
       "5": "Vacuum",
       "6": "Cryogenics",
-      "7": "Cooling (incl. hot off gas)",
-      "8": null,
-      "9": null
+      "7": "Cooling (incl. hot off gas)"
     },
     "signal": {
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -278,18 +260,13 @@
       "2": "Power",
       "3": "Communications",
       "4": "Fire Alarm",
-      "5": null,
       "6": "Lighting",
-      "7": "Process Cooling",
-      "8": null,
-      "9": null
+      "7": "Process Cooling"
     },
     "signal": {
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -333,8 +310,6 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -370,16 +345,12 @@
       "4": "Cryogenic distribution",
       "5": "Purifiers",
       "6": "Utilities",
-      "7": "Gas Storage",
-      "8": null,
-      "9": null
+      "7": "Gas Storage"
     },
     "signal": {
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
