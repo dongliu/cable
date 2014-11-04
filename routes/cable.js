@@ -1,5 +1,5 @@
 var sysSub = require('../config/sys-sub.json');
-var signal = require('../config/signal.json');
+// var signal = require('../config/signal.json');
 
 var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
@@ -32,7 +32,7 @@ module.exports = function(app) {
   app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      signal: signal,
+      // signal: signal,
       roles: req.session.roles
     });
   });
@@ -171,7 +171,7 @@ module.exports = function(app) {
   app.get('/requests/:id', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      signal: signal,
+      // signal: signal,
       id: req.params.id,
       roles: req.session.roles
     });

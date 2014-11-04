@@ -15,23 +15,21 @@ block head
 block content
   script.
     var sysSub = !{JSON.stringify(sysSub)};
-    var signal = !{JSON.stringify(signal)};
+    // var signal = !{JSON.stringify(signal)};
   .container
     #message
     #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
       .modal-header
-        //- button.close(type='button',data-dismiss='modal',aria-hidden='true') x
         h3#modalLabel
       .modal-body
       .modal-footer
         button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
-        //- button.btn.btn(onclick='',aria-hidden='true') Close the window
     form.form-horizontal(name='request')
       if (typeof id == 'undefined')
         h3 New Cable Request
       else
         h3 Cable Request &nbsp;
-          span#cableId #{id}
+          span#requestId #{id}
       include requestform
       include request_action
 block js
