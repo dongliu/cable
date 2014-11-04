@@ -55,8 +55,12 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "RF Power",
-      "C": "RF Controls",
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -97,8 +101,12 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "RF Power",
-      "C": "RF Controls",
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -141,8 +149,12 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "RF Power",
-      "C": "RF Controls",
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -184,8 +196,6 @@
       "A": {
         "name": "Miscellaneous"
       },
-      "B": "N/A",
-      "C": "N/A",
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
