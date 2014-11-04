@@ -2,8 +2,8 @@
   "A": {
     "name": "Miscellaneous"
   },
-  "B": null,
-  "C": null,
+  "B": "N/A",
+  "C": "N/A",
   "D": {
     "name": "<600 VDC",
     "disc": "e.g. magnet and other power"
@@ -26,9 +26,5 @@
   },
   "K": {
     "name": ">600 VAC Power"
-  },
-  "L": null,
-  "M": null,
-  "N": null,
-  "1": null
+  }
 }

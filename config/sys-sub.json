@@ -1,7 +1,7 @@
 {
   "1": {
     "name": "PPS",
-    "sub-system": {
+    "subcategory": {
       "0": "Access Control",
       "1": "ODH",
       "2": "Radiation Monitor System",
@@ -12,11 +12,41 @@
       "7": null,
       "8": "PLC",
       "9": "IOC"
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "2": {
-    "name": "Front End Systems",
-    "sub-system": {
+    "name": "Front End",
+    "subcategory": {
       "0": "Magnets/Electrostatics",
       "1": "RT ECR Source",
       "2": "SC ECR Source",
@@ -27,11 +57,41 @@
       "7": "Cooling",
       "8": "RF",
       "9": "MHB/RFQ/Buncher/Chopper"
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "RF Power",
+      "C": "RF Controls",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "3": {
-    "name": "Linac Segment Systems",
-    "sub-system": {
+    "name": "Linac Segment",
+    "subcategory": {
       "0": "Magnets",
       "1": "SRF Cryomodules",
       "2": null,
@@ -42,11 +102,41 @@
       "7": "Cooling",
       "8": "RF",
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "RF Power",
+      "C": "RF Controls",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "4": {
     "name": "Folding Segments & BDS",
-    "sub-system": {
+    "subcategory": {
       "0": "Magnets",
       "1": "SRF Cryomodules",
       "2": "Charge Stripper",
@@ -57,11 +147,41 @@
       "7": "Cooling",
       "8": "RF",
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "RF Power",
+      "C": "RF Controls",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "5": {
-    "name": "ESD Hot Cell Systems",
-    "sub-system": {
+    "name": "ESD Hot Cell",
+    "subcategory": {
       "0": "Magnets",
       "1": "Target, wedges",
       "2": "Remote Handling",
@@ -72,12 +192,42 @@
       "7": "Cooling (incl. hot off gas)",
       "8": null,
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "6": {
-    "name": "ESD Non-Hot Cell Systems",
-    "note": "* FS F1S2 and stages 2&3, * Target Building systems that are not in the Hot Cell",
-    "sub-system": {
+    "name": "ESD Non-Hot Cell",
+    "note": "* FS F1S2 and stages 2&3, * Target Building that are not in the Hot Cell",
+    "subcategory": {
       "0": "Magnets",
       "1": "Wedges/Slits",
       "2": "Remote Handling",
@@ -88,11 +238,41 @@
       "7": "Cooling (incl. hot off gas)",
       "8": null,
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "7": {
     "name": "Conventional Facilities",
-    "sub-system": {
+    "subcategory": {
       "0": "Access Control",
       "1": "HVAC",
       "2": "Power",
@@ -103,11 +283,41 @@
       "7": "Process Cooling",
       "8": null,
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "8": {
-    "name": "Integrated Controls Systems",
-    "sub-system": {
+    "name": "Integrated Controls",
+    "subcategory": {
       "0": "Cryoplant Control",
       "1": "Cryomodule Control",
       "2": "PS Control",
@@ -118,21 +328,81 @@
       "7": "Network",
       "8": "PLC",
       "9": "IOC"
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   },
   "9": {
     "name": "Cryogenics plant/distribution",
-    "sub-system": {
+    "subcategory": {
       "0": "Compressors",
       "1": "Coldboxes",
       "2": "Dewars",
-      "3": "Sub-Atmospheric Systems",
+      "3": "Sub-Atmospheric",
       "4": "Cryogenic distribution",
       "5": "Purifiers",
       "6": "Utilities",
       "7": "Gas Storage",
       "8": null,
       "9": null
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": "N/A",
+      "C": "N/A",
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "120-480 VAC Power"
+      },
+      "K": {
+        "name": ">600 VAC Power"
+      }
     }
   }
 }
