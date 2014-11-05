@@ -178,9 +178,9 @@ function updateSignal(json) {
   }).text('choose').prop('disabled', true));
   $.each(json[cat].signal, function (k, v) {
     if (v) {
-      $('#sub').append($('<option>', {
+      $('#signal').append($('<option>', {
         value: k
-      }).text(v.name));
+      }).text(json[cat].signal[k].name));
     }
   });
 }
@@ -219,6 +219,7 @@ function setCSS(cat, sub, signal) {
     $('#cat').val(cat);
     $('#cat').next('.add-on').text(cat);
     updateSub(sysSub);
+    updateSignal(sysSub);
   }
   if (signal) {
     $('#signal').val(signal);
@@ -440,7 +441,7 @@ $(function () {
     html: true
   });
 
-  $('#engineer').autocomplete({
+/*  $('#engineer').autocomplete({
     minLength: 1,
     source: function (req, res) {
       var term = req.term.toLowerCase();
@@ -469,7 +470,7 @@ $(function () {
     select: function (event, ui) {
       $('#engineer').val(ui.item.value);
     }
-  });
+  });*/
 
   $('#type').autocomplete({
     minLength: 1,
@@ -535,7 +536,7 @@ $(function () {
       var savedBinder = new Binder.FormBinder(requestForm, json);
       savedBinder.deserialize();
 
-      setSSS(cat, sub, signal);
+      setCSS(cat, sub, signal);
 
       // rooms();
 
@@ -573,13 +574,8 @@ $(function () {
         $('#approve').closest('.btn-group').removeClass('hide');
       }
 
-      if (json.status === 3) {
-        // $('.form-actions').hide();
-      }
     }).fail(function (jqXHR, status, error) {
-      alert('Cannot find the saved request.');
-    }).always(function () {
-      // $('#request').fadeTo('slow', 1);
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot find the saved request. You might need to try again or contact the admin.</div>');
     });
   } else {
     // $('form[name="request"]').fadeTo('slow', 1);
@@ -609,7 +605,7 @@ $(function () {
       request: currentModel,
       action: action
     };
-    if (action == 'save' || action == 'adjust') {
+    if (action === 'save' || action === 'adjust') {
       if (_.isEqual(initModel, currentModel)) {
 
         $('#modalLabel').html('The request cannot be sent');
@@ -621,7 +617,7 @@ $(function () {
       }
     }
 
-    if (action == 'submit' || action == 'approve') {
+    if (action === 'submit' || action === 'approve') {
       if ($(requestForm).valid()) {
         sendRequest(data);
       } else {
@@ -632,7 +628,7 @@ $(function () {
       }
     }
 
-    if (action == 'clone' || action == 'reject') {
+    if (action === 'clone' || action === 'reject') {
       sendRequest(data);
     }
 
