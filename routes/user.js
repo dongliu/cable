@@ -7,7 +7,7 @@ var User = mongoose.model('User');
 
 var auth = require('../lib/auth');
 
-var Roles = ['manage', 'admin'];
+var Roles = ['manager', 'admin'];
 
 function addUser(req, res) {
   var nameFilter = ad.nameFilter.replace('_name', req.body.name);
