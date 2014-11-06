@@ -1,13 +1,16 @@
 exports.main = function (req, res) {
-  return res.render('manage', {
+  // return res.render('manager', {
+  //   roles: req.session.roles
+  // });
+
+  if (req.session.roles && req.session.roles.length) {
+    return res.render('manager', {
+      roles: req.session.roles
+    });
+  }
+  return res.render('main', {
     roles: req.session.roles
   });
-
-  // if (req.session.roles && req.session.roles.length) {
-  //   return res.render('manage', {roles: req.session.roles});
-  // } else {
-  //   return res.render('main', {roles: req.session.roles});
-  // }
 };
 
 

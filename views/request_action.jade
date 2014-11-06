@@ -5,13 +5,13 @@
     button.btn.btn-primary#submit(type='submit') Submit
   .btn-group.hide
     button.btn.btn-warning#reset(type='button') Reset
-  if (roles.length && roles.indexOf('manage') != -1)
+  if (roles.length && roles.indexOf('manager') != -1)
     .btn-group.hide
       button.btn.btn-info#adjust(type='button') Save adjustment
-  if (roles.length && roles.indexOf('manage') != -1)
+  if (roles.length && roles.indexOf('manager') != -1)
     .btn-group.hide
       button.btn.btn-warning#reject(type='button') Reject
-  if (roles.length && roles.indexOf('manage') != -1)
+  if (roles.length && roles.indexOf('manager') != -1)
     .btn-group.hide
       button.btn.btn-primary#approve(type='submit') Approve
   if (typeof id !== 'undefined')

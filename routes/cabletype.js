@@ -29,7 +29,7 @@ module.exports = function (app) {
   });
 
   app.post('/cabletypes', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber']), function (req, res) {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
+    if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var newType = {
@@ -70,7 +70,7 @@ module.exports = function (app) {
   });
 
   app.put('/cabletypes/:id', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
+    if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var conditions = {

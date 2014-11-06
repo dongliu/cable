@@ -1,5 +1,4 @@
 var sysSub = require('../config/sys-sub.json');
-// var signal = require('../config/signal.json');
 
 var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
@@ -171,7 +170,6 @@ module.exports = function(app) {
   app.get('/requests/:id', auth.ensureAuthenticated, function(req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      // signal: signal,
       id: req.params.id,
       roles: req.session.roles
     });
@@ -360,7 +358,7 @@ module.exports = function(app) {
     }
 
     if (req.body.action == 'adjust') {
-      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+      if (roles.length === 0 || roles.indexOf('manager') === -1) {
         return res.send(403, "You are not authorized to access this resource. ");
       }
       Request.findOneAndUpdate({
@@ -385,7 +383,7 @@ module.exports = function(app) {
     }
 
     if (req.body.action == 'reject') {
-      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+      if (roles.length === 0 || roles.indexOf('manager') === -1) {
         return res.send(403, "You are not authorized to access this resource. ");
       }
       request.rejectedBy = req.session.userid;
@@ -413,7 +411,7 @@ module.exports = function(app) {
     }
 
     if (req.body.action == 'approve') {
-      if (roles.length === 0 || roles.indexOf('manage') === -1) {
+      if (roles.length === 0 || roles.indexOf('manager') === -1) {
         return res.send(403, "You are not authorized to access this resource. ");
       }
       request.approvedBy = req.session.userid;
@@ -591,7 +589,7 @@ module.exports = function(app) {
   });
 
   app.put('/cables/:id', auth.ensureAuthenticated, function(req, res) {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('manage') === -1) {
+    if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var conditions = {
