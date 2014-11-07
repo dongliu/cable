@@ -482,7 +482,7 @@ var typeColumns = [{
 
 /*user columns*/
 
-var useridColumn = personColumn('User id', '_id');
+var useridColumn = personColumn('User id', 'adid');
 
 var fullNameNoLinkColumn = {
   sTitle: 'Full name',
