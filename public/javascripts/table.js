@@ -1,7 +1,7 @@
 /*global moment:false*/
 // table functions
 
-function addEvents() {
+function selectEvent() {
   $('tbody').on('click', 'input.select-row', function (e) {
     if ($(this).prop('checked')) {
       $(e.target).closest('tr').addClass('row-selected');
@@ -9,12 +9,14 @@ function addEvents() {
       $(e.target).closest('tr').removeClass('row-selected');
     }
   });
+}
 
+
+function filterEvent() {
   $('tfoot').on('keyup', 'input', function (e) {
     var table = $(this).closest('table');
     var th = $(this).closest('th');
     table.dataTable().fnFilter(this.value, $('tfoot th', table).index(th));
-
   });
 }
 
@@ -477,6 +479,32 @@ var typeColumns = [{
   sDefaultContent: '',
   bFilter: true
 }];
+
+/*user columns*/
+
+var useridColumn = personColumn('User id', '_id');
+
+var fullNameNoLinkColumn = {
+  sTitle: 'Full name',
+  mData: 'name',
+  sDefaultContent: '',
+  bFilter: true
+};
+
+var rolesColumn = {
+  sTitle: 'Roles',
+  mData: 'roles',
+  sDefaultContent: '',
+  mRender: function (data, type, full) {
+    return data.join();
+  },
+  bFilter: true
+};
+
+var lastVisitedOnColumn = dateColumn('Last visited', 'lastVisitedOn');
+
+
+/*table tools*/
 
 var oTableTools = {
   "sSwfPath": "/datatables/swf/copy_csv_xls_pdf.swf",
