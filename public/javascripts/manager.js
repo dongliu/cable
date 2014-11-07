@@ -246,8 +246,9 @@ $(function () {
 
 
   /*all tabs*/
+  filterEvent();
+  selectEvent();
 
-  addEvents();
   initCableTables(procuringTable, installingTable, installedTable);
 });
 
