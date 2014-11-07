@@ -1,3 +1,5 @@
+/*global fnAddFilterFoot: false, typeColumns: false, sDom: false, oTableTools: false, filterEvent: false*/
+
 $(function () {
   fnAddFilterFoot('#cable-type', typeColumns);
   var cabletype = $('#cable-type').dataTable({
@@ -12,7 +14,7 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  addEvents();
+  filterEvent();
 
   $.ajax({
     url: '/cabletypes/json',
