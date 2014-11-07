@@ -1,3 +1,9 @@
+/*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
+/*global moment: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
+
+
+
 var approvingTableColumns = {
   from: [12, 13, 14, 15],
   to: [16, 17, 18, 19],
@@ -318,12 +324,6 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
 }*/
 
 $(function () {
-  $('#reload').click(function (e) {
-    initRequestTable(approvingTable, '/requests/statuses/1/json');
-    initRequestTable(rejectedTable, 'requests/statuses/3/json');
-    // initCableTables(procuringTable, installingTable, installedTable);
-  });
-
   /*approving table starts*/
 
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
@@ -363,13 +363,13 @@ $(function () {
     fnSelectAll(approvingTable, 'row-selected', 'select-row', true);
   });
 
-  $('#approving-approve').click(function (e) {
+/*  $('#approving-approve').click(function (e) {
     batchApprove(approvingTable, procuringTable);
   });
 
   $('#approving-reject').click(function (e) {
     batchReject(approvingTable, rejectedTable);
-  });
+  });*/
 
   /*approving tab ends*/
 
@@ -445,13 +445,13 @@ $(function () {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
+/*  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable);
   });
 
   $('#procuring-to-install').click(function (e) {
     batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
-  });
+  });*/
 
   /*procuring tab ends*/
 
@@ -490,13 +490,13 @@ $(function () {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
-  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
+/*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable);
   });
 
   $('#installing-to-use').click(function (e) {
     batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
-  });
+  });*/
 
   /*installing tab ends*/
 
@@ -541,7 +541,10 @@ $(function () {
   selectEvent();
 
   // initCableTables(procuringTable, installingTable, installedTable);
+
+  $('#reload').click(function (e) {
+    initRequestTable(approvingTable, '/requests/statuses/1/json');
+    initRequestTable(rejectedTable, 'requests/statuses/3/json');
+    // initCableTables(procuringTable, installingTable, installedTable);
+  });
 });
-
-
-
