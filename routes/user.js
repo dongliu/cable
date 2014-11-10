@@ -55,13 +55,13 @@ function addUser(req, res) {
           console.error(err.msg);
           return res.send(500, err.msg);
         }
-        console.lod(err);
+        console.log(err);
         return res.send(500, 'cannot save the new user in db.');
       }
 
       var url = req.protocol + '://' + req.get('host') + '/users/' + newUser.adid;
       res.set('Location', url);
-      res.send(303, 'The new user is at <a href="' + url + '">here</a>');
+      res.send(201, 'The new user is at <a href="' + url + '">here</a>');
     });
 
   });
