@@ -3100,13 +3100,13 @@ table th[class*="span"],
   padding-left: 20px;
 }
 
-.typeahead {
+/*.typeahead {
   z-index: 1051;
   margin-top: 2px;
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
-}
+}*/
 
 .well {
   min-height: 20px;

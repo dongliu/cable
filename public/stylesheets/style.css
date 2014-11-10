@@ -386,10 +386,10 @@ text {
   background-color: #c09853 !important;
 }
 
-ul.dropdown-menu input[type="checkbox"] {
+/*ul.dropdown-menu input[type="checkbox"] {
   margin-left: 0;
-}
+}*/
 
-.ui-autocomplete {
+/*.ui-autocomplete {
   z-index: 1510 !important;
-}
+}*/
