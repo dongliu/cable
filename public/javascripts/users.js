@@ -1,5 +1,5 @@
 /*global selectColumn: false, useridColumn: false, fullNameNoLinkColumn: false, rolesColumn: false, lastVisitedOnColumn: false, sDom: false, oTableTools: false, selectEvent: false, filterEvent: false, fnGetSelected: false*/
-
+/*global Bloodhound: false*/
 
 function inArray(name, ao) {
   var i;
@@ -88,11 +88,25 @@ function modifyFromModal(cb) {
 }
 
 $(function () {
-  $('#username').typeahead({
-    name: 'usernames',
+  var usernames = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('displayName'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
-    valueKey: 'displayName',
-    prefetch: '/adusernames'
+    prefetch: {
+      url: '/adusernames'
+    }
+  });
+
+  usernames.initialize();
+
+  $('#username').typeahead({
+    minLength: 1,
+    highlight: true,
+    hint: true
+  }, {
+    name: 'usernames',
+    displayKey: 'displayName',
+    source: usernames.ttAdapter()
   });
 
   var userTable = $('#users').dataTable({
