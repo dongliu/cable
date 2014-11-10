@@ -159,7 +159,7 @@ $(function () {
       $('#modal .modal-body').empty();
       selected.forEach(function (row) {
         var data = userTable.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + data.name + '</div>');
+        $('#modal .modal-body').append('<div id="' + data.adid + '">' + data.name + '</div>');
       });
       $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
       $('#update').click(function (e) {
@@ -186,7 +186,7 @@ $(function () {
       $('#modal .modal-body').append('<form id="modal-roles" class="form-inline"><label class="checkbox"><input id="modal-manager" type="checkbox" value="manager">manager</label> <label class="checkbox"><input id="modal-admin" type="checkbox" value="admin">admin</label> </form>');
       selected.forEach(function (row) {
         var data = userTable.fnGetData(row);
-        $('#modal .modal-body').append('<div id="' + data._id + '">' + data.name + '</div>');
+        $('#modal .modal-body').append('<div id="' + data.adid + '">' + data.name + '</div>');
       });
       $('#modal .modal-footer').html('<button id="modify" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
       $('#modify').click(function (e) {
