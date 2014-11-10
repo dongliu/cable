@@ -131,10 +131,6 @@ module.exports = function (app) {
   });
 
   app.post('/users/', auth.ensureAuthenticated, function (req, res) {
-    // if (!req.is('json')) {
-    //   return res.send(415, 'json request expected.');
-    // }
-
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.send(403, 'only admin allowed');
     }
@@ -156,7 +152,6 @@ module.exports = function (app) {
       }
       addUser(req, res);
     });
-
   });
 
 
@@ -177,7 +172,7 @@ module.exports = function (app) {
   });
 
 
-  app.get('/users/:id', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/:id/', auth.ensureAuthenticated, function (req, res) {
     User.findOne({
       adid: req.params.id
     }).lean().exec(function (err, user) {
@@ -195,7 +190,7 @@ module.exports = function (app) {
     });
   });
 
-  app.put('/users/:id', auth.ensureAuthenticated, function (req, res) {
+  app.put('/users/:id/', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
@@ -215,6 +210,38 @@ module.exports = function (app) {
         return res.send(204);
       }
       return res.send(404, 'cannot find user ' + req.params.id);
+    });
+  });
+
+
+  app.post('/users/:id/wbs/', auth.ensureAuthenticated, function (req, res) {
+    if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    if (!req.is('json')) {
+      return res.send(415, 'json request expected.');
+    }
+    User.findOne({
+      adid: req.params.id
+    }).exec(function (err, user) {
+      if (err) {
+        console.error(err.msg);
+        return res.send(500, err.msg);
+      }
+      if (!user) {
+        return res.send(404, 'cannot find user ' + req.params.id);
+      }
+      if (user.wbs === undefined) {
+        user.wbs = [];
+      }
+      user.wbs.addToSet(req.body.newwbs);
+      user.save(function (err) {
+        if (err) {
+          console.error(err.msg);
+          return res.send(500, err.msg);
+        }
+        return res.send(201, req.body.newwbs + ' was added to the wbs list.');
+      });
     });
   });
 
@@ -255,7 +282,7 @@ module.exports = function (app) {
 
   // resource /adusers
 
-  app.get('/adusers/:id', auth.ensureAuthenticated, function (req, res) {
+  app.get('/adusers/:id/', auth.ensureAuthenticated, function (req, res) {
 
     var searchFilter = ad.searchFilter.replace('_id', req.params.id);
     var opts = {

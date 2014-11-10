@@ -494,9 +494,23 @@ var fullNameNoLinkColumn = {
 var rolesColumn = {
   sTitle: 'Roles',
   mData: 'roles',
-  sDefaultContent: '',
+  // sDefaultContent: '',
   mRender: function (data, type, full) {
-    return data.join();
+    if (data) {
+      return data.join();
+    }
+    return '';
+  },
+  bFilter: true
+};
+
+var wbsColumn = {
+  sTitle: 'WBS',
+  mData: function (source) {
+    if (source.wbs) {
+      return source.wbs.join();
+    }
+    return '';
   },
   bFilter: true
 };

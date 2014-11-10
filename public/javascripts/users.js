@@ -1,4 +1,4 @@
-/*global selectColumn: false, useridColumn: false, fullNameNoLinkColumn: false, rolesColumn: false, lastVisitedOnColumn: false, sDom: false, oTableTools: false, selectEvent: false, filterEvent: false, fnGetSelected: false*/
+/*global selectColumn: false, useridColumn: false, fullNameNoLinkColumn: false, rolesColumn: false, wbsColumn: false, lastVisitedOnColumn: false, sDom: false, oTableTools: false, selectEvent: false, filterEvent: false, fnGetSelected: false*/
 /*global Bloodhound: false*/
 
 function inArray(name, ao) {
@@ -112,9 +112,9 @@ $(function () {
   var userTable = $('#users').dataTable({
     aaData: [],
     // bAutoWidth: false,
-    aoColumns: [selectColumn, useridColumn, fullNameNoLinkColumn, rolesColumn, lastVisitedOnColumn],
+    aoColumns: [selectColumn, useridColumn, fullNameNoLinkColumn, rolesColumn, wbsColumn, lastVisitedOnColumn],
     aaSorting: [
-      [4, 'desc'],
+      [5, 'desc'],
       [1, 'asc']
     ],
     sDom: sDom,

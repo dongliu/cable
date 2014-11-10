@@ -15,6 +15,7 @@ var user = new Schema({
   phone: String,
   mobile: String,
   roles: [String],
+  wbs: [String],
   lastVisitedOn: Date,
   subscribe: {
     type: Boolean,
