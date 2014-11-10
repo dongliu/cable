@@ -13,7 +13,6 @@ block content
   script.
     var roles = !{JSON.stringify(user.roles)};
   .container(style="margin-top: 10px")
-    //- a.btn.btn-primary(href="/users") users
     #message
     #profile.well
       img(src="/adusers/#{user.adid}/photo")
@@ -34,27 +33,12 @@ block content
         dd #{user.subscribe}
         dt Priviledges
         dd#roles
-          //- //- form.form-inline
-          //- label.checkbox.inline
-          //-   input(type='checkbox', value='adjust')
-          //-   | adjust
-          //- //- = ' '
-          //- label.checkbox.inline
-          //-   input(type='checkbox', value='approve')
-          //-   | approve
-          //- //- = ' '
-          //- label.checkbox.inline
-          //-   input(type='checkbox', value='install')
-          //-   | install
-          //- = ' '
           label.checkbox.inline
             input(type='checkbox', value='manager')
-            | manage
-          //- = ' '
+            | manager
           label.checkbox.inline
             input(type='checkbox', value='admin')
             | admin
-          //- = ' '
       if (myRoles.indexOf('admin') !== -1)
         button#modify.btn.btn-primary(type='submit') Modify
         = ' '
