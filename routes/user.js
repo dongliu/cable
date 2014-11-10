@@ -211,7 +211,10 @@ module.exports = function (app) {
           error: err.msg
         });
       }
-      res.send(204);
+      if (user) {
+        return res.send(204);
+      }
+      return res.send(404, 'cannot find user ' + req.params.id);
     });
   });
 
