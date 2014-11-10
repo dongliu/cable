@@ -145,7 +145,7 @@ $(function () {
           initTable(userTable);
         },
         error: function (jqXHR, status, error) {
-          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot update the share list : ' + jqXHR.responseText + '</div>');
+          $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot add user: ' + jqXHR.responseText + '</div>');
         }
       });
     }
