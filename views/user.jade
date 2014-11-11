@@ -12,7 +12,10 @@ block head
 block content
   script.
     var roles = !{JSON.stringify(user.roles)};
-    var wbs = !{JSON.stringify(user.wbs)};
+    var wbs = [];
+  if (user.wbs != undefined)
+    script.
+      wbs = !{JSON.stringify(user.wbs)};
   .container(style="margin-top: 10px")
     #message
     #profile.well
