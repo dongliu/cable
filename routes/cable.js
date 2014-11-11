@@ -27,8 +27,8 @@ var querystring = require('querystring');
 
 //TODO need a server side validation in the future
 
-module.exports = function(app) {
-  app.get('/requests/new', auth.ensureAuthenticated, function(req, res) {
+module.exports = function (app) {
+  app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
       // signal: signal,
@@ -39,10 +39,10 @@ module.exports = function(app) {
   // get the requests owned by the current user
   // this is different from the request with status parameter
   // need more work when sharing is enabled
-  app.get('/requests', auth.ensureAuthenticated, function(req, res) {
+  app.get('/requests', auth.ensureAuthenticated, function (req, res) {
     Request.find({
       createdBy: req.session.userid
-    }).lean().exec(function(err, requests) {
+    }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -52,10 +52,10 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/requests/json', auth.ensureAuthenticated, function(req, res) {
+  app.get('/requests/json', auth.ensureAuthenticated, function (req, res) {
     Request.find({
       createdBy: req.session.userid
-    }).lean().exec(function(err, requests) {
+    }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -66,7 +66,7 @@ module.exports = function(app) {
   });
 
   // create a new request
-  app.post('/requests', auth.ensureAuthenticated, function(req, res) {
+  app.post('/requests', auth.ensureAuthenticated, function (req, res) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
@@ -102,7 +102,7 @@ module.exports = function(app) {
 
           requests.push(request);
         }
-        Request.create(requests, function(err) {
+        Request.create(requests, function (err) {
           if (err) {
             console.error(err.msg);
             res.send(500, err.msg);
@@ -136,7 +136,7 @@ module.exports = function(app) {
         for (i = 0; i < req.body.quantity; i += 1) {
           requests.push(request);
         }
-        Request.create(requests, function(err) {
+        Request.create(requests, function (err) {
           if (err) {
             console.dir(err);
             res.send(500, err.msg);
@@ -147,7 +147,7 @@ module.exports = function(app) {
       } else if (req.body.quantity && req.body.quantity >= 21) {
         res.send(400, 'the quantity is too large');
       } else {
-        (new Request(request)).save(function(err, cableRequest) {
+        (new Request(request)).save(function (err, cableRequest) {
           if (err) {
             console.error(err.msg);
             return res.send(500, err.msg);
@@ -167,7 +167,7 @@ module.exports = function(app) {
 
   // get the request details
   // add authorization check here
-  app.get('/requests/:id', auth.ensureAuthenticated, function(req, res) {
+  app.get('/requests/:id', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
       id: req.params.id,
@@ -175,8 +175,8 @@ module.exports = function(app) {
     });
   });
 
-  app.delete('/requests/:id', auth.ensureAuthenticated, function(req, res) {
-    Request.findById(req.params.id).exec(function(err, request) {
+  app.delete('/requests/:id', auth.ensureAuthenticated, function (req, res) {
+    Request.findById(req.params.id).exec(function (err, request) {
       if (err) {
         console.error(err.msg);
         return res.send(500, err.msg);
@@ -188,7 +188,7 @@ module.exports = function(app) {
         if (request.status === 1 || request.status === 2) {
           return res.send(400, 'this resource is not allowed to be deleted');
         }
-        request.remove(function(err) {
+        request.remove(function (err) {
           if (err) {
             console.error(err.msg);
             return res.send(500, err.msg);
@@ -202,8 +202,8 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/requests/:id/json', auth.ensureAuthenticated, function(req, res) {
-    Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
+  app.get('/requests/:id/json', auth.ensureAuthenticated, function (req, res) {
+    Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -214,8 +214,8 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/requests/:id/details', auth.ensureAuthenticated, function(req, res) {
-    Request.findById(req.params.id).lean().exec(function(err, cableRequest) {
+  app.get('/requests/:id/details', auth.ensureAuthenticated, function (req, res) {
+    Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -233,30 +233,10 @@ module.exports = function(app) {
   });
 
   // get the request list based on query
-  // a super user can only view the saved requests created by her/him self
-  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function(req, res) {
-    // if (req.session.roles.length === 0) {
-    //   return res.send(403, "You are not authorized to access this resource. ");
-    // }
-    var status = parseInt(req.params.s, 10);
-    if (status < 0 || status > 4) {
-      return res.json(400, {
-        error: 'wrong status'
-      });
-    }
-    var query;
-    // This needs to be changed if sharing is enabled
-    if (status === 0) {
-      query = {
-        createdBy: req.session.userid,
-        status: status
-      };
-    } else {
-      query = {
-        status: status
-      };
-    }
-    Request.find(query).lean().exec(function(err, docs) {
+  // a manager can only view the saved requests that has his wbs numbers
+
+  function findRequest(query, res) {
+    Request.find(query).lean().exec(function (err, docs) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -265,11 +245,51 @@ module.exports = function(app) {
       }
       return res.json(docs);
     });
+  }
+
+  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function (req, res) {
+    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    var status = parseInt(req.params.s, 10);
+    if (status < 0 || status > 4) {
+      return res.send(400, 'the status ' + status + ' is invalid.');
+    }
+    var query;
+    // admin see all
+    if (req.session.roles.indexOf('admin') !== -1) {
+      query = {
+        status: status
+      };
+      findRequest(query, res);
+    } else {
+      // manager see his own wbs
+      User.findOne({
+        adid: req.session.userid
+      }).lean().exec(function (err, user) {
+        if (err) {
+          console.error(err.msg);
+          return res.send(500, err.msg);
+        }
+        if (!user) {
+          return res.send(404, 'cannot identify you.');
+        }
+        if (user.wbs === undefined || user.wbs.length === 0) {
+          return res.json([]);
+        }
+        query = {
+          'basic.wbs': {
+            $in: user.wbs
+          },
+          status: status
+        };
+        findRequest(query, res);
+      });
+    }
   });
 
-
   // update a request
-  app.put('/requests/:id', auth.ensureAuthenticated, function(req, res) {
+  app.put('/requests/:id', auth.ensureAuthenticated, function (req, res) {
     var roles = req.session.roles;
     var request = req.body.request || {};
     request.updatedBy = req.session.userid;
@@ -283,7 +303,7 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 0
-      }, request, function(err, cableRequest) {
+      }, request, function (err, cableRequest) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -310,7 +330,7 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 0
-      }, request, function(err, cableRequest) {
+      }, request, function (err, cableRequest) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -339,7 +359,7 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function(err, cableRequest) {
+      }, request, function (err, cableRequest) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -364,7 +384,7 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function(err, cableRequest) {
+      }, request, function (err, cableRequest) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -392,7 +412,7 @@ module.exports = function(app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function(err, cableRequest) {
+      }, request, function (err, cableRequest) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -421,7 +441,7 @@ module.exports = function(app) {
         _id: req.params.id,
         status: 1
       }, request).lean().exec(
-        function(err, cableRequest) {
+        function (err, cableRequest) {
           if (err) {
             console.error(err.msg);
             return res.json(500, {
@@ -444,10 +464,10 @@ module.exports = function(app) {
 
 
 
-  app.get('/cables', function(req, res) {
+  app.get('/cables', function (req, res) {
     Cable.find({
       submittedBy: req.session.userid
-    }).lean().exec(function(err, cables) {
+    }).lean().exec(function (err, cables) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -459,10 +479,10 @@ module.exports = function(app) {
 
 
   // get the user's cables
-  app.get('/cables/json', function(req, res) {
+  app.get('/cables/json', function (req, res) {
     Cable.find({
       submittedBy: req.session.userid
-    }).lean().exec(function(err, cables) {
+    }).lean().exec(function (err, cables) {
       if (err) {
         return res.json(500, {
           error: err.msg
@@ -475,7 +495,7 @@ module.exports = function(app) {
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
-  app.get('/cables/statuses/:s/json', function(req, res) {
+  app.get('/cables/statuses/:s/json', function (req, res) {
     if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
@@ -488,7 +508,7 @@ module.exports = function(app) {
 
     if (status === 0) {
       // get all the cables
-      Cable.find({}).lean().exec(function(err, docs) {
+      Cable.find({}).lean().exec(function (err, docs) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -500,7 +520,7 @@ module.exports = function(app) {
     } else {
       var low = status * 100;
       var up = status * 100 + 99;
-      Cable.where('status').gte(low).lte(up).lean().exec(function(err, docs) {
+      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
         if (err) {
           console.error(err.msg);
           return res.json(500, {
@@ -512,10 +532,10 @@ module.exports = function(app) {
     }
   });
 
-  app.get('/cables/:id', function(req, res) {
+  app.get('/cables/:id', function (req, res) {
     Cable.findOne({
       number: req.params.id
-    }).lean().exec(function(err, cable) {
+    }).lean().exec(function (err, cable) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -526,7 +546,7 @@ module.exports = function(app) {
         return res.render('cable', {
           cable: cable,
           fs: {
-            formatCableStatus: function(s) {
+            formatCableStatus: function (s) {
               var status = {
                 '100': 'approved',
                 '101': 'ordered',
@@ -550,12 +570,12 @@ module.exports = function(app) {
               }
               return 'unknown';
             },
-            encodeName: function(s) {
+            encodeName: function (s) {
               return querystring.stringify({
                 name: s
               });
             },
-            json2List: function(json) {
+            json2List: function (json) {
               var output = '<dl>';
               for (var k in json) {
                 if (json.hasOwnProperty(k)) {
@@ -574,10 +594,10 @@ module.exports = function(app) {
 
   });
 
-  app.get('/cables/:id/json', auth.ensureAuthenticated, function(req, res) {
+  app.get('/cables/:id/json', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
       number: req.params.id
-    }).lean().exec(function(err, cable) {
+    }).lean().exec(function (err, cable) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -588,7 +608,7 @@ module.exports = function(app) {
     });
   });
 
-  app.put('/cables/:id', auth.ensureAuthenticated, function(req, res) {
+  app.put('/cables/:id', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
@@ -601,119 +621,119 @@ module.exports = function(app) {
     var required = req.body.required;
 
     switch (req.body.action) {
-      case "order":
-        update['status'] = 101;
-        update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "receive":
-        update['status'] = 102;
-        update['receivedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['receivedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "accept":
-        update['status'] = 103;
-        update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "install":
-        update['status'] = 200;
-        break;
-      case "label":
-        conditions['status'] = {
-          $gte: 200
-        };
-        update['status'] = 201;
-        update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "benchTerm":
-        conditions['status'] = {
-          $gte: 200
-        };
-        update['status'] = 202;
-        update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "benchTest":
-        conditions['status'] = {
-          $gte: 200
-        };
-        update['status'] = 203;
-        update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "pull":
-        // check required steps
-        conditions['status'] = {
-          $gte: 200
-        };
-        if (required && required.label) {
-          conditions['labeledBy'] = {
-            $exists: true
-          };
-        }
-        if (required && required.benchTerm) {
-          conditions['benchTerminatedBy'] = {
-            $exists: true
-          };
-        }
-        if (required && required.benchTest) {
-          conditions['benchTestedBy'] = {
-            $exists: true
-          };
-        }
-        update['status'] = 249;
-        break;
-      case "pulled":
-        conditions['status'] = 249;
-        update['status'] = 250;
-        update['pulledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "fieldTerm":
-        conditions['status'] = {
-          $gte: 250
-        };
-        update['status'] = 251;
-        update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "fieldTest":
-        conditions['status'] = {
-          $gte: 250
-        };
-        if (required && required.fieldTerm) {
-          conditions['fieldTerminatedBy'] = {
-            $exists: true
-          };
-        }
-        update['status'] = 252;
-        update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-        update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
-        break;
-      case "use":
-        // check required steps
-        conditions['status'] = 252;
-        if (required && required.fieldTerm) {
-          conditions['fieldTerminatedBy'] = {
-            $exists: true
-          };
-        }
-        conditions['fieldTestedBy'] = {
+    case "order":
+      update['status'] = 101;
+      update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "receive":
+      update['status'] = 102;
+      update['receivedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['receivedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "accept":
+      update['status'] = 103;
+      update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "install":
+      update['status'] = 200;
+      break;
+    case "label":
+      conditions['status'] = {
+        $gte: 200
+      };
+      update['status'] = 201;
+      update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "benchTerm":
+      conditions['status'] = {
+        $gte: 200
+      };
+      update['status'] = 202;
+      update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "benchTest":
+      conditions['status'] = {
+        $gte: 200
+      };
+      update['status'] = 203;
+      update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "pull":
+      // check required steps
+      conditions['status'] = {
+        $gte: 200
+      };
+      if (required && required.label) {
+        conditions['labeledBy'] = {
           $exists: true
         };
-        update['status'] = 300;
-        break;
-      default:
-        inValidaAction = true;
+      }
+      if (required && required.benchTerm) {
+        conditions['benchTerminatedBy'] = {
+          $exists: true
+        };
+      }
+      if (required && required.benchTest) {
+        conditions['benchTestedBy'] = {
+          $exists: true
+        };
+      }
+      update['status'] = 249;
+      break;
+    case "pulled":
+      conditions['status'] = 249;
+      update['status'] = 250;
+      update['pulledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "fieldTerm":
+      conditions['status'] = {
+        $gte: 250
+      };
+      update['status'] = 251;
+      update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "fieldTest":
+      conditions['status'] = {
+        $gte: 250
+      };
+      if (required && required.fieldTerm) {
+        conditions['fieldTerminatedBy'] = {
+          $exists: true
+        };
+      }
+      update['status'] = 252;
+      update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
+      update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      break;
+    case "use":
+      // check required steps
+      conditions['status'] = 252;
+      if (required && required.fieldTerm) {
+        conditions['fieldTerminatedBy'] = {
+          $exists: true
+        };
+      }
+      conditions['fieldTestedBy'] = {
+        $exists: true
+      };
+      update['status'] = 300;
+      break;
+    default:
+      inValidaAction = true;
     }
     if (inValidaAction) {
       res.send(400, 'invalid action');
     }
     update['updatedOn'] = Date.now();
     update['updatedBy'] = req.session.userid;
-    Cable.findOneAndUpdate(conditions, update, function(err, cable) {
+    Cable.findOneAndUpdate(conditions, update, function (err, cable) {
       if (err) {
         console.error(err.msg);
         return res.json(500, {
@@ -742,7 +762,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
     sort: {
       number: -1
     }
-  }).lean().exec(function(err, cable) {
+  }).lean().exec(function (err, cable) {
     var nextNumber;
     if (err) {
       console.error(err.msg);
@@ -772,7 +792,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
         approvedBy: req.session.userid,
         approvedOn: Date.now(),
       });
-      newCable.save(function(err, doc) {
+      newCable.save(function (err, doc) {
         if (err) {
           console.dir(err);
           // see test/duplicatedCableNumber.js for a test of this case
