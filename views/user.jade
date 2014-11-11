@@ -12,6 +12,7 @@ block head
 block content
   script.
     var roles = !{JSON.stringify(user.roles)};
+    var wbs = !{JSON.stringify(user.wbs)};
   .container(style="margin-top: 10px")
     #message
     #profile.well
@@ -50,7 +51,7 @@ block content
             if (user.wbs)
               each n in user.wbs
                 li
-                  | #{n}
+                  span.wbs #{n}
                   = ' '
                   button.btn.btn-small.btn-warning.remove-wbs
                     i.fa.fa-trash-o.fa-lg

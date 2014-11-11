@@ -1,3 +1,5 @@
+/*jslint es5:true*/
+
 var ad = require('../config/ad.json');
 
 var ldapClient = require('../lib/ldap-client');
@@ -241,6 +243,34 @@ module.exports = function (app) {
           return res.send(500, err.msg);
         }
         return res.send(201, req.body.newwbs + ' was added to the wbs list.');
+      });
+    });
+  });
+
+  app.delete('/users/:id/wbs/:wbs', auth.ensureAuthenticated, function (req, res) {
+    if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    User.findOne({
+      adid: req.params.id
+    }).exec(function (err, user) {
+      if (err) {
+        console.error(err.msg);
+        return res.send(500, err.msg);
+      }
+      if (!user) {
+        return res.send(404, 'cannot find user ' + req.params.id);
+      }
+      if (user.wbs === undefined) {
+        return res.send(204);
+      }
+      user.wbs.pull(req.params.wbs);
+      user.save(function (err) {
+        if (err) {
+          console.error(err.msg);
+          return res.send(500, err.msg);
+        }
+        return res.send(204);
       });
     });
   });
