@@ -57,11 +57,12 @@ $(function () {
     });
     $('#confirm').click(function (e) {
       e.preventDefault();
-      if ($('#newWBS').val()) {
+      var newwbs = $('#newWBS').val();
+      if (newwbs) {
         if (wbs && wbs.length) {
-          if (wbs.indexOf($('#newWBS').val()) !== -1) {
+          if (wbs.indexOf(newwbs) !== -1) {
             cleanWbsForm();
-            $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The WBS number <strong>' + $('#newWBS').val() + '</strong> is already in the user list. </div>');
+            $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The WBS number <strong>' + newwbs + '</strong> is already in the user list. </div>');
             return $(window).scrollTop($('#message div:last-child').offset().top - 40);
           }
         } else {
@@ -72,13 +73,13 @@ $(function () {
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({
-            newwbs: $('#newWBS').val()
+            newwbs: newwbs
           })
         }).done(function (data, status, jqXHR) {
-          wbs.push($('#newWBS').val());
-          $('#wbs').append('<li><span class="wbs">' + $('#newWBS').val() + '</span> <button class="btn btn-small btn-warning remove-wbs"><i class="fa fa-trash-o fa-lg"></i></button></li>');
+          wbs.push(newwbs);
+          $('#wbs').append('<li><span class="wbs">' + newwbs + '</span> <button class="btn btn-small btn-warning remove-wbs"><i class="fa fa-trash-o fa-lg"></i></button></li>');
           cleanWbsForm();
-          $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>The WBS number <strong>' + $('#newWBS').val() + '</strong> was added.</div>');
+          $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>The WBS number <strong>' + newwbs + '</strong> was added.</div>');
         }).fail(function (jqXHR, status, error) {
           if (jqXHR.status !== 401) {
             $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot add the WBS number.</div>');
