@@ -6,4 +6,4 @@ The `master` branch depends on a CAS service for authentication. If you want to 
 
 The `general` branch was developed for the original use cases.
 
-The `frib` branch is current actively developed for current frib use cases.
+The `frib` branch is currently active for recent frib use cases.
