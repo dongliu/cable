@@ -39,6 +39,7 @@ $(function () {
         var timestamp = request.getResponseHeader('Date');
         var dateObj = moment(timestamp);
         $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The modification was saved at ' + dateObj.format('HH:mm:ss') + '.</div>');
+        $('#modify').hide();
       }).fail(function (jqXHR, status, error) {
         $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>The save request failed. You might need to try again or contact the admin.</div>');
       });
