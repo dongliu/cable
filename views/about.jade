@@ -1,24 +1,63 @@
-extends layout
+doctype html
+html
+  head
+    meta(http-equiv='X-UA-Compatible', content='IE=Edge')
+    title FRIB Cable :: about
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
+    link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
+    link(rel='stylesheet', href='/font-awesome-4.2.0/css/font-awesome.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body(data-spy='scroll', data-target='.bs-docs-sidebar')
+    .navbar.navbar-inverse.navbar-fixed-top
+      .navbar-inner
+        .container-fluid
+          button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href='http://www.frib.msu.edu/', target='_blank') FRIB
+          .nav-collapse.collapse
+            ul.nav
+              li
+                a(href='/') Cable
+              li.active
+                a(href='http://traveler', target='_blank') Traveler
+              li
+                a(href='https://controls.frib.msu.edu/controlshelp/', target='_blank') Trouble report
+              li
+                a(href='/logout') Logout
+    header.jumbotron.subhead
+      .container
+        //- .hero-unit
+        h1 FRIB Cable
+        h2 A Web application to manage cables and cable users
 
-block head
-  meta(charset='urf-8')
-  title FRIB Cable App
-  meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/stylesheets/style.css')
+    //- .container-fluid
+    .container
+      .row
+        .span3.bs-docs-sidebar
+          ul.nav.nav-list.bs-docs-sidenav.affix(data-offset-top='282', data-spy='affix', style="top: 40px;")
+            li
+              a(href='#user') User management
+            li
+              a(href='#bug') Bugs and suggestions
+        .span9
+          section#user
+            .page-header
+              h2 User management
+            p An application admin user can change a user's role and add WBS numbers to a manager's account.
+            embed(src="/images/user.swf",width=1024,height=788,quality='low',play=false,loop=false,wmode='transparent',type="application/x-shockwave-flash",pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash")
+          section#bug
+            .page-header
+              h2 Bugs and suggestions
+            h4 If you find something not working well or you want a new feature, please contact
+              = ' '
+              a(href='mailto:liud@frib.msu.edu?Subject=cable%20issues',target='_top') Dong Liu
+              | . Thank you.
 
-block content
-  //- .jumbotron
-  .hero-unit
-    h1 FRIB Cable App
-    p Request and Manage Cables Online
-    if username
-      p Welcome #{username}!
-    else
-      p
-        a.btn.btn-large.btn-primary(href='https://liud-dev.nscl.msu.edu/cas/login?service=http://localhost:3000') Log In
 
-block js
-  script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
-  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+    script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
+    script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
+
