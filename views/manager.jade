@@ -38,10 +38,11 @@ block content
             a(href='./nscl/rooms', target='_blank') NSCL rooms
           li#rooms
             a(href='./srf/rooms', target='_blank') SRF highbay rooms
-      .btn-group
-        a.btn.btn-primary(href='/users', target='_blank')
-          i.fa.fa-user.fa-lg
-          | &nbsp;Users
+      if (roles.indexOf('admin') !== -1)
+        .btn-group
+          a.btn.btn-primary(href='/users', target='_blank')
+            i.fa.fa-user.fa-lg
+            | &nbsp;Users
       .btn-group
         a.btn.btn-warning(href='/switch-to-normal')
           i.fa.fa-exchange.fa-lg

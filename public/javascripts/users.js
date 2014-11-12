@@ -22,7 +22,7 @@ function initTable(oTable) {
     oTable.fnDraw();
   }).fail(function (jqXHR, status, error) {
     $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for users information.</div>');
-  }).always();
+  });
 }
 
 function updateFromModal(cb) {
@@ -62,7 +62,7 @@ function modifyFromModal(cb) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/users/' + that.id,
+      url: '/users/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -150,6 +150,10 @@ $(function () {
       });
     }
     document.forms[0].reset();
+  });
+
+  $('#user-reload').click(function (e) {
+    initTable(userTable);
   });
 
   $('#user-update').click(function (e) {

@@ -90,13 +90,18 @@ function updateUserProfile(user, res) {
         error: user.adid + ' is not unique!'
       });
     }
-    user.update({
+    var update = {
       name: result[0].displayName,
       email: result[0].mail,
       office: result[0].physicalDeliveryOfficeName,
-      phone: result[0].telephoneNumber,
-      mobile: result[0].mobile
-    }, function (err) {
+      phone: result[0].telephoneNumber
+    };
+
+    if (result[0].mobile !== undefined) {
+      update.mobile = result[0].mobile;
+    }
+
+    user.update(update, function (err) {
       if (err) {
         return res.json(500, err);
       }
