@@ -73,64 +73,15 @@ module.exports = function (app) {
     var request = {};
     var requests = [];
     var i;
-    if (req.body.requests) {
-      // console.log(req.body.requests);
-      if (!util.isArray(req.body.requests)) {
-        res.send(400, 'requests should be an array');
-      } else {
-        for (i = 0; i < req.body.requests.length; i += 1) {
-          // request = new Request(req.body.request);
-          request.basic = req.body.requests[i].basic;
-          request.from = req.body.requests[i].from;
-          request.to = req.body.requests[i].to;
-          request.required = req.body.requests[i].required;
-          request.comments = req.body.requests[i].comments;
-
-          if (req.body.action === 'clone') {
-            request.basic.quantity = 1;
-          }
-
-          request.createdBy = req.session.userid;
-          request.createdOn = Date.now();
-          request.status = 0;
-
-          if (req.body.action === 'submit') {
-            request.submittedBy = req.session.userid;
-            request.submittedOn = request.createdOn;
-            request.status = 1;
-          }
-
-          requests.push(request);
-        }
-        Request.create(requests, function (err) {
-          if (err) {
-            console.error(err.msg);
-            res.send(500, err.msg);
-          } else {
-            res.send(201, '' + (arguments.length - 1) + ' requests created');
-          }
-        });
-      }
-
-    } else if (req.body.request && !util.isArray(req.body.request)) {
-
-      // Here is the problem
-      // request = new Request(req.body.request);
+    if (req.body.request) {
       request = req.body.request;
-
       if (req.body.action === 'clone') {
         request.basic.quantity = 1;
       }
-
       request.createdBy = req.session.userid;
       request.createdOn = Date.now();
       request.status = 0;
 
-      if (req.body.action === 'submit') {
-        request.submittedBy = req.session.userid;
-        request.submittedOn = request.createdOn;
-        request.status = 1;
-      }
       // limit the max number of a clone request to 21
       if (req.body.quantity && req.body.quantity > 1 && req.body.quantity < 21) {
         for (i = 0; i < req.body.quantity; i += 1) {
@@ -145,7 +96,7 @@ module.exports = function (app) {
           }
         });
       } else if (req.body.quantity && req.body.quantity >= 21) {
-        res.send(400, 'the quantity is too large');
+        res.send(400, 'the quantity needs to be less than 21.');
       } else {
         (new Request(request)).save(function (err, cableRequest) {
           if (err) {
@@ -162,7 +113,6 @@ module.exports = function (app) {
     } else {
       res.send(400, 'need request description');
     }
-
   });
 
   // get the request details
