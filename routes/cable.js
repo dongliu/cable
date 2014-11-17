@@ -31,7 +31,6 @@ module.exports = function (app) {
   app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      // signal: signal,
       roles: req.session.roles
     });
   });
@@ -65,8 +64,8 @@ module.exports = function (app) {
     });
   });
 
-  // create a new request
-  app.post('/requests', auth.ensureAuthenticated, function (req, res) {
+  // create a new request from a form or clone
+  app.post('/requests/', auth.ensureAuthenticated, function (req, res) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
@@ -117,7 +116,7 @@ module.exports = function (app) {
 
   // get the request details
   // add authorization check here
-  app.get('/requests/:id', auth.ensureAuthenticated, function (req, res) {
+  app.get('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
       id: req.params.id,

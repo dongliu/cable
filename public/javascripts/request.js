@@ -17,7 +17,7 @@ function sendRequest(data) {
 
   var url, type;
   if (/^\/requests\/new/.test(path) || data.action === 'clone') {
-    url = '/requests';
+    url = '/requests/';
     type = 'POST';
   } else {
     url = path;
