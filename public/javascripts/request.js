@@ -1,5 +1,5 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
-/*global moment: false, Binder: false*/
+/*global moment: false, Binder: false, Bloodhound: false*/
 /*global selectColumn: false, formLinkColumn: false, titleColumn: false, createdOnColumn: false, updatedOnColumn: false, updatedByColumn: false, sharedWithColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, createdByColumn: false, createdOnColumn: false, travelerConfigLinkColumn: false, statusColumn: false, deviceColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false*/
 /*global sysSub: false, json2List: false*/
 
@@ -7,10 +7,6 @@ var initModel;
 var binder;
 var requestForm;
 var wbs;
-
-// var fribrooms = [];
-// var nsclrooms = [];
-// var srfrooms = [];
 
 function sendRequest(data) {
   var path = window.location.pathname;
@@ -33,8 +29,6 @@ function sendRequest(data) {
     processData: false,
     dataType: 'json'
   }).done(function (json) {
-    // var location = formRequest.getResponseHeader('Location');
-    // $('form[name="request"]').fadeTo('slow', 1);
     if (/^\/requests\/new/.test(path)) {
       document.location.href = json.location;
     } else {
@@ -231,7 +225,7 @@ function setCSS(cat, sub, signal) {
   }
 }
 
-function setTypeDetails(val, cableType) {
+/*function setTypeDetails(val, cableType) {
   var type = null;
   var i;
   for (i = 0; i < cableType.length; i += 1) {
@@ -247,7 +241,7 @@ function setTypeDetails(val, cableType) {
     return type;
   }
   return null;
-}
+}*/
 
 /*function setRooms(building, room) {
   var rooms;
@@ -334,41 +328,41 @@ function initwbs() {
     $('#rea6wbs').show();
     link = '/rea6/wbs/json';
   }
-  $('#wbs').autocomplete({
-    minLength: 2,
-    source: function (req, res) {
-      var term = req.term;
-      var output = [];
+  // $('#wbs').autocomplete({
+  //   minLength: 2,
+  //   source: function (req, res) {
+  //     var term = req.term;
+  //     var output = [];
 
-      if (term.indexOf('.', term.length - 1) === -1) {
-        return;
-      }
+  //     if (term.indexOf('.', term.length - 1) === -1) {
+  //       return;
+  //     }
 
-      term = term.substring(0, term.length - 1);
-      if (wbs && wbs.children) {
-        output = getChildren(wbs, term);
-        if (output.length === 0) {
-          return;
-        }
-        res(output);
-      } else {
-        $.getJSON(link, function (data, status, xhr) {
-          wbs = data;
-          output = getChildren(wbs, term);
-          if (output.length === 0) {
-            return;
-          }
-          res(output);
-        });
-      }
-    },
-    focus: function (event, ui) {
-      $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
-    },
-    select: function (event, ui) {
-      var value = ui.item.value;
-    }
-  });
+  //     term = term.substring(0, term.length - 1);
+  //     if (wbs && wbs.children) {
+  //       output = getChildren(wbs, term);
+  //       if (output.length === 0) {
+  //         return;
+  //       }
+  //       res(output);
+  //     } else {
+  //       $.getJSON(link, function (data, status, xhr) {
+  //         wbs = data;
+  //         output = getChildren(wbs, term);
+  //         if (output.length === 0) {
+  //           return;
+  //         }
+  //         res(output);
+  //       });
+  //     }
+  //   },
+  //   focus: function (event, ui) {
+  //     $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
+  //   },
+  //   select: function (event, ui) {
+  //     var value = ui.item.value;
+  //   }
+  // });
 }
 
 
@@ -378,7 +372,6 @@ $(function () {
       return false;
     }
   });
-  var cableType = [];
 
   requestForm = document.forms[0];
 
@@ -405,91 +398,60 @@ $(function () {
 
   css();
 
-  // snapshot the initial form model
-
   $('#project').change(function () {
     initwbs();
   });
 
-/*  $.getJSON('/frib/rooms/json', function (json) {
-    getLeaves(json, fribrooms);
-  });
-  $.getJSON('/nscl/rooms/json', function (json) {
-    getLeaves(json, nsclrooms);
-  });
-  $.getJSON('/srf/rooms/json', function (json) {
-    getLeaves(json, srfrooms);
-  });*/
-
-
-  /*$('#from-building').change(function () {
-    $('#from-room').prop('disabled', false);
-    setRooms('#from-building', '#from-room');
-  });
-
-  $('#to-building').change(function () {
-    $('#to-room').prop('disabled', false);
-    setRooms('#to-building', '#to-room');
-  });*/
-
-  $('#type-details').popover({
+/*  $('#type-details').popover({
     html: true
-  });
-
-/*  $('#engineer').autocomplete({
-    minLength: 1,
-    source: function (req, res) {
-      var term = req.term.toLowerCase();
-      var output = [];
-      var key = term.charAt(0);
-      if (key in nameCache) {
-        for (var i = 0; i < nameCache[key].length; i += 1) {
-          if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
-            output.push(nameCache[key][i]);
-          }
-        }
-        res(output);
-        return;
-      }
-      $.getJSON('/adusernames', req, function (data, status, xhr) {
-        var names = [];
-        for (var i = 0; i < data.length; i += 1) {
-          if (data[i].displayName.indexOf(',') !== -1) {
-            names.push(data[i].displayName);
-          }
-        }
-        nameCache[term] = names;
-        res(names);
-      });
-    },
-    select: function (event, ui) {
-      $('#engineer').val(ui.item.value);
-    }
   });*/
 
-  $('#type').autocomplete({
-    minLength: 1,
-    source: function (req, res) {
-      var term = req.term.toLowerCase();
-      var output = [];
-      if (cableType.length === 0) {
-        $.getJSON('/cabletypes/json', function (data, status, xhr) {
-          cableType = data;
-          res(getType(cableType, term));
-        });
-      } else {
-        res(getType(cableType, term));
-      }
-    },
-    select: function (event, ui) {
-      $('#type').val(ui.item.value);
-      var type = setTypeDetails($('#type').val(), cableType);
-      if (type) {
-        $('#function').val(type.service);
-      }
+  var usernames = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('displayName'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 20,
+    prefetch: {
+      url: '/adusernames'
     }
-
   });
+
+  usernames.initialize();
+
+  $('#engineer').typeahead({
+    minLength: 1,
+    highlight: true,
+    hint: true
+  }, {
+    name: 'usernames',
+    displayKey: 'displayName',
+    source: usernames.ttAdapter()
+  });
+
+  var cabletypes = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 20,
+    prefetch: {
+      url: '/cabletypes/json'
+    }
+  });
+
+  cabletypes.initialize();
+
+  $('#type').typeahead({
+    minLength: 1,
+    highlight: true,
+    hint: true
+  }, {
+    name: 'cabletypes',
+    displayKey: 'name',
+    source: cabletypes.ttAdapter()
+  });
+
+  // $('#type').on('typeahead:selected', function (e, suggestion, dataset) {
+  //   console.log(dataset);
+  //   console.log(suggestion);
+  // });
 
 
 
@@ -544,17 +506,18 @@ $(function () {
       // validator.form();
 
       initModel = _.cloneDeep(binder.serialize());
+
       // cable type details
-      if ($('#type').val() !== '') {
-        if (cableType.length === 0) {
-          $.getJSON('/cabletypes/json', function (data, status, xhr) {
-            cableType = data;
-            setTypeDetails($('#type').val(), cableType);
-          });
-        } else {
-          setTypeDetails($('#type').val(), cableType);
-        }
-      }
+      // if ($('#type').val() !== '') {
+      //   if (cableType.length === 0) {
+      //     $.getJSON('/cabletypes/json', function (data, status, xhr) {
+      //       cableType = data;
+      //       setTypeDetails($('#type').val(), cableType);
+      //     });
+      //   } else {
+      //     setTypeDetails($('#type').val(), cableType);
+      //   }
+      // }
       // show action buttons
 
       if (json.status === 0) {
