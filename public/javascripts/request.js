@@ -379,11 +379,6 @@ $(function () {
     }
   });
   var cableType = [];
-  // var nameCache = {};
-  // var wbs;
-  // var penetration = [];
-  // var deviceCache = {};
-  // var rackCache = {};
 
   requestForm = document.forms[0];
 
