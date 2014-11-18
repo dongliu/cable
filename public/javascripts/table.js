@@ -384,7 +384,7 @@ var numberColumn = {
   sTitle: 'Number',
   mData: 'number',
   mRender: function (data, type, full) {
-    return '<a href="cables/' + data + '" target="_blank">' + data + '</a>';
+    return '<a href="cables/' + data + '/" target="_blank">' + data + '</a>';
   },
   bFilter: true
 };

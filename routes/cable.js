@@ -68,7 +68,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
     } else {
       nextNumber = sss + '000000';
     }
-    console.log(nextNumber);
+    // console.log(nextNumber);
     var newCable = new Cable({
       number: nextNumber,
       status: 100,
@@ -98,11 +98,10 @@ function createCable(cableRequest, req, res, quantity, cables) {
           });
         }
       } else {
-        cables.push(doc.toJSON());
+        console.log('new cable ' + nextNumber + ' was created.');
+        cables.push(req.protocol + '://' + req.get('host') + '/cables/' + nextNumber + '/');
         if (quantity === 1) {
-          var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
-          res.set('Location', url);
-          return res.json(201, cables);
+          return res.json(200, cables);
         }
         createCable(cableRequest, req, res, quantity - 1, cables);
       }
@@ -563,7 +562,7 @@ module.exports = function (app) {
     }
   });
 
-  app.get('/cables/:id', function (req, res) {
+  app.get('/cables/:id/', function (req, res) {
     Cable.findOne({
       number: req.params.id
     }).lean().exec(function (err, cable) {

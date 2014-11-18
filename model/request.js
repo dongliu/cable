@@ -94,54 +94,69 @@ var cable = new Schema({
     index: true,
     unique: true
   },
-  // tags: [String],
   status: Number,
   basic: {
-    project: String,
-    system: String,
-    subsystem: String,
-    signal: String,
-    cableType: String,
+    project: {
+      type: String,
+      enum: ['FRIB', 'REA'],
+      uppercase: true,
+      required: true
+    },
     engineer: String,
+    wbs: {
+      type: String,
+      required: true
+    },
+    originCategory: {
+      type: String,
+      enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      required: true
+    },
+    originSubcategory: {
+      type: String,
+      enum: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      required: true
+    },
+    signalClassification: {
+      type: String,
+      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+      required: true
+    },
+    cableType: String,
     service: String,
-    wbs: String,
+    traySection: {
+      type: String,
+      enum: ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS']
+    },
     tags: [String]
-    // ,quantity: {
-    //   type: Number,
-    //   min: 1
-    // }
   },
 
   from: {
-    building: String,
-    area: String,
-    room: String,
     rack: String,
-    elevation: Number,
-    unit: String,
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
     label: String
   },
+
   to: {
-    building: String,
-    area: String,
-    room: String,
     rack: String,
-    elevation: Number,
-    unit: String,
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
     label: String
   },
+
   required: {
     label: Boolean,
     benchTerm: Boolean,
     benchTest: Boolean,
     fieldTerm: Boolean
   },
+
+  conduit: String,
+  routing: [Mixed],
+
   comments: String,
   submittedBy: String,
   submittedOn: Date,
