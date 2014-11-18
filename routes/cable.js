@@ -1,3 +1,5 @@
+/*jslint es5: true*/
+
 var sysSub = require('../config/sys-sub.json');
 
 var mongoose = require('mongoose');
@@ -26,6 +28,87 @@ var querystring = require('querystring');
 
 
 //TODO: need a server side validation in the future
+
+function pad(num) {
+  var s = num.toString();
+  if (s.length === 6) {
+    return s;
+  }
+  s = '000000' + s;
+  return s.substring(s.length - 6);
+}
+
+function increment(number) {
+  var sequence = parseInt(number.substring(3), 10);
+  if (sequence === 999999) {
+    return null;
+  }
+  return number.substring(0, 3) + pad(sequence + 1);
+}
+
+function createCable(cableRequest, req, res, quantity, cables) {
+  var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
+  Cable.findOne({
+    number: {
+      $regex: '^' + sss + '\\d{6}'
+    }
+  }, 'number', {
+    sort: {
+      number: -1
+    }
+  }).lean().exec(function (err, cable) {
+    var nextNumber;
+    if (err) {
+      console.error(err.msg);
+      // revert the request state?
+      return res.send(500, err.msg);
+    }
+    if (cable) {
+      nextNumber = increment(cable.number);
+    } else {
+      nextNumber = sss + '000000';
+    }
+    console.log(nextNumber);
+    var newCable = new Cable({
+      number: nextNumber,
+      status: 100,
+      request_id: cableRequest._id,
+      tags: cableRequest.basic.tags,
+      basic: cableRequest.basic,
+      from: cableRequest.from,
+      to: cableRequest.to,
+      required: cableRequest.required,
+      comments: cableRequest.comments,
+      submittedBy: cableRequest.submittedBy,
+      submittedOn: cableRequest.submittedOn,
+      approvedBy: req.session.userid,
+      approvedOn: Date.now(),
+    });
+    newCable.save(function (err, doc) {
+      if (err) {
+        console.dir(err);
+        // see test/duplicatedCableNumber.js for a test of this case
+        if (err.code && err.code === 11000) {
+          console.log(nextNumber + ' already existed, try again ...');
+          createCable(cableRequest, req, res, quantity, cables);
+        } else {
+          console.error(err.msg);
+          return res.json(500, {
+            error: err.msg
+          });
+        }
+      } else {
+        cables.push(doc.toJSON());
+        if (quantity === 1) {
+          var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
+          res.set('Location', url);
+          return res.json(201, cables);
+        }
+        createCable(cableRequest, req, res, quantity - 1, cables);
+      }
+    });
+  });
+}
 
 module.exports = function (app) {
   app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
@@ -91,7 +174,7 @@ module.exports = function (app) {
             console.dir(err);
             res.send(500, err.msg);
           } else {
-            res.send(201, '' + req.body.quantity + ' requests created');
+            res.send(201, req.body.quantity + ' requests created');
           }
         });
       } else if (req.body.quantity && req.body.quantity >= 21) {
@@ -258,12 +341,12 @@ module.exports = function (app) {
   }
 
   // update a request
-  app.put('/requests/:id/', auth.ensureAuthenticated, authorize(), function (req, res) {
+  app.put('/requests/:id/', auth.ensureAuthenticated, authorize, function (req, res) {
     var request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
 
-    if (req.body.action == 'save') {
+    if (req.body.action === 'save') {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 0
@@ -276,16 +359,15 @@ module.exports = function (app) {
         }
         if (cableRequest) {
           return res.json(200, cableRequest.toJSON());
-        } else {
-          console.error(req.params.id + ' gone');
-          return res.json(410, {
-            error: req.params.id + ' gone'
-          });
         }
+        console.error(req.params.id + ' gone');
+        return res.json(410, {
+          error: req.params.id + ' gone'
+        });
       });
     }
 
-    if (req.body.action == 'submit') {
+    if (req.body.action === 'submit') {
       // cannot submitted twice
       request.submittedBy = req.session.userid;
       request.submittedOn = Date.now();
@@ -303,16 +385,15 @@ module.exports = function (app) {
         }
         if (cableRequest) {
           return res.json(200, cableRequest.toJSON());
-        } else {
-          console.error(req.params.id + ' cannot be submitted');
-          return res.json(410, {
-            error: req.params.id + ' cannot be submitted'
-          });
         }
+        console.error(req.params.id + ' cannot be submitted');
+        return res.json(410, {
+          error: req.params.id + ' cannot be submitted'
+        });
       });
     }
 
-    if (req.body.action == 'revert') {
+    if (req.body.action === 'revert') {
       request.revertedBy = req.session.userid;
       request.revertedOn = Date.now();
       request.status = 0;
@@ -330,16 +411,15 @@ module.exports = function (app) {
         }
         if (cableRequest) {
           return res.json(200, cableRequest.toJSON());
-        } else {
-          console.error(req.params.id + ' cannot be reverted');
-          return res.json(400, {
-            error: req.params.id + ' cannot be reverted'
-          });
         }
+        console.error(req.params.id + ' cannot be reverted');
+        return res.json(400, {
+          error: req.params.id + ' cannot be reverted'
+        });
       });
     }
 
-    if (req.body.action == 'adjust') {
+    if (req.body.action === 'adjust') {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
@@ -352,19 +432,15 @@ module.exports = function (app) {
         }
         if (cableRequest) {
           return res.json(200, cableRequest.toJSON());
-        } else {
-          console.error(req.params.id + ' gone');
-          return res.json(410, {
-            error: req.params.id + ' gone'
-          });
         }
+        console.error(req.params.id + ' gone');
+        return res.json(410, {
+          error: req.params.id + ' gone'
+        });
       });
     }
 
-    if (req.body.action == 'reject') {
-      if (roles.length === 0 || roles.indexOf('manager') === -1) {
-        return res.send(403, "You are not authorized to access this resource. ");
-      }
+    if (req.body.action === 'reject') {
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
       request.status = 3;
@@ -380,19 +456,15 @@ module.exports = function (app) {
         }
         if (cableRequest) {
           return res.json(200, cableRequest.toJSON());
-        } else {
-          console.error(req.params.id + ' gone');
-          return res.json(410, {
-            error: req.params.id + ' gone'
-          });
         }
+        console.error(req.params.id + ' gone');
+        return res.json(410, {
+          error: req.params.id + ' gone'
+        });
       });
     }
 
-    if (req.body.action == 'approve') {
-      if (roles.length === 0 || roles.indexOf('manager') === -1) {
-        return res.send(403, "You are not authorized to access this resource. ");
-      }
+    if (req.body.action === 'approve') {
       request.approvedBy = req.session.userid;
       request.approvedOn = Date.now();
       request.status = 2;
@@ -523,9 +595,8 @@ module.exports = function (app) {
                 '400': 'failed',
                 '500': 'aborted'
               };
-              // var status = ['approved', 'procuring', 'installing', 'working', 'failed'];
-              if (status['' + s]) {
-                return status['' + s];
+              if (status[s.toString()]) {
+                return status[s.toString()];
               }
               return 'unknown';
             },
@@ -536,7 +607,8 @@ module.exports = function (app) {
             },
             json2List: function (json) {
               var output = '<dl>';
-              for (var k in json) {
+              var k;
+              for (k in json) {
                 if (json.hasOwnProperty(k)) {
                   output = output + '<p>' + k + ' : ' + json[k] + '</p>';
                 }
@@ -546,9 +618,8 @@ module.exports = function (app) {
             }
           }
         });
-      } else {
-        return res.send(403, 'cannot find cable ' + req.params.id);
       }
+      return res.send(403, 'cannot find cable ' + req.params.id);
     });
 
   });
@@ -581,108 +652,108 @@ module.exports = function (app) {
 
     switch (req.body.action) {
     case "order":
-      update['status'] = 101;
-      update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 101;
+      update.orderedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.orderedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "receive":
-      update['status'] = 102;
-      update['receivedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['receivedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 102;
+      update.receivedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.receivedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "accept":
-      update['status'] = 103;
-      update['orderedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['orderedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 103;
+      update.orderedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.orderedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "install":
-      update['status'] = 200;
+      update.status = 200;
       break;
     case "label":
-      conditions['status'] = {
+      conditions.status = {
         $gte: 200
       };
-      update['status'] = 201;
-      update['labeledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['labeledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 201;
+      update.labeledBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.labeledOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "benchTerm":
-      conditions['status'] = {
+      conditions.status = {
         $gte: 200
       };
-      update['status'] = 202;
-      update['benchTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['benchTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 202;
+      update.benchTerminatedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.benchTerminatedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "benchTest":
-      conditions['status'] = {
+      conditions.status = {
         $gte: 200
       };
-      update['status'] = 203;
-      update['benchTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['benchTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 203;
+      update.benchTestedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.benchTestedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "pull":
       // check required steps
-      conditions['status'] = {
+      conditions.status = {
         $gte: 200
       };
       if (required && required.label) {
-        conditions['labeledBy'] = {
+        conditions.labeledBy = {
           $exists: true
         };
       }
       if (required && required.benchTerm) {
-        conditions['benchTerminatedBy'] = {
+        conditions.benchTerminatedBy = {
           $exists: true
         };
       }
       if (required && required.benchTest) {
-        conditions['benchTestedBy'] = {
+        conditions.benchTestedBy = {
           $exists: true
         };
       }
-      update['status'] = 249;
+      update.status = 249;
       break;
     case "pulled":
-      conditions['status'] = 249;
-      update['status'] = 250;
-      update['pulledBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['pulledOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      conditions.status = 249;
+      update.status = 250;
+      update.pulledBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.pulledOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "fieldTerm":
-      conditions['status'] = {
+      conditions.status = {
         $gte: 250
       };
-      update['status'] = 251;
-      update['fieldTerminatedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['fieldTerminatedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 251;
+      update.fieldTerminatedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.fieldTerminatedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "fieldTest":
-      conditions['status'] = {
+      conditions.status = {
         $gte: 250
       };
       if (required && required.fieldTerm) {
-        conditions['fieldTerminatedBy'] = {
+        conditions.fieldTerminatedBy = {
           $exists: true
         };
       }
-      update['status'] = 252;
-      update['fieldTestedBy'] = (req.body.name == '') ? req.session.username : req.body.name;
-      update['fieldTestedOn'] = (req.body.date == '') ? Date.now() : Date(req.body.date);
+      update.status = 252;
+      update.fieldTestedBy = (req.body.name === '') ? req.session.username : req.body.name;
+      update.fieldTestedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
       break;
     case "use":
       // check required steps
-      conditions['status'] = 252;
+      conditions.status = 252;
       if (required && required.fieldTerm) {
-        conditions['fieldTerminatedBy'] = {
+        conditions.fieldTerminatedBy = {
           $exists: true
         };
       }
-      conditions['fieldTestedBy'] = {
+      conditions.fieldTestedBy = {
         $exists: true
       };
-      update['status'] = 300;
+      update.status = 300;
       break;
     default:
       inValidaAction = true;
@@ -690,8 +761,8 @@ module.exports = function (app) {
     if (inValidaAction) {
       res.send(400, 'invalid action');
     }
-    update['updatedOn'] = Date.now();
-    update['updatedBy'] = req.session.userid;
+    update.updatedOn = Date.now();
+    update.updatedBy = req.session.userid;
     Cable.findOneAndUpdate(conditions, update, function (err, cable) {
       if (err) {
         console.error(err.msg);
@@ -701,98 +772,10 @@ module.exports = function (app) {
       }
       if (cable) {
         return res.json(200, cable.toJSON());
-      } else {
-        console.error(req.params.id + ' with conditions for the update cannot be found');
-        return res.send(409, req.params.id + ' state, requirements and the update conflicted');
       }
+      console.error(req.params.id + ' with conditions for the update cannot be found');
+      return res.send(409, req.params.id + ' state, requirements and the update conflicted');
     });
 
   });
 };
-
-
-function createCable(cableRequest, req, res, quantity, cables) {
-  var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
-  Cable.findOne({
-    number: {
-      $regex: '^' + sss + '\\d{6}'
-    }
-  }, 'number', {
-    sort: {
-      number: -1
-    }
-  }).lean().exec(function (err, cable) {
-    var nextNumber;
-    if (err) {
-      console.error(err.msg);
-      // revert the request state?
-      return res.json(500, {
-        error: err.msg
-      });
-    } else {
-      if (cable) {
-        nextNumber = increment(cable.number);
-      } else {
-        nextNumber = sss + '000000';
-      }
-      console.log(nextNumber);
-      var newCable = new Cable({
-        number: nextNumber,
-        status: 100,
-        request_id: cableRequest._id,
-        tags: cableRequest.basic.tags,
-        basic: cableRequest.basic,
-        from: cableRequest.from,
-        to: cableRequest.to,
-        required: cableRequest.required,
-        comments: cableRequest.comments,
-        submittedBy: cableRequest.submittedBy,
-        submittedOn: cableRequest.submittedOn,
-        approvedBy: req.session.userid,
-        approvedOn: Date.now(),
-      });
-      newCable.save(function (err, doc) {
-        if (err) {
-          console.dir(err);
-          // see test/duplicatedCableNumber.js for a test of this case
-          if (err.code && err.code == 11000) {
-            console.log(nextNumber + ' already existed, try again ...');
-            createCable(cableRequest, req, res, quantity, cables);
-          } else {
-            console.error(err.msg);
-            return res.json(500, {
-              error: err.msg
-            });
-          }
-        } else {
-          cables.push(doc.toJSON());
-          if (quantity === 1) {
-            var url = req.protocol + '://' + req.get('host') + '/cables/' + nextNumber;
-            res.set('Location', url);
-            return res.json(201, cables);
-          } else {
-            createCable(cableRequest, req, res, quantity - 1, cables);
-          }
-        }
-      });
-    }
-  });
-}
-
-function increment(number) {
-  var sequence = parseInt(number.substring(3), 10);
-  if (sequence == 999999) {
-    return null;
-  }
-  return number.substring(0, 3) + pad(sequence + 1);
-}
-
-function pad(num) {
-  var s = '' + num;
-  if (s.length >= 6) {
-    return s;
-  } else {
-    s = '000000' + s;
-    return s.substring(s.length - 6);
-  }
-}
