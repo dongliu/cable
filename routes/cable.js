@@ -25,7 +25,7 @@ var querystring = require('querystring');
 // aborted: 500
 
 
-//TODO need a server side validation in the future
+//TODO: need a server side validation in the future
 
 module.exports = function (app) {
   app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
@@ -124,7 +124,7 @@ module.exports = function (app) {
     });
   });
 
-  app.delete('/requests/:id', auth.ensureAuthenticated, function (req, res) {
+  app.delete('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
     Request.findById(req.params.id).exec(function (err, request) {
       if (err) {
         console.error(err.msg);
@@ -237,16 +237,31 @@ module.exports = function (app) {
     }
   });
 
-  // update a request
-  app.put('/requests/:id', auth.ensureAuthenticated, function (req, res) {
+  function authorize(req, res, next) {
     var roles = req.session.roles;
+    var action = req.body.action;
+    if (!req.body.action) {
+      return res.send(400, 'no action found.');
+    }
+    if (action === 'adjust' || action === 'approve' || action === 'reject') {
+      if (roles.length === 0 || roles.indexOf('manager') === -1) {
+        return res.send(404, 'You are not authorized to modify this resource. ');
+      }
+      // assume no way to guess the request id
+      next();
+    } else if (action === 'save' || action === 'submit' || action === 'revert') {
+      // assume no way to guess the request id
+      next();
+    } else {
+      return res.send(400, 'action not understood.');
+    }
+  }
+
+  // update a request
+  app.put('/requests/:id/', auth.ensureAuthenticated, authorize(), function (req, res) {
     var request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
-
-    if (!req.body.action) {
-      res.send(400, 'do not know you want to do');
-    }
 
     if (req.body.action == 'save') {
       Request.findOneAndUpdate({
@@ -300,9 +315,7 @@ module.exports = function (app) {
     if (req.body.action == 'revert') {
       request.revertedBy = req.session.userid;
       request.revertedOn = Date.now();
-      // request.testChange = 'done';
       request.status = 0;
-
 
       console.dir(request);
       Request.findOneAndUpdate({
@@ -327,9 +340,6 @@ module.exports = function (app) {
     }
 
     if (req.body.action == 'adjust') {
-      if (roles.length === 0 || roles.indexOf('manager') === -1) {
-        return res.send(403, "You are not authorized to access this resource. ");
-      }
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
