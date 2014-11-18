@@ -47,7 +47,7 @@ function increment(number) {
 }
 
 function createCable(cableRequest, req, res, quantity, cables) {
-  var sss = cableRequest.basic.system + cableRequest.basic.subsystem + cableRequest.basic.signal;
+  var sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
   Cable.findOne({
     number: {
       $regex: '^' + sss + '\\d{6}'

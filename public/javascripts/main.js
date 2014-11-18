@@ -356,8 +356,8 @@ $(function () {
   });
 
   $('#reload').click(function (e) {
-    // initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
-    initRequests(savedTable, submittedTable, rejectedTable, approvedTable, null);
+    initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
+    // initRequests(savedTable, submittedTable, rejectedTable, approvedTable, null);
   });
 
   /*saved tab starts*/
