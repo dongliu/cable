@@ -27,11 +27,19 @@ var installedTableColumns = procuringTableColumns;
 var nameCache = {};
 
 // TODO: need a new way to handle ajax 401
-/*$(document).ajaxError(function (event, jqxhr) {
-  if (jqxhr.status == 401) {
-    document.location.href = window.location.pathname;
+
+
+function initCableTableFromData(oTable, data, cb) {
+  oTable.fnClearTable();
+  oTable.fnAddData(data);
+  if ($('#cables-unwrap').hasClass('active')) {
+    fnUnwrap(oTable);
   }
-});*/
+  oTable.fnDraw();
+  if (cb) {
+    cb();
+  }
+}
 
 function initRequestTable(oTable, url) {
   $.ajax({
@@ -102,16 +110,33 @@ function initCableTables(procuringTable, installingTable, installedTable) {
   }
 }
 
-function initCableTableFromData(oTable, data, cb) {
-  oTable.fnClearTable();
-  oTable.fnAddData(data);
-  if ($('#cables-unwrap').hasClass('active')) {
-    fnUnwrap(oTable);
-  }
-  oTable.fnDraw();
-  if (cb) {
-    cb();
-  }
+
+function approveFromModal(requests, approvingTable, procuringTable) {
+  $('#approve').prop('disabled', true);
+  var number = $('#modal .modal-body div').length;
+  $('#modal .modal-body div').each(function (index) {
+    var that = this;
+    $.ajax({
+      url: '/requests/' + that.id + '/',
+      type: 'PUT',
+      contentType: 'application/json',
+      dataType: 'json',
+      data: JSON.stringify({
+        action: 'approve'
+      })
+    }).done(function (cables) {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).addClass('text-success');
+      // remove the request row
+      approvingTable.fnDeleteRow(requests[index]);
+      // add the new cables to the procuring table
+      procuringTable.fnAddData(cables);
+    }).fail(function (jqXHR, status, error) {
+      $(that).prepend('<i class="icon-question"></i>');
+      $(that).append(' : ' + jqXHR.responseText);
+      $(that).addClass('text-error');
+    });
+  });
 }
 
 function batchApprove(oTable, procuringTable) {
@@ -138,8 +163,9 @@ function batchApprove(oTable, procuringTable) {
   }
 }
 
-function approveFromModal(requests, approvingTable, procuringTable) {
-  $('#approve').prop('disabled', true);
+
+function rejectFromModal(requests, approvingTable, rejectedTable) {
+  $('#reject').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function (index) {
     var that = this;
@@ -147,17 +173,17 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       url: '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
-      dataType: 'json',
       data: JSON.stringify({
-        action: 'approve'
+        action: 'reject'
       }),
-    }).done(function (cables) {
-      $(that).prepend('<i class="icon-check"></i>');
+      dataType: 'json'
+    }).done(function (request) {
+      $(that).prepend('<i class="icon-remove"></i>');
       $(that).addClass('text-success');
       // remove the request row
       approvingTable.fnDeleteRow(requests[index]);
       // add the new cables to the procuring table
-      procuringTable.fnAddData(cables);
+      rejectedTable.fnAddData(request);
     }).fail(function (jqXHR, status, error) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
@@ -188,34 +214,6 @@ function batchReject(oTable, rejectedTable) {
     $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
   }
-}
-
-function rejectFromModal(requests, approvingTable, rejectedTable) {
-  $('#reject').prop('disabled', true);
-  var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function (index) {
-    var that = this;
-    $.ajax({
-      url: '/requests/' + that.id + '/',
-      type: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        action: 'reject'
-      }),
-      dataType: 'json'
-    }).done(function (request) {
-      $(that).prepend('<i class="icon-remove"></i>');
-      $(that).addClass('text-success');
-      // remove the request row
-      approvingTable.fnDeleteRow(requests[index]);
-      // add the new cables to the procuring table
-      rejectedTable.fnAddData(request);
-    }).fail(function (jqXHR, status, error) {
-      $(that).prepend('<i class="icon-question"></i>');
-      $(that).append(' : ' + jqXHR.responseText);
-      $(that).addClass('text-error');
-    });
-  });
 }
 
 /*function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
@@ -321,10 +319,11 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
 
 $(function () {
 
+  var approvingTable, rejectedTable, procuringTable, installingTable, installedTable;
   /*approving table starts*/
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
-  var approvingTable = $('#approving-table').dataTable({
+  approvingTable = $('#approving-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: approvingAoCulumns,
@@ -373,7 +372,7 @@ $(function () {
 
   var rejectedAoColumns = [detailsLinkColumn, rejectedOnColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#rejected-table', rejectedAoColumns);
-  var rejectedTable = $('#rejected-table').dataTable({
+  rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: rejectedAoColumns,
@@ -408,7 +407,7 @@ $(function () {
 
   var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
-  var procuringTable = $('#procuring-table').dataTable({
+  procuringTable = $('#procuring-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: procuringAoColumns,
@@ -454,7 +453,7 @@ $(function () {
   /*installing tab starts*/
   var installingAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#installing-table', installingAoColumns);
-  var installingTable = $('#installing-table').dataTable({
+  installingTable = $('#installing-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: installingAoColumns,
@@ -499,7 +498,7 @@ $(function () {
   /*installed tab starts*/
   var installedAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([commentsColumn]);
   fnAddFilterFoot('#installed-table', installedAoColumns);
-  var installedTable = $('#installed-table').dataTable({
+  installedTable = $('#installed-table').dataTable({
     aaData: [],
     bAutoWidth: false,
     aoColumns: installedAoColumns,
@@ -541,6 +540,6 @@ $(function () {
   $('#reload').click(function (e) {
     initRequestTable(approvingTable, '/requests/statuses/1/json');
     initRequestTable(rejectedTable, 'requests/statuses/3/json');
-    // initCableTables(procuringTable, installingTable, installedTable);
+    initCableTables(procuringTable, installingTable, installedTable);
   });
 });
