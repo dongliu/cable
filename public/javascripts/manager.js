@@ -49,7 +49,7 @@ function initRequestTable(oTable, url) {
 }
 
 
-/*function initCableTables(procuringTable, installingTable, installedTable) {
+function initCableTables(procuringTable, installingTable, installedTable) {
   if (procuringTable) {
     $.ajax({
       url: '/cables/statuses/1/json',
@@ -122,7 +122,7 @@ function batchApprove(oTable, procuringTable) {
     $('#modal .modal-body').empty();
     selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.originCategory + data.basic.originSubcategory + data.basic.signalClassification + '||' + data.basic.wbs + '</div>');
       requests.push(row);
     });
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
@@ -144,7 +144,7 @@ function approveFromModal(requests, approvingTable, procuringTable) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id,
+      url: '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       dataType: 'json',
@@ -158,13 +158,11 @@ function approveFromModal(requests, approvingTable, procuringTable) {
       approvingTable.fnDeleteRow(requests[index]);
       // add the new cables to the procuring table
       procuringTable.fnAddData(cables);
-    })
-      .fail(function (jqXHR, status, error) {
-        $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.responseText);
-        $(that).addClass('text-error');
-      })
-      .always();
+    }).fail(function (jqXHR, status, error) {
+      $(that).prepend('<i class="icon-question"></i>');
+      $(that).append(' : ' + jqXHR.responseText);
+      $(that).addClass('text-error');
+    });
   });
 }
 
@@ -176,7 +174,7 @@ function batchReject(oTable, rejectedTable) {
     $('#modal .modal-body').empty();
     selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.system + data.basic.subsystem + data.basic.signal + '||' + data.basic.wbs + '</div>');
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.originCategory + data.basic.originSubcategory + data.basic.signalClassification + '||' + data.basic.wbs + '</div>');
       requests.push(row);
     });
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
@@ -198,7 +196,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id,
+      url: '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -212,17 +210,15 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
       approvingTable.fnDeleteRow(requests[index]);
       // add the new cables to the procuring table
       rejectedTable.fnAddData(request);
-    })
-      .fail(function (jqXHR, status, error) {
-        $(that).prepend('<i class="icon-question"></i>');
-        $(that).append(' : ' + jqXHR.responseText);
-        $(that).addClass('text-error');
-      })
-      .always();
+    }).fail(function (jqXHR, status, error) {
+      $(that).prepend('<i class="icon-question"></i>');
+      $(that).append(' : ' + jqXHR.responseText);
+      $(that).addClass('text-error');
+    });
   });
 }
 
-function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
+/*function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
   var required = [];
@@ -324,8 +320,8 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
 }*/
 
 $(function () {
-  /*approving table starts*/
 
+  /*approving table starts*/
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
   var approvingTable = $('#approving-table').dataTable({
@@ -363,13 +359,13 @@ $(function () {
     fnSelectAll(approvingTable, 'row-selected', 'select-row', true);
   });
 
-/*  $('#approving-approve').click(function (e) {
+  $('#approving-approve').click(function (e) {
     batchApprove(approvingTable, procuringTable);
   });
 
   $('#approving-reject').click(function (e) {
     batchReject(approvingTable, rejectedTable);
-  });*/
+  });
 
   /*approving tab ends*/
 
@@ -445,13 +441,13 @@ $(function () {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-/*  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
-    batchCableAction(procuringTable, $(this).val(), procuringTable);
-  });
+  /*  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
+      batchCableAction(procuringTable, $(this).val(), procuringTable);
+    });
 
-  $('#procuring-to-install').click(function (e) {
-    batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
-  });*/
+    $('#procuring-to-install').click(function (e) {
+      batchCableAction(procuringTable, $(this).val(), procuringTable, installingTable);
+    });*/
 
   /*procuring tab ends*/
 
@@ -490,13 +486,13 @@ $(function () {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
-/*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
-    batchCableAction(installingTable, $(this).val(), null, installingTable);
-  });
+  /*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
+      batchCableAction(installingTable, $(this).val(), null, installingTable);
+    });
 
-  $('#installing-to-use').click(function (e) {
-    batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
-  });*/
+    $('#installing-to-use').click(function (e) {
+      batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
+    });*/
 
   /*installing tab ends*/
 
