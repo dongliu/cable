@@ -15,9 +15,17 @@ var submittedTableColumns = {
   comments: [21]
 };
 
-var rejectedTableColumns = submittedTableColumns;
+var rejectedTableColumns = {
+  from: [13, 14, 15, 16],
+  to: [17, 18, 19, 20],
+  comments: [22]
+};
 
-var approvedTableColumns = submittedTableColumns;
+var approvedTableColumns = {
+  from: [13, 14, 15, 16],
+  to: [17, 18, 19, 20],
+  comments: [22]
+};
 
 var cablesTableColumns = {
   from: [10, 11, 12, 13],

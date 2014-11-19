@@ -99,9 +99,9 @@ function createCable(cableRequest, req, res, quantity, cables) {
         }
       } else {
         console.log('new cable ' + nextNumber + ' was created.');
-        cables.push(req.protocol + '://' + req.get('host') + '/cables/' + nextNumber + '/');
+        cables.push(doc.toJSON());
         if (quantity === 1) {
-          return res.json(200, cables);
+          return res.json(200, {request: cableRequest, cables: cables});
         }
         createCable(cableRequest, req, res, quantity - 1, cables);
       }
