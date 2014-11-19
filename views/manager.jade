@@ -64,6 +64,8 @@ block content
         li
           a(href='#rejected', data-toggle='tab') Rejected
         li
+          a(href='#approved', data-toggle='tab') Approved
+        li
           a(href='#procuring', data-toggle='tab') To procure
         li
           a(href='#installing', data-toggle='tab') To install
@@ -120,6 +122,12 @@ block content
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
           table#rejected-table.table.table-bordered.table-hover
+        #approved.tab-pane
+          .btn-toolbar
+            .btn-group(data-toggle='buttons-radio')
+              button.btn.btn-info#approved-wrap.active Wrap
+              button.btn.btn-info#approved-unwrap Unwrap
+          table#approved-table.table.table-bordered.table-hover
         #procuring.tab-pane
           .btn-toolbar
             .btn-group
