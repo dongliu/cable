@@ -4,28 +4,20 @@
 
 
 var savedTableColumns = {
-  from: [12, 13, 14, 15],
-  to: [16, 17, 18, 19],
-  comments: [21]
+  from: [13, 14, 15, 16],
+  to: [17, 18, 19, 20],
+  comments: [22]
 };
 
-var submittedTableColumns = {
-  from: [12, 13, 14, 15],
-  to: [16, 17, 18, 19],
-  comments: [21]
-};
+var submittedTableColumns = savedTableColumns;
 
 var rejectedTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [22]
+  from: [14, 15, 16, 17],
+  to: [18, 19, 20, 21],
+  comments: [23]
 };
 
-var approvedTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [22]
-};
+var approvedTableColumns = rejectedTableColumns;
 
 var cablesTableColumns = {
   from: [10, 11, 12, 13],
@@ -552,7 +544,7 @@ $(function () {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 7), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
