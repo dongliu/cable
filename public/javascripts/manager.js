@@ -19,21 +19,21 @@ var approvingTableColumns = {
 var approvedTableColumns = rejectedTableColumns;*/
 
 var procuringTableColumns = {
+  from: [14, 15, 16, 17],
+  to: [18, 19, 20, 21],
+  comments: [23]
+};
+
+var installingTableColumns = {
   from: [13, 14, 15, 16],
   to: [17, 18, 19, 20],
   comments: [22]
 };
 
-var installingTableColumns = {
+var installedTableColumns = {
   from: [12, 13, 14, 15],
   to: [16, 17, 18, 19],
   comments: [21]
-};
-
-var installedTableColumns = {
-  from: [11, 12, 13, 14],
-  to: [15, 16, 17, 18],
-  comments: [20]
 };
 
 var nameCache = {};
@@ -454,7 +454,7 @@ $(function () {
 
   /*procuring tab starts*/
 
-  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
     aaData: [],
@@ -500,7 +500,7 @@ $(function () {
   /*procuring tab ends*/
 
   /*installing tab starts*/
-  var installingAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var installingAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#installing-table', installingAoColumns);
   installingTable = $('#installing-table').dataTable({
     aaData: [],
@@ -545,7 +545,7 @@ $(function () {
   /*installing tab ends*/
 
   /*installed tab starts*/
-  var installedAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 1), basicColumns.slice(2, 7), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var installedAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
   fnAddFilterFoot('#installed-table', installedAoColumns);
   installedTable = $('#installed-table').dataTable({
     aaData: [],

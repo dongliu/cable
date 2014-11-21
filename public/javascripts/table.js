@@ -299,6 +299,11 @@ var basicColumns = [{
   },
   bFilter: true
 }, {
+  sTitle: 'Tray section',
+  sDefaultContent: '',
+  mData: 'basic.traySection',
+  bFilter: true
+}, {
   sTitle: 'Cable type',
   sDefaultContent: '',
   mData: 'basic.cableType',
