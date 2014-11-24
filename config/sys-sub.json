@@ -13,10 +13,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -68,10 +68,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -120,10 +120,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -174,10 +174,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -227,10 +227,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -280,10 +280,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -332,10 +332,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -387,10 +387,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
@@ -440,10 +440,10 @@
         "name": "Miscellaneous"
       },
       "B": {
-        "name": "RF Power"
+        "name": "High Power RF"
       },
       "C": {
-        "name": "RF Controls"
+        "name": "Medium Level Signals"
       },
       "D": {
         "name": "<600 VDC",
