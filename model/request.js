@@ -119,7 +119,7 @@ var cable = new Schema({
     },
     signalClassification: {
       type: String,
-      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
       required: true
     },
     cableType: String,

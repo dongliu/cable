@@ -12,6 +12,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -30,10 +36,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -79,10 +91,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -125,10 +143,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -173,10 +197,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -196,6 +226,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -214,10 +250,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -237,6 +279,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -255,10 +303,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -277,6 +331,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -295,10 +355,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -320,6 +386,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -338,10 +410,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   },
@@ -361,6 +439,12 @@
       "A": {
         "name": "Miscellaneous"
       },
+      "B": {
+        "name": "RF Power"
+      },
+      "C": {
+        "name": "RF Controls"
+      },
       "D": {
         "name": "<600 VDC",
         "disc": "e.g. magnet and other power"
@@ -379,10 +463,16 @@
         "name": ">600 VDC"
       },
       "J": {
-        "name": "120-480 VAC Power"
+        "name": "<600 VAC Power"
       },
       "K": {
-        "name": ">600 VAC Power"
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
       }
     }
   }
