@@ -8,7 +8,6 @@ var express = require('express'),
   http = require('http'),
   fs = require('fs'),
   sysSub = require(__dirname + '/config/sys-sub.json'),
-  signal = require(__dirname + '/config/signal.json'),
   penetration = require(__dirname + '/config/penetration.json'),
   path = require('path');
 
@@ -37,19 +36,29 @@ var app = express();
 
 app.enable('strict routing');
 
-var access_logfile = fs.createWriteStream('./logs/access.log', {
-  flags: 'a'
-});
+
+if (app.get('env') === 'production') {
+  var access_logfile = fs.createWriteStream('./logs/access.log', {
+    flags: 'a'
+  });
+}
+
 
 app.configure(function () {
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  // app.use(express.logger({stream: access_logfile}));
+  if (app.get('env') === 'production') {
+    app.use(express.logger({
+      stream: access_logfile
+    }));
+  }
   app.use(express.compress());
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.favicon(__dirname + '/public/favicon.ico'));
-  app.use(express.logger('dev'));
+  if (app.get('env') === 'development') {
+    app.use(express.logger('dev'));
+  }
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
@@ -127,10 +136,6 @@ app.get('/penetration', function (req, res) {
 app.get('/sys-sub', function (req, res) {
   res.json(sysSub);
 });
-app.get('/signal', function (req, res) {
-  res.json(signal);
-});
-
 
 app.get('/logout', routes.logout);
 
