@@ -11,6 +11,8 @@ var express = require('express'),
   penetration = require(__dirname + '/config/penetration.json'),
   path = require('path');
 
+var rotator = require('file-stream-rotator');
+
 var mongoose = require('mongoose');
 mongoose.connection.close();
 var CableType = require('./model/meta.js').CableType;
@@ -38,8 +40,9 @@ app.enable('strict routing');
 
 
 if (app.get('env') === 'production') {
-  var access_logfile = fs.createWriteStream('./logs/access.log', {
-    flags: 'a'
+  var access_logfile = rotator.getStream({
+    filename: __dirname + '/logs/access.log',
+    frequency: 'daily'
   });
 }
 

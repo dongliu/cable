@@ -6,14 +6,15 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.1.0",
-    "jade": "1.2.0",
     "cas.js": "0.0.1",
     "csv": "0.4.0",
+    "express": "3.1.0",
     "express-slash": "1.0.0",
-    "pause": "0.0.1",
+    "file-stream-rotator": "0.0.5",
+    "jade": "1.2.0",
+    "ldapjs": "0.7.1",
     "mongoose": "3.8.8",
-    "ldapjs": "0.7.1"
+    "pause": "0.0.1"
   },
   "devDependencies": {
     "should": "4.1.0",
