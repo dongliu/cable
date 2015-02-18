@@ -108,7 +108,13 @@ legend Routing
 .control-group
   .control-label Conduit
   .controls
-    input#to-drawing(type='text', name='conduit')
+    input(type='text', name='conduit')
+.control-group
+  .control-label Length
+  .controls
+    .input-append
+      input(type='number', name='length')
+      span.add-on ft
 
 //-   #rounting-element
 //-     .control-group

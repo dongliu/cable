@@ -68,6 +68,7 @@ var request = new Schema({
     fieldTerm: Boolean
   },
 
+  length: Number,
   conduit: String,
   routing: [Mixed],
 
@@ -154,6 +155,7 @@ var cable = new Schema({
     fieldTerm: Boolean
   },
 
+  length: Number,
   conduit: String,
   routing: [Mixed],
 
