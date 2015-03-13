@@ -494,7 +494,7 @@ module.exports = function (app) {
 
 
 
-  app.get('/cables', function (req, res) {
+  app.get('/cables', auth.ensureAuthenticated, function (req, res) {
     Cable.find({
       submittedBy: req.session.userid
     }).lean().exec(function (err, cables) {
@@ -509,7 +509,7 @@ module.exports = function (app) {
 
 
   // get the user's cables
-  app.get('/cables/json', function (req, res) {
+  app.get('/cables/json', auth.ensureAuthenticated, function (req, res) {
     Cable.find({
       submittedBy: req.session.userid
     }).lean().exec(function (err, cables) {
@@ -525,7 +525,7 @@ module.exports = function (app) {
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
-  app.get('/cables/statuses/:s/json', function (req, res) {
+  app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
@@ -562,7 +562,7 @@ module.exports = function (app) {
     }
   });
 
-  app.get('/cables/:id/', function (req, res) {
+  app.get('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
       number: req.params.id
     }).lean().exec(function (err, cable) {
