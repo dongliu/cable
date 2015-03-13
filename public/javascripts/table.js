@@ -281,6 +281,13 @@ var commentsColumn = {
   bFilter: true
 };
 
+var lengthColumn = {
+  sTitle: 'Length(ft)',
+  sDefaultContent: '',
+  mData: 'length',
+  bFilter: true
+};
+
 var basicColumns = [{
   sTitle: 'project',
   sDefaultContent: '',

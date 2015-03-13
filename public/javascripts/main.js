@@ -1,12 +1,12 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
 /*global moment: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 
 var savedTableColumns = {
   from: [13, 14, 15, 16],
   to: [17, 18, 19, 20],
-  comments: [22]
+  comments: [23]
 };
 
 var submittedTableColumns = savedTableColumns;
@@ -14,7 +14,7 @@ var submittedTableColumns = savedTableColumns;
 var rejectedTableColumns = {
   from: [14, 15, 16, 17],
   to: [18, 19, 20, 21],
-  comments: [23]
+  comments: [24]
 };
 
 var approvedTableColumns = rejectedTableColumns;
@@ -22,7 +22,7 @@ var approvedTableColumns = rejectedTableColumns;
 var cablesTableColumns = {
   from: [10, 11, 12, 13],
   to: [14, 15, 16, 17],
-  comments: [19]
+  comments: [20]
 };
 
 // var approved = [];
@@ -364,7 +364,7 @@ $(function () {
 
   /*saved tab starts*/
   // add footer first
-  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   fnAddFilterFoot('#saved-table', savedAoColumns);
   savedTable = $('#saved-table').dataTable({
@@ -413,7 +413,7 @@ $(function () {
   /*saved tab ends*/
 
   /*submitted tab starts*/
-  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#submitted-table', submittedAoColumns);
 
   submittedTable = $('#submitted-table').dataTable({
@@ -460,7 +460,7 @@ $(function () {
 
   /*rejected tab starts*/
 
-  var rejectedAoColumns = [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var rejectedAoColumns = [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
@@ -505,7 +505,7 @@ $(function () {
   /*rejected tab ends*/
 
   /*approved tab starts*/
-  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, approvedByColumn, submittedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, approvedByColumn, submittedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     aaData: [],
@@ -546,7 +546,7 @@ $(function () {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
