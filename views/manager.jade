@@ -23,6 +23,10 @@ block content
           i.fa.fa-gears.fa-lg
           | &nbsp;Meta
           span.caret
+        .btn-group
+          button.btn.btn-primary#bar
+            i.fa.fa-bar-chart
+            | &nbsp;Bar chart
         ul.dropdown-menu
           //- li#numbering
           //-   a(href='./numbering', target='_blank') FRIB cable numbering
@@ -93,7 +97,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#approving-wrap.active Wrap
               button.btn.btn-info#approving-unwrap Unwrap
-
             #approving-show.btn-group
               button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
                 i.fa.fa-wrench.fa-lg
@@ -286,6 +289,8 @@ block js
   script(type='text/javascript', src='/dependencies/lodash.js')
   script(type='text/javascript', src='/javascripts/table.js')
   script(type='text/javascript', src='/javascripts/util.js')
+  script(type='text/javascript', src='/dependencies/Chart.js')
+  script(type='text/javascript', src='/dependencies/Chart.HorizontalBar.js')
   script(type='text/javascript', src='/javascripts/manager.js')
 
 

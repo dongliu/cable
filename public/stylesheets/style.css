@@ -525,3 +525,12 @@ text {
   top: auto;
   bottom: 270px;
 }
+
+/*modal size*/
+.modal {
+  width: 630px;
+}
+.modal-body {
+  max-height: 450px;
+  /*width: 800px;*/
+}

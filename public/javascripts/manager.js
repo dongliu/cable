@@ -328,10 +328,60 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
   });
 }*/
 
-$(function () {
-  $.ajaxSetup({
-    cache: false
+
+function barChart(oTable) {
+  var selected = fnGetSelected(oTable, 'row-selected');
+  if (selected.length) {
+    $('#modalLabel').html('Plot a bar chart for the selected ' + selected.length + ' items in current table');
+  } else {
+    $('#modalLabel').html('Plot a bar chart for all items in the table');
+  }
+  $('#modal .modal-body').empty();
+  $('#modal .modal-body').html('<canvas id="barChart" height="400" width="600"></canvas>');
+
+  $('#modal .modal-footer').html('<button id="plot" class="btn btn-primary">Plot</button><button data-dismiss="modal" aria-hidden="true" class="btn">Close</button>');
+
+  $('#modal').modal('show');
+  var barChartData = {
+    labels: [],
+    datasets: [{
+      label: "Test",
+      fillColor: "rgba(220,220,220,0.5)",
+      strokeColor: "rgba(220,220,220,0.8)",
+      highlightFill: "rgba(220,220,220,0.75)",
+      highlightStroke: "rgba(220,220,220,1)",
+      data: []
+    }]
+  };
+  var data = [];
+  if (selected.length) {
+    selected.forEach(function (row) {
+      data.push(oTable.fnGetData(row));
+    });
+  } else {
+    data = oTable.fnGetData();
+  }
+  var groups = _.countBy(data, function (item) {
+    return item.basic.wbs;
   });
+  _.forEach(groups, function (count, key) {
+    barChartData.labels.push(key);
+    barChartData.datasets[0].data.push(count);
+  });
+
+  $('#plot').click(function (e) {
+    var ctx = $('#barChart')[0].getContext('2d');
+    var plot = new Chart(ctx).Bar(barChartData, {
+      barShowStroke: false
+        // responsive: true
+    });
+  });
+}
+
+$(function () {
+  // $.ajaxSetup({
+  //   cache: false
+  // });
   $(document).ajaxError(function (event, jqxhr) {
     if (jqxhr.status === 401) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
@@ -597,5 +647,10 @@ $(function () {
     initRequestTable(rejectedTable, 'requests/statuses/3/json');
     initRequestTable(approvedTable, 'requests/statuses/2/json');
     initCableTables(procuringTable, installingTable, installedTable);
+  });
+
+  $('#bar').click(function (e) {
+    var activeTable = $('#tabs .tab-pane.active table').dataTable();
+    barChart(activeTable);
   });
 });
