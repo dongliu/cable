@@ -1,5 +1,5 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
-/*global moment: false*/
+/*global moment: false, Chart:false*/
 /*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn:false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 
@@ -34,6 +34,10 @@ var installedTableColumns = {
   from: [12, 13, 14, 15],
   to: [16, 17, 18, 19],
   comments: [22]
+};
+
+var managerGlobal = {
+  plot: null
 };
 
 // var nameCache = {};
@@ -328,28 +332,29 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
   });
 }*/
 
-
-function barChart(oTable) {
-  var selected = fnGetSelected(oTable, 'row-selected');
-  if (selected.length) {
-    $('#modalLabel').html('Plot a bar chart for the selected ' + selected.length + ' items in current table');
-  } else {
-    $('#modalLabel').html('Plot a bar chart for all items in the table');
+function query(o, s) {
+  s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+  s = s.replace(/^\./, ''); // strip a leading dot
+  var a = s.split('.');
+  var i, n;
+  for (i = 0; i < a.length; i += 1) {
+    if (o.hasOwnProperty(a[i])) {
+      o = o[a[i]];
+    } else {
+      return;
+    }
   }
-  $('#modal .modal-body').empty();
-  $('#modal .modal-body').html('<canvas id="barChart" height="400" width="600"></canvas>');
+  return o;
+}
 
-  $('#modal .modal-footer').html('<button id="plot" class="btn btn-primary">Plot</button><button data-dismiss="modal" aria-hidden="true" class="btn">Close</button>');
-
-  $('#modal').modal('show');
+function drawChart(ctx, selected, oTable, groupBy) {
   var barChartData = {
     labels: [],
     datasets: [{
-      label: "Test",
-      fillColor: "rgba(220,220,220,0.5)",
-      strokeColor: "rgba(220,220,220,0.8)",
-      highlightFill: "rgba(220,220,220,0.75)",
-      highlightStroke: "rgba(220,220,220,1)",
+      fillColor: 'rgba(151,187,205,0.5)',
+      strokeColor: 'rgba(151,187,205,0.8)',
+      highlightFill: 'rgba(151,187,205,0.75)',
+      highlightStroke: 'rgba(151,187,205,1)',
       data: []
     }]
   };
@@ -362,19 +367,43 @@ function barChart(oTable) {
     data = oTable.fnGetData();
   }
   var groups = _.countBy(data, function (item) {
-    return item.basic.wbs;
+    return query(item, groupBy);
   });
   _.forEach(groups, function (count, key) {
     barChartData.labels.push(key);
     barChartData.datasets[0].data.push(count);
   });
+  ctx.clearRect(0, 0, 400, 600);
+  if (managerGlobal.plot !== null) {
+    managerGlobal.plot.destroy();
+  }
+  managerGlobal.plot = new Chart(ctx).Bar(barChartData, {
+    barShowStroke: false,
+    animation: false
+  });
+}
+
+function barChart(oTable) {
+  var selected = fnGetSelected(oTable, 'row-selected');
+  if (selected.length) {
+    $('#modalLabel').html('Plot a bar chart for the selected ' + selected.length + ' items in current table');
+  } else {
+    $('#modalLabel').html('Plot a bar chart for all items in the table');
+  }
+  $('#modal .modal-body').empty();
+  $('#modal .modal-body').html('<canvas id="barChart" height="400" width="600"></canvas>');
+
+  $('#modal .modal-footer').html('<form class="form-inline"><select id="bar-key"><option value="basic.wbs">WBS</option><option value="basic.traySection">Tray section</option><option value="basic.cableType">Cable type</option><option value="basic.engineer">Engineer</option><option value="conduit">Conduit</option></select> <button id="plot" class="btn btn-primary">Plot</button> <button data-dismiss="modal" aria-hidden="true" class="btn">Close</button></form>');
+
+  $('#modal').modal('show');
+
+
 
   $('#plot').click(function (e) {
+    e.preventDefault();
     var ctx = $('#barChart')[0].getContext('2d');
-    var plot = new Chart(ctx).Bar(barChartData, {
-      barShowStroke: false
-        // responsive: true
-    });
+    var groupBy = $('#bar-key').val();
+    drawChart(ctx, selected, oTable, groupBy);
   });
 }
 
