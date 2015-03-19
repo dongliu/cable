@@ -40,6 +40,8 @@ html
             li
               a(href='#user') User management
             li
+              a(href='#bar') Bar chart
+            li
               a(href='#bug') Bugs and suggestions
         .span9
           section#user
@@ -47,6 +49,11 @@ html
               h2 User management
             p An application admin user can change a user's role and add WBS numbers to a manager's account.
             embed(src="/images/user.swf",width=1024,height=788,quality='low',play=false,loop=false,wmode='transparent',type="application/x-shockwave-flash",pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash")
+          section#bar
+            .page-header
+              h2 Bar chart
+            p A user can plot a bar chart for the data loaded in any table. A user can plot the data from different tables by switching the activ tab. By default, all the data in a table is counted and plotted. A user can also filter and select the data to be plotted. The chart can be saved as images by right click on it. All items with an empty property will be counted in a group, and the group has no label on the chart.
+            embed(src="/images/bar.swf",width=1024,height=788,quality='low',play=false,loop=false,wmode='transparent',type="application/x-shockwave-flash",pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash")
           section#bug
             .page-header
               h2 Bugs and suggestions
