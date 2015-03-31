@@ -1,63 +1,25 @@
+/*global fnAddFilterFoot: false, typeColumns: false, sDom: false, oTableTools: false, filterEvent: false*/
+/*global window: false*/
+
 $(document).ajaxError(function (event, jqxhr) {
-  if (jqxhr.status == 401) {
+  if (jqxhr.status === 401) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }
 });
 
-var columns = typeColumns;
-$(function () {
-  fnAddFilterFoot('#cable-type', columns);
-  var cabletype = $('#cable-type').dataTable({
-    aaData: [],
-    bAutoWidth: false,
-    aoColumns: columns,
-    sDom: sDom,
-    oTableTools: oTableTools
-  });
-
-  addEvents();
-
-  $('#add').click(function (e) {
-    $.ajax({
-      url: '/cabletypes',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({}),
-      dataType: 'json'
-    }).done(function (json) {
-      var newType = cabletype.fnAddDataAndDisplay(json);
-      $(cabletype.fnGetNodes(newType.iPos)).addClass('row-selected');
-      tdEdit(cabletype);
-    }).fail(function (jqXHR, status, error) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot create a new cable type : ' + jqXHR.responseText + '</div>');
-    }).always();
-  });
-
-  $.ajax({
-    url: '/cabletypes/json',
-    type: 'GET',
-    dataType: 'json'
-  }).done(function (json) {
-    cabletype.fnClearTable();
-    cabletype.fnAddData(json);
-    cabletype.fnDraw();
-    tdEdit(cabletype);
-  }).fail(function (jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
-  }).always();
-});
+// var columns = typeColumns;
 
 function tdEdit(oTable) {
   $('td', oTable.fnGetNodes()).editable(function (value, settings) {
     var that = this;
-    if (value == oTable.fnGetData(that)) {
+    if (value === oTable.fnGetData(that)) {
       return value;
     }
     var data = {};
-    data['target'] = columns[oTable.fnGetPosition(that)[2]].mData;
-    data['update'] = value;
-    data['original'] = oTable.fnGetData(that);
+    data.target = typeColumns[oTable.fnGetPosition(that)[2]].mData;
+    data.update = value;
+    data.original = oTable.fnGetData(that);
     var ajax = $.ajax({
       url: '/cabletypes/' + oTable.fnGetData(that.parentNode)._id,
       type: 'PUT',
@@ -85,3 +47,47 @@ function tdEdit(oTable) {
     placeholder: ''
   });
 }
+
+$(function () {
+  fnAddFilterFoot('#cable-type', typeColumns);
+  var cabletype = $('#cable-type').dataTable({
+    aaData: [],
+    bAutoWidth: false,
+    aoColumns: typeColumns,
+    sDom: sDom,
+    oTableTools: oTableTools
+  });
+
+  filterEvent();
+
+/*  $('#add').click(function (e) {
+    $.ajax({
+      url: '/cabletypes',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({}),
+      dataType: 'json'
+    }).done(function (json) {
+      var newType = cabletype.fnAddDataAndDisplay(json);
+      $(cabletype.fnGetNodes(newType.iPos)).addClass('row-selected');
+      tdEdit(cabletype);
+    }).fail(function (jqXHR, status, error) {
+      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot create a new cable type : ' + jqXHR.responseText + '</div>');
+    }).always();
+  });*/
+
+  $.ajax({
+    url: '/cabletypes/json',
+    type: 'GET',
+    dataType: 'json'
+  }).done(function (json) {
+    cabletype.fnClearTable();
+    cabletype.fnAddData(json);
+    cabletype.fnDraw();
+    tdEdit(cabletype);
+  }).fail(function (jqXHR, status, error) {
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
+  }).always();
+});
+
+
