@@ -104,7 +104,10 @@ function createCable(cableRequest, req, res, quantity, cables) {
         console.log('new cable ' + nextNumber + ' was created.');
         cables.push(doc.toJSON());
         if (quantity === 1) {
-          return res.json(200, {request: cableRequest, cables: cables});
+          return res.json(200, {
+            request: cableRequest,
+            cables: cables
+          });
         }
         createCable(cableRequest, req, res, quantity - 1, cables);
       }
@@ -529,7 +532,7 @@ module.exports = function (app) {
   // status: 1 for procuring, 2 for installing, 3 for installed
 
   app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles.length === 0) {
+    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
     var status = parseInt(req.params.s, 10);
@@ -540,28 +543,60 @@ module.exports = function (app) {
     }
 
     if (status === 0) {
-      // get all the cables
-      Cable.find({}).lean().exec(function (err, docs) {
-        if (err) {
-          console.error(err.msg);
-          return res.json(500, {
-            error: err.msg
-          });
-        }
-        return res.json(docs);
-      });
+      if (req.session.roles.indexOf('admin') !== -1) {
+        // get all the cables
+        Cable.find({}).lean().exec(function (err, docs) {
+          if (err) {
+            console.error(err.msg);
+            return res.json(500, {
+              error: err.msg
+            });
+          }
+          return res.json(docs);
+        });
+      } else {
+        return res.send(403, "Only admin can access this resource. ");
+      }
     } else {
       var low = status * 100;
       var up = status * 100 + 99;
-      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
-        if (err) {
-          console.error(err.msg);
-          return res.json(500, {
-            error: err.msg
+      if (req.session.roles.indexOf('admin') !== -1) {
+        Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+          if (err) {
+            console.error(err.msg);
+            return res.json(500, {
+              error: err.msg
+            });
+          }
+          return res.json(docs);
+        });
+      } else {
+        // manager see his own wbs
+        User.findOne({
+          adid: req.session.userid
+        }).lean().exec(function (err, user) {
+          if (err) {
+            console.error(err.msg);
+            return res.send(500, err.msg);
+          }
+          if (!user) {
+            return res.send(404, 'cannot identify you.');
+          }
+          if (user.wbs === undefined || user.wbs.length === 0) {
+            return res.json([]);
+          }
+
+          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (err, docs) {
+            if (err) {
+              console.error(err.msg);
+              return res.json(500, {
+                error: err.msg
+              });
+            }
+            return res.json(docs);
           });
-        }
-        return res.json(docs);
-      });
+        });
+      }
     }
   });
 
