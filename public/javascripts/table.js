@@ -401,6 +401,15 @@ var numberColumn = {
   bFilter: true
 };
 
+var requestNumberColumn = {
+  sTitle: 'Request',
+  mData: 'request_id',
+  mRender: function (data, type, full) {
+    return '<a href="requests/' + data + '/" target="_blank">' + data + '</a>';
+  },
+  bFilter: true
+};
+
 var statusColumn = {
   sTitle: 'Status',
   // mData: 'status',

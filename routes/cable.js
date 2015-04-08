@@ -22,9 +22,10 @@ var querystring = require('querystring');
 //   100: approved 101: ordered 102: received 103: accepted
 // installing
 //   200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
-// working: 300
-// failed: 400
-// aborted: 500
+// working: 3xx
+// failed: 4xx
+// aborted: 5xx
+//   501: not required
 
 
 //TODO: need a server side validation in the future
