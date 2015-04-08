@@ -75,7 +75,10 @@ var request = new Schema({
   routing: [Mixed],
 
   comments: String,
-  status: Number,
+  status: {
+    type: Number,
+    index: true
+  },
   createdBy: String,
   createdOn: Date,
   updatedBy: String,
@@ -97,7 +100,10 @@ var cable = new Schema({
     index: true,
     unique: true
   },
-  status: Number,
+  status: {
+    type: Number,
+    index: true
+  },
   basic: {
     project: {
       type: String,
