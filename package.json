@@ -14,6 +14,7 @@
     "jade": "1.2.0",
     "ldapjs": "0.7.1",
     "mongoose": "3.8.8",
+    "validator": "3.37.0",
     "pause": "0.0.1"
   },
   "devDependencies": {

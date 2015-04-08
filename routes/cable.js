@@ -47,6 +47,25 @@ function increment(number) {
 }
 
 function createCable(cableRequest, req, res, quantity, cables) {
+  // fix the unspecified quantity in some requests
+  if (quantity === null) {
+    quantity = 1;
+  }
+  if (isNaN(quantity)) {
+    console.log('cable request ' + cableRequest._id + " is not a number!");
+    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+  }
+
+  if (quantity !== parseInt(quantity, 10)) {
+    console.log('cable request ' + cableRequest._id + " is not an integer!");
+    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+  }
+
+  if (quantity < 1) {
+    console.log('cable request ' + cableRequest._id + " is less than 1!");
+    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+  }
+
   var sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
   Cable.findOne({
     number: {
@@ -103,7 +122,8 @@ function createCable(cableRequest, req, res, quantity, cables) {
       } else {
         console.log('new cable ' + nextNumber + ' was created.');
         cables.push(doc.toJSON());
-        if (quantity === 1) {
+        // should be equal to 1 when return
+        if (quantity < 2) {
           return res.json(200, {request: cableRequest, cables: cables});
         }
         createCable(cableRequest, req, res, quantity - 1, cables);
