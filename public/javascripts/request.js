@@ -542,6 +542,10 @@ $(function () {
         $('#approve').closest('.btn-group').removeClass('hide');
       }
 
+      if (json.status === 2 || json.status === 3) {
+        $('input, select, textarea').prop('disabled', true);
+      }
+
     }).fail(function (jqXHR, status, error) {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot find the saved request. You might need to try again or contact the admin.</div>');
     });
