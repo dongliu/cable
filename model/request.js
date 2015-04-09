@@ -41,7 +41,9 @@ var request = new Schema({
     tags: [String],
     quantity: {
       type: Number,
-      min: 1
+      min: 1,
+      max: 100,
+      default: 1
     }
   },
 
@@ -73,7 +75,10 @@ var request = new Schema({
   routing: [Mixed],
 
   comments: String,
-  status: Number,
+  status: {
+    type: Number,
+    index: true
+  },
   createdBy: String,
   createdOn: Date,
   updatedBy: String,
@@ -95,7 +100,10 @@ var cable = new Schema({
     index: true,
     unique: true
   },
-  status: Number,
+  status: {
+    type: Number,
+    index: true
+  },
   basic: {
     project: {
       type: String,
