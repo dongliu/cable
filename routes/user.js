@@ -385,6 +385,9 @@ module.exports = function (app) {
     opts = {
       filter: nameFilter,
       attributes: ['displayName'],
+      paged: {
+        pageSize: 200
+      },
       scope: 'sub'
     };
     ldapClient.search(ad.searchBase, opts, false, function (err, result) {
