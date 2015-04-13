@@ -278,6 +278,7 @@ var commentsColumn = {
   sTitle: 'Comments',
   sDefaultContent: '',
   mData: 'comments',
+  sClass: 'editable',
   bFilter: true
 };
 
@@ -285,6 +286,7 @@ var lengthColumn = {
   sTitle: 'Length(ft)',
   sDefaultContent: '',
   mData: 'length',
+  sClass: 'editable',
   bFilter: true
 };
 
@@ -292,11 +294,13 @@ var basicColumns = [{
   sTitle: 'project',
   sDefaultContent: '',
   mData: 'basic.project',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'WBS',
   sDefaultContent: '',
   mData: 'basic.wbs',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Category',
@@ -309,21 +313,25 @@ var basicColumns = [{
   sTitle: 'Tray section',
   sDefaultContent: '',
   mData: 'basic.traySection',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Cable type',
   sDefaultContent: '',
   mData: 'basic.cableType',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Engineer',
   sDefaultContent: '',
   mData: 'basic.engineer',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Function',
   sDefaultContent: '',
   mData: 'basic.service',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Tags',
@@ -334,6 +342,7 @@ var basicColumns = [{
     }
     return '';
   },
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'Quantity',
@@ -345,21 +354,25 @@ var fromColumns = [{
   sTitle: 'From rack',
   sDefaultContent: '',
   mData: 'from.rack',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'termination device',
   sDefaultContent: '',
   mData: 'from.terminationDevice',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'termination type',
   sDefaultContent: '',
   mData: 'from.terminationType',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'wiring drawing',
   sDefaultContent: '',
   mData: 'from.wiringDrawing',
+  sClass: 'editable',
   bFilter: true
 }];
 
@@ -367,21 +380,25 @@ var toColumns = [{
   sTitle: 'To rack',
   sDefaultContent: '',
   mData: 'to.rack',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'termination device',
   sDefaultContent: '',
   mData: 'to.terminationDevice',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'termination type',
   sDefaultContent: '',
   mData: 'to.terminationType',
+  sClass: 'editable',
   bFilter: true
 }, {
   sTitle: 'wiring drawing',
   sDefaultContent: '',
   mData: 'to.wiringDrawing',
+  sClass: 'editable',
   bFilter: true
 }];
 
@@ -389,6 +406,7 @@ var conduitColumn = {
   sTitle: 'Conduit',
   sDefaultContent: '',
   mData: 'conduit',
+  sClass: 'editable',
   bFilter: true
 };
 
