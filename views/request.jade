@@ -2,10 +2,10 @@ extends layout
 
 block head
   meta(charset='urf-8')
-  if (typeof id == 'undefined')
-    title FRIB Cable :: new request
-  else
+  if (locals.id)
     title FRIB Cable :: request :: #{id}
+  else
+    title FRIB Cable :: new request
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
@@ -23,11 +23,11 @@ block content
       .modal-footer
         button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
     form.form-horizontal(name='request')
-      if (locals.id == 'undefined')
-        h3 New Cable Request
-      else
+      if (locals.id)
         h3 Cable Request &nbsp;
           span#requestId #{id}
+      else
+        h3 New Cable Request
       include requestform
       include request_action
 block js
