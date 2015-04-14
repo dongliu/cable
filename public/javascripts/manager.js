@@ -24,6 +24,8 @@ var procuringTableColumns = {
   comments: [25]
 };
 
+var procuringAoColumns;
+
 var installingTableColumns = {
   from: [13, 14, 15, 16],
   to: [17, 18, 19, 20],
@@ -152,6 +154,33 @@ function approveFromModal(requests, approvingTable, approvedTable, procuringTabl
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
     });
+  });
+}
+
+function updateTdFromModal(cableNumber, target, oldValue, newValue, td) {
+  $('#update').prop('disabled', true);
+  if (oldValue == newValue) {
+    $('#modal .modal-body').append('<div class="text-error">The new value is the same as the old one!</div>');
+  } else {
+
+  }
+}
+
+function updateTd(td, oTable) {
+  var cableNumber = oTable.fnGetData(td.parentNode).number;
+  var target = procuringAoColumns[oTable.fnGetPosition(td)[2]].mData;
+  var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
+  var oldValue = oTable.fnGetData(td);
+  $('#modalLabel').html('Update the cable <b>' + cableNumber + '</b>? ');
+  $('#modal .modal-body').empty();
+  $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + target + ')' + '</b></div>');
+  $('#modal .modal-body').append('<div>From <b>' + oldValue + '</b></div>');
+  $('#modal .modal-body').append('<div>To <input id="new-value" type="text"></div>');
+  $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+  $('#modal').modal('show');
+  $('#update').click(function (e) {
+    var newValue = $('#new-value').val();
+    updateTdFromModal(cableNumber, target, oldValue, newValue, td);
   });
 }
 
@@ -540,7 +569,7 @@ $(function () {
 
   /*procuring tab starts*/
 
-  var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
     aaData: [],
@@ -578,17 +607,23 @@ $(function () {
   $('#procuring-edit').click(function (e) {
     if (managerGlobal.procuring_edit) {
       // $('#procuring-edit span').text('Edit mode')
-      $('#procuring-edit').html('<i class="fa fa-check-square-o fa-lg"></i>&nbsp;Edit mode')
+      $('#procuring-edit').html('<i class="fa fa-check-square-o fa-lg"></i>&nbsp;Edit mode');
       managerGlobal.procuring_edit = false;
       $('#procuring-order, #procuring-receive, #procuring-accept, #procuring-to-install').prop('disabled', false);
     } else {
       // $('#procuring-edit span').text('View mode')
-      $('#procuring-edit').html('<i class="fa fa-edit fa-lg"></i>&nbsp;Check mode')
+      $('#procuring-edit').html('<i class="fa fa-edit fa-lg"></i>&nbsp;Check mode');
       managerGlobal.procuring_edit = true;
       $('#procuring-order, #procuring-receive, #procuring-accept, #procuring-to-install').prop('disabled', true);
     }
   });
 
+  $('#procuring-table').on('click', 'td.editable', function (e) {
+    e.preventDefault();
+    if (managerGlobal.procuring_edit) {
+      updateTd(this, procuringTable);
+    }
+  });
   /*  $('#procuring-order, #procuring-receive, #procuring-accept').click(function (e) {
       batchCableAction(procuringTable, $(this).val(), procuringTable);
     });
