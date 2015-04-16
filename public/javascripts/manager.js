@@ -1,5 +1,5 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
-/*global moment: false, Chart:false*/
+/*global moment: false, Chart: false, json2List: false*/
 /*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedOnColumn:false, approvedByColumn:false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 
@@ -160,22 +160,34 @@ function approveFromModal(requests, approvingTable, approvedTable, procuringTabl
 function updateTdFromModal(cableNumber, target, oldValue, newValue, td) {
   $('#update').prop('disabled', true);
   if (oldValue == newValue) {
-    $('#modal .modal-body').append('<div class="text-error">The new value is the same as the old one!</div>');
+    $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
   } else {
 
   }
 }
 
+function cableDetails(cableData) {
+  delete cableData[0];
+  var details = '';
+  details += '<div id="cable-details" class="collapse out">';
+  details += '<h4>Cable details</h4>';
+  details += json2List(cableData);
+  details += '</div>';
+  return details;
+}
+
 function updateTd(td, oTable) {
-  var cableNumber = oTable.fnGetData(td.parentNode).number;
+  var cableData = oTable.fnGetData(td.parentNode);
+  var cableNumber = cableData.number;
   var target = procuringAoColumns[oTable.fnGetPosition(td)[2]].mData;
   var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
   var oldValue = oTable.fnGetData(td);
-  $('#modalLabel').html('Update the cable <b>' + cableNumber + '</b>? ');
+  $('#modalLabel').html('Update the cable <span class="text-info" style="text-decoration: underline;" data-toggle="collapse" data-target="#cable-details">' + cableNumber + '</span> ?');
   $('#modal .modal-body').empty();
   $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + target + ')' + '</b></div>');
   $('#modal .modal-body').append('<div>From <b>' + oldValue + '</b></div>');
   $('#modal .modal-body').append('<div>To <input id="new-value" type="text"></div>');
+  $('#modal .modal-body').append(cableDetails(cableData));
   $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
   $('#modal').modal('show');
   $('#update').click(function (e) {
