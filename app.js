@@ -18,7 +18,21 @@ mongoose.connection.close();
 var CableType = require('./model/meta.js').CableType;
 var Request = require('./model/request.js').Request;
 var User = require('./model/user.js').User;
-mongoose.connect('mongodb://localhost/cable_frib');
+
+var mongoOptions = {
+  db: {
+    native_parser: true
+  },
+  server: {
+    poolSize: 5,
+    socketOptions: {
+      connectTimeoutMS: 30000,
+      keepAlive: 1
+    }
+  }
+};
+
+mongoose.connect('mongodb://localhost/cable_frib', mongoOptions);
 
 mongoose.connection.on('connected', function () {
   console.log('Mongoose default connection opened.');
