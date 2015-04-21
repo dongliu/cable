@@ -336,12 +336,20 @@ var basicColumns = [{
 }, {
   sTitle: 'Tags',
   sDefaultContent: '',
-  mData: function (source, type, val) {
+  mData: 'basic.tags',
+  mRender: function (data, type, full) {
+    if (data) {
+      return data.join();
+    } else {
+      return '';
+    }
+  },
+/*  mData: function (source, type, val) {
     if (source.basic.tags) {
       return source.basic.tags.join();
     }
     return '';
-  },
+  },*/
   sClass: 'editable',
   bFilter: true
 }, {

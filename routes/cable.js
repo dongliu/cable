@@ -5,6 +5,7 @@ var sysSub = require('../config/sys-sub.json');
 var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var Cable = mongoose.model('Cable');
+var Change = mongoose.model('Change');
 var User = mongoose.model('User');
 
 var util = require('util');
@@ -133,6 +134,20 @@ function createCable(cableRequest, req, res, quantity, cables) {
         createCable(cableRequest, req, res, quantity - 1, cables);
       }
     });
+  });
+}
+
+function updateCable(conditions, update, req, res) {
+  Cable.findOneAndUpdate(conditions, update, function (err, cable) {
+    if (err) {
+      console.error(err);
+      return res.send(500, 'cannot save updated cable.');
+    }
+    if (cable) {
+      return res.json(200, cable.toJSON());
+    }
+    console.error(req.params.id + ' with conditions for the update cannot be found');
+    return res.send(409, req.params.id + ' with conditions for the update cannot be found.');
   });
 }
 
@@ -709,6 +724,13 @@ module.exports = function (app) {
     var required = req.body.required;
 
     switch (req.body.action) {
+    case "update":
+      conditions[req.body.property] = req.body.oldValue;
+      update[req.body.property] = req.body.newValue;
+      update.$inc = {
+        __v: 1
+      };
+      break;
     case "order":
       update.status = 101;
       update.orderedBy = (req.body.name === '') ? req.session.username : req.body.name;
@@ -817,23 +839,30 @@ module.exports = function (app) {
       inValidaAction = true;
     }
     if (inValidaAction) {
-      res.send(400, 'invalid action');
+      return res.send(400, 'invalid action');
     }
     update.updatedOn = Date.now();
     update.updatedBy = req.session.userid;
-    Cable.findOneAndUpdate(conditions, update, function (err, cable) {
-      if (err) {
-        console.error(err.msg);
-        return res.json(500, {
-          error: err.msg
-        });
-      }
-      if (cable) {
-        return res.json(200, cable.toJSON());
-      }
-      console.error(req.params.id + ' with conditions for the update cannot be found');
-      return res.send(409, req.params.id + ' state, requirements and the update conflicted');
-    });
+    if (req.body.action !== 'update') {
+      updateCable(conditions, update, req, res);
+    } else {
+      var change = new Change({
+        cableName: req.params.id,
+        property: req.body.property,
+        oldValue: req.body.oldValue,
+        newValue: req.body.newValue,
+        updatedBy: req.session.userid,
+        updatedOn: Date.now()
+      });
+      change.save(function (err, doc) {
+        if (err) {
+          console.error(err);
+          return res.send(500, 'cannot save the change');
+        }
+        update.$push = {changeHistory: doc._id};
+        updateCable(conditions, update, req, res);
+      });
+    }
 
   });
 };

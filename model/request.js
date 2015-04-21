@@ -193,28 +193,25 @@ var cable = new Schema({
   fieldTerminatedOn: Date,
   fieldTestedBy: String,
   fieldTestedOn: Date,
-  updateHistory: [ObjectId]
+  changeHistory: [ObjectId]
 });
 
-
-var update = new Schema({
+var change = new Schema({
+  cableName: String,
   property: String,
   oldValue: Mixed,
-  newValue: Mixed
-});
-
-var updateHistory = new Schema({
-  cableId: ObjectId,
-  updates: [update],
+  newValue: Mixed,
   updatedBy: String,
   updatedOn: Date
 });
 
 var Request = mongoose.model('Request', request);
 var Cable = mongoose.model('Cable', cable);
+var Change = mongoose.model('Change', change);
 
 
 module.exports = {
   Cable: Cable,
+  Change: Change,
   Request: Request
 };
