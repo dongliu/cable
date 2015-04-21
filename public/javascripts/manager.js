@@ -157,12 +157,27 @@ function approveFromModal(requests, approvingTable, approvedTable, procuringTabl
   });
 }
 
-function updateTdFromModal(cableNumber, target, oldValue, newValue, td) {
+function updateTdFromModal(cableNumber, property, oldValue, newValue, td) {
   $('#update').prop('disabled', true);
   if (oldValue == newValue) {
     $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
   } else {
+    var data = {};
+    data.property = property;
+    data.newValue = newValue;
+    data.oldValue = oldValue;
+    var ajax = $.ajax({
+      url: '/cables/' + cableNumber + '/',
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: function (data) {
 
+      },
+      error: function (jqXHR, status, error) {
+        $('#modal .modal-body').prepend('<div class="text-error">' + jqXHR.responseText + '</div>');
+      }
+    });
   }
 }
 
@@ -179,7 +194,7 @@ function cableDetails(cableData) {
 function updateTd(td, oTable) {
   var cableData = oTable.fnGetData(td.parentNode);
   var cableNumber = cableData.number;
-  var target = procuringAoColumns[oTable.fnGetPosition(td)[2]].mData;
+  var property = procuringAoColumns[oTable.fnGetPosition(td)[2]].mData;
   var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
   var oldValue = oTable.fnGetData(td);
   $('#modalLabel').html('Update the cable <span class="text-info" style="text-decoration: underline;" data-toggle="collapse" data-target="#cable-details">' + cableNumber + '</span> ?');
@@ -192,7 +207,7 @@ function updateTd(td, oTable) {
   $('#modal').modal('show');
   $('#update').click(function (e) {
     var newValue = $('#new-value').val();
-    updateTdFromModal(cableNumber, target, oldValue, newValue, td);
+    updateTdFromModal(cableNumber, property, oldValue, newValue, td);
   });
 }
 
@@ -308,7 +323,7 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
   $('#modal .modal-body .cable').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/cables/' + that.id,
+      url: '/cables/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({

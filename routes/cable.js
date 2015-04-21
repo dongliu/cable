@@ -696,7 +696,7 @@ module.exports = function (app) {
     });
   });
 
-  app.put('/cables/:id', auth.ensureAuthenticated, function (req, res) {
+  app.put('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }

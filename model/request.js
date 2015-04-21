@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Mixed = Schema.Types.Mixed;
+var ObjectId = Schema.Types.ObjectId;
 
 var request = new Schema({
   basic: {
@@ -191,7 +192,22 @@ var cable = new Schema({
   fieldTerminatedBy: String,
   fieldTerminatedOn: Date,
   fieldTestedBy: String,
-  fieldTestedOn: Date
+  fieldTestedOn: Date,
+  updateHistory: [ObjectId]
+});
+
+
+var update = new Schema({
+  property: String,
+  oldValue: Mixed,
+  newValue: Mixed
+});
+
+var updateHistory = new Schema({
+  cableId: ObjectId,
+  updates: [update],
+  updatedBy: String,
+  updatedOn: Date
 });
 
 var Request = mongoose.model('Request', request);
