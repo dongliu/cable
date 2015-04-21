@@ -42,7 +42,7 @@ var managerGlobal = {
 
 // var nameCache = {};
 
-function initCableTableFromData(oTable, data, cb) {
+/*function initCableTableFromData(oTable, data, cb) {
   oTable.fnClearTable();
   oTable.fnAddData(data);
   if ($('#cables-unwrap').hasClass('active')) {
@@ -52,9 +52,9 @@ function initCableTableFromData(oTable, data, cb) {
   if (cb) {
     cb();
   }
-}
+}*/
 
-function initRequestTable(oTable, url) {
+/*function initRequestTable(oTable, url) {
   $.ajax({
     url: url,
     type: 'GET',
@@ -67,10 +67,10 @@ function initRequestTable(oTable, url) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
-}
+}*/
 
 
-function initCableTables(procuringTable, installingTable, installedTable) {
+/*function initCableTables(procuringTable, installingTable, installedTable) {
   if (procuringTable) {
     $.ajax({
       url: '/cables/statuses/1/json',
@@ -121,7 +121,7 @@ function initCableTables(procuringTable, installingTable, installedTable) {
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }).always();
   }
-}
+}*/
 
 
 function approveFromModal(requests, approvingTable, approvedTable, procuringTable) {
@@ -423,8 +423,14 @@ $(function () {
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
   approvingTable = $('#approving-table').dataTable({
-    aaData: [],
+    sAjaxSource: '/requests/statuses/1/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
+    bDeferRender: true,
     aoColumns: approvingAoCulumns,
     aaSorting: [
       [2, 'desc'],
@@ -434,7 +440,6 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  initRequestTable(approvingTable, '/requests/statuses/1/json');
   $('#approving-wrap').click(function (e) {
     $('#approving-table td').removeClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
@@ -473,7 +478,14 @@ $(function () {
   fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
+    sAjaxSource: '/requests/statuses/3/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
+    bDeferRender: true,
     aoColumns: rejectedAoColumns,
     aaSorting: [
       [1, 'desc'],
@@ -483,8 +495,6 @@ $(function () {
     sDom: sDom,
     oTableTools: oTableTools
   });
-
-  initRequestTable(rejectedTable, 'requests/statuses/3/json');
 
   $('#rejected-wrap').click(function (e) {
     $('#rejected-table td').removeClass('nowrap');
@@ -507,8 +517,14 @@ $(function () {
   var approvedAoColumns = [detailsLinkColumn, approvedOnColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
-    aaData: [],
+    sAjaxSource: '/requests/statuses/2/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
+    bDeferRender: true,
     aoColumns: approvedAoColumns,
     aaSorting: [
       [1, 'desc'],
@@ -519,7 +535,6 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  initRequestTable(approvedTable, 'requests/statuses/2/json');
 
   $('#approved-wrap').click(function (e) {
     $('#approved-table td').removeClass('nowrap');
@@ -542,8 +557,13 @@ $(function () {
   var procuringAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
-    aaData: [],
+    sAjaxSource: '/cables/statuses/1/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
     aoColumns: procuringAoColumns,
     aaSorting: [
       [4, 'desc'],
@@ -588,8 +608,13 @@ $(function () {
   var installingAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#installing-table', installingAoColumns);
   installingTable = $('#installing-table').dataTable({
-    aaData: [],
+    sAjaxSource: '/cables/statuses/2/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
     aoColumns: installingAoColumns,
     aaSorting: [
       [3, 'desc'],
@@ -633,8 +658,13 @@ $(function () {
   var installedAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#installed-table', installedAoColumns);
   installedTable = $('#installed-table').dataTable({
-    aaData: [],
+    sAjaxSource: '/cables/statuses/3/json',
+    sAjaxDataProp: '',
     bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
     aoColumns: installedAoColumns,
     aaSorting: [
       [3, 'desc'],
@@ -669,13 +699,18 @@ $(function () {
   filterEvent();
   selectEvent();
 
-  initCableTables(procuringTable, installingTable, installedTable);
-
   $('#reload').click(function (e) {
-    initRequestTable(approvingTable, '/requests/statuses/1/json');
-    initRequestTable(rejectedTable, 'requests/statuses/3/json');
-    initRequestTable(approvedTable, 'requests/statuses/2/json');
-    initCableTables(procuringTable, installingTable, installedTable);
+    approvingTable.fnReloadAjax();
+    rejectedTable.fnReloadAjax();
+    approvedTable.fnReloadAjax();
+    procuringTable.fnReloadAjax();
+    installingTable.fnReloadAjax();
+    installedTable.fnReloadAjax();
+
+    // initRequestTable(approvingTable, '/requests/statuses/1/json');
+    // initRequestTable(rejectedTable, 'requests/statuses/3/json');
+    // initRequestTable(approvedTable, 'requests/statuses/2/json');
+    // initCableTables(procuringTable, installingTable, installedTable);
   });
 
   $('#bar').click(function (e) {
