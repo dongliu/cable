@@ -132,11 +132,9 @@ function splitTags(s) {
 
 function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue, td, oTable) {
   $('#update').prop('disabled', true);
-  var sOldValue;
+  var sOldValue = oldValue;
   if (parseType && parseType === 'array') {
     sOldValue = oldValue.join();
-  } else {
-    sOldValue = oldValue;
   }
   if (sOldValue.trim() == newValue.trim()) {
     $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
@@ -184,10 +182,14 @@ function updateTd(td, oTable) {
   var parseType = columnDef.sParseType;
   var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
   var oldValue = oTable.fnGetData(td);
+  var renderedValue = oldValue;
+  if (parseType && parseType === 'array') {
+    renderedValue = oldValue.join();
+  }
   $('#modalLabel').html('Update the cable <span class="text-info" style="text-decoration: underline;" data-toggle="collapse" data-target="#cable-details">' + cableNumber + '</span> ?');
   $('#modal .modal-body').empty();
   $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + property + ')' + '</b></div>');
-  $('#modal .modal-body').append('<div>From <b>' + oldValue.join() + '</b></div>');
+  $('#modal .modal-body').append('<div>From <b>' + renderedValue + '</b></div>');
   $('#modal .modal-body').append('<div>To <input id="new-value" type="text"></div>');
   $('#modal .modal-body').append(cableDetails(cableData));
   $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
