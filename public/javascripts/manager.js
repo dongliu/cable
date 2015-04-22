@@ -656,14 +656,14 @@ $(function () {
 
   $('#procuring-edit').click(function (e) {
     if (managerGlobal.procuring_edit) {
-      // $('#procuring-edit span').text('Edit mode')
       $('#procuring-edit').html('<i class="fa fa-check-square-o fa-lg"></i>&nbsp;Edit mode');
       managerGlobal.procuring_edit = false;
+      $('#procuring-table td.editable').removeClass('info');
       $('#procuring-order, #procuring-receive, #procuring-accept, #procuring-to-install').prop('disabled', false);
     } else {
-      // $('#procuring-edit span').text('View mode')
       $('#procuring-edit').html('<i class="fa fa-edit fa-lg"></i>&nbsp;Check mode');
       managerGlobal.procuring_edit = true;
+      $('#procuring-table td.editable').addClass('info');
       $('#procuring-order, #procuring-receive, #procuring-accept, #procuring-to-install').prop('disabled', true);
     }
   });

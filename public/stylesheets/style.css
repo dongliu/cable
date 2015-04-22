@@ -534,3 +534,13 @@ text {
   max-height: 450px;
   /*width: 800px;*/
 }
+
+
+/*td editable*/
+td.info.editable {
+  background-color: #d9edf7;
+}
+
+.table-hover tbody tr:hover > td.info.editable {
+  background-color: #fcf8e3;
+}
