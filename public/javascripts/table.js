@@ -344,12 +344,10 @@ var basicColumns = [{
       return '';
     }
   },
-/*  mData: function (source, type, val) {
-    if (source.basic.tags) {
-      return source.basic.tags.join();
-    }
-    return '';
-  },*/
+  // mParser: function (sRendered) {
+  //   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*,\s*/) : [];
+  // },
+  sParseType: 'array',
   sClass: 'editable',
   bFilter: true
 }, {

@@ -126,17 +126,30 @@ var managerGlobal = {
   }
 }*/
 
+function splitTags(s) {
+  return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
+}
 
-function updateTdFromModal(cableNumber, property, oldValue, newValue, td, oTable) {
+function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue, td, oTable) {
   $('#update').prop('disabled', true);
-  if (oldValue == newValue) {
+  var sOldValue;
+  if (parseType && parseType === 'array') {
+    sOldValue = oldValue.join();
+  } else {
+    sOldValue = oldValue;
+  }
+  if (sOldValue.trim() == newValue.trim()) {
     $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
   } else {
     var data = {};
     data.action = 'update';
     data.property = property;
-    data.newValue = newValue;
     data.oldValue = oldValue;
+    if (parseType && parseType === 'array') {
+      data.newValue = splitTags(newValue);
+    } else {
+      data.newValue = newValue;
+    }
     var ajax = $.ajax({
       url: '/cables/' + cableNumber + '/',
       type: 'PUT',
@@ -166,20 +179,22 @@ function cableDetails(cableData) {
 function updateTd(td, oTable) {
   var cableData = oTable.fnGetData(td.parentNode);
   var cableNumber = cableData.number;
-  var property = procuringAoColumns[oTable.fnGetPosition(td)[2]].mData;
+  var columnDef = procuringAoColumns[oTable.fnGetPosition(td)[2]];
+  var property = columnDef.mData;
+  var parseType = columnDef.sParseType;
   var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
   var oldValue = oTable.fnGetData(td);
   $('#modalLabel').html('Update the cable <span class="text-info" style="text-decoration: underline;" data-toggle="collapse" data-target="#cable-details">' + cableNumber + '</span> ?');
   $('#modal .modal-body').empty();
   $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + property + ')' + '</b></div>');
-  $('#modal .modal-body').append('<div>From <b>' + oldValue + '</b></div>');
+  $('#modal .modal-body').append('<div>From <b>' + oldValue.join() + '</b></div>');
   $('#modal .modal-body').append('<div>To <input id="new-value" type="text"></div>');
   $('#modal .modal-body').append(cableDetails(cableData));
   $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
   $('#modal').modal('show');
   $('#update').click(function (e) {
     var newValue = $('#new-value').val();
-    updateTdFromModal(cableNumber, property, oldValue, newValue, td, oTable);
+    updateTdFromModal(cableNumber, property, parseType, oldValue, newValue, td, oTable);
   });
 }
 
