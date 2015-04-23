@@ -685,7 +685,7 @@ $(function () {
     }
   });
 
-  $('#procuring-table').on('click', 'td.editable', function (e) {
+  $('#procuring-table').on('dblclick', 'td.editable', function (e) {
     e.preventDefault();
     if (managerGlobal.procuring_edit) {
       updateTd(this, procuringTable);
