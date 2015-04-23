@@ -23,9 +23,7 @@ html
               li.active
                 a(href='/') Cable
               li
-                a(href='http://traveler', target='_blank') Traveler
-              li
-                a(href='https://controls.frib.msu.edu/controlshelp/', target='_blank') Trouble report
+                a(href='https://controls.frib.msu.edu/', target='_blank') Controls
               li
                 a(href='/logout') Logout
     header.jumbotron.subhead
@@ -42,6 +40,8 @@ html
             li
               a(href='#bar') Bar chart
             li
+              a(href='#change') Change cable specification
+            li
               a(href='#bug') Bugs and suggestions
         .span9
           section#user
@@ -54,6 +54,12 @@ html
               h2 Bar chart
             p A user can plot a bar chart for the data loaded in any table. A user can plot the data from different tables by switching the active tab. By default, all the data entries in a table are counted and plotted. A user can also filter and select the data entries to be plotted. The chart can be saved as images by right clicking on it. All items with an empty property will be counted in a group, and the group has no label on the chart.
             embed(src="/images/bar.swf",width=1024,height=788,quality='low',play=false,loop=false,wmode='transparent',type="application/x-shockwave-flash",pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash")
+          section#change
+            .page-header
+              h2 Change cable specification
+            p A manager can change the specification of a cable in the table view. The interface switchs to an edit mode when clicking the Edit mode button. The editable cells in the table change to a light blue color. Double click on a cell to edit, and a dialog to appear. If the new value is the same as the old value, the change request will be ignored.
+            embed(src="/images/change.swf",width=1024,height=788,quality='low',play=false,loop=false,wmode='transparent',type="application/x-shockwave-flash",pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash")
+          section#bug
           section#bug
             .page-header
               h2 Bugs and suggestions
