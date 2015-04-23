@@ -551,7 +551,7 @@ $(function () {
     });
   } else {
     // $('form[name="request"]').fadeTo('slow', 1);
-    // validator.form();
+    validator.form();
     initModel = _.cloneDeep(binder.serialize());
 
     // $('#save').closest('.btn-group').show();
@@ -584,23 +584,21 @@ $(function () {
         $('#modal .modal-body').html('No change has been made in the form');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
-      } else {
-        sendRequest(data);
       }
     }
 
-    if (action === 'submit' || action === 'approve') {
+    if (action === 'save' || action === 'submit') {
       if ($(requestForm).valid()) {
         sendRequest(data);
       } else {
-        $('#modalLabel').html('The request cannot be sent');
+        $('#modalLabel').html('The request is not validated');
         $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
       }
     }
 
-    if (action === 'clone' || action === 'reject') {
+    if (action === 'clone' || action === 'reject' || action === 'approve') {
       sendRequest(data);
     }
 

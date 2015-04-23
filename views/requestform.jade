@@ -42,7 +42,17 @@ legend Basic information
 .control-group
   .control-label Tray section
   .controls
-    input#tray-section(type='text', name='basic.traySection')
+    select#tray-section.input(name='basic.traySection')
+      option HPRF
+      option DC
+      option VLLS
+      option LLS
+      option HVDC
+      option MLS
+      option AC
+      option MV-AC
+      option REF
+      option PPS
 .control-group
   .control-label Type
   .controls
