@@ -584,10 +584,11 @@ $(function () {
         $('#modal .modal-body').html('No change has been made in the form');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
+        return;
       }
     }
 
-    if (action === 'save' || action === 'submit') {
+    if (action === 'save' || action === 'submit' || action === 'adjust') {
       if ($(requestForm).valid()) {
         sendRequest(data);
       } else {
@@ -595,6 +596,7 @@ $(function () {
         $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
         // $('#modal .modal-footer').html();
         $('#modal').modal('show');
+        return;
       }
     }
 
