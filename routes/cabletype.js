@@ -57,11 +57,11 @@ module.exports = function (app) {
       if (err) {
         console.dir(err);
         if (err.code && err.code === 11000) {
-          console.error(err.msg || err.err);
+          console.error(err.message || err.err);
           return res.send(400, 'The type name ' + newType.name + ' was already used.');
         }
-        console.error(err.msg || err.err);
-        return res.send(500, err.msg || err.err);
+        console.error(err.message || err.err);
+        return res.send(500, err.message || err.err);
       }
       var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
       res.set('Location', url);
@@ -90,7 +90,7 @@ module.exports = function (app) {
         if (err.lastErrorObject && err.lastErrorObject.code === 11001) {
           return res.send(400, req.body.update + ' is already taken');
         }
-        return res.send(500, err.msg || err.errmsg);
+        return res.send(500, err.message || err.errmsg);
       }
       if (type) {
         return res.send(204);

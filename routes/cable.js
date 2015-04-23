@@ -80,9 +80,9 @@ function createCable(cableRequest, req, res, quantity, cables) {
   }).lean().exec(function (err, cable) {
     var nextNumber;
     if (err) {
-      console.error(err.msg);
+      console.error(err);
       // revert the request state?
-      return res.send(500, err.msg);
+      return res.send(500, err.message);
     }
     if (cable) {
       nextNumber = increment(cable.number);
@@ -116,9 +116,9 @@ function createCable(cableRequest, req, res, quantity, cables) {
           console.log(nextNumber + ' already existed, try again ...');
           createCable(cableRequest, req, res, quantity, cables);
         } else {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
       } else {
@@ -168,7 +168,7 @@ module.exports = function (app) {
     }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       return res.json(requests);
@@ -181,7 +181,7 @@ module.exports = function (app) {
     }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       return res.json(requests);
@@ -213,7 +213,7 @@ module.exports = function (app) {
         Request.create(requests, function (err) {
           if (err) {
             console.dir(err);
-            res.send(500, err.msg);
+            res.send(500, err.message);
           } else {
             res.send(201, req.body.quantity + ' requests created');
           }
@@ -223,8 +223,8 @@ module.exports = function (app) {
       } else {
         (new Request(request)).save(function (err, cableRequest) {
           if (err) {
-            console.error(err.msg);
-            return res.send(500, err.msg);
+            console.error(err);
+            return res.send(500, err.message);
           }
           var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
           res.set('Location', url);
@@ -251,8 +251,8 @@ module.exports = function (app) {
   app.delete('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
     Request.findById(req.params.id).exec(function (err, request) {
       if (err) {
-        console.error(err.msg);
-        return res.send(500, err.msg);
+        console.error(err);
+        return res.send(500, err.message);
       }
       if (request) {
         if (req.session.userid !== request.createdBy) {
@@ -263,8 +263,8 @@ module.exports = function (app) {
         }
         request.remove(function (err) {
           if (err) {
-            console.error(err.msg);
-            return res.send(500, err.msg);
+            console.error(err);
+            return res.send(500, err.message);
           }
           return res.send(200, 'deleted');
         });
@@ -278,9 +278,9 @@ module.exports = function (app) {
   app.get('/requests/:id/json', auth.ensureAuthenticated, function (req, res) {
     Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
-        console.error(err.msg);
+        console.error(err);
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       res.json(cableRequest);
@@ -290,9 +290,9 @@ module.exports = function (app) {
   app.get('/requests/:id/details', auth.ensureAuthenticated, function (req, res) {
     Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
-        console.error(err.msg);
+        console.error(err);
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       if (cableRequest) {
@@ -311,9 +311,9 @@ module.exports = function (app) {
   function findRequest(query, res) {
     Request.find(query).lean().exec(function (err, docs) {
       if (err) {
-        console.error(err.msg);
+        console.error(err);
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       return res.json(docs);
@@ -341,8 +341,8 @@ module.exports = function (app) {
         adid: req.session.userid
       }).lean().exec(function (err, user) {
         if (err) {
-          console.error(err.msg);
-          return res.send(500, err.msg);
+          console.error(err);
+          return res.send(500, err.message);
         }
         if (!user) {
           return res.send(404, 'cannot identify you.');
@@ -393,9 +393,9 @@ module.exports = function (app) {
         status: 0
       }, request, function (err, cableRequest) {
         if (err) {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
         if (cableRequest) {
@@ -419,9 +419,9 @@ module.exports = function (app) {
         status: 0
       }, request, function (err, cableRequest) {
         if (err) {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
         if (cableRequest) {
@@ -445,9 +445,9 @@ module.exports = function (app) {
         status: 1
       }, request, function (err, cableRequest) {
         if (err) {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
         if (cableRequest) {
@@ -466,9 +466,9 @@ module.exports = function (app) {
         status: 1
       }, request, function (err, cableRequest) {
         if (err) {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
         if (cableRequest) {
@@ -490,9 +490,9 @@ module.exports = function (app) {
         status: 1
       }, request, function (err, cableRequest) {
         if (err) {
-          console.error(err.msg);
+          console.error(err);
           return res.json(500, {
-            error: err.msg
+            error: err.message
           });
         }
         if (cableRequest) {
@@ -515,9 +515,9 @@ module.exports = function (app) {
       }, request).lean().exec(
         function (err, cableRequest) {
           if (err) {
-            console.error(err.msg);
+            console.error(err);
             return res.json(500, {
-              error: err.msg
+              error: err.message
             });
           }
           if (cableRequest) {
@@ -542,7 +542,7 @@ module.exports = function (app) {
     }).lean().exec(function (err, cables) {
       if (err) {
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       return res.json(cables);
@@ -557,7 +557,7 @@ module.exports = function (app) {
     }).lean().exec(function (err, cables) {
       if (err) {
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       return res.json(cables);
@@ -583,9 +583,9 @@ module.exports = function (app) {
         // get all the cables
         Cable.find({}).lean().exec(function (err, docs) {
           if (err) {
-            console.error(err.msg);
+            console.error(err);
             return res.json(500, {
-              error: err.msg
+              error: err.message
             });
           }
           return res.json(docs);
@@ -599,9 +599,9 @@ module.exports = function (app) {
       if (req.session.roles.indexOf('admin') !== -1) {
         Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
           if (err) {
-            console.error(err.msg);
+            console.error(err);
             return res.json(500, {
-              error: err.msg
+              error: err.message
             });
           }
           return res.json(docs);
@@ -612,8 +612,8 @@ module.exports = function (app) {
           adid: req.session.userid
         }).lean().exec(function (err, user) {
           if (err) {
-            console.error(err.msg);
-            return res.send(500, err.msg);
+            console.error(err);
+            return res.send(500, err.message);
           }
           if (!user) {
             return res.send(404, 'cannot identify you.');
@@ -624,9 +624,9 @@ module.exports = function (app) {
 
           Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (err, docs) {
             if (err) {
-              console.error(err.msg);
+              console.error(err);
               return res.json(500, {
-                error: err.msg
+                error: err.message
               });
             }
             return res.json(docs);
@@ -641,9 +641,9 @@ module.exports = function (app) {
       number: req.params.id
     }).lean().exec(function (err, cable) {
       if (err) {
-        console.error(err.msg);
+        console.error(err);
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       if (cable) {
@@ -702,9 +702,9 @@ module.exports = function (app) {
       number: req.params.id
     }).lean().exec(function (err, cable) {
       if (err) {
-        console.error(err.msg);
+        console.error(err);
         return res.json(500, {
-          error: err.msg
+          error: err.message
         });
       }
       res.json(cable);
