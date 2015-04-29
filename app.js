@@ -19,20 +19,20 @@ var CableType = require('./model/meta.js').CableType;
 var Request = require('./model/request.js').Request;
 var User = require('./model/user.js').User;
 
-var mongoOptions = {
-  db: {
-    native_parser: true
-  },
-  server: {
-    poolSize: 5,
-    socketOptions: {
-      connectTimeoutMS: 30000,
-      keepAlive: 1
-    }
-  }
-};
+// var mongoOptions = {
+//   db: {
+//     native_parser: true
+//   },
+//   server: {
+//     poolSize: 5,
+//     socketOptions: {
+//       connectTimeoutMS: 30000,
+//       keepAlive: 1
+//     }
+//   }
+// };
 
-mongoose.connect('mongodb://localhost/cable_frib', mongoOptions);
+mongoose.connect('mongodb://localhost/cable_frib');
 
 mongoose.connection.on('connected', function () {
   console.log('Mongoose default connection opened.');
