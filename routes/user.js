@@ -169,7 +169,6 @@ module.exports = function (app) {
     }
     User.find().lean().exec(function (err, users) {
       if (err) {
-        console.error(err);
         return res.json(500, {
           error: err.message
         });
@@ -393,9 +392,7 @@ module.exports = function (app) {
         return res.json(500, err.message);
       }
       if (result.length === 0) {
-        return res.json(500, {
-          error: 'Names starting with ' + query + ' are not found!'
-        });
+        return res.json([]);
       }
       return res.json(result);
     });
