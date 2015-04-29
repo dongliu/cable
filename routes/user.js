@@ -385,14 +385,15 @@ module.exports = function (app) {
     opts = {
       filter: nameFilter,
       attributes: ['displayName'],
-      paged: {
-        pageSize: 200
-      },
+      // paged: {
+      //   pageSize: 200
+      // },
       scope: 'sub'
     };
     ldapClient.search(ad.searchBase, opts, false, function (err, result) {
       if (err) {
-        return res.json(500, JSON.stringify(err));
+        console.error(err);
+        return res.json(500, err.message);
       }
       if (result.length === 0) {
         return res.json(500, {
