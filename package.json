@@ -13,7 +13,7 @@
     "file-stream-rotator": "0.0.5",
     "jade": "1.2.0",
     "ldapjs": "0.7.2",
-    "mongoose": "3.8.8",
+    "mongoose": "4.0.2",
     "validator": "3.37.0",
     "pause": "0.0.1"
   },
