@@ -6,6 +6,7 @@ logs/
 doc/
 # config/
 config/ad.json
+config/auth.json
 
 # Git related files. #
 *.orig
