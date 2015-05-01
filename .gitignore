@@ -21,3 +21,6 @@ config/auth.json
 # sublime stuff#
 *.sublime-project
 *.sublime-workspace
+
+# npm log #
+npm-debug.log*
