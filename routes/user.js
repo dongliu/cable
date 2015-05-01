@@ -388,7 +388,6 @@ module.exports = function (app) {
     };
     ldapClient.search(ad.searchBase, opts, false, function (err, result) {
       if (err) {
-        console.error(err);
         return res.json(500, err.message);
       }
       if (result.length === 0) {
