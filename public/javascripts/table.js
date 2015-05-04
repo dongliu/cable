@@ -13,10 +13,19 @@ function selectEvent() {
 
 
 function filterEvent() {
-  $('tfoot').on('keyup', 'input', function (e) {
+  $('.filter').on('keyup', 'input', function (e) {
     var table = $(this).closest('table');
     var th = $(this).closest('th');
-    table.dataTable().fnFilter(this.value, $('tfoot th', table).index(th));
+    var filter = $(this).closest('.filter');
+    var index;
+    if (filter.is('thead')) {
+      index = $('thead.filter th', table).index(th);
+      $('tfoot.filter th:nth-child(' + (index + 1) + ') input').val(this.value);
+    } else {
+      index = $('tfoot.filter th', table).index(th);
+      $('thead.filter th:nth-child(' + (index + 1) + ') input').val(this.value);
+    }
+    table.dataTable().fnFilter(this.value, index);
   });
 }
 
@@ -170,7 +179,19 @@ function fnAddFilterFoot(sTable, aoColumns) {
       tr.append('<th></th>');
     }
   });
-  $(sTable).append($('<tfoot>').append(tr));
+  $(sTable).append($('<tfoot class="filter">').append(tr));
+}
+
+function fnAddFilterHead(sTable, aoColumns) {
+  var tr = $('<tr role="row">');
+  aoColumns.forEach(function (c) {
+    if (c.bFilter) {
+      tr.append('<th><input type="text" placeholder="' + c.sTitle + '" style="width:80%;" autocomplete="off"></th>');
+    } else {
+      tr.append('<th></th>');
+    }
+  });
+  $(sTable).append($('<thead class="filter">').append(tr));
 }
 
 $.fn.dataTableExt.oApi.fnAddDataAndDisplay = function (oSettings, aData) {
@@ -586,7 +607,8 @@ var oTableTools = {
 };
 
 var sDom = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
-
+var sDomNoTools = "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
+var sDomNoLength = "<'row-fluid'<'span6'<'control-group'T>><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
 
 /**
  * By default DataTables only uses the sAjaxSource variable at initialisation
