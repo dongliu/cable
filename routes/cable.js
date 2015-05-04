@@ -535,19 +535,19 @@ module.exports = function (app) {
   });
 
 
-
-  app.get('/cables', auth.ensureAuthenticated, function (req, res) {
-    Cable.find({
-      submittedBy: req.session.userid
-    }).lean().exec(function (err, cables) {
-      if (err) {
-        return res.json(500, {
-          error: err.message
-        });
-      }
-      return res.json(cables);
-    });
-  });
+  // not used
+  /*  app.get('/cables', auth.ensureAuthenticated, function (req, res) {
+      Cable.find({
+        submittedBy: req.session.userid
+      }).lean().exec(function (err, cables) {
+        if (err) {
+          return res.json(500, {
+            error: err.message
+          });
+        }
+        return res.json(cables);
+      });
+    });*/
 
 
   // get the user's cables
@@ -561,6 +561,26 @@ module.exports = function (app) {
         });
       }
       return res.json(cables);
+    });
+  });
+
+  app.get('/allcables', auth.ensureAuthenticated, function (req, res) {
+    res.render('allcables');
+  });
+
+
+  // get all the cables
+  app.get('/allcables/json', auth.ensureAuthenticated, function (req, res) {
+    var low = 100;
+    var up = 499;
+    Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+      if (err) {
+        console.error(err);
+        return res.json(500, {
+          error: err.message
+        });
+      }
+      return res.json(docs);
     });
   });
 
@@ -859,7 +879,9 @@ module.exports = function (app) {
           console.error(err);
           return res.send(500, 'cannot save the change');
         }
-        update.$push = {changeHistory: doc._id};
+        update.$push = {
+          changeHistory: doc._id
+        };
         updateCable(conditions, update, req, res);
       });
     }
