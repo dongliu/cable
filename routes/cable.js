@@ -25,8 +25,8 @@ var querystring = require('querystring');
 //   200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
 // working: 3xx
 // failed: 4xx
-// aborted: 5xx
-//   501: not required
+// obsoleted: 5xx
+//   501: not needed
 
 
 //TODO: need a server side validation in the future

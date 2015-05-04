@@ -38,6 +38,12 @@ var installedTableColumns = {
   comments: [22]
 };
 
+var obsoletedTableColumns = {
+  from: [13, 14, 15, 16],
+  to: [17, 18, 19, 20],
+  comments: [23]
+};
+
 var managerGlobal = {
   plot: null,
   procuring_edit: false
@@ -495,7 +501,7 @@ $(function () {
     }
   });
 
-  var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable;
+  var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
   /*approving table starts*/
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
@@ -790,7 +796,48 @@ $(function () {
   $('#installed-select-none').click(function (e) {
     fnDeselect(installedTable, 'row-selected', 'select-row');
   });
+  /*installed tab end*/
 
+  /*obsoleted tab starts*/
+  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
+  obsoletedTable = $('#obsoleted-table').dataTable({
+    sAjaxSource: '/cables/statuses/5/json',
+    sAjaxDataProp: '',
+    bAutoWidth: false,
+    bProcessing: true,
+    oLanguage: {
+      sLoadingRecords: 'Please wait - loading data from the server ...'
+    },
+    aoColumns: obsoletedAoColumns,
+    aaSorting: [
+      [4, 'desc'],
+      [1, 'desc']
+    ],
+    sDom: sDom,
+    oTableTools: oTableTools
+  });
+
+  $('#obsoleted-wrap').click(function (e) {
+    fnWrap(obsoletedTable);
+  });
+
+  $('#obsoleted-unwrap').click(function (e) {
+    fnUnwrap(obsoletedTable);
+  });
+
+  $('#obsoleted-show input:checkbox').change(function (e) {
+    fnSetColumnsVis(obsoletedTable, obsoletedTableColumns[$(this).val()], $(this).prop('checked'));
+  });
+
+  // $('#obsoleted-select-all').click(function (e) {
+  //   fnSelectAll(obsoletedTable, 'row-selected', 'select-row', true);
+  // });
+
+  // $('#obsoleted-select-none').click(function (e) {
+  //   fnDeselect(obsoletedTable, 'row-selected', 'select-row');
+  // });
+  /*obsoleted tab end*/
 
   /*all tabs*/
   filterEvent();

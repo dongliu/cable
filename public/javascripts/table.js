@@ -44,7 +44,7 @@ function formatCableStatus(s) {
     '252': 'field tested',
     '300': 'working',
     '400': 'failed',
-    '500': 'aborted'
+    '501': 'not needed'
   };
   if (status[s.toString()]) {
     return status[s.toString()];
@@ -135,12 +135,14 @@ function fnSelectAll(oTableLocal, selectedClass, checkboxClass, filtered) {
   fnDeselect(oTableLocal, selectedClass, checkboxClass);
   var rows, i;
   if (filtered) {
-    rows = oTableLocal.$('tr', {"filter":"applied"});
+    rows = oTableLocal.$('tr', {
+      "filter": "applied"
+    });
   } else {
     rows = oTableLocal.$('tr');
   }
 
-  for(i = 0; i < rows.length; i += 1) {
+  for (i = 0; i < rows.length; i += 1) {
     $(rows[i]).addClass(selectedClass);
     $(rows[i]).find('input.' + checkboxClass).prop('checked', true);
   }
@@ -278,6 +280,9 @@ var approvedByColumn = personColumn('Approved by', 'approvedBy');
 var rejectedOnColumn = dateColumn('Rejected', 'rejectedOn');
 var rejectedByColumn = personColumn('Rejected by', 'rejectedBy');
 
+var obsoletedOnColumn = dateColumn('Obsoleted', 'obsoletedOn');
+var obsoletedByColumn = personColumn('Obsoleted by', 'obsoletedBy');
+
 var commentsColumn = {
   sTitle: 'Comments',
   sDefaultContent: '',
@@ -344,9 +349,8 @@ var basicColumns = [{
   mRender: function (data, type, full) {
     if (data) {
       return data.join();
-    } else {
-      return '';
     }
+    return '';
   },
   // mParser: function (sRendered) {
   //   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*,\s*/) : [];
