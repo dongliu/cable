@@ -588,6 +588,51 @@ module.exports = function (app) {
     res.render('workingsheets');
   });
 
+  app.get('/activecables/json', auth.ensureAuthenticated, function (req, res) {
+    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
+      return res.send(403, "You are not authorized to access this resource. ");
+    }
+    var low = 100;
+    var up = 499;
+    if (req.session.roles.indexOf('admin') !== -1) {
+      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+        if (err) {
+          console.error(err);
+          return res.json(500, {
+            error: err.message
+          });
+        }
+        return res.json(docs);
+      });
+    } else {
+      // manager see his own wbs
+      User.findOne({
+        adid: req.session.userid
+      }).lean().exec(function (err, user) {
+        if (err) {
+          console.error(err);
+          return res.send(500, err.message);
+        }
+        if (!user) {
+          return res.send(404, 'cannot identify you.');
+        }
+        if (user.wbs === undefined || user.wbs.length === 0) {
+          return res.json([]);
+        }
+
+        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (err, docs) {
+          if (err) {
+            console.error(err);
+            return res.json(500, {
+              error: err.message
+            });
+          }
+          return res.json(docs);
+        });
+      });
+    }
+  });
+
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
