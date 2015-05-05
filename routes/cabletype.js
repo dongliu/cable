@@ -81,7 +81,9 @@ module.exports = function (app) {
     update[req.body.target] = req.body.update;
     update.updatedOn = Date.now();
     update.updatedBy = req.session.userid;
-    CableType.findOneAndUpdate(conditions, update, function (err, type) {
+    CableType.findOneAndUpdate(conditions, update, {
+      new: true
+    }, function (err, type) {
       // the err is not a mongoose error
       if (err) {
         if (err.errmsg) {
