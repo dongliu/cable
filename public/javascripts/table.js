@@ -62,13 +62,16 @@ function formatCableStatus(s) {
 }
 
 
-function dateColumn(title, key) {
+function dateColumn(title, key, long) {
   return {
     sTitle: title,
     mData: function (source, type, val) {
       if (type === 'sort') {
         // return formatDateLong(source[key]);
         return source[key];
+      }
+      if (long) {
+        return formatDateLong(source[key]);
       }
       return formatDate(source[key]);
     },
@@ -291,11 +294,13 @@ var detailsLinkColumn = {
 var createdOnColumn = dateColumn('Created', 'createdOn');
 
 var updatedOnColumn = dateColumn('Updated', 'updatedOn');
+var updatedOnLongColumn = dateColumn('Updated', 'updatedOn', true);
 
 var submittedOnColumn = dateColumn('Submitted', 'submittedOn');
 var submittedByColumn = personColumn('Submitted by', 'submittedBy');
 
 var approvedOnColumn = dateColumn('Approved', 'approvedOn');
+var approvedOnLongColumn = dateColumn('Approved', 'approvedOn', true);
 var approvedByColumn = personColumn('Approved by', 'approvedBy');
 
 var rejectedOnColumn = dateColumn('Rejected', 'rejectedOn');

@@ -257,7 +257,7 @@ $(function () {
   });
   // var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
   /*approving table starts*/
-  var activeAoCulumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var activeAoCulumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   var activeTable = $('#active-table').dataTable({
     sAjaxSource: '/activecables/json',
     sAjaxDataProp: '',

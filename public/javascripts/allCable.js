@@ -12,7 +12,7 @@ $(function () {
   //   to: [17, 18, 19, 20],
   //   comments: [23]
   // };
-  var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   var allTable = $('#all-cable').dataTable({
     sAjaxSource: '/allcables/json',
