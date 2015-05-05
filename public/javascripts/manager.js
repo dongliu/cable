@@ -799,7 +799,7 @@ $(function () {
   /*installed tab end*/
 
   /*obsoleted tab starts*/
-  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
   obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
@@ -850,11 +850,6 @@ $(function () {
     procuringTable.fnReloadAjax();
     installingTable.fnReloadAjax();
     installedTable.fnReloadAjax();
-
-    // initRequestTable(approvingTable, '/requests/statuses/1/json');
-    // initRequestTable(rejectedTable, 'requests/statuses/3/json');
-    // initRequestTable(approvedTable, 'requests/statuses/2/json');
-    // initCableTables(procuringTable, installingTable, installedTable);
   });
 
   $('#bar').click(function (e) {
