@@ -234,6 +234,7 @@ $(function () {
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
     },
+    bProcessing: true,
     aoColumns: activeAoCulumns,
     aaSorting: [
       [4, 'desc'],
@@ -277,6 +278,7 @@ $(function () {
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
     },
+    bProcessing: true,
     aoColumns: obsoletedAoColumns,
     aaSorting: [
       [4, 'desc'],

@@ -23,6 +23,7 @@ $(function () {
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
     },
+    bProcessing: true,
     aoColumns: allAoColumns,
     aaSorting: [
       [3, 'desc'],
