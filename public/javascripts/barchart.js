@@ -1,3 +1,5 @@
+var plot = null;
+
 function query(o, s) {
   s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
   s = s.replace(/^\./, ''); // strip a leading dot
@@ -40,10 +42,10 @@ function drawChart(ctx, selected, oTable, groupBy) {
     barChartData.datasets[0].data.push(count);
   });
   ctx.clearRect(0, 0, 400, 600);
-  if (managerGlobal.plot !== null) {
-    managerGlobal.plot.destroy();
+  if (plot !== null) {
+    plot.destroy();
   }
-  managerGlobal.plot = new Chart(ctx).Bar(barChartData, {
+  plot = new Chart(ctx).Bar(barChartData, {
     barShowStroke: false,
     animation: false
   });
