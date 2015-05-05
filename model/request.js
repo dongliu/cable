@@ -175,6 +175,8 @@ var cable = new Schema({
   approvedOn: Date,
   updatedOn: Date,
   updatedBy: String,
+  obsoletedOn: Date,
+  obsoletedBy: String,
   orderedBy: String,
   orderedOn: Date,
   receivedBy: String,
