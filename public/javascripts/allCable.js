@@ -7,49 +7,40 @@ $(function () {
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }
   });
-  var allTableColumns = {
-    from: [14, 15, 16, 17],
-    to: [18, 19, 20, 21],
-    comments: [24]
-  };
-  var allAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  // var allTableColumns = {
+  //   from: [13, 14, 15, 16],
+  //   to: [17, 18, 19, 20],
+  //   comments: [23]
+  // };
+  var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   var allTable = $('#all-cable').dataTable({
     sAjaxSource: '/allcables/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
-    iDisplayLength: 50,
-    bLengthChange: false,
-    // bProcessing: true,
+    iDisplayLength: 25,
+    aLengthMenu: [[25, 50, 100, 500, 1000, -1], [25, 50, 100, 500, 1000, "All"]],
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
     },
     aoColumns: allAoColumns,
     aaSorting: [
+      [3, 'desc'],
       [4, 'desc'],
-      [5, 'desc'],
-      [1, 'desc']
+      [0, 'desc']
     ],
-    sDom: sDomNoLength,
+    sDom: sDom2iT1l,
     oTableTools: oTableTools
   });
 
   fnAddFilterHead('#all-cable', allAoColumns);
   fnAddFilterFoot('#all-cable', allAoColumns);
+
   $('#all-wrap').click(function (e) {
     fnWrap(allTable);
   });
   $('#all-unwrap').click(function (e) {
     fnUnwrap(allTable);
-  });
-  $('#all-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(allTable, allTableColumns[$(this).val()], $(this).prop('checked'));
-  });
-  $('#all-select-all').click(function (e) {
-    fnSelectAll(allTable, 'row-selected', 'select-row', true);
-  });
-  $('#all-select-none').click(function (e) {
-    fnDeselect(allTable, 'row-selected', 'select-row');
   });
 
   $('#reload').click(function (e) {
