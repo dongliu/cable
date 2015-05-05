@@ -241,7 +241,7 @@ $(function () {
       [5, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom2iT1l,
+    sDom: sDom2i1p,
     oTableTools: oTableTools
   });
   fnAddFilterHead('#active-table', activeAoCulumns);
@@ -284,7 +284,7 @@ $(function () {
       [4, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom2iT1l,
+    sDom: sDom2i1p,
     oTableTools: oTableTools
   });
   fnAddFilterHead('#obsoleted-table', obsoletedAoColumns);

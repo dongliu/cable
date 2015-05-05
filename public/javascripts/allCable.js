@@ -30,7 +30,7 @@ $(function () {
       [4, 'desc'],
       [0, 'desc']
     ],
-    sDom: sDom2iT1l,
+    sDom: sDom2i1p,
     oTableTools: oTableTools
   });
 
