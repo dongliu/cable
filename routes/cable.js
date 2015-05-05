@@ -584,6 +584,10 @@ module.exports = function (app) {
     });
   });
 
+  app.get('/workingsheets', auth.ensureAuthenticated, function (req, res) {
+    res.render('workingsheets');
+  });
+
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
