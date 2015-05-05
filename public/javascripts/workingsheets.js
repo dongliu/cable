@@ -80,14 +80,14 @@ function updateTd(td, oTable) {
   });
 }
 
-function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
+function batchAction(oTable, action, obsoletedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
   var required = [];
   if (selected.length) {
     $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
-    $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
+    // $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls"><input id="username" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="date" type="text" class="input-small" placeholder="date"></div></div></form>');
     selected.forEach(function (row) {
       var data = oTable.fnGetData(row);
       cables.push(row);
@@ -95,11 +95,12 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
       $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-    $('#username').autocomplete(nameAuto('#username', nameCache));
-    $('#date').datepicker();
+    // $('#username').autocomplete(nameAuto('#username', nameCache));
+    // $('#date').datepicker();
     $('#modal').modal('show');
     $('#action').click(function (e) {
-      actionFromModal(cables, required, action, procuringTable, installingTable, installedTable);
+      $('#action').prop('disabled', true);
+      actionFromModal(cables, action, oTable, obsoletedTable);
     });
   } else {
     $('#modalLabel').html('Alert');
@@ -109,8 +110,8 @@ function batchCableAction(oTable, action, procuringTable, installingTable, insta
   }
 }
 
-function actionFromModal(cables, required, action, procuringTable, installingTable, installedTable) {
-  $('#action').prop('disabled', true);
+function actionFromModal(cables, action, activeTable, obsoletedTable) {
+  // $('#action').prop('disabled', true);
   var number = $('#modal .modal-body .cable').length;
   $('#modal .modal-body .cable').each(function (index) {
     var that = this;
@@ -119,10 +120,7 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
-        action: action,
-        required: required[index],
-        name: $('#username').val(),
-        date: $('#date').val()
+        action: action
       }),
       dataType: 'json'
     }).done(function (cable) {
@@ -130,43 +128,9 @@ function actionFromModal(cables, required, action, procuringTable, installingTab
       $(that).addClass('text-success');
       fnSetDeselect(cables[index], 'row-selected', 'select-row');
       switch (action) {
-      case 'order':
-        procuringTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'receive':
-        procuringTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'accept':
-        procuringTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'install':
-        procuringTable.fnDeleteRow(cables[index]);
-        installingTable.fnAddData(cable);
-        break;
-      case 'label':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'benchTerm':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'benchTest':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'pull':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'pulled':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'fieldTerm':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'fieldTest':
-        installingTable.fnUpdate(cable, cables[index]);
-        break;
-      case 'use':
-        installingTable.fnDeleteRow(cables[index]);
-        installedTable.fnAddData(cable);
+      case 'obsolete':
+        activeTable.fnDeleteRow(cables[index]);
+        obsoletedTable.fnAddData(cable);
         break;
       default:
         // do nothing
@@ -296,12 +260,11 @@ $(function () {
     fnSelectAll(activeTable, 'row-selected', 'select-row', true);
   });
   $('#obsolte').click(function (e) {
-    // batchApprove(approvingTable, approvedTable, procuringTable);
+    batchAction(activeTable, 'obsolete', obsoletedTable);
   });
   /*approving tab ends*/
   /*obsoleted tab starts*/
-  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
+  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   var obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
     sAjaxDataProp: '',
@@ -322,6 +285,8 @@ $(function () {
     sDom: sDom2iT1l,
     oTableTools: oTableTools
   });
+  fnAddFilterHead('#obsoleted-table', obsoletedAoColumns);
+  fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
   $('#obsoleted-wrap').click(function (e) {
     fnWrap(obsoletedTable);
   });
@@ -331,6 +296,7 @@ $(function () {
   $('#obsoleted-show input:checkbox').change(function (e) {
     fnSetColumnsVis(obsoletedTable, obsoletedTableColumns[$(this).val()], $(this).prop('checked'));
   });
+
   /*obsoleted tab end*/
   /*all tabs*/
   filterEvent();
