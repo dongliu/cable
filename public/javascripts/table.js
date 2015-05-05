@@ -20,10 +20,10 @@ function filterEvent() {
     var index;
     if (filter.is('thead')) {
       index = $('thead.filter th', table).index(th);
-      $('tfoot.filter th:nth-child(' + (index + 1) + ') input').val(this.value);
+      $('tfoot.filter th:nth-child(' + (index + 1) + ') input', table).val(this.value);
     } else {
       index = $('tfoot.filter th', table).index(th);
-      $('thead.filter th:nth-child(' + (index + 1) + ') input').val(this.value);
+      $('thead.filter th:nth-child(' + (index + 1) + ') input', table).val(this.value);
     }
     table.dataTable().fnFilter(this.value, index);
   });
@@ -86,6 +86,18 @@ function personColumn(title, key) {
     sDefaultContent: '',
     mRender: function (data, type, full) {
       return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
+    },
+    bFilter: true
+  };
+}
+
+function personNameColumn(title, key) {
+  return {
+    sTitle: title,
+    mData: key,
+    sDefaultContent: '',
+    mRender: function (data, type, full) {
+      return '<a href = "/usernames/' + data + '" target="_blank">' + data + '</a>';
     },
     bFilter: true
   };
