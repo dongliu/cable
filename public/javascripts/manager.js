@@ -850,6 +850,7 @@ $(function () {
     procuringTable.fnReloadAjax();
     installingTable.fnReloadAjax();
     installedTable.fnReloadAjax();
+    obsoletedTable.fnReloadAjax();
   });
 
   $('#bar').click(function (e) {
