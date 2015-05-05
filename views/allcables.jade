@@ -13,11 +13,20 @@ block head
 block content
   .container-fluid(style="margin-top: 10px")
     #message
+    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+      .modal-header
+        h3#modalLabel
+      .modal-body
+      .modal-footer
     .btn-toolbar
         .btn-group
           button.btn.btn-primary#reload
             i.fa.fa-refresh.fa-lg
             | &nbsp;Reload
+        .btn-group
+          button.btn.btn-primary#bar
+            i.fa.fa-bar-chart.fa-lg
+            | &nbsp;Bar chart
         .btn-group(data-toggle='buttons-radio')
           button.btn.btn-info#all-wrap.active Wrap
           button.btn.btn-info#all-unwrap Unwrap
@@ -42,4 +51,5 @@ block js
   script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
   script(type='text/javascript', src='/dependencies/moment.js')
   script(type='text/javascript', src='/javascripts/table.js')
+  script(type='text/javascript', src='/javascripts/barchart.js')
   script(type='text/javascript', src='/javascripts/allCable.js')

@@ -7,11 +7,6 @@ $(function () {
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }
   });
-  // var allTableColumns = {
-  //   from: [13, 14, 15, 16],
-  //   to: [17, 18, 19, 20],
-  //   comments: [23]
-  // };
   var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   var allTable = $('#all-cable').dataTable({
@@ -19,7 +14,10 @@ $(function () {
     sAjaxDataProp: '',
     bAutoWidth: false,
     iDisplayLength: 25,
-    aLengthMenu: [[25, 50, 100, 500, 1000, -1], [25, 50, 100, 500, 1000, "All"]],
+    aLengthMenu: [
+      [25, 50, 100, 500, 1000, -1],
+      [25, 50, 100, 500, 1000, "All"]
+    ],
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
     },
@@ -47,6 +45,11 @@ $(function () {
   $('#reload').click(function (e) {
     allTable.fnReloadAjax();
   });
+
+  $('#bar').click(function (e) {
+    barChart(allTable);
+  });
+
 
   filterEvent();
   selectEvent();
