@@ -138,10 +138,12 @@ function createCable(cableRequest, req, res, quantity, cables) {
 }
 
 function updateCable(conditions, update, req, res) {
-  Cable.findOneAndUpdate(conditions, update, function (err, cable) {
+  Cable.findOneAndUpdate(conditions, update, {
+    new: true
+  }, function (err, cable) {
     if (err) {
       console.error(err);
-      return res.send(500, 'cannot save updated cable.');
+      return res.send(500, 'cannot save the update.');
     }
     if (cable) {
       return res.json(200, cable.toJSON());
@@ -391,7 +393,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 0
-      }, request, function (err, cableRequest) {
+      }, request, {
+        new: true
+      }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
@@ -417,7 +421,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 0
-      }, request, function (err, cableRequest) {
+      }, request, {
+        new: true
+      }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
@@ -443,7 +449,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function (err, cableRequest) {
+      }, request, {
+        new: true
+      }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
@@ -464,7 +472,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function (err, cableRequest) {
+      }, request, {
+        new: true
+      }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
@@ -488,7 +498,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request, function (err, cableRequest) {
+      }, request, {
+        new: true
+      }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
@@ -512,7 +524,9 @@ module.exports = function (app) {
       Request.findOneAndUpdate({
         _id: req.params.id,
         status: 1
-      }, request).lean().exec(
+      }, request, {
+        new: true
+      }).lean().exec(
         function (err, cableRequest) {
           if (err) {
             console.error(err);
@@ -788,7 +802,7 @@ module.exports = function (app) {
       number: req.params.id
     };
     var update = {};
-    var inValidaAction = false;
+    var inValidAction = false;
 
     var required = req.body.required;
 
@@ -799,6 +813,14 @@ module.exports = function (app) {
       update.$inc = {
         __v: 1
       };
+      break;
+    case "obsolete":
+      conditions.status = {
+        $lte: 500
+      };
+      update.status = 501;
+      update.obsoletedBy = req.session.userid;
+      update.obsoletedOn = Date.now();
       break;
     case "order":
       update.status = 101;
@@ -905,9 +927,9 @@ module.exports = function (app) {
       update.status = 300;
       break;
     default:
-      inValidaAction = true;
+      inValidAction = true;
     }
-    if (inValidaAction) {
+    if (inValidAction) {
       return res.send(400, 'invalid action');
     }
     update.updatedOn = Date.now();
