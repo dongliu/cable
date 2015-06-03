@@ -54,14 +54,12 @@ var app = express();
 
 app.enable('strict routing');
 
-
 if (app.get('env') === 'production') {
   var access_logfile = rotator.getStream({
     filename: __dirname + '/logs/access.log',
     frequency: 'daily'
   });
 }
-
 
 app.configure(function () {
   app.set('port', process.env.PORT || 3000);
@@ -106,6 +104,14 @@ app.configure('development', function () {
 
 app.get('/about', about.index);
 app.get('/', auth.ensureAuthenticated, routes.main);
+app.get('/login', auth.ensureAuthenticated, function (req, res) {
+  if (req.session.userid) {
+    return res.redirect('/');
+  }
+  // something wrong
+  res.send(400, 'please enable cookie in your browser');
+});
+
 app.get('/switch-to-normal', auth.ensureAuthenticated, routes.switch2normal);
 
 // init the user service
