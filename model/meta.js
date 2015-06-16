@@ -10,8 +10,14 @@ var cableType = new Schema({
     unique: true
   },
   service: String,
-  conductorNumber: {type: Number, required: true},
-  conductorSize: {type: String, required: true},
+  conductorNumber: {
+    type: Number,
+    required: true
+  },
+  conductorSize: {
+    type: String,
+    required: true
+  },
   fribType: {
     type: String,
     enum: {
@@ -20,7 +26,11 @@ var cableType = new Schema({
     },
     required: true
   },
-  typeNumber: {type: String, required: true},
+  typeNumber: {
+    type: String,
+    unique: true,
+    required: true
+  },
   pairing: String,
   shielding: String,
   outerDiameter: String,
