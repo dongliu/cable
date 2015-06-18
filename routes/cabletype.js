@@ -6,7 +6,7 @@ var auth = require('../lib/auth');
 var util = require('../lib/util');
 
 module.exports = function (app) {
-  app.get('/cabletypes', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cabletypes/', auth.ensureAuthenticated, function (req, res) {
     res.render('cabletype', {
       roles: req.session.roles
     });
@@ -15,6 +15,13 @@ module.exports = function (app) {
   app.get('/cabletypes/manage', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('cabletypemgmt');
+    }
+    return res.send(403, 'You are not authorized to access this resource');
+  });
+
+  app.get('/cabletypes/new', auth.ensureAuthenticated, function (req, res) {
+    if (req.session.roles.indexOf('admin') !== -1) {
+      return res.render('newcabletype');
     }
     return res.send(403, 'You are not authorized to access this resource');
   });
@@ -28,44 +35,54 @@ module.exports = function (app) {
     });
   });
 
-  app.post('/cabletypes', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber']), function (req, res) {
+  app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements']), function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.send(403, "You are not authorized to access this resource. ");
     }
-    var newType = {
-      service: req.body.service,
-      conductorNumber: req.conductorNumber,
-      conductorSize: req.conductorSize,
-      fribType: req.fribType,
-      typeNumber: req.typeNumber,
-      pairing: req.pairing,
-      shielding: req.shielding,
-      outerDiameter: req.outerDiameter,
-      voltageRating: req.voltageRating,
-      raceway: req.raceway,
-      tunnelHotcell: req.tunnelHotcell,
-      otherRequirements: req.otherRequirements,
-      createBy: req.session.userid,
-      createdOn: Date.now()
-    };
 
+    if (!req.is('json')) {
+      return res.send(415, 'json request expected.');
+    }
+
+    var newType = req.body;
 
     // generate the type name here
     newType.name = newType.conductorNumber + 'C_' + newType.conductorSize + '_' + newType.fribType + '_' + newType.typeNumber;
+    newType.createdBy = req.session.userid;
+    newType.createdOn = Date.now();
 
     (new CableType(newType)).save(function (err, type) {
       if (err) {
         console.dir(err);
+        console.error(err.message || err.err);
         if (err.code && err.code === 11000) {
-          console.error(err.message || err.err);
           return res.send(400, 'The type name ' + newType.name + ' was already used.');
         }
-        console.error(err.message || err.err);
         return res.send(500, err.message || err.err);
       }
-      var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id;
+      var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id + '/';
       res.set('Location', url);
       return res.send(201, 'A new cable type is created at <a href="' + url + '"">' + url + '</a>');
+    });
+  });
+
+  app.get('/cabletypes/:id/', auth.ensureAuthenticated, function (req, res) {
+    res.redirect('/cabletypes/' + req.params.id + '/details');
+  });
+
+  app.get('/cabletypes/:id/details', auth.ensureAuthenticated, function (req, res) {
+    CableType.findById(req.params.id).lean().exec(function (err, type) {
+      if (err) {
+        console.error(err);
+        return res.send(500, err.message);
+      }
+      if (type) {
+        res.render('typedetails', {
+          type: type
+        });
+      } else {
+        res.send(410, 'The type ' + req.params.id + ' is gone.');
+      }
     });
   });
 

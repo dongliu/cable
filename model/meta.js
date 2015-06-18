@@ -7,7 +7,8 @@ var cableType = new Schema({
   name: {
     type: String,
     index: true,
-    unique: true
+    unique: true,
+    required: true
   },
   service: String,
   conductorNumber: {
@@ -28,7 +29,6 @@ var cableType = new Schema({
   },
   typeNumber: {
     type: String,
-    unique: true,
     required: true
   },
   pairing: String,
