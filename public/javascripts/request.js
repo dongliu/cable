@@ -225,95 +225,6 @@ function setCSS(cat, sub, signal) {
   }
 }
 
-/*function setTypeDetails(val, cableType) {
-  var type = null;
-  var i;
-  for (i = 0; i < cableType.length; i += 1) {
-    if (cableType[i].name === val) {
-      type = cableType[i];
-      break;
-    }
-  }
-  if (type) {
-    $('#type-details').attr('disabled', false);
-    $('#type-details').attr('data-original-title', type.name);
-    $('#type-details').attr('data-content', json2List(type));
-    return type;
-  }
-  return null;
-}*/
-
-/*function setRooms(building, room) {
-  var rooms;
-  if ($(building + ' option:selected').val() === 'frib') {
-    rooms = fribrooms;
-  } else if ($(building + ' option:selected').val() === 'nscl') {
-    rooms = nsclrooms;
-  } else if ($(building + ' option:selected').val() === 'srf') {
-    rooms = srfrooms;
-  }
-  $(room).autocomplete({
-    minLength: 1,
-    source: function (req, res) {
-      var term = req.term;
-      var output = [];
-      if (rooms.length) {
-        output = getRooms(rooms, term);
-        if (output.length === 0) {
-          return;
-        }
-        res(output);
-      }
-    },
-    focus: function (event, ui) {
-      $(room).siblings('.help-inline').text(
-        _.find(rooms, function (room) {
-          return room.number == ui.item.value;
-        }).name);
-      // getRoomName(rooms, ui.item.value));
-    },
-    select: function (event, ui) {
-      var value = ui.item.value;
-    }
-  });
-}*/
-
-/*function getRooms(rooms, term) {
-  var upper = term.toUpperCase();
-  var result = _.filter(rooms, function (room) {
-    return (room.number.indexOf(upper) === 0);
-  });
-  return _.map(result, function (room) {
-    return room.number;
-  });
-}*/
-
-/*function getLeaves(rooms, leaves) {
-  // var leaves = [];
-  if (rooms.children && rooms.children.length) {
-    for (var i = 0; i < rooms.children.length; i += 1) {
-      if (rooms.children[i].children) {
-        getLeaves(rooms.children[i], leaves);
-      } else {
-        leaves.push(rooms.children[i]);
-      }
-    }
-  }
-}*/
-
-/*function rooms() {
-  if ($('#from-building').val()) {
-    $('#from-room').prop('disabled', false);
-    setRooms('#from-building', '#from-room');
-  }
-
-  if ($('#to-building').val()) {
-    $('#to-room').prop('disabled', false);
-    setRooms('#to-building', '#to-room');
-  }
-}
-*/
-
 function initwbs() {
   $('#wbs').prop('disabled', false);
   wbs = {};
@@ -328,41 +239,6 @@ function initwbs() {
     $('#rea6wbs').show();
     link = '/rea6/wbs/json';
   }
-  // $('#wbs').autocomplete({
-  //   minLength: 2,
-  //   source: function (req, res) {
-  //     var term = req.term;
-  //     var output = [];
-
-  //     if (term.indexOf('.', term.length - 1) === -1) {
-  //       return;
-  //     }
-
-  //     term = term.substring(0, term.length - 1);
-  //     if (wbs && wbs.children) {
-  //       output = getChildren(wbs, term);
-  //       if (output.length === 0) {
-  //         return;
-  //       }
-  //       res(output);
-  //     } else {
-  //       $.getJSON(link, function (data, status, xhr) {
-  //         wbs = data;
-  //         output = getChildren(wbs, term);
-  //         if (output.length === 0) {
-  //           return;
-  //         }
-  //         res(output);
-  //       });
-  //     }
-  //   },
-  //   focus: function (event, ui) {
-  //     $('#wbs').siblings('.help-inline').text(getNodeName(wbs, ui.item.value));
-  //   },
-  //   select: function (event, ui) {
-  //     var value = ui.item.value;
-  //   }
-  // });
 }
 
 
