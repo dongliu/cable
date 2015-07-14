@@ -762,14 +762,15 @@ module.exports = function (app) {
               });
             },
             json2List: function (json) {
-              var output = '<dl>';
+              // var output = '<dl>';
+              var output = '';
               var k;
               for (k in json) {
                 if (json.hasOwnProperty(k)) {
-                  output = output + '<p>' + k + ' : ' + json[k] + '</p>';
+                  output = output + '<div><strong>' + k + '</strong> : ' + json[k] + '</div>';
                 }
               }
-              output = output + '</dl>';
+              // output = output + '</dl>';
               return output;
             }
           }
@@ -791,6 +792,39 @@ module.exports = function (app) {
         });
       }
       res.json(cable);
+    });
+  });
+
+  app.get('/cables/:id/changes/', auth.ensureAuthenticated, function (req, res) {
+    res.send('not implemented');
+  });
+
+  app.get('/cables/:id/changes/json', auth.ensureAuthenticated, function (req, res) {
+    Cable.findOne({
+      number: req.params.id
+    }, 'changeHistory').lean().exec(function (err, cable) {
+      if (err) {
+        console.error(err);
+        return res.send(500, err.message);
+      }
+      // console.log(cable);
+      if (!cable.hasOwnProperty('changeHistory')) {
+        return res.json([]);
+      }
+      if (cable.changeHistory.length === 0) {
+        return res.json([]);
+      }
+      Change.find({
+        _id: {
+          $in: cable.changeHistory
+        }
+      }).lean().exec(function (err, changes) {
+        if (err) {
+          console.error(err);
+          return res.send(500, err.message);
+        }
+        res.json(changes);
+      });
     });
   });
 
