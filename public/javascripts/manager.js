@@ -649,8 +649,8 @@ $(function () {
     },
     aoColumns: procuringAoColumns,
     aaSorting: [
-      [5, 'desc'],
       [4, 'desc'],
+      [5, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom,
