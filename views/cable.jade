@@ -2,11 +2,11 @@ extends layout
 
 block head
   meta(charset='urf-8')
-  title FRIB Cable :: cable :: #{cable.number}
+  title FRIB Cable :: cable :: #{number}
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
+  //- link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 
@@ -15,100 +15,123 @@ block content
     #message
     h3 Cable
       =' '
-      span#cableId #{cable.number}
-    dl
-      dt reference request
-      dd
-        a(href='/requests/#{cable.request_id}/details', target='_blank') #{cable.request_id}
-      dt status
-      dd#status #{fs.formatCableStatus(cable.status)}
-      dt basic
-      dd
-        != fs.json2List(cable.basic)
-      dt from
-      dd
-        != fs.json2List(cable.from)
-      dt to
-      dd
-        != fs.json2List(cable.to)
-      dt comments
-      dd #{cable.comments}
-      dt submitted by
-      dd
-        a(href='/users/#{cable.submittedBy}', target='_blank') #{cable.submittedBy}
-      dt submitted on
-      dd #{cable.submittedOn}
-      dt approved by
-      dd
-        a(href='/users/#{cable.approvedBy}', target='_blank') #{cable.approvedBy}
-      dt approved on
-      dd #{cable.approvedOn}
-      if (cable.updatedOn)
-        dt updated by
-        dd
-          a(href='/users/#{cable.updatedBy}', target='_blank') #{cable.updatedBy}
-        dt updated on
-        dd #{cable.updatedOn}
-      if (cable.orderedOn)
-        dt ordered by
-        dd
-          a(href='/users?#{fs.encodeName(cable.orderedBy)}', target='_blank') #{cable.updatedBy}
-        dt ordered on
-        dd #{cable.orderedOn}
-      if (cable.receivedOn)
-        dt received by
-        dd
-          a(href='/users?#{fs.encodeName(cable.receivedBy)}', target='_blank') #{cable.receivedBy}
-        dt received on
-        dd #{cable.receivedOn}
-      if (cable.acceptedOn)
-        dt accepted by
-        dd
-          a(href='/users?#{fs.encodeName(cable.acceptedBy)}', target='_blank') #{cable.acceptedOn}
-        dt accepted on
-        dd #{cable.acceptedOn}
-      if (cable.labeledOn)
-        dt labeled by
-        dd
-          a(href='/users?#{fs.encodeName(cable.labeledBy)}', target='_blank') #{cable.labeledBy}
-        dt labeled on
-        dd #{cable.labeledOn}
-      if (cable.benchTerminatedOn)
-        dt bench terminated by
-        dd
-          a(href='/users?#{fs.encodeName(cable.benchTerminatedBy)}', target='_blank') #{cable.benchTerminatedBy}
-        dt bench terminated on
-        dd #{cable.benchTerminatedOn}
-      if (cable.benchTestedOn)
-        dt bench tested by
-        dd
-          a(href='/users?#{fs.encodeName(cable.benchTestedBy)}', target='_blank') #{cable.benchTestedBy}
-        dt bench tested on
-        dd #{cable.benchTestedOn}
-      if (cable.pulledOn)
-        dt pulled by
-        dd
-          a(href='/users?#{fs.encodeName(cable.pulledBy)}', target='_blank') #{cable.pulledBy}
-        dt pulled on
-        dd #{cable.pulledOn}
-      if (cable.fieldTerminatedOn)
-        dt field terminated by
-        dd
-          a(href='/users?#{fs.encodeName(cable.fieldTerminatedBy)}', target='_blank') #{cable.fieldTerminatedBy}
-        dt field terminated on
-        dd #{cable.fieldTerminatedOn}
-      if (cable.fieldTestedOn)
-        dt field tested by
-        dd
-          a(href='/users?#{fs.encodeName(cable.fieldTestedBy)}', target='_blank') #{cable.fieldTestedBy}
-        dt field tested on
-        dd #{cable.fieldTestedOn}
+      span#cableId #{number}
+    .btn-group(data-toggle='buttons-radio')
+      button.btn.btn-info#show-history Show update history
+      button.btn.btn-info#hide-history.active Hide update history
+    h4 reference request
+    a#request(target='_blank')
+    h4 status
+    #status
+
+    h4 basic
+    div project:
+      = ' '
+      span#project
+    div engineer:
+      = ' '
+      span#engineer
+    div wbs:
+      = ' '
+      span#wbs
+    div origin categrary:
+      = ' '
+      span#originCategory
+    div origin subcategory:
+      = ' '
+      span#originSubcategory
+    div signal classification:
+      = ' '
+      span#signalClassification
+    div cable type:
+      = ' '
+      span#cableType
+    div service:
+      = ' '
+      span#service
+    div tray section:
+      = ' '
+      span#traySection
+    div tags:
+      = ' '
+      span#tags
+
+
+    h4 from
+    h4 to
+    h4 comments
+    span#comments
+    h4 workflow
+    ol
+      li submitted by
+        a#submittedBy(target='_blank')
+        = ' '
+        | on
+        span#submittedOn
+      li approved by
+        a#approvedBy(target='_blank')
+        = ' '
+        | on
+        span#approvedOn
+    //- if (cable.orderedOn)
+    //-   dt ordered by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.orderedBy)}', target='_blank') #{cable.updatedBy}
+    //-   dt ordered on
+    //-   dd #{cable.orderedOn}
+    //- if (cable.receivedOn)
+    //-   dt received by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.receivedBy)}', target='_blank') #{cable.receivedBy}
+    //-   dt received on
+    //-   dd #{cable.receivedOn}
+    //- if (cable.acceptedOn)
+    //-   dt accepted by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.acceptedBy)}', target='_blank') #{cable.acceptedOn}
+    //-   dt accepted on
+    //-   dd #{cable.acceptedOn}
+    //- if (cable.labeledOn)
+    //-   dt labeled by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.labeledBy)}', target='_blank') #{cable.labeledBy}
+    //-   dt labeled on
+    //-   dd #{cable.labeledOn}
+    //- if (cable.benchTerminatedOn)
+    //-   dt bench terminated by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.benchTerminatedBy)}', target='_blank') #{cable.benchTerminatedBy}
+    //-   dt bench terminated on
+    //-   dd #{cable.benchTerminatedOn}
+    //- if (cable.benchTestedOn)
+    //-   dt bench tested by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.benchTestedBy)}', target='_blank') #{cable.benchTestedBy}
+    //-   dt bench tested on
+    //-   dd #{cable.benchTestedOn}
+    //- if (cable.pulledOn)
+    //-   dt pulled by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.pulledBy)}', target='_blank') #{cable.pulledBy}
+    //-   dt pulled on
+    //-   dd #{cable.pulledOn}
+    //- if (cable.fieldTerminatedOn)
+    //-   dt field terminated by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.fieldTerminatedBy)}', target='_blank') #{cable.fieldTerminatedBy}
+    //-   dt field terminated on
+    //-   dd #{cable.fieldTerminatedOn}
+    //- if (cable.fieldTestedOn)
+    //-   dt field tested by
+    //-   dd
+    //-     a(href='/users?#{fs.encodeName(cable.fieldTestedBy)}', target='_blank') #{cable.fieldTestedBy}
+    //-   dt field tested on
+    //-   dd #{cable.fieldTestedOn}
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
-  //- script(type='text/javascript', src='/javascripts/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  //- script(type='text/javascript', src='/dependencies/lodash.js')
+  script(type='text/javascript', src='/dependencies/jsonpath.js')
   //- script(type='text/javascript', src='/javascripts/util.js')
   //- script(type='text/javascript', src='/javascripts/table.js')
-  //- script(type='text/javascript', src='/javascripts/cable.js')
+  script(type='text/javascript', src='/javascripts/cable.js')

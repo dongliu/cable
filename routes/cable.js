@@ -725,55 +725,11 @@ module.exports = function (app) {
     }).lean().exec(function (err, cable) {
       if (err) {
         console.error(err);
-        return res.json(500, {
-          error: err.message
-        });
+        return res.send(500, err.message);
       }
       if (cable) {
         return res.render('cable', {
-          cable: cable,
-          fs: {
-            formatCableStatus: function (s) {
-              var status = {
-                '100': 'approved',
-                '101': 'ordered',
-                '102': 'received',
-                '103': 'accepted',
-                '200': 'to install',
-                '201': 'labeled',
-                '202': 'bench terminated',
-                '203': 'bench tested',
-                '249': 'to pull',
-                '250': 'pulled',
-                '251': 'field terminated',
-                '252': 'field tested',
-                '300': 'working',
-                '400': 'failed',
-                '500': 'aborted'
-              };
-              if (status[s.toString()]) {
-                return status[s.toString()];
-              }
-              return 'unknown';
-            },
-            encodeName: function (s) {
-              return querystring.stringify({
-                name: s
-              });
-            },
-            json2List: function (json) {
-              // var output = '<dl>';
-              var output = '';
-              var k;
-              for (k in json) {
-                if (json.hasOwnProperty(k)) {
-                  output = output + '<div><strong>' + k + '</strong> : ' + json[k] + '</div>';
-                }
-              }
-              // output = output + '</dl>';
-              return output;
-            }
-          }
+          number: req.params.id
         });
       }
       return res.send(403, 'cannot find cable ' + req.params.id);
