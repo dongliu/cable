@@ -22,12 +22,26 @@ function formatCableStatus(s) {
   return 'unknown';
 }
 
+function formatDateLong(date) {
+  return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
+}
+
+function history(found) {
+  var i, output = '';
+  if (found.length > 0) {
+    for (i = 0; i < found.length; i += 1) {
+      output = output + 'changed to <strong>' + found[i].newValue + '</strong> from <strong> ' + found[i].oldValue + ' by ' + found[i].inputBy + ' on ' + formatDateLong(found[i].inputOn) + '; ';
+    }
+  }
+  return output;
+}
+
 var template = {
   request: {
     e: '$.request_id',
-    t: function (v) {
-      return v[0];
-    },
+    // t: function (v) {
+    //   return v[0];
+    // },
     l: function (v) {
       $('#request').prop('href', '/requests/' + v + '/');
       $('#request').text(v);
@@ -42,54 +56,54 @@ var template = {
     root: '$.basic',
     project: {
       e: '$.project',
-      l: '#project'
+      l: 'span[name="project"]'
     },
     engineer: {
       e: '$.engineer',
-      l: '#engineer'
+      l: 'span[name="engineer"]'
     },
     wbs: {
       e: '$.wbs',
-      l: '#wbs'
+      l: 'span[name="wbs"]'
     },
     originCategory: {
       e: '$.originCategory',
       l: function (v) {
-        $('#originCategory').text(v);
-        $('#originCategoryName').text(sysSub[v].name || 'unknown');
+        $('span[name="originCategory"]').text(v);
+        $('span[name="originCategoryName"]').text(sysSub[v].name || 'unknown');
       }
     },
     originSubcategory: {
       e: '$.originSubcategory',
       l: function (v) {
-        $('#originSubcategory').text(v);
-        var cat = $('#originCategory').text();
-        $('#originSubcategoryName').text(sysSub[cat].subcategory[v] || 'unknown');
+        $('span[name="originSubcategory"]').text(v);
+        var cat = $('span[name="originCategory"]').text();
+        $('span[name="originSubcategoryName"]').text(sysSub[cat].subcategory[v] || 'unknown');
       }
     },
     signalClassification: {
       e: '$.signalClassification',
       l: function (v) {
-        $('#signalClassification').text(v);
-        var cat = $('#originCategory').text();
-        $('#signalClassificationName').text(sysSub[cat].signal[v].name || 'unknown');
+        $('span[name="signalClassification"]').text(v);
+        var cat = $('span[name="originCategory"]').text();
+        $('span[name="signalClassificationName"]').text(sysSub[cat].signal[v].name || 'unknown');
       }
     },
     cableType: {
       e: '$.cableType',
-      l: '#cableType'
+      l: 'span[name="cableType"]'
     },
     service: {
       e: '$.service',
-      l: '#service'
+      l: 'span[name="service"]'
     },
     traySection: {
       e: '$.traySection',
-      l: '#traySection'
+      l: 'span[name="traySection"]'
     },
     tags: {
       e: '$.tags',
-      l: '#tags'
+      l: 'span[name="tags"]'
     }
   },
 
@@ -97,19 +111,19 @@ var template = {
     root: '$.from',
     rack : {
       e: '$.rack',
-      l: '#fromRack'
+      l: 'span[name="from.rack"]'
     },
     terminationDevice: {
       e: '$.terminationDevice',
-      l: '#fromTerminationDevice'
+      l: 'span[name="from.terminationDevice"]'
     },
     terminationType: {
       e: '$.terminationType',
-      l: '#fromTerminationType'
+      l: 'span[name="from.terminationType"]'
     },
     wiringDrawing: {
       e: '$,wiringDrawing',
-      l: '#fromWireDrawing'
+      l: 'span[name="from.wireDrawing"]'
     }
   },
 
@@ -117,23 +131,54 @@ var template = {
     root: '$.to',
     rack : {
       e: '$.rack',
-      l: '#toRack'
+      l: 'span[name="to.rack"]'
     },
     terminationDevice: {
       e: '$.terminationDevice',
-      l: '#toTerminationDevice'
+      l: 'span[name="to.terminationDevice"]'
     },
     terminationType: {
       e: '$.terminationType',
-      l: '#toTerminationType'
+      l: 'span[name="to.terminationType"]'
     },
     wiringDrawing: {
       e: '$,wiringDrawing',
-      l: '#toWireDrawing'
+      l: 'span[name="to.wireDrawing"]'
     }
   },
 
+  comments: {
+    e: '$.comments',
+    l: 'span[name="comments"]'
+  },
 
+  approvedBy: {
+    e: '$.approvedBy',
+    l: function(v) {
+      $('#approvedBy').prop('href', '/users/' + v + '/');
+      $('#approvedBy').text(v);
+    }
+  },
+  approvedOn: {
+    e: '$.approvedOn',
+    l: function (v) {
+      $('#approvedOn').text(formatDateLong(v[0]));
+    }
+  },
+
+  submittedBy: {
+    e: '$.submittedBy',
+    l: function(v) {
+      $('#submittedBy').prop('href', '/users/' + v + '/');
+      $('#submittedBy').text(v);
+    }
+  },
+  submittedOn: {
+    e: '$.submittedOn',
+    l: function (v) {
+      $('#submittedOn').text(formatDateLong(v[0]));
+    }
+  }
 
 };
 

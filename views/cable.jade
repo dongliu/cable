@@ -29,83 +29,87 @@ block content
     h4 basic
     div project:
       = ' '
-      span#project
+      span(name='project')
     div engineer:
       = ' '
-      span#engineer
+      span(name='engineer')
     div wbs:
       = ' '
-      span#wbs
+      span(name='wbs')
     div origin categrary:
       = ' '
-      span#originCategory
+      span(name='originCategory')
       = ' - '
-      span#originCategoryName
+      span(name='originCategoryName')
     div origin subcategory:
       = ' '
-      span#originSubcategory
+      span(name='originSubcategory')
       = ' - '
-      span#originSubcategoryName
+      span(name='originSubcategoryName')
     div signal classification:
       = ' '
-      span#signalClassification
+      span(name='signalClassification')
       = ' - '
-      span#signalClassificationName
+      span(name='signalClassificationName')
     div cable type:
       = ' '
-      span#cableType
+      span(name='cableType')
     div service:
       = ' '
-      span#service
+      span(name='service')
     div tray section:
       = ' '
-      span#traySection
+      span(name='traySection')
     div tags:
       = ' '
-      span#tags
+      span(name='tags')
 
 
     h4 from
     div rack:
       = ' '
-      span#fromRack
+      span(name='from.rack')
     div termination device:
       = ' '
-      span#fromTerminationDevice
+      span(name='from.terminationDevice')
     div termination type:
       = ' '
-      span#fromTerminationType
+      span(name='from.terminationType')
     div wire drawing:
       = ' '
-      span#fromWireDrawing
+      span(name='from.wireDrawing')
 
     h4 to
     div rack:
       = ' '
-      span#toRack
+      span(name='to.rack')
     div termination device:
       = ' '
-      span#toTerminationDevice
+      span(name='to.terminationDevice')
     div termination type:
       = ' '
-      span#toTerminationType
+      span(name='to.terminationType')
     div wire drawing:
       = ' '
-      span#toWireDrawing
+      span(name='to.wireDrawing')
 
     h4 comments
-    span#comments
+    span(name='comments')
     h4 workflow
     ol
       li submitted by
+        = ' '
         a#submittedBy(target='_blank')
         = ' '
         | on
+        = ' '
         span#submittedOn
       li approved by
+        = ' '
         a#approvedBy(target='_blank')
         = ' '
         | on
+        = ' '
         span#approvedOn
     //- if (cable.orderedOn)
     //-   dt ordered by
@@ -166,6 +170,5 @@ block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/dependencies/jsonpath.js')
-  //- script(type='text/javascript', src='/javascripts/util.js')
-  //- script(type='text/javascript', src='/javascripts/table.js')
+  script(type='text/javascript', src='/dependencies/moment.js')
   script(type='text/javascript', src='/javascripts/cable.js')
