@@ -11,6 +11,8 @@ block head
 
 
 block content
+  script.
+    var sysSub = !{JSON.stringify(sysSub)};
   .container
     #message
     h3 Cable
@@ -22,7 +24,7 @@ block content
     h4 reference request
     a#request(target='_blank')
     h4 status
-    #status
+    span#status
 
     h4 basic
     div project:
@@ -37,12 +39,18 @@ block content
     div origin categrary:
       = ' '
       span#originCategory
+      = ' - '
+      span#originCategoryName
     div origin subcategory:
       = ' '
       span#originSubcategory
+      = ' - '
+      span#originSubcategoryName
     div signal classification:
       = ' '
       span#signalClassification
+      = ' - '
+      span#signalClassificationName
     div cable type:
       = ' '
       span#cableType
@@ -58,7 +66,33 @@ block content
 
 
     h4 from
+    div rack:
+      = ' '
+      span#fromRack
+    div termination device:
+      = ' '
+      span#fromTerminationDevice
+    div termination type:
+      = ' '
+      span#fromTerminationType
+    div wire drawing:
+      = ' '
+      span#fromWireDrawing
+
     h4 to
+    div rack:
+      = ' '
+      span#toRack
+    div termination device:
+      = ' '
+      span#toTerminationDevice
+    div termination type:
+      = ' '
+      span#toTerminationType
+    div wire drawing:
+      = ' '
+      span#toWireDrawing
+
     h4 comments
     span#comments
     h4 workflow

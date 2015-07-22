@@ -729,6 +729,7 @@ module.exports = function (app) {
       }
       if (cable) {
         return res.render('cable', {
+          sysSub: sysSub,
           number: req.params.id
         });
       }
