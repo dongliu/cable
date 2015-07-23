@@ -30,7 +30,7 @@ function history(found) {
   var i, output = '';
   if (found.length > 0) {
     for (i = 0; i < found.length; i += 1) {
-      output = output + 'changed to <strong>' + found[i].newValue + '</strong> from <strong> ' + found[i].oldValue + ' by ' + found[i].inputBy + ' on ' + formatDateLong(found[i].inputOn) + '; ';
+      output = output + 'changed to <strong>' + found[i].newValue + '</strong> from <strong>' + found[i].oldValue + '</strong> by <strong>' + found[i].updatedBy + '</strong> on <strong>' + formatDateLong(found[i].updatedOn) + '</strong>; ';
     }
   }
   return output;
@@ -56,60 +56,60 @@ var template = {
     root: '$.basic',
     project: {
       e: '$.project',
-      l: 'span[name="project"]'
+      l: 'span[name="basic.project"]'
     },
     engineer: {
       e: '$.engineer',
-      l: 'span[name="engineer"]'
+      l: 'span[name="basic.engineer"]'
     },
     wbs: {
       e: '$.wbs',
-      l: 'span[name="wbs"]'
+      l: 'span[name="basic.wbs"]'
     },
     originCategory: {
       e: '$.originCategory',
       l: function (v) {
-        $('span[name="originCategory"]').text(v);
+        $('span[name="basic.originCategory"]').text(v);
         $('span[name="originCategoryName"]').text(sysSub[v].name || 'unknown');
       }
     },
     originSubcategory: {
       e: '$.originSubcategory',
       l: function (v) {
-        $('span[name="originSubcategory"]').text(v);
-        var cat = $('span[name="originCategory"]').text();
+        $('span[name="basic.originSubcategory"]').text(v);
+        var cat = $('span[name="basic.originCategory"]').text();
         $('span[name="originSubcategoryName"]').text(sysSub[cat].subcategory[v] || 'unknown');
       }
     },
     signalClassification: {
       e: '$.signalClassification',
       l: function (v) {
-        $('span[name="signalClassification"]').text(v);
-        var cat = $('span[name="originCategory"]').text();
+        $('span[name="basic.signalClassification"]').text(v);
+        var cat = $('span[name="basic.originCategory"]').text();
         $('span[name="signalClassificationName"]').text(sysSub[cat].signal[v].name || 'unknown');
       }
     },
     cableType: {
       e: '$.cableType',
-      l: 'span[name="cableType"]'
+      l: 'span[name="basic.cableType"]'
     },
     service: {
       e: '$.service',
-      l: 'span[name="service"]'
+      l: 'span[name="basic.service"]'
     },
     traySection: {
       e: '$.traySection',
-      l: 'span[name="traySection"]'
+      l: 'span[name="basic.traySection"]'
     },
     tags: {
       e: '$.tags',
-      l: 'span[name="tags"]'
+      l: 'span[name="basic.tags"]'
     }
   },
 
   from: {
     root: '$.from',
-    rack : {
+    rack: {
       e: '$.rack',
       l: 'span[name="from.rack"]'
     },
@@ -129,7 +129,7 @@ var template = {
 
   to: {
     root: '$.to',
-    rack : {
+    rack: {
       e: '$.rack',
       l: 'span[name="to.rack"]'
     },
@@ -154,7 +154,7 @@ var template = {
 
   approvedBy: {
     e: '$.approvedBy',
-    l: function(v) {
+    l: function (v) {
       $('#approvedBy').prop('href', '/users/' + v + '/');
       $('#approvedBy').text(v);
     }
@@ -168,7 +168,7 @@ var template = {
 
   submittedBy: {
     e: '$.submittedBy',
-    l: function(v) {
+    l: function (v) {
       $('#submittedBy').prop('href', '/users/' + v + '/');
       $('#submittedBy').text(v);
     }
@@ -222,8 +222,33 @@ $(function () {
     url: './changes/json',
     type: 'GET',
     dataType: 'json'
-  }).done(function (json) {}).fail(function (jqXHR, status, error) {
+  }).done(function (json) {
+    $('span').each(function (index, element) {
+      var found = json.filter(function (e) {
+        return e.property === $(element).attr('name');
+      });
+      if (found.length) {
+        if (found.length > 1) {
+          found.sort(function (a, b) {
+            if (a.updatedOn > b.updatedOn) {
+              return -1;
+            }
+            return 1;
+          });
+        }
+        $(element).closest('div').append('<div class="input-history alert alert-info"><b>history</b>: ' + history(found) + '</div>');
+      }
+    });
+  }).fail(function (jqXHR, status, error) {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable change history.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
+
+  $('#show-history').click(function (e) {
+    $('.input-history').show();
+  });
+  $('#hide-history').click(function (e) {
+    $('.input-history').hide();
+  });
+
 });
