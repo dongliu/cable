@@ -39,13 +39,14 @@ function history(found) {
 var template = {
   request: {
     e: '$.request_id',
-    // t: function (v) {
-    //   return v[0];
-    // },
     l: function (v) {
       $('#request').prop('href', '/requests/' + v + '/');
       $('#request').text(v);
     }
+  },
+  version: {
+    e: '$.__v',
+    l: '#version'
   },
   status: {
     e: '$.status',
