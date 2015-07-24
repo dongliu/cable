@@ -1,3 +1,5 @@
+/*global moment: false, sysSub: false, JSONPath: false, window: false*/
+
 function formatCableStatus(s) {
   var status = {
     '100': 'approved',
@@ -188,9 +190,9 @@ function jsonETL(json, template) {
   for (prop in template) {
     if (template.hasOwnProperty(prop)) {
       if (template[prop].root) {
-        jsonETL(jsonPath.eval(json, template[prop].root)[0], template[prop]);
+        jsonETL(JSONPath({}, json, template[prop].root)[0], template[prop]);
       } else {
-        value = jsonPath.eval(json, template[prop].e);
+        value = JSONPath({}, json, template[prop].e);
         if (template[prop].t && typeof template[prop].t === 'function') {
           value = template[prop].t(value);
         }
