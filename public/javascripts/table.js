@@ -337,6 +337,13 @@ var lengthColumn = {
   bFilter: true
 };
 
+var versionColumn = {
+  sTitle: 'version',
+  sDefaultContent: 0,
+  mData: '__v',
+  bFilter: true
+}
+
 var basicColumns = [{
   sTitle: 'project',
   sDefaultContent: '',

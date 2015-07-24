@@ -221,7 +221,7 @@ $(function () {
   });
   // var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
   /*approving table starts*/
-  var activeAoCulumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var activeAoCulumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   var activeTable = $('#active-table').dataTable({
     sAjaxSource: '/activecables/json',
     sAjaxDataProp: '',
@@ -237,8 +237,8 @@ $(function () {
     bProcessing: true,
     aoColumns: activeAoCulumns,
     aaSorting: [
-      [4, 'desc'],
       [5, 'desc'],
+      [6, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom2i1p,

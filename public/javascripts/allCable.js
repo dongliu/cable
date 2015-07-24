@@ -7,7 +7,7 @@ $(function () {
       $(window).scrollTop($('#message div:last-child').offset().top - 40);
     }
   });
-  var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   var allTable = $('#all-cable').dataTable({
     sAjaxSource: '/allcables/json',
@@ -24,8 +24,8 @@ $(function () {
     bProcessing: true,
     aoColumns: allAoColumns,
     aaSorting: [
-      [3, 'desc'],
       [4, 'desc'],
+      [5, 'desc'],
       [0, 'desc']
     ],
     sDom: sDom2i1p,
