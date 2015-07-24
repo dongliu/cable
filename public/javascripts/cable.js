@@ -150,6 +150,14 @@ var template = {
     }
   },
 
+  length: {
+    e: '$.length',
+    l: 'span[name="length"]'
+  },
+  conduit: {
+    e: '$.conduit',
+    l: 'span[name="conduit"]'
+  },
   comments: {
     e: '$.comments',
     l: 'span[name="comments"]'
