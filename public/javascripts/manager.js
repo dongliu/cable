@@ -1,6 +1,6 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
 /*global moment: false, Chart: false, json2List: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedOnColumn:false, approvedByColumn:false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedOnColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedOnColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 
 
@@ -142,12 +142,18 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
   if (parseType && parseType === 'array') {
     sOldValue = oldValue.join();
   }
-  if (sOldValue.trim() == newValue.trim()) {
+  if (sOldValue.trim() === newValue.trim()) {
     $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
   } else {
     var data = {};
     data.action = 'update';
     data.property = property;
+    if (oldValue === '') {
+      oldValue = null;
+    }
+    if (newValue === '') {
+      newValue = null;
+    }
     data.oldValue = oldValue;
     if (parseType && parseType === 'array') {
       data.newValue = splitTags(newValue);
