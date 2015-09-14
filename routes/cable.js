@@ -799,7 +799,11 @@ module.exports = function (app) {
 
     switch (req.body.action) {
     case "update":
-      conditions[req.body.property] = req.body.oldValue;
+      if (req.body.oldValue === null) {
+        conditions[req.body.property] = {$in: [null, '']};
+      } else {
+        conditions[req.body.property] = req.body.oldValue;
+      }
       update[req.body.property] = req.body.newValue;
       update.$inc = {
         __v: 1
