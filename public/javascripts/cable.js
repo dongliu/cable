@@ -234,9 +234,12 @@ $(function () {
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {
-    $('span').each(function (index, element) {
+    $('span.property').each(function (index, element) {
       var found = json.filter(function (e) {
-        return e.property === $(element).attr('name');
+        if (e.hasOwnProperty('property')) {
+          return e.property === $(element).attr('name');
+        }
+        return false;
       });
       if (found.length) {
         if (found.length > 1) {
