@@ -5,9 +5,9 @@
 
 
 var approvingTableColumns = {
-  from: [12, 13, 14, 15],
-  to: [16, 17, 18, 19],
-  comments: [22]
+  from: [13, 14, 15, 16],
+  to: [17, 18, 19, 20],
+  comments: [23]
 };
 
 /*var rejectedTableColumns = {
@@ -39,9 +39,9 @@ var installedTableColumns = {
 };
 
 var obsoletedTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [23]
+  from: [14, 15, 16, 17],
+  to: [18, 19, 20, 21],
+  comments: [24]
 };
 
 var managerGlobal = {
