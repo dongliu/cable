@@ -216,7 +216,6 @@ var change = new Schema({
   property: String,
   oldValue: Mixed,
   newValue: Mixed,
-  update: Mixed,
   updatedBy: String,
   updatedOn: Date
 });
