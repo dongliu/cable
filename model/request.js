@@ -118,6 +118,10 @@ var cable = new Schema({
     type: Number,
     index: true
   },
+  ownerProvided: {
+    type: Boolean,
+    default: false
+  },
   basic: {
     project: {
       type: String,
