@@ -3,134 +3,10 @@
 /*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedOnColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedOnColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 
-
-var approvingTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [23]
-};
-
-/*var rejectedTableColumns = {
-  from: [12, 13, 14, 15],
-  to: [16, 17, 18, 19],
-  comments: [21]
-};
-
-var approvedTableColumns = rejectedTableColumns;*/
-
-var procuringTableColumns = {
-  from: [15, 16, 17, 18],
-  to: [19, 20, 21, 22],
-  comments: [25]
-};
-
-var procuringAoColumns;
-
-var installingTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [23]
-};
-
-var installedTableColumns = {
-  from: [12, 13, 14, 15],
-  to: [16, 17, 18, 19],
-  comments: [22]
-};
-
-var obsoletedTableColumns = {
-  from: [14, 15, 16, 17],
-  to: [18, 19, 20, 21],
-  comments: [24]
-};
-
 var managerGlobal = {
   plot: null,
   procuring_edit: false
 };
-
-// var nameCache = {};
-
-/*function initCableTableFromData(oTable, data, cb) {
-  oTable.fnClearTable();
-  oTable.fnAddData(data);
-  if ($('#cables-unwrap').hasClass('active')) {
-    fnUnwrap(oTable);
-  }
-  oTable.fnDraw();
-  if (cb) {
-    cb();
-  }
-}*/
-
-/*function initRequestTable(oTable, url) {
-  $.ajax({
-    url: url,
-    type: 'GET',
-    dataType: 'json'
-  }).done(function (json) {
-    oTable.fnClearTable();
-    oTable.fnAddData(json);
-    oTable.fnDraw();
-  }).fail(function (jqXHR, status, error) {
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
-    $(window).scrollTop($('#message div:last-child').offset().top - 40);
-  }).always();
-}*/
-
-
-/*function initCableTables(procuringTable, installingTable, installedTable) {
-  if (procuringTable) {
-    $.ajax({
-      url: '/cables/statuses/1/json',
-      type: 'GET',
-      dataType: 'json'
-    }).done(function (cables) {
-      initCableTableFromData(procuringTable, cables, function () {
-        $('#procuring-show input:checkbox').each(function (i) {
-          fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
-        });
-      });
-    }).fail(function (jqXHR, status, error) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }).always();
-  }
-
-  if (installingTable) {
-    $.ajax({
-      url: '/cables/statuses/2/json',
-      type: 'GET',
-      dataType: 'json'
-    }).done(function (cables) {
-      initCableTableFromData(installingTable, cables, function () {
-        $('#installing-show input:checkbox').each(function (i) {
-          fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
-        });
-      });
-    }).fail(function (jqXHR, status, error) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }).always();
-  }
-
-  if (installedTable) {
-    $.ajax({
-      url: '/cables/statuses/3/json',
-      type: 'GET',
-      dataType: 'json'
-    }).done(function (cables) {
-      initCableTableFromData(installedTable, cables, function () {
-        $('#installed-show input:checkbox').each(function (i) {
-          fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
-        });
-      });
-    }).fail(function (jqXHR, status, error) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cables.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }).always();
-  }
-}*/
 
 function splitTags(s) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
@@ -189,10 +65,11 @@ function cableDetails(cableData) {
 function updateTd(td, oTable) {
   var cableData = oTable.fnGetData(td.parentNode);
   var cableNumber = cableData.number;
-  var columnDef = procuringAoColumns[oTable.fnGetPosition(td)[2]];
+  var aoColumns = oTable.aoColumns;
+  var columnDef = aoColumns[oTable.fnGetPosition(td)[2]];
   var property = columnDef.mData;
   var parseType = columnDef.sParseType;
-  var title = procuringAoColumns[oTable.fnGetPosition(td)[2]].sTitle;
+  var title = aoColumns[oTable.fnGetPosition(td)[2]].sTitle;
   var oldValue = oTable.fnGetData(td);
   var renderedValue = oldValue;
   if (parseType && parseType === 'array') {
@@ -497,15 +374,9 @@ function barChart(oTable) {
 }
 
 $(function () {
-  // $.ajaxSetup({
-  //   cache: false
-  // });
-  $(document).ajaxError(function (event, jqxhr) {
-    if (jqxhr.status === 401) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }
-  });
+
+  ajax401('');
+  disableAjaxCache();
 
   var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
   /*approving table starts*/
@@ -537,10 +408,6 @@ $(function () {
   $('#approving-unwrap').click(function (e) {
     $('#approving-table td').addClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
-  });
-
-  $('#approving-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(approvingTable, approvingTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#approving-select-none').click(function (e) {
@@ -595,10 +462,6 @@ $(function () {
     rejectedTable.fnAdjustColumnSizing();
   });
 
-  // $('#rejected-show input:checkbox').change(function (e) {
-  //   fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
-  // });
-
   /*rejected tab ends*/
 
   /*approved tab starts*/
@@ -635,15 +498,11 @@ $(function () {
     approvedTable.fnAdjustColumnSizing();
   });
 
-  // $('#approved-show input:checkbox').change(function (e) {
-  //   fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
-  // });
-
   /*approved tab ends*/
 
   /*procuring tab starts*/
 
-  procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnColumn, approvedOnColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
     sAjaxSource: '/cables/statuses/1/json',
@@ -655,8 +514,8 @@ $(function () {
     },
     aoColumns: procuringAoColumns,
     aaSorting: [
-      [4, 'desc'],
       [5, 'desc'],
+      [6, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom,
@@ -669,10 +528,6 @@ $(function () {
 
   $('#procuring-unwrap').click(function (e) {
     fnUnwrap(procuringTable);
-  });
-
-  $('#procuring-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(procuringTable, procuringTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#procuring-select-all').click(function (e) {
@@ -714,7 +569,7 @@ $(function () {
   /*procuring tab ends*/
 
   /*installing tab starts*/
-  var installingAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var installingAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#installing-table', installingAoColumns);
   installingTable = $('#installing-table').dataTable({
     sAjaxSource: '/cables/statuses/2/json',
@@ -726,7 +581,7 @@ $(function () {
     },
     aoColumns: installingAoColumns,
     aaSorting: [
-      [3, 'desc'],
+      [4, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom,
@@ -739,10 +594,6 @@ $(function () {
 
   $('#installing-unwrap').click(function (e) {
     fnUnwrap(installingTable);
-  });
-
-  $('#installing-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(installingTable, installingTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#installing-select-all').click(function (e) {
@@ -764,7 +615,7 @@ $(function () {
   /*installing tab ends*/
 
   /*installed tab starts*/
-  var installedAoColumns = [selectColumn, numberColumn, statusColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var installedAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#installed-table', installedAoColumns);
   installedTable = $('#installed-table').dataTable({
     sAjaxSource: '/cables/statuses/3/json',
@@ -776,7 +627,7 @@ $(function () {
     },
     aoColumns: installedAoColumns,
     aaSorting: [
-      [3, 'desc'],
+      [4, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom,
@@ -791,10 +642,6 @@ $(function () {
     fnUnwrap(installedTable);
   });
 
-  $('#installed-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(installedTable, installedTableColumns[$(this).val()], $(this).prop('checked'));
-  });
-
   $('#installed-select-all').click(function (e) {
     fnSelectAll(installedTable, 'row-selected', 'select-row', true);
   });
@@ -805,7 +652,7 @@ $(function () {
   /*installed tab end*/
 
   /*obsoleted tab starts*/
-  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
   obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
@@ -817,7 +664,7 @@ $(function () {
     },
     aoColumns: obsoletedAoColumns,
     aaSorting: [
-      [4, 'desc'],
+      [5, 'desc'],
       [1, 'desc']
     ],
     sDom: sDom,
@@ -830,10 +677,6 @@ $(function () {
 
   $('#obsoleted-unwrap').click(function (e) {
     fnUnwrap(obsoletedTable);
-  });
-
-  $('#obsoleted-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(obsoletedTable, obsoletedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   // $('#obsoleted-select-all').click(function (e) {
