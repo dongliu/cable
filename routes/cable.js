@@ -149,6 +149,7 @@ function updateCable(conditions, update, req, res) {
       return res.json(200, cable.toJSON());
     }
     console.error(req.params.id + ' with conditions for the update cannot be found');
+    console.error(conditions);
     return res.send(409, req.params.id + ' with conditions for the update cannot be found.');
   });
 }
@@ -800,7 +801,11 @@ module.exports = function (app) {
     switch (req.body.action) {
     case "update":
       if (req.body.oldValue === null) {
-        conditions[req.body.property] = {$in: [null, '']};
+        // for string, treat null and '' the same
+        conditions[req.body.property] = {$in: [null, '', false]};
+      } else if (req.body.oldValue === false) {
+        // for boolean, treat false and '' the same
+        conditions[req.body.property] = {$in: [null, false]};
       } else {
         conditions[req.body.property] = req.body.oldValue;
       }
