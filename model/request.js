@@ -84,6 +84,11 @@ var request = new Schema({
     fieldTerm: Boolean
   },
 
+  ownerProvided: {
+    type: Boolean,
+    default: false
+  },
+
   length: Number,
   conduit: String,
   routing: [Mixed],
