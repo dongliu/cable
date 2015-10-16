@@ -347,6 +347,15 @@ var versionColumn = {
   bFilter: true
 }
 
+var ownerProvidedColumn = {
+  sTitle: 'Owner provided',
+  sDefaultContent: false,
+  mData: 'ownerProvided',
+  sClass: 'editable',
+  sParseType: 'boolean',
+  bFilter: true
+}
+
 var basicColumns = [{
   sTitle: 'project',
   sDefaultContent: '',
