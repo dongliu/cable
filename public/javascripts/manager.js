@@ -18,38 +18,50 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
   if (parseType && parseType === 'array') {
     sOldValue = oldValue.join();
   }
-  if (sOldValue.trim() === newValue.trim()) {
-    $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+  if (parseType && parseType === 'boolean') {
+    if (['true', 'false'].indexOf(newValue) === -1) {
+      $('#modal .modal-body').prepend('<div class="text-error">Please input true or false</div>');
+      return;
+    }
+    newValue = (newValue === 'true');
+    if (newValue === oldValue) {
+      $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      return;
+    }
   } else {
-    var data = {};
-    data.action = 'update';
-    data.property = property;
-    if (oldValue === '') {
-      oldValue = null;
+    if (sOldValue.trim() === newValue.trim()) {
+      $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      return;
     }
-    if (newValue === '') {
-      newValue = null;
-    }
-    data.oldValue = oldValue;
-    if (parseType && parseType === 'array') {
-      data.newValue = splitTags(newValue);
-    } else {
-      data.newValue = newValue;
-    }
-    var ajax = $.ajax({
-      url: '/cables/' + cableNumber + '/',
-      type: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify(data),
-      success: function (data) {
-        oTable.fnUpdate(data, oTable.fnGetPosition(td)[0]);
-        $('#modal .modal-body').html('<div class="text-success">The update succeded!</div>');
-      },
-      error: function (jqXHR, status, error) {
-        $('#modal .modal-body').prepend('<div class="text-error">' + jqXHR.responseText + '</div>');
-      }
-    });
   }
+  var data = {};
+  data.action = 'update';
+  data.property = property;
+  if (oldValue === '') {
+    oldValue = null;
+  }
+  if (newValue === '') {
+    newValue = null;
+  }
+  data.oldValue = oldValue;
+  if (parseType && parseType === 'array') {
+    data.newValue = splitTags(newValue);
+  } else {
+    data.newValue = newValue;
+  }
+  var ajax = $.ajax({
+    url: '/cables/' + cableNumber + '/',
+    type: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    success: function (data) {
+      oTable.fnUpdate(data, oTable.fnGetPosition(td)[0]);
+      $('#modal .modal-body').html('<div class="text-success">The update succeded!</div>');
+    },
+    error: function (jqXHR, status, error) {
+      $('#modal .modal-body').prepend('<div class="text-error">' + jqXHR.responseText + '</div>');
+    }
+  });
 }
 
 function cableDetails(cableData) {
@@ -65,7 +77,7 @@ function cableDetails(cableData) {
 function updateTd(td, oTable) {
   var cableData = oTable.fnGetData(td.parentNode);
   var cableNumber = cableData.number;
-  var aoColumns = oTable.aoColumns;
+  var aoColumns = oTable.fnSettings().aoColumns;
   var columnDef = aoColumns[oTable.fnGetPosition(td)[2]];
   var property = columnDef.mData;
   var parseType = columnDef.sParseType;
@@ -502,7 +514,7 @@ $(function () {
 
   /*procuring tab starts*/
 
-  var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
     sAjaxSource: '/cables/statuses/1/json',
