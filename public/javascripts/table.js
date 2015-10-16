@@ -309,6 +309,7 @@ var updatedOnColumn = dateColumn('Updated', 'updatedOn');
 var updatedOnLongColumn = dateColumn('Updated', 'updatedOn', true);
 
 var submittedOnColumn = dateColumn('Submitted', 'submittedOn');
+var submittedOnLongColumn = dateColumn('Submitted', 'submittedOn', true);
 var submittedByColumn = personColumn('Submitted by', 'submittedBy');
 
 var approvedOnColumn = dateColumn('Approved', 'approvedOn');
@@ -316,9 +317,11 @@ var approvedOnLongColumn = dateColumn('Approved', 'approvedOn', true);
 var approvedByColumn = personColumn('Approved by', 'approvedBy');
 
 var rejectedOnColumn = dateColumn('Rejected', 'rejectedOn');
+var rejectedOnLongColumn = dateColumn('Rejected', 'rejectedOn', true);
 var rejectedByColumn = personColumn('Rejected by', 'rejectedBy');
 
 var obsoletedOnColumn = dateColumn('Obsoleted', 'obsoletedOn');
+var obsoletedOnLongColumn = dateColumn('Obsoleted', 'obsoletedOn', true);
 var obsoletedByColumn = personColumn('Obsoleted by', 'obsoletedBy');
 
 var commentsColumn = {
