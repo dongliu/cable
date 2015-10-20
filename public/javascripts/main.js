@@ -1,31 +1,6 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
-/*global moment: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
-
-
-var savedTableColumns = {
-  from: [13, 14, 15, 16],
-  to: [17, 18, 19, 20],
-  comments: [23]
-};
-
-var submittedTableColumns = savedTableColumns;
-
-var rejectedTableColumns = {
-  from: [14, 15, 16, 17],
-  to: [18, 19, 20, 21],
-  comments: [24]
-};
-
-var approvedTableColumns = rejectedTableColumns;
-
-var cablesTableColumns = {
-  from: [10, 11, 12, 13],
-  to: [14, 15, 16, 17],
-  comments: [20]
-};
-
-// var approved = [];
+/*global moment: false, ajax401: false, disableAjaxCache: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, ownerProvidedColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
 
 var savedTable, submittedTable, rejectedTable, approvedTable, cablesTable;
 
@@ -89,9 +64,6 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     });
 
     if (savedTable) {
-      $('#saved-show input:checkbox').each(function (i) {
-        fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
       savedTable.fnClearTable();
       savedTable.fnAddData(saved);
 
@@ -101,9 +73,6 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       savedTable.fnDraw();
     }
     if (submittedTable) {
-      $('#submitted-show input:checkbox').each(function (i) {
-        fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
       submittedTable.fnClearTable();
       submittedTable.fnAddData(submitted);
       if ($('#submitted-unwrap').hasClass('active')) {
@@ -112,9 +81,6 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       submittedTable.fnDraw();
     }
     if (rejectedTable) {
-      $('#rejected-show input:checkbox').each(function (i) {
-        fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
       rejectedTable.fnClearTable();
       rejectedTable.fnAddData(rejected);
       if ($('#rejected-unwrap').hasClass('active')) {
@@ -123,9 +89,6 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
       rejectedTable.fnDraw();
     }
     if (approvedTable) {
-      $('#approved-show input:checkbox').each(function (i) {
-        fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
-      });
       approvedTable.fnClearTable();
       approvedTable.fnAddData(approved);
       if ($('#approved-unwrap').hasClass('active')) {
@@ -347,24 +310,16 @@ function batchDelete(table) {
 
 
 $(function () {
-  // $.ajaxSetup({
-  //   cache: false
-  // });
-  $(document).ajaxError(function (event, jqxhr) {
-    if (jqxhr.status === 401) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }
-  });
+  ajax401('');
+  disableAjaxCache();
 
   $('#reload').click(function (e) {
     initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
-    // initRequests(savedTable, submittedTable, rejectedTable, approvedTable, null);
   });
 
   /*saved tab starts*/
   // add footer first
-  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var savedAoColumns = [selectColumn, editLinkColumn, createdOnColumn, updatedOnColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   fnAddFilterFoot('#saved-table', savedAoColumns);
   savedTable = $('#saved-table').dataTable({
@@ -385,10 +340,6 @@ $(function () {
 
   $('#saved-unwrap').click(function (e) {
     fnUnwrap(savedTable);
-  });
-
-  $('#saved-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(savedTable, savedTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   $('#saved-select-all').click(function (e) {
@@ -413,7 +364,7 @@ $(function () {
   /*saved tab ends*/
 
   /*submitted tab starts*/
-  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var submittedAoColumns = [selectColumn, detailsLinkColumn, submittedOnColumn, updatedOnColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#submitted-table', submittedAoColumns);
 
   submittedTable = $('#submitted-table').dataTable({
@@ -444,10 +395,6 @@ $(function () {
     batchRevert(submittedTable);
   });
 
-  $('#submitted-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(submittedTable, submittedTableColumns[$(this).val()], $(this).prop('checked'));
-  });
-
   $('#submitted-select-all').click(function (e) {
     fnSelectAll(submittedTable, 'row-selected', 'select-row', true);
   });
@@ -460,7 +407,7 @@ $(function () {
 
   /*rejected tab starts*/
 
-  var rejectedAoColumns = [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var rejectedAoColumns = [selectColumn, detailsLinkColumn, rejectedOnColumn, submittedOnColumn, rejectedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
@@ -482,10 +429,6 @@ $(function () {
     fnUnwrap(rejectedTable);
   });
 
-  $('#rejected-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(rejectedTable, rejectedTableColumns[$(this).val()], $(this).prop('checked'));
-  });
-
   $('#rejected-select-all').click(function (e) {
     fnSelectAll(rejectedTable, 'row-selected', 'select-row', true);
   });
@@ -505,7 +448,7 @@ $(function () {
   /*rejected tab ends*/
 
   /*approved tab starts*/
-  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, approvedByColumn, submittedOnColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var approvedAoColumns = [selectColumn, detailsLinkColumn, approvedOnColumn, approvedByColumn, submittedOnColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     aaData: [],
@@ -535,10 +478,6 @@ $(function () {
     fnUnwrap(approvedTable);
   });
 
-  $('#approved-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(approvedTable, approvedTableColumns[$(this).val()], $(this).prop('checked'));
-  });
-
   $('#approved-clone').click(function (e) {
     batchClone(approvedTable);
   });
@@ -546,7 +485,7 @@ $(function () {
   /*approved tab ends*/
 
   /*cables tab starts*/
-  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var cableAoCulumns = [numberColumn, statusColumn, updatedOnColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   fnAddFilterFoot('#cables-table', cableAoCulumns);
   cablesTable = $('#cables-table').dataTable({
@@ -567,10 +506,6 @@ $(function () {
 
   $('#cables-unwrap').click(function (e) {
     fnUnwrap(cablesTable);
-  });
-
-  $('#cables-show input:checkbox').change(function (e) {
-    fnSetColumnsVis(cablesTable, cablesTableColumns[$(this).val()], $(this).prop('checked'));
   });
 
   /*cables tab ends*/

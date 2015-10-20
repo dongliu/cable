@@ -27,23 +27,12 @@ block content
           | &nbsp;Meta
           span.caret
         ul.dropdown-menu
-          //- li#numbering
-          //-   a(href='./numbering', target='_blank') FRIB cable numbering
           li#cabletypes
             a(href='./cabletypes/', target='_blank') FRIB approved cable types
           li#wbs
             a(href='./frib/wbs', target='_blank') FRIB work breakdown structure
           li#wbs
             a(href='./rea6/wbs', target='_blank') ReA 6 work breakdown structure
-          //- li#rooms
-          //-   a(href='./frib/rooms', target='_blank') FRIB rooms
-          //- li#rooms
-          //-   a(href='./nscl/rooms', target='_blank') NSCL rooms
-          //- li#rooms
-          //-   a(href='./srf/rooms', target='_blank') SRF highbay rooms
-          //- li.divider
-          //- li
-          //-   a(href='/workpackages', target='_blank') Work packages
       .btn-group
         a.btn(href='/profile', target='_blank')
           i.fa.fa-user.fa-lg
@@ -105,36 +94,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#saved-wrap.active Wrap
               button.btn.btn-info#saved-unwrap Unwrap
-            #saved-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
-            //- button#saved-filter.btn.btn-primary(type='button',data-toggle='collapse',data-target='#saved-filters') Filter by date
-          //- #saved-filters.collapse
-          //-   .control-group
-          //-     .control-label Created date
-          //-     .controls
-          //-       input.input-small(placeholder='from')
-          //-       input.input-small(placeholder='to')
-          //-   .control-group
-          //-     .control-label Updated date
-          //-     .controls
-          //-       input.input-small(placeholder='from')
-          //-       input.input-small(placeholder='to')
           table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           .btn-toolbar
@@ -157,27 +116,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#submitted-wrap.active Wrap
               button.btn.btn-info#submitted-unwrap Unwrap
-            #submitted-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
-                //- li.divider
-                //- li
-                //-   a(href='#restore') restore
           table#submitted-table.table.table-bordered.table-hover
 
         #approved.tab-pane
@@ -197,24 +135,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#approved-wrap.active Wrap
                 button.btn.btn-info#approved-unwrap Unwrap
-            #approved-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
 
           table#approved-table.table.table-bordered.table-hover
         #rejected.tab-pane
@@ -239,27 +159,6 @@ block content
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
 
-            #rejected-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
-                //- li.divider
-                //- li
-                //-   a(href='#restore') restore
           table#rejected-table.table.table-bordered.table-hover
 
         #cables.tab-pane
@@ -267,24 +166,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#cables-wrap.active Wrap
                 button.btn.btn-info#cables-unwrap Unwrap
-            #cables-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
           table#cables-table.table.table-bordered.table-hover
 
 block js
@@ -297,6 +178,7 @@ block js
   script(type='text/javascript', src='/jquery/jquery.validate.js')
   script(type='text/javascript', src='/dependencies/moment.js')
   script(type='text/javascript', src='/dependencies/lodash.js')
+  script(type='text/javascript', src='/javascripts/ajaxhelper.js')
   script(type='text/javascript', src='/javascripts/table.js')
   script(type='text/javascript', src='/javascripts/main.js')
 
