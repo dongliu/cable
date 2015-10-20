@@ -83,8 +83,12 @@ function createRequest(requests, i) {
   var request = requests[i];
   var namecodes;
   var newRequest;
+  var quantityIndex = 10;
   // need more validation function here
-  if (!validator.isInt(request[10])) {
+  if (version === 'v2.0') {
+    quantityIndex = 11;
+  }
+  if (!validator.isInt(request[quantityIndex])) {
     console.log('The quantity is not an integer: ' + requests[i]);
     if (i === requests.length - 1) {
       return jobDone();
