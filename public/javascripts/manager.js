@@ -392,7 +392,7 @@ $(function () {
 
   var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
   /*approving table starts*/
-  var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
   approvingTable = $('#approving-table').dataTable({
     sAjaxSource: '/requests/statuses/1/json',
@@ -442,7 +442,7 @@ $(function () {
 
   /*rejected tab starts*/
 
-  var rejectedAoColumns = [detailsLinkColumn, rejectedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var rejectedAoColumns = [detailsLinkColumn, rejectedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
@@ -478,7 +478,7 @@ $(function () {
 
   /*approved tab starts*/
 
-  var approvedAoColumns = [detailsLinkColumn, approvedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var approvedAoColumns = [detailsLinkColumn, approvedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     sAjaxSource: '/requests/statuses/2/json',
