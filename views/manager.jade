@@ -24,20 +24,12 @@ block content
           | &nbsp;Meta
           span.caret
         ul.dropdown-menu
-          //- li#numbering
-          //-   a(href='./numbering', target='_blank') FRIB cable numbering
           li#cabletypes
             a(href='./cabletypes/', target='_blank') FRIB approved cable types
           li#wbs
             a(href='./frib/wbs', target='_blank') FRIB work breakdown structure
           li#wbs
             a(href='./rea6/wbs', target='_blank') ReA 6 work breakdown structure
-          //- li#rooms
-          //-   a(href='./frib/rooms', target='_blank') FRIB rooms
-          //- li#rooms
-          //-   a(href='./nscl/rooms', target='_blank') NSCL rooms
-          //- li#rooms
-          //-   a(href='./srf/rooms', target='_blank') SRF highbay rooms
       .btn-group
         button.btn.btn-primary#bar
           i.fa.fa-bar-chart.fa-lg
@@ -107,27 +99,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#approving-wrap.active Wrap
               button.btn.btn-info#approving-unwrap Unwrap
-            //- #approving-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
-                //- li.divider
-                //- li
-                //-   a(href='#restore') restore
           table#approving-table.table.table-bordered.table-hover
         #rejected.tab-pane
           .btn-toolbar
@@ -175,24 +146,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#procuring-wrap.active Wrap
               button.btn.btn-info#procuring-unwrap Unwrap
-            //- #procuring-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
           table#procuring-table.table.table-bordered.table-hover
         #installing.tab-pane
           .btn-toolbar
@@ -207,24 +160,6 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#installing-wrap.active Wrap
               button.btn.btn-info#installing-unwrap Unwrap
-            //- #installing-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
           .btn-toolbar
             .btn-group
               button.btn#installing-label(value='label')
@@ -272,56 +207,12 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#installed-wrap.active Wrap
               button.btn.btn-info#installed-unwrap Unwrap
-            //- #installed-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
           table#installed-table.table.table-bordered.table-hover
         #obsoleted.tab-pane
           .btn-toolbar
-            //- .btn-group
-            //-   button.btn.btn-info#obsoleted-select-all
-            //-     i.fa.fa-list.fa-lg
-            //-     | &nbsp;Select all in current view
-            //- .btn-group
-            //-   button.btn.btn-info#obsoleted-select-none
-            //-     i.fa.fa-square-o.fa-lg
-            //-     | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#obsoleted-wrap.active Wrap
               button.btn.btn-info#obsoleted-unwrap Unwrap
-            //- #obsoleted-show.btn-group
-              button.btn.btn-info.dropdown-toggle(data-toggle='dropdown')
-                i.fa.fa-wrench.fa-lg
-                | &nbsp;Show
-                span.caret
-              ul.dropdown-menu
-                li
-                  label.checkbox
-                    input(type='checkbox', value='from', checked)
-                    | from
-                li
-                  label.checkbox
-                    input(type='checkbox', value='to', checked)
-                    | to
-                li
-                  label.checkbox
-                    input(type='checkbox', value='comments', checked)
-                    | comments
           table#obsoleted-table.table.table-bordered.table-hover
 
 block js
