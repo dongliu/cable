@@ -1,57 +1,82 @@
+#!/usr/bin/env node
+
 /**
  * @fileOverview read a csv file with cable request details and insert them into mongo.
  * @author Dong Liu
  */
 
-var csv = require('csv'),
-  fs = require('fs'),
-  path = require('path'),
-  mongoose = require('mongoose'),
-  validator = require('validator'),
-  Request = require('../model/request.js').Request;
+/*jslint es5: true*/
+
+var csv = require('csv');
+
+var fs = require('fs');
+var path = require('path');
+var mongoose = require('mongoose');
+var validator = require('validator');
+var Request = require('../model/request.js').Request;
+var program = require('commander');
 
 var naming = require('../lib/naming');
 
-var inputPath, realPath, db, line = 0,
-  requests = [],
-  parser, processed = 0,
-  success = 0;
+var inputPath;
+var realPath;
+var db;
+var line = 0;
+var requests = [];
+var parser;
+var processed = 0;
+var success = 0;
 
 var version = '';
 
-if (process.argv.length === 3) {
-  inputPath = process.argv[2];
-} else {
-  console.warn('needs exact one argument for the input csv file path');
+program.version('0.0.1')
+  .option('-v, --validate', 'validate data from spreadsheet')
+  .arguments('<source>')
+  .action(function (source) {
+    inputPath = source;
+  });
+
+program.parse(process.argv);
+
+if (inputPath === undefined) {
+  console.error('need the input source csv file path!');
   process.exit(1);
 }
 
 realPath = path.resolve(process.cwd(), inputPath);
 
 if (!fs.existsSync(realPath)) {
-  console.warn(realPath + ' does not exist.');
-  console.warn('Please input a valid csv file path.');
+  console.error(realPath + ' does not exist.');
+  console.error('Please input a valid csv file path.');
   process.exit(1);
 }
 
-mongoose.connect('mongodb://localhost/cable_frib');
-
-db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-
-db.once('open', function () {
-  console.log('db connected');
-});
+if (!program.validate) {
+  mongoose.connect('mongodb://localhost/cable_frib');
+  db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function () {
+    console.log('db connected');
+  });
+}
 
 function jobDone() {
-  console.log(requests.length + ' requests were processed, and ' + success + ' requests were inserted. Bye.');
-  mongoose.connection.close();
+  if (program.validate) {
+    console.log(requests.length + ' requests were processed, and ' + success + ' requests were valid. Bye.');
+  } else {
+    console.log(requests.length + ' requests were processed, and ' + success + ' requests were inserted. Bye.');
+    mongoose.connection.close();
+  }
   process.exit();
 }
 
 function splitTags(s) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
+}
+
+function isTrue(S) {
+  var s = S.toLowerCase();
+  return (s === 'yes' || s === 'true');
 }
 
 function createRequest(requests, i) {
@@ -89,21 +114,19 @@ function createRequest(requests, i) {
         tags: splitTags(request[10]),
         quantity: request[11]
       },
-
       from: {
         rack: request[12],
         terminationDevice: request[13],
         terminationType: request[14],
         wiringDrawing: request[15]
       },
-
       to: {
         rack: request[16],
         terminationDevice: request[17],
         terminationType: request[18],
         wiringDrawing: request[19]
       },
-      ownerProvided: request[8],
+      ownerProvided: isTrue(request[8]),
       conduit: request[20],
       length: request[21],
       comments: request[22],
@@ -153,19 +176,35 @@ function createRequest(requests, i) {
       submittedOn: Date.now()
     };
   }
-  Request.create(newRequest, function (err, doc) {
-    if (err) {
-      console.log(err);
-    } else {
-      success += 1;
-      console.log('New request created with id: ' + doc.id);
-    }
-    if (i === requests.length - 1) {
-      jobDone();
-    } else {
-      createRequest(requests, i + 1);
-    }
-  });
+  if (program.validate) {
+    newRequest = new Request(newRequest);
+    newRequest.validate(function (err) {
+      if (err) {
+        console.log('line ' + i + ':' + err);
+      } else {
+        success += 1;
+      }
+      if (i === requests.length - 1) {
+        jobDone();
+      } else {
+        createRequest(requests, i + 1);
+      }
+    });
+  } else {
+    Request.create(newRequest, function (err, doc) {
+      if (err) {
+        console.log(err);
+      } else {
+        success += 1;
+        console.log('New request created with id: ' + doc.id);
+      }
+      if (i === requests.length - 1) {
+        jobDone();
+      } else {
+        createRequest(requests, i + 1);
+      }
+    });
+  }
 }
 
 

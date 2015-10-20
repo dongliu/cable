@@ -15,7 +15,8 @@
     "ldapjs": "0.7.1",
     "mongoose": "4.0.2",
     "pause": "0.0.1",
-    "validator": "3.37.0"
+    "validator": "3.37.0",
+    "commander": "*"
   },
   "devDependencies": {
     "should": "4.1.0",
