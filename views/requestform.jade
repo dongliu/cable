@@ -70,6 +70,13 @@ legend Basic information
   .control-label Quantity
   .controls
     input#quantity(type='text', name='basic.quantity', class='type[number]', value=1, required, min=1)
+.control-group
+  .control-label Owner provided
+  .controls
+    select#ownerProvided.input(type='boolean', name='ownerProvided', required)
+      option(value='', disabled=true, selected) choose
+      option(value='false') No
+      option(value='true') Yes
 //- fieldset
 legend Source(from)
 .control-group
