@@ -109,7 +109,10 @@ var template = {
       l: 'span[name="basic.tags"]'
     }
   },
-
+  ownerProvided: {
+    e: '$.ownerProvided',
+    l: 'span[name="ownerProvided"]'
+  },
   from: {
     root: '$.from',
     rack: {
