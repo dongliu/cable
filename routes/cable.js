@@ -96,6 +96,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
       request_id: cableRequest._id,
       tags: cableRequest.basic.tags,
       basic: cableRequest.basic,
+      ownerProvided: cableRequest.ownerProvided,
       from: cableRequest.from,
       to: cableRequest.to,
       required: cableRequest.required,
@@ -110,7 +111,6 @@ function createCable(cableRequest, req, res, quantity, cables) {
     });
     newCable.save(function (err, doc) {
       if (err) {
-        console.dir(err);
         // see test/duplicatedCableNumber.js for a test of this case
         if (err.code && err.code === 11000) {
           console.log(nextNumber + ' already existed, try again ...');
@@ -527,7 +527,7 @@ module.exports = function (app) {
         status: 1
       }, request, {
         new: true
-      }).lean().exec(
+      }).exec(
         function (err, cableRequest) {
           if (err) {
             console.error(err);
@@ -536,7 +536,7 @@ module.exports = function (app) {
             });
           }
           if (cableRequest) {
-            createCable(cableRequest, req, res, cableRequest.basic.quantity, []);
+            createCable(cableRequest.toJSON(), req, res, cableRequest.basic.quantity, []);
           } else {
             console.error(req.params.id + ' gone');
             return res.json(410, {
@@ -742,7 +742,7 @@ module.exports = function (app) {
   app.get('/cables/:id/json', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
       number: req.params.id
-    }).lean().exec(function (err, cable) {
+    }).exec(function (err, cable) {
       if (err) {
         console.error(err);
         return res.json(500, {
