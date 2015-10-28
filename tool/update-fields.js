@@ -157,13 +157,19 @@ function checkCables() {
       if (!program.dryrun) {
         docs.forEach(function (doc) {
           console.log('updating ' + (++current) + ' cable with number ' + doc.number);
+          var update = {};
+          spec.updates.forEach(function (c) {
+            update[c.property] = c.newValue;
+            if (c.oldValue === '_whatever_') {
+              c.oldValue = doc.get(c.property);
+            }
+          });
           var multiChange = new MultiChange({
             cableName: doc.number,
             updates: spec.updates,
             updatedBy: 'system',
             updatedOn: Date.now()
           });
-          var update = {};
           spec.updates.forEach(function (c) {
             update[c.property] = c.newValue;
           });

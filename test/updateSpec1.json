@@ -1,7 +1,10 @@
 {
   "condition": {
     "basic.cableType": "2C_5kVDC_Coax_035",
-    "basic.engineer": "Kelly Davidson"
+    "basic.engineer": "Kelly Davidson",
+    "basic.tags": {
+      "$in": ["Ion Pump", "ION PUMP"]
+    }
   },
   "updates": [{
     "property": "basic.cableType",
