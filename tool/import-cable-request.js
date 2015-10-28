@@ -84,8 +84,9 @@ function createRequest(requests, i) {
   var namecodes;
   var newRequest;
   var quantityIndex = 10;
+  var v2 = (version.indexOf('v2') === 0);
   // need more validation function here
-  if (version === 'v2.0') {
+  if (v2) {
     quantityIndex = 11;
   }
   if (!validator.isInt(request[quantityIndex])) {
@@ -103,7 +104,7 @@ function createRequest(requests, i) {
     }
     return createRequest(requests, i + 1);
   }
-  if (version === 'v2.0') {
+  if (v2) {
     newRequest = {
       basic: {
         project: request[0],
@@ -222,9 +223,8 @@ parser.on('readable', function () {
       line += 1;
       console.log('read ' + line + ' lines ...');
       if (line === 2) {
-        if (record[0] === 'v2.0') {
-          version = 'v2.0';
-        }
+        version = record[0];
+        console.log('template version: ' + version);
       }
       if (record[0] === 'FRIB') {
         requests.push(record);
