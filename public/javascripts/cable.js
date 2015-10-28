@@ -237,8 +237,20 @@ $(function () {
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {
+    var changes = [];
+    $.each(json, function (index, value) {
+      if (value.hasOwnProperty('updates')) {
+        $.each(value.updates, function (i, v) {
+          v.updatedOn = value.updatedOn;
+          v.updatedBy = value.updatedBy;
+          changes.push(v);
+        });
+      } else {
+        changes.push(value);
+      }
+    });
     $('span.property').each(function (index, element) {
-      var found = json.filter(function (e) {
+      var found = changes.filter(function (e) {
         if (e.hasOwnProperty('property')) {
           return e.property === $(element).attr('name');
         }

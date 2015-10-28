@@ -5,6 +5,7 @@ var sysSub = require('../config/sys-sub.json');
 var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var Cable = mongoose.model('Cable');
+var MultiChange = mongoose.model('MultiChange');
 var Change = mongoose.model('Change');
 var User = mongoose.model('User');
 
@@ -776,12 +777,22 @@ module.exports = function (app) {
         _id: {
           $in: cable.changeHistory
         }
-      }).lean().exec(function (err, changes) {
-        if (err) {
-          console.error(err);
-          return res.send(500, err.message);
+      }).lean().exec(function (err1, changes) {
+        if (err1) {
+          console.error(err1);
+          return res.send(500, err1.message);
         }
-        res.json(changes);
+        MultiChange.find({
+          _id: {
+            $in: cable.changeHistory
+          }
+        }).lean().exec(function (err2, multiChanges) {
+          if (err2) {
+            console.error(err2);
+            return res.send(500, err1.message);
+          }
+          res.json(changes.concat(multiChanges));
+        });
       });
     });
   });
@@ -802,10 +813,14 @@ module.exports = function (app) {
     case "update":
       if (req.body.oldValue === null) {
         // for string, treat null and '' the same
-        conditions[req.body.property] = {$in: [null, '', false]};
+        conditions[req.body.property] = {
+          $in: [null, '', false]
+        };
       } else if (req.body.oldValue === false) {
         // for boolean, treat false and '' the same
-        conditions[req.body.property] = {$in: [null, false]};
+        conditions[req.body.property] = {
+          $in: [null, false]
+        };
       } else {
         conditions[req.body.property] = req.body.oldValue;
       }

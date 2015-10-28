@@ -13,7 +13,7 @@ var path = require('path');
 var mongoose = require('mongoose');
 var Request = require('../model/request.js').Request;
 var Cable = require('../model/request.js').Cable;
-var Change = require('../model/request.js').Change;
+var MultiChange = require('../model/request.js').MultiChange;
 
 var program = require('commander');
 
@@ -61,8 +61,6 @@ if (!fs.existsSync(realPath)) {
 }
 
 spec = require(realPath);
-
-console.log(spec);
 
 if (program.cable) {
   if (!spec.condition.status) {
@@ -158,24 +156,24 @@ function checkCables() {
       console.log('find ' + docs.length + ' cables for the condition.');
       if (!program.dryrun) {
         docs.forEach(function (doc) {
-          console.log('updating ' + (++current) + ' cable with id ' + doc._id);
-          var change = new Change({
+          console.log('updating ' + (++current) + ' cable with number ' + doc.number);
+          var multiChange = new MultiChange({
             cableName: doc.number,
-            property: spec.change.field_name,
-            oldValue: spec.change.from_value,
-            newValue: spec.change.to_value,
+            updates: spec.updates,
             updatedBy: 'system',
             updatedOn: Date.now()
           });
           var update = {};
-          update[spec.change.field_name] = spec.change.to_value;
-          if (!!change) {
+          spec.updates.forEach(function (c) {
+            update[c.property] = c.newValue;
+          });
+          if (!!multiChange) {
             update.updatedOn = Date.now();
             update.updatedBy = 'system';
             update.$inc = {
               __v: 1
             };
-            change.save(function (err, c) {
+            multiChange.save(function (err, c) {
               if (err) {
                 console.error(err);
                 cablesProcessed += 1;

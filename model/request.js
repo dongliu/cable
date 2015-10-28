@@ -229,13 +229,28 @@ var change = new Schema({
   updatedOn: Date
 });
 
+var update = new Schema({
+  property: String,
+  oldValue: Mixed,
+  newValue: Mixed
+});
+
+var multiChange = new Schema({
+  cableName: String,
+  updates: [update],
+  updatedBy: String,
+  updatedOn: Date
+});
+
 var Request = mongoose.model('Request', request);
 var Cable = mongoose.model('Cable', cable);
 var Change = mongoose.model('Change', change);
+var MultiChange = mongoose.model('MultiChange', multiChange);
 
 
 module.exports = {
   Cable: Cable,
   Change: Change,
+  MultiChange : MultiChange,
   Request: Request
 };

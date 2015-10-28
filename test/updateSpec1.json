@@ -1,0 +1,11 @@
+{
+  "condition": {
+    "basic.cableType": "2C_5kVDC_Coax_035",
+    "basic.engineer": "Kelly Davidson"
+  },
+  "updates": [{
+    "property": "basic.cableType",
+    "oldValue": "2C_5kVDC_Coax_035",
+    "newValue": "2C_10kVDC_Coax_032"
+  }]
+}
