@@ -93,7 +93,13 @@ module.exports = function (app) {
     var conditions = {
       _id: req.params.id
     };
-    conditions[req.body.target] = req.body.original;
+    if (req.body.original === null) {
+      conditions[req.body.target] = {
+          $in: [null, '']
+        };
+    } else {
+      conditions[req.body.target] = req.body.original;
+    }
     var update = {};
     update[req.body.target] = req.body.update;
     update.updatedOn = Date.now();

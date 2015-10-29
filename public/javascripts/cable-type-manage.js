@@ -20,6 +20,12 @@ function tdEdit(oTable) {
     data.target = typeColumns[oTable.fnGetPosition(that)[2]].mData;
     data.update = value;
     data.original = oTable.fnGetData(that);
+    if (data.original === '') {
+      data.original = null;
+    }
+    if (data.update === '') {
+      data.update = null;
+    }
     var ajax = $.ajax({
       url: '/cabletypes/' + oTable.fnGetData(that.parentNode)._id,
       type: 'PUT',
@@ -60,22 +66,6 @@ $(function () {
 
   filterEvent();
 
-/*  $('#add').click(function (e) {
-    $.ajax({
-      url: '/cabletypes',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({}),
-      dataType: 'json'
-    }).done(function (json) {
-      var newType = cabletype.fnAddDataAndDisplay(json);
-      $(cabletype.fnGetNodes(newType.iPos)).addClass('row-selected');
-      tdEdit(cabletype);
-    }).fail(function (jqXHR, status, error) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot create a new cable type : ' + jqXHR.responseText + '</div>');
-    }).always();
-  });*/
-
   $.ajax({
     url: '/cabletypes/json',
     type: 'GET',
@@ -89,5 +79,3 @@ $(function () {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
   }).always();
 });
-
-
