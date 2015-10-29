@@ -812,12 +812,12 @@ module.exports = function (app) {
     switch (req.body.action) {
     case "update":
       if (req.body.oldValue === null) {
-        // for string, treat null and '' the same
+        // for string, treat null and '' as the same
         conditions[req.body.property] = {
-          $in: [null, '', false]
+          $in: [null, '']
         };
       } else if (req.body.oldValue === false) {
-        // for boolean, treat false and '' the same
+        // for boolean, treat false and '' as the same
         conditions[req.body.property] = {
           $in: [null, false]
         };
