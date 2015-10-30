@@ -213,7 +213,7 @@ function createRequest(requests, i) {
 }
 
 
-parser = csv.parse();
+parser = csv.parse({trim: true});
 
 parser.on('readable', function () {
   var record;
