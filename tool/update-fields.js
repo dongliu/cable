@@ -154,7 +154,12 @@ function checkCables() {
       console.error(err);
     } else {
       console.log('find ' + docs.length + ' cables for the condition.');
-      if (!program.dryrun) {
+      if (program.dryrun) {
+        docs.forEach(function (doc) {
+          console.log('need to ' + (++current) + ' cable with number ' + doc.number);
+        });
+        console.log('bye.');
+      } else {
         docs.forEach(function (doc) {
           console.log('updating ' + (++current) + ' cable with number ' + doc.number);
           var update = {};
