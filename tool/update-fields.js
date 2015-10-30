@@ -77,7 +77,7 @@ if (program.request) {
   }
 }
 
-console.log(spec);
+console.log(JSON.stringify(spec, null, 2));
 
 mongoose.connect('mongodb://localhost/cable_frib');
 db = mongoose.connection;
