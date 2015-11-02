@@ -23,6 +23,7 @@ var realPath;
 var db;
 var line = 0;
 var requests = [];
+var lines = [];
 var parser;
 var processed = 0;
 var success = 0;
@@ -90,15 +91,15 @@ function createRequest(requests, i) {
     quantityIndex = 11;
   }
   if (!validator.isInt(request[quantityIndex])) {
-    console.log('The quantity is not an integer: ' + requests[i]);
+    console.log('Line ' + lines[i] + ': the quantity is not an integer: ' + request[quantityIndex]);
     if (i === requests.length - 1) {
       return jobDone();
     }
     return createRequest(requests, i + 1);
   }
-  namecodes = naming.encode(request[3].trim(), request[4].trim(), request[5].trim());
-  if (namecodes.length !== 3) {
-    console.log('cannot encode the name of: ' + requests[i]);
+  namecodes = naming.encode(request[3], request[4], request[5]);
+  if (namecodes.indexOf(null) !== -1) {
+    console.log('Line ' + lines[i] + ': cannot encode the name of: ' + namecodes);
     if (i === requests.length - 1) {
       return jobDone();
     }
@@ -228,6 +229,7 @@ parser.on('readable', function () {
       }
       if (record[0] === 'FRIB') {
         requests.push(record);
+        lines.push(line);
       }
     }
   } while (!!record);
