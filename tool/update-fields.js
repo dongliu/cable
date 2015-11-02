@@ -117,13 +117,21 @@ function checkRequests() {
       console.error(err);
     } else {
       console.log('find ' + docs.length + ' requests to process for the condition.');
-      docs.forEach(function (doc) {
-        console.log('processing ' + (++current) + ' request with id ' + doc._id);
-        var update = {};
-        if (program.dryrun) {
-          requestsProcessed += 1;
-          itemsAllChecked(docs.length, requestsProcessed, allDone);
-        } else {
+      if (program.dryrun) {
+        docs.forEach(function (doc) {
+          console.log('need to update ' + (++current) + ' request with id ' + doc._id);
+        });
+        console.log('bye.');
+      } else {
+        docs.forEach(function (doc) {
+          console.log('updating ' + (++current) + ' request with id ' + doc._id);
+          var update = {};
+          spec.updates.forEach(function (c) {
+            update[c.property] = c.newValue;
+            if (c.oldValue === '_whatever_') {
+              c.oldValue = doc.get(c.property);
+            }
+          });
           update.updatedOn = Date.now();
           update.updatedBy = 'system';
           update.$inc = {
@@ -140,8 +148,8 @@ function checkRequests() {
             requestsProcessed += 1;
             itemsAllChecked(docs.length, requestsProcessed, allDone);
           });
-        }
-      });
+        });
+      }
     }
   });
 }
@@ -156,7 +164,7 @@ function checkCables() {
       console.log('find ' + docs.length + ' cables for the condition.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
-          console.log('need to ' + (++current) + ' cable with number ' + doc.number);
+          console.log('need to update ' + (++current) + ' cable with number ' + doc.number);
         });
         console.log('bye.');
       } else {
