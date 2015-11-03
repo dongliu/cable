@@ -128,9 +128,6 @@ function checkRequests() {
           var update = {};
           spec.updates.forEach(function (c) {
             update[c.property] = c.newValue;
-            if (c.oldValue === '_whatever_') {
-              c.oldValue = doc.get(c.property);
-            }
           });
           update.updatedOn = Date.now();
           update.updatedBy = 'system';
@@ -154,6 +151,13 @@ function checkRequests() {
   });
 }
 
+function oldValue(value, property, doc) {
+  if (value === '_whatever_') {
+    return doc.get(property);
+  }
+  return value;
+}
+
 function checkCables() {
   console.log('Starting processing cables ...');
   Cable.find(spec.condition).exec(function (err, docs) {
@@ -171,15 +175,19 @@ function checkCables() {
         docs.forEach(function (doc) {
           console.log('updating ' + (++current) + ' cable with number ' + doc.number);
           var update = {};
-          spec.updates.forEach(function (c) {
+          var updates = [];
+
+          spec.updates.forEach(function (c, index) {
             update[c.property] = c.newValue;
-            if (c.oldValue === '_whatever_') {
-              c.oldValue = doc.get(c.property);
-            }
+            updates.push({
+              property: c.property,
+              oldValue: oldValue(c.oldValue, c.property, doc),
+              newValue: c.newValue
+            });
           });
           var multiChange = new MultiChange({
             cableName: doc.number,
-            updates: spec.updates,
+            updates: updates,
             updatedBy: 'system',
             updatedOn: Date.now()
           });
