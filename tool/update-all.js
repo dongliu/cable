@@ -21,6 +21,7 @@ var inputPath;
 var realPath;
 var db;
 var spec;
+var cableToProcess = 0;
 var cablesProcessed = 0;
 var cablesUpdated = 0;
 var requestsProcessed = 0;
@@ -207,6 +208,7 @@ function checkCables() {
             return i !== -1;
           });
           if (found) {
+            cableToProcess += 1;
             console.log('updating ' + (++current) + ' cable with number ' + doc.number);
             var update = {};
             var updates = [];
@@ -237,7 +239,7 @@ function checkCables() {
                 if (err) {
                   console.error(err);
                   cablesProcessed += 1;
-                  itemsAllChecked(docs.length, cablesProcessed, allDone);
+                  itemsAllChecked(cableToProcess, cablesProcessed, allDone);
                 } else {
                   update.$push = {
                     changeHistory: c._id
@@ -251,13 +253,13 @@ function checkCables() {
                       cablesUpdated += 1;
                     }
                     cablesProcessed += 1;
-                    itemsAllChecked(docs.length, cablesProcessed, allDone);
+                    itemsAllChecked(cableToProcess, cablesProcessed, allDone);
                   });
                 }
               });
             } else {
               cablesProcessed += 1;
-              itemsAllChecked(docs.length, cablesProcessed, allDone);
+              itemsAllChecked(cableToProcess, cablesProcessed, allDone);
             }
           }
         });
