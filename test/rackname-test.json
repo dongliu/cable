@@ -1,0 +1,10 @@
+{
+  "condition": {
+    "from.rack": "FS1_R1624:CAB_N0505"
+  },
+  "updates": {
+    "replace": ["from.rack", "to.rack"],
+    "oldValue": ["LS2_R1624:CAB_N4202", "FS1_R1624:CAB_N0505"],
+    "newValue": ["LS2_R1624:CAB_N4202", "FS1_R1624:CAB_N0505"]
+  }
+}
