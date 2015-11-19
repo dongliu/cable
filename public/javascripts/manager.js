@@ -1,6 +1,6 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
-/*global moment: false, Chart: false, json2List: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, rejectedOnColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedOnColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedOnColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
+/*global moment: false, Chart: false, json2List: false, ajax401: false, disableAjaxCache: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false, submittedOnLongColumn: false, ownerProvidedColumn: false, rejectedOnLongColumn: false, approvedOnLongColumn: false, versionColumn: false, updatedOnLongColumn: false, obsoletedOnLongColumn: false, sDom2i1p: false*/
 
 
 var managerGlobal = {
@@ -23,16 +23,15 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
       $('#modal .modal-body').prepend('<div class="text-error">Please input true or false</div>');
       return;
     }
-    newValue = (newValue === 'true');
+    newValue = newValue === 'true';
     if (newValue === oldValue) {
       $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
       return;
     }
-  } else {
-    if (sOldValue.trim() === newValue.trim()) {
-      $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
-      return;
-    }
+  }
+  if (sOldValue.trim() === newValue.trim()) {
+    $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+    return;
   }
   var data = {};
   data.action = 'update';
@@ -49,16 +48,16 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
   } else {
     data.newValue = newValue;
   }
-  var ajax = $.ajax({
+  $.ajax({
     url: '/cables/' + cableNumber + '/',
     type: 'PUT',
     contentType: 'application/json',
     data: JSON.stringify(data),
-    success: function (data) {
+    success: function () {
       oTable.fnUpdate(data, oTable.fnGetPosition(td)[0]);
       $('#modal .modal-body').html('<div class="text-success">The update succeded!</div>');
     },
-    error: function (jqXHR, status, error) {
+    error: function (jqXHR) {
       $('#modal .modal-body').prepend('<div class="text-error">' + jqXHR.responseText + '</div>');
     }
   });
@@ -89,13 +88,13 @@ function updateTd(td, oTable) {
   }
   $('#modalLabel').html('Update the cable <span class="text-info" style="text-decoration: underline;" data-toggle="collapse" data-target="#cable-details">' + cableNumber + '</span> ?');
   $('#modal .modal-body').empty();
-  $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + property + ')' + '</b></div>');
+  $('#modal .modal-body').append('<div>Update the value of <b>' + title + ' (' + property + ')</b></div>');
   $('#modal .modal-body').append('<div>From <b>' + renderedValue + '</b></div>');
   $('#modal .modal-body').append('<div>To <input id="new-value" type="text"></div>');
   $('#modal .modal-body').append(cableDetails(cableData));
   $('#modal .modal-footer').html('<button id="update" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
   $('#modal').modal('show');
-  $('#update').click(function (e) {
+  $('#update').click(function () {
     var newValue = $('#new-value').val();
     updateTdFromModal(cableNumber, property, parseType, oldValue, newValue, td, oTable);
   });
@@ -103,7 +102,7 @@ function updateTd(td, oTable) {
 
 function approveFromModal(requests, approvingTable, approvedTable, procuringTable) {
   $('#approve').prop('disabled', true);
-  var number = $('#modal .modal-body div').length;
+  // var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
@@ -123,7 +122,7 @@ function approveFromModal(requests, approvingTable, approvedTable, procuringTabl
       approvedTable.fnAddData(result.request);
       // add the new cables to the procuring table
       procuringTable.fnAddData(result.cables);
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function (jqXHR) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
@@ -145,7 +144,7 @@ function batchApprove(oTable, approvedTable, procuringTable) {
     });
     $('#modal .modal-footer').html('<button id="approve" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#approve').click(function (e) {
+    $('#approve').click(function () {
       approveFromModal(requests, oTable, approvedTable, procuringTable);
     });
   } else {
@@ -159,7 +158,7 @@ function batchApprove(oTable, approvedTable, procuringTable) {
 
 function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#reject').prop('disabled', true);
-  var number = $('#modal .modal-body div').length;
+  // var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
@@ -177,7 +176,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
       approvingTable.fnDeleteRow(requests[index]);
       // add the new cables to the procuring table
       rejectedTable.fnAddData(request);
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function (jqXHR) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
@@ -198,7 +197,7 @@ function batchReject(oTable, rejectedTable) {
     });
     $('#modal .modal-footer').html('<button id="reject" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#reject').click(function (e) {
+    $('#reject').click(function () {
       rejectFromModal(requests, oTable, rejectedTable);
     });
   } else {
@@ -314,12 +313,12 @@ function query(o, s) {
   s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
   s = s.replace(/^\./, ''); // strip a leading dot
   var a = s.split('.');
-  var i, n;
+  var i;
   for (i = 0; i < a.length; i += 1) {
     if (o.hasOwnProperty(a[i])) {
       o = o[a[i]];
     } else {
-      return;
+      return null;
     }
   }
   return o;
@@ -375,8 +374,6 @@ function barChart(oTable) {
 
   $('#modal').modal('show');
 
-
-
   $('#plot').click(function (e) {
     e.preventDefault();
     var ctx = $('#barChart')[0].getContext('2d');
@@ -390,10 +387,18 @@ $(function () {
   ajax401('');
   disableAjaxCache();
 
-  var approvingTable, rejectedTable, approvedTable, procuringTable, installingTable, installedTable, obsoletedTable;
+  var approvingTable;
+  var rejectedTable;
+  var approvedTable;
+  var procuringTable;
+  var installingTable;
+  var installedTable;
+  var obsoletedTable;
   /*approving table starts*/
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   fnAddFilterFoot('#approving-table', approvingAoCulumns);
+  // fnAddFilterHead('#approving-table', approvingAoCulumns);
+
   approvingTable = $('#approving-table').dataTable({
     sAjaxSource: '/requests/statuses/1/json',
     sAjaxDataProp: '',
@@ -404,37 +409,47 @@ $(function () {
     },
     bDeferRender: true,
     aoColumns: approvingAoCulumns,
+    iDisplayLength: 10,
+    aLengthMenu: [
+      [10, 50, 100, -1],
+      [10, 50, 100, 'All']
+    ],
     aaSorting: [
       [2, 'desc'],
       [5, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2i1p,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    sScrollX: '100%',
+    bScrollCollapse: true
   });
 
-  $('#approving-wrap').click(function (e) {
+  fnAddFilterHeadScroll('#approving-table', approvingAoCulumns);
+
+  $('#approving-wrap').click(function () {
     $('#approving-table td').removeClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
   });
 
-  $('#approving-unwrap').click(function (e) {
+  $('#approving-unwrap').click(function () {
     $('#approving-table td').addClass('nowrap');
     approvingTable.fnAdjustColumnSizing();
   });
 
-  $('#approving-select-none').click(function (e) {
+  $('#approving-select-none').click(function () {
     fnDeselect(approvingTable, 'row-selected', 'select-row');
   });
 
-  $('#approving-select-all').click(function (e) {
+  $('#approving-select-all').click(function () {
     fnSelectAll(approvingTable, 'row-selected', 'select-row', true);
   });
 
-  $('#approving-approve').click(function (e) {
+  $('#approving-approve').click(function () {
     batchApprove(approvingTable, approvedTable, procuringTable);
   });
 
-  $('#approving-reject').click(function (e) {
+  $('#approving-reject').click(function () {
     batchReject(approvingTable, rejectedTable);
   });
 
@@ -464,12 +479,12 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  $('#rejected-wrap').click(function (e) {
+  $('#rejected-wrap').click(function () {
     $('#rejected-table td').removeClass('nowrap');
     rejectedTable.fnAdjustColumnSizing();
   });
 
-  $('#rejected-unwrap').click(function (e) {
+  $('#rejected-unwrap').click(function () {
     $('#rejected-table td').addClass('nowrap');
     rejectedTable.fnAdjustColumnSizing();
   });
@@ -500,12 +515,12 @@ $(function () {
   });
 
 
-  $('#approved-wrap').click(function (e) {
+  $('#approved-wrap').click(function () {
     $('#approved-table td').removeClass('nowrap');
     approvedTable.fnAdjustColumnSizing();
   });
 
-  $('#approved-unwrap').click(function (e) {
+  $('#approved-unwrap').click(function () {
     $('#approved-table td').addClass('nowrap');
     approvedTable.fnAdjustColumnSizing();
   });
@@ -534,23 +549,23 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  $('#procuring-wrap').click(function (e) {
+  $('#procuring-wrap').click(function () {
     fnWrap(procuringTable);
   });
 
-  $('#procuring-unwrap').click(function (e) {
+  $('#procuring-unwrap').click(function () {
     fnUnwrap(procuringTable);
   });
 
-  $('#procuring-select-all').click(function (e) {
+  $('#procuring-select-all').click(function () {
     fnSelectAll(procuringTable, 'row-selected', 'select-row', true);
   });
 
-  $('#procuring-select-none').click(function (e) {
+  $('#procuring-select-none').click(function () {
     fnDeselect(procuringTable, 'row-selected', 'select-row');
   });
 
-  $('#procuring-edit').click(function (e) {
+  $('#procuring-edit').click(function () {
     if (managerGlobal.procuring_edit) {
       $('#procuring-edit').html('<i class="fa fa-check-square-o fa-lg"></i>&nbsp;Edit mode');
       managerGlobal.procuring_edit = false;
@@ -600,19 +615,19 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  $('#installing-wrap').click(function (e) {
+  $('#installing-wrap').click(function () {
     fnWrap(installingTable);
   });
 
-  $('#installing-unwrap').click(function (e) {
+  $('#installing-unwrap').click(function () {
     fnUnwrap(installingTable);
   });
 
-  $('#installing-select-all').click(function (e) {
+  $('#installing-select-all').click(function () {
     fnSelectAll(installingTable, 'row-selected', 'select-row', true);
   });
 
-  $('#installing-select-none').click(function (e) {
+  $('#installing-select-none').click(function () {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
@@ -646,19 +661,19 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  $('#installed-wrap').click(function (e) {
+  $('#installed-wrap').click(function () {
     fnWrap(installedTable);
   });
 
-  $('#installed-unwrap').click(function (e) {
+  $('#installed-unwrap').click(function () {
     fnUnwrap(installedTable);
   });
 
-  $('#installed-select-all').click(function (e) {
+  $('#installed-select-all').click(function () {
     fnSelectAll(installedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#installed-select-none').click(function (e) {
+  $('#installed-select-none').click(function () {
     fnDeselect(installedTable, 'row-selected', 'select-row');
   });
   /*installed tab end*/
@@ -683,11 +698,11 @@ $(function () {
     oTableTools: oTableTools
   });
 
-  $('#obsoleted-wrap').click(function (e) {
+  $('#obsoleted-wrap').click(function () {
     fnWrap(obsoletedTable);
   });
 
-  $('#obsoleted-unwrap').click(function (e) {
+  $('#obsoleted-unwrap').click(function () {
     fnUnwrap(obsoletedTable);
   });
 
@@ -703,8 +718,9 @@ $(function () {
   /*all tabs*/
   filterEvent();
   selectEvent();
+  highlightedEvent();
 
-  $('#reload').click(function (e) {
+  $('#reload').click(function () {
     approvingTable.fnReloadAjax();
     rejectedTable.fnReloadAjax();
     approvedTable.fnReloadAjax();
@@ -714,7 +730,7 @@ $(function () {
     obsoletedTable.fnReloadAjax();
   });
 
-  $('#bar').click(function (e) {
+  $('#bar').click(function () {
     var activeTable = $('#tabs .tab-pane.active table').dataTable();
     barChart(activeTable);
   });
