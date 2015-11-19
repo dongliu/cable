@@ -6,6 +6,9 @@
     "node": true
   },
   "extends": "defaults/configurations/walmart/es5",
+  "globals": {
+    "_": false
+  },
   "rules": {
     "no-console": 0,
     "quotes": [2, "single", "avoid-escape"],
