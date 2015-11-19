@@ -48,7 +48,9 @@ function filterEvent() {
       index = $('tfoot.filter th', table).index(th);
       $('thead.filter th:nth-child(' + (index + 1) + ') input', wrapper).val(this.value);
     }
+    var scrollDiv = $(this).closest('.table-overflow');
     bodyTable.dataTable().fnFilter(this.value, index);
+    $(scrollDiv).scrollLeft($(this).offset().left);
   });
 }
 
@@ -679,6 +681,7 @@ var oTableTools = {
 
 var sDom = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDom2i = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'i><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
+var sDom2InoF = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'r><'span6'i>>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDom2i1p = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'i><'span3'r><'span3'f>>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDomNoTools = "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDomNoLength = "<'row-fluid'<'span6'<'control-group'T>><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
