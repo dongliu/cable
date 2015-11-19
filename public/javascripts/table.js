@@ -11,21 +11,44 @@ function selectEvent() {
   });
 }
 
+function highlightedEvent() {
+  $('tbody').on('click', 'td', function (e) {
+    if ($(e.target).closest('tr').hasClass('row-highlighted')) {
+      $(e.target).closest('tr').removeClass('row-highlighted');
+    } else {
+      $(e.target).closest('tr').addClass('row-highlighted');
+    }
+  });
+}
+
 
 function filterEvent() {
   $('.filter').on('keyup', 'input', function (e) {
-    var table = $(this).closest('table');
+    var bodyTable;
+    var tableScroll = $(this).closest('.dataTables_scroll');
+    if (tableScroll.length) {
+      bodyTable = $(this).closest('.dataTables_scroll').find('.dataTables_scrollBody table');
+    } else {
+      bodyTable = $(this).closest('table');
+    }
     var th = $(this).closest('th');
     var filter = $(this).closest('.filter');
     var index;
+    var table = $(this).closest('table');
+    var wrapper;
+    if (tableScroll.length) {
+      wrapper = tableScroll;
+    } else {
+      wrapper = table;
+    }
     if (filter.is('thead')) {
       index = $('thead.filter th', table).index(th);
-      $('tfoot.filter th:nth-child(' + (index + 1) + ') input', table).val(this.value);
+      $('tfoot.filter th:nth-child(' + (index + 1) + ') input', wrapper).val(this.value);
     } else {
       index = $('tfoot.filter th', table).index(th);
-      $('thead.filter th:nth-child(' + (index + 1) + ') input', table).val(this.value);
+      $('thead.filter th:nth-child(' + (index + 1) + ') input', wrapper).val(this.value);
     }
-    table.dataTable().fnFilter(this.value, index);
+    bodyTable.dataTable().fnFilter(this.value, index);
   });
 }
 
@@ -207,6 +230,18 @@ function fnAddFilterHead(sTable, aoColumns) {
     }
   });
   $(sTable).append($('<thead class="filter">').append(tr));
+}
+
+function fnAddFilterHeadScroll(sTable, aoColumns) {
+  var tr = $('<tr role="row">');
+  aoColumns.forEach(function (c) {
+    if (c.bFilter) {
+      tr.append('<th><input type="text" placeholder="' + c.sTitle + '" style="width:80%;" autocomplete="off"></th>');
+    } else {
+      tr.append('<th></th>');
+    }
+  });
+  $(sTable + '_wrapper').find('.dataTables_scrollHead table').append($('<thead class="filter">').append(tr));
 }
 
 $.fn.dataTableExt.oApi.fnAddDataAndDisplay = function (oSettings, aData) {
