@@ -584,3 +584,6 @@ td.info.editable {
   background-color: #fcf8e3;
 }
 
+.table-overflow {
+  overflow-x: scroll;
+}

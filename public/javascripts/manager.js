@@ -1,6 +1,6 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
 /*global moment: false, Chart: false, json2List: false, ajax401: false, disableAjaxCache: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false, submittedOnLongColumn: false, ownerProvidedColumn: false, rejectedOnLongColumn: false, approvedOnLongColumn: false, versionColumn: false, updatedOnLongColumn: false, obsoletedOnLongColumn: false, sDom2i1p: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, submittedByColumn: false, numberColumn: false, requestNumberColumn: false, approvedByColumn: false, requiredColumn: false, obsoletedByColumn: false, fnAddFilterFoot: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false, submittedOnLongColumn: false, ownerProvidedColumn: false, rejectedOnLongColumn: false, approvedOnLongColumn: false, versionColumn: false, updatedOnLongColumn: false, obsoletedOnLongColumn: false, sDom2InoF: false, highlightedEvent: false, fnAddFilterHeadScroll: false*/
 
 
 var managerGlobal = {
@@ -158,7 +158,6 @@ function batchApprove(oTable, approvedTable, procuringTable) {
 
 function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#reject').prop('disabled', true);
-  // var number = $('#modal .modal-body div').length;
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
@@ -396,8 +395,6 @@ $(function () {
   var obsoletedTable;
   /*approving table starts*/
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#approving-table', approvingAoCulumns);
-  // fnAddFilterHead('#approving-table', approvingAoCulumns);
 
   approvingTable = $('#approving-table').dataTable({
     sAjaxSource: '/requests/statuses/1/json',
@@ -409,32 +406,24 @@ $(function () {
     },
     bDeferRender: true,
     aoColumns: approvingAoCulumns,
-    iDisplayLength: 10,
-    aLengthMenu: [
-      [10, 50, 100, -1],
-      [10, 50, 100, 'All']
-    ],
     aaSorting: [
       [2, 'desc'],
       [5, 'desc']
     ],
-    sDom: sDom2i1p,
+    sDom: sDom2InoF,
     oTableTools: oTableTools,
     sScrollY: '50vh',
-    sScrollX: '100%',
     bScrollCollapse: true
   });
 
   fnAddFilterHeadScroll('#approving-table', approvingAoCulumns);
 
   $('#approving-wrap').click(function () {
-    $('#approving-table td').removeClass('nowrap');
-    approvingTable.fnAdjustColumnSizing();
+    fnWrap(approvingTable);
   });
 
   $('#approving-unwrap').click(function () {
-    $('#approving-table td').addClass('nowrap');
-    approvingTable.fnAdjustColumnSizing();
+    fnUnwrap(approvingTable);
   });
 
   $('#approving-select-none').click(function () {
@@ -458,7 +447,6 @@ $(function () {
   /*rejected tab starts*/
 
   var rejectedAoColumns = [detailsLinkColumn, rejectedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#rejected-table', rejectedAoColumns);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
     sAjaxSource: '/requests/statuses/3/json',
@@ -475,9 +463,12 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
+  fnAddFilterHeadScroll('#rejected-table', rejectedAoColumns);
 
   $('#rejected-wrap').click(function () {
     $('#rejected-table td').removeClass('nowrap');
@@ -494,7 +485,6 @@ $(function () {
   /*approved tab starts*/
 
   var approvedAoColumns = [detailsLinkColumn, approvedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#approved-table', approvedAoColumns);
   approvedTable = $('#approved-table').dataTable({
     sAjaxSource: '/requests/statuses/2/json',
     sAjaxDataProp: '',
@@ -510,10 +500,12 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
-
+  fnAddFilterHeadScroll('#approved-table', approvedAoColumns);
 
   $('#approved-wrap').click(function () {
     $('#approved-table td').removeClass('nowrap');
@@ -530,7 +522,7 @@ $(function () {
   /*procuring tab starts*/
 
   var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#procuring-table', procuringAoColumns);
+  // fnAddFilterFoot('#procuring-table', procuringAoColumns);
   procuringTable = $('#procuring-table').dataTable({
     sAjaxSource: '/cables/statuses/1/json',
     sAjaxDataProp: '',
@@ -545,9 +537,12 @@ $(function () {
       [6, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
+  fnAddFilterHeadScroll('#procuring-table', procuringAoColumns);
 
   $('#procuring-wrap').click(function () {
     fnWrap(procuringTable);
@@ -597,7 +592,7 @@ $(function () {
 
   /*installing tab starts*/
   var installingAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnLongColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#installing-table', installingAoColumns);
+  // fnAddFilterFoot('#installing-table', installingAoColumns);
   installingTable = $('#installing-table').dataTable({
     sAjaxSource: '/cables/statuses/2/json',
     sAjaxDataProp: '',
@@ -611,9 +606,12 @@ $(function () {
       [4, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
+  fnAddFilterHeadScroll('#installing-table', installingAoColumns);
 
   $('#installing-wrap').click(function () {
     fnWrap(installingTable);
@@ -643,7 +641,7 @@ $(function () {
 
   /*installed tab starts*/
   var installedAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#installed-table', installedAoColumns);
+  // fnAddFilterFoot('#installed-table', installedAoColumns);
   installedTable = $('#installed-table').dataTable({
     sAjaxSource: '/cables/statuses/3/json',
     sAjaxDataProp: '',
@@ -657,9 +655,13 @@ $(function () {
       [4, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
+  fnAddFilterHeadScroll('#installed-table', installedAoColumns);
+
 
   $('#installed-wrap').click(function () {
     fnWrap(installedTable);
@@ -680,7 +682,7 @@ $(function () {
 
   /*obsoleted tab starts*/
   var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
-  fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
+  // fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
   obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
     sAjaxDataProp: '',
@@ -694,9 +696,12 @@ $(function () {
       [5, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
+  fnAddFilterHeadScroll('#obsoleted-table', obsoletedAoColumns);
 
   $('#obsoleted-wrap').click(function () {
     fnWrap(obsoletedTable);
@@ -719,6 +724,13 @@ $(function () {
   filterEvent();
   selectEvent();
   highlightedEvent();
+
+  $('a[data-toggle="tab"]').on('shown', function () {
+    var table = $.fn.dataTable.fnTables(true);
+    if (table.length > 0) {
+      $(table).dataTable().fnAdjustColumnSizing();
+    }
+  });
 
   $('#reload').click(function () {
     approvingTable.fnReloadAjax();

@@ -99,19 +99,22 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#approving-wrap.active Wrap
               button.btn.btn-info#approving-unwrap Unwrap
-          table#approving-table.table.table-bordered.table-hover
+          .table-overflow
+            table#approving-table.table.table-bordered.table-hover.table-condensed
         #rejected.tab-pane
           .btn-toolbar
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
-          table#rejected-table.table.table-bordered.table-hover
+          .table-overflow
+            table#rejected-table.table.table-bordered.table-hover.table-condensed
         #approved.tab-pane
           .btn-toolbar
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#approved-wrap.active Wrap
               button.btn.btn-info#approved-unwrap Unwrap
-          table#approved-table.table.table-bordered.table-hover
+          .table-overflow
+            table#approved-table.table.table-bordered.table-hover.table-condensed
         #procuring.tab-pane
           .btn-toolbar
             .btn-group
@@ -146,7 +149,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#procuring-wrap.active Wrap
               button.btn.btn-info#procuring-unwrap Unwrap
-          table#procuring-table.table.table-bordered.table-hover
+          .table-overflow
+            table#procuring-table.table.table-bordered.table-hover.table-condensed
         #installing.tab-pane
           .btn-toolbar
             .btn-group
@@ -193,7 +197,8 @@ block content
               button.btn.btn-primary#installing-to-use(value='use')
                 i.fa.fa-check-square-o.fa-lg
                 | &nbsp;Ready to use
-          table#installing-table.table.table-bordered.table-hover
+          .table-overflow
+            table#installing-table.table.table-bordered.table-hover.table-condensed
         #installed.tab-pane
           .btn-toolbar
             .btn-group
@@ -207,13 +212,15 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#installed-wrap.active Wrap
               button.btn.btn-info#installed-unwrap Unwrap
-          table#installed-table.table.table-bordered.table-hover
+          .table-overflow
+            table#installed-table.table.table-bordered.table-hover.table-condensed
         #obsoleted.tab-pane
           .btn-toolbar
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#obsoleted-wrap.active Wrap
               button.btn.btn-info#obsoleted-unwrap Unwrap
-          table#obsoleted-table.table.table-bordered.table-hover
+          .table-overflow
+            table#obsoleted-table.table.table-bordered.table-hover.table-condensed
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
