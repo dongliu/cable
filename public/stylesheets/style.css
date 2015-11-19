@@ -391,6 +391,11 @@ text {
 .row-selected td {
   background-color: #c09853 !important;
 }
+
+.row-highlighted td{
+  background-color: #ffff66;
+}
+
 /*ul.dropdown-menu input[type="checkbox"] {
   margin-left: 0;
 }*/
