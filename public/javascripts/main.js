@@ -1,30 +1,34 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
 /*global moment: false, ajax401: false, disableAjaxCache: false*/
-/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, updatedByColumn: false, submittedOnColumn: false, submittedByColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, requiredColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, ownerProvidedColumn: false, fnSetColumnsVis: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false*/
+/*global selectColumn: false, editLinkColumn: false, detailsLinkColumn: false, createdOnColumn: false, rejectedOnColumn: false, rejectedByColumn: false, updatedOnColumn: false, submittedOnColumn: false, numberColumn: false, approvedOnColumn:false, approvedByColumn: false, fnAddFilterFoot: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, basicColumns: false, fromColumns: false, toColumns: false, conduitColumn: false, lengthColumn: false, commentsColumn: false, statusColumn: false, ownerProvidedColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false, fnWrap: false, fnUnwrap: false, sDom2InoF: false, tabShownEvent: false, highlightedEvent: false*/
 
-var savedTable, submittedTable, rejectedTable, approvedTable, cablesTable;
+var savedTable;
+var submittedTable;
+var rejectedTable;
+var approvedTable;
+var cablesTable;
 
-function initCable(cablesTable) {
+function initCable(table) {
   $.ajax({
     url: '/cables/json',
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
   }).done(function (json) {
-    cablesTable.fnClearTable();
-    cablesTable.fnAddData(json);
+    table.fnClearTable();
+    table.fnAddData(json);
     if ($('#cables-unwrap').hasClass('active')) {
-      fnUnwrap(cablesTable);
+      fnUnwrap(table);
     }
-    cablesTable.fnDraw();
+    table.fnDraw();
 
-  }).fail(function (jqXHR, status, error) {
+  }).fail(function () {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   });
 }
 
-function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable) {
+function initRequests() {
   $.ajax({
     url: '/requests/json',
     type: 'GET',
@@ -99,7 +103,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     if (cablesTable) {
       initCable(cablesTable);
     }
-  }).fail(function (jqXHR, status, error) {
+  }).fail(function () {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable requests.</div>');
     $(window).scrollTop($('#message div:last-child').offset().top - 40);
   }).always();
@@ -108,7 +112,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
 function submitFromModal() {
   $('#submit').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function (index) {
+  $('#modal .modal-body div').each(function () {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id + '/',
@@ -120,7 +124,7 @@ function submitFromModal() {
     }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function (jqXHR) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
@@ -144,7 +148,7 @@ function batchSubmit(table) {
     });
     $('#modal .modal-footer').html('<button id="submit" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#submit').click(function (e) {
+    $('#submit').click(function () {
       submitFromModal();
     });
   } else {
@@ -158,7 +162,7 @@ function batchSubmit(table) {
 function cloneFromModal(requests) {
   $('#clone').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function (index) {
+  $('#modal .modal-body div').each(function () {
     var that = this;
     $.ajax({
       url: '/requests/',
@@ -172,7 +176,7 @@ function cloneFromModal(requests) {
     }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function (jqXHR) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
@@ -193,7 +197,7 @@ function batchClone(table) {
     $('#modal .modal-body').empty();
     selected.forEach(function (row) {
       var data = table.fnGetData(row);
-      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.originCategory + data.basic.originSubcategory + data.basic.signalClassification + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1 max=20>' + '</div>');
+      $('#modal .modal-body').append('<div id="' + data._id + '">' + moment(data.createdOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.basic.originCategory + data.basic.originSubcategory + data.basic.signalClassification + '||' + data.basic.wbs + ' <input type="text" placeholder="quantity" value="1" class="type[number] input-mini" min=1 max=20></div>');
       requests[data._id] = {
         basic: data.basic,
         ownerProvided: data.ownerProvided,
@@ -206,7 +210,7 @@ function batchClone(table) {
     });
     $('#modal .modal-footer').html('<button id="clone" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#clone').click(function (e) {
+    $('#clone').click(function () {
       cloneFromModal(requests);
     });
   } else {
@@ -220,7 +224,7 @@ function batchClone(table) {
 function revertFromModal() {
   $('#revert').prop('disabled', true);
   var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function (index) {
+  $('#modal .modal-body div').each(function () {
     var that = this;
     $.ajax({
       url: '/requests/' + that.id + '/',
@@ -232,7 +236,7 @@ function revertFromModal() {
     }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function (jqXHR) {
       $(that).prepend('<i class="icon-question"></i>');
       $(that).append(' : ' + jqXHR.responseText);
       $(that).addClass('text-error');
@@ -257,7 +261,7 @@ function batchRevert(table) {
     });
     $('#modal .modal-footer').html('<button id="revert" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
     $('#modal').modal('show');
-    $('#revert').click(function (e) {
+    $('#revert').click(function () {
       revertFromModal();
     });
   } else {
@@ -268,28 +272,28 @@ function batchRevert(table) {
   }
 }
 
-function deleteFromModal() {
-  $('#delete').prop('disabled', true);
-  var number = $('#modal .modal-body div').length;
-  $('#modal .modal-body div').each(function (index) {
-    var that = this;
-    $.ajax({
-      url: '/requests/' + this.id + '/',
-      type: 'Delete'
-    }).done(function () {
-      $(that).wrap('<del></del>');
-      $(that).addClass('text-success');
-    }).fail(function (jqXHR, status, error) {
-      $(that).append(' : ' + jqXHR.responseText);
-      $(that).addClass('text-error');
-    }).always(function () {
-      number = number - 1;
-      if (number === 0) {
-        initRequests(savedTable);
-      }
-    });
-  });
-}
+// function deleteFromModal() {
+//   $('#delete').prop('disabled', true);
+//   var number = $('#modal .modal-body div').length;
+//   $('#modal .modal-body div').each(function () {
+//     var that = this;
+//     $.ajax({
+//       url: '/requests/' + this.id + '/',
+//       type: 'Delete'
+//     }).done(function () {
+//       $(that).wrap('<del></del>');
+//       $(that).addClass('text-success');
+//     }).fail(function (jqXHR) {
+//       $(that).append(' : ' + jqXHR.responseText);
+//       $(that).addClass('text-error');
+//     }).always(function () {
+//       number = number - 1;
+//       if (number === 0) {
+//         initRequests(savedTable);
+//       }
+//     });
+//   });
+// }
 
 function batchDelete(table) {
   var selected = fnGetSelected(table, 'row-selected');
@@ -315,7 +319,7 @@ $(function () {
   ajax401('');
   disableAjaxCache();
 
-  $('#reload').click(function (e) {
+  $('#reload').click(function () {
     initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
   });
 
@@ -332,35 +336,37 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
 
-  $('#saved-wrap').click(function (e) {
+  $('#saved-wrap').click(function () {
     fnWrap(savedTable);
   });
 
-  $('#saved-unwrap').click(function (e) {
+  $('#saved-unwrap').click(function () {
     fnUnwrap(savedTable);
   });
 
-  $('#saved-select-all').click(function (e) {
+  $('#saved-select-all').click(function () {
     fnSelectAll(savedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#saved-select-none').click(function (e) {
+  $('#saved-select-none').click(function () {
     fnDeselect(savedTable, 'row-selected', 'select-row');
   });
 
-  $('#saved-delete').click(function (e) {
+  $('#saved-delete').click(function () {
     batchDelete(savedTable);
   });
 
-  $('#saved-submit').click(function (e) {
+  $('#saved-submit').click(function () {
     batchSubmit(savedTable);
   });
 
-  $('#saved-clone').click(function (e) {
+  $('#saved-clone').click(function () {
     batchClone(savedTable);
   });
   /*saved tab ends*/
@@ -377,31 +383,33 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
 
-  $('#submitted-wrap').click(function (e) {
+  $('#submitted-wrap').click(function () {
     fnWrap(submittedTable);
   });
 
-  $('#submitted-unwrap').click(function (e) {
+  $('#submitted-unwrap').click(function () {
     fnUnwrap(submittedTable);
   });
 
-  $('#submitted-clone').click(function (e) {
+  $('#submitted-clone').click(function () {
     batchClone(submittedTable);
   });
 
-  $('#submitted-revert').click(function (e) {
+  $('#submitted-revert').click(function () {
     batchRevert(submittedTable);
   });
 
-  $('#submitted-select-all').click(function (e) {
+  $('#submitted-select-all').click(function () {
     fnSelectAll(submittedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#submitted-select-none').click(function (e) {
+  $('#submitted-select-none').click(function () {
     fnDeselect(submittedTable, 'row-selected', 'select-row');
   });
 
@@ -419,31 +427,33 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
 
-  $('#rejected-wrap').click(function (e) {
+  $('#rejected-wrap').click(function () {
     fnWrap(rejectedTable);
   });
 
-  $('#rejected-unwrap').click(function (e) {
+  $('#rejected-unwrap').click(function () {
     fnUnwrap(rejectedTable);
   });
 
-  $('#rejected-select-all').click(function (e) {
+  $('#rejected-select-all').click(function () {
     fnSelectAll(rejectedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#rejected-select-none').click(function (e) {
+  $('#rejected-select-none').click(function () {
     fnDeselect(rejectedTable, 'row-selected', 'select-row');
   });
 
-  $('#rejected-delete').click(function (e) {
+  $('#rejected-delete').click(function () {
     batchDelete(rejectedTable);
   });
 
-  $('#rejected-clone').click(function (e) {
+  $('#rejected-clone').click(function () {
     batchClone(rejectedTable);
   });
 
@@ -460,27 +470,29 @@ $(function () {
       [2, 'desc'],
       [3, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
 
-  $('#approved-select-all').click(function (e) {
+  $('#approved-select-all').click(function () {
     fnSelectAll(approvedTable, 'row-selected', 'select-row', true);
   });
 
-  $('#approved-select-none').click(function (e) {
+  $('#approved-select-none').click(function () {
     fnDeselect(approvedTable, 'row-selected', 'select-row');
   });
 
-  $('#approved-wrap').click(function (e) {
+  $('#approved-wrap').click(function () {
     fnWrap(approvedTable);
   });
 
-  $('#approved-unwrap').click(function (e) {
+  $('#approved-unwrap').click(function () {
     fnUnwrap(approvedTable);
   });
 
-  $('#approved-clone').click(function (e) {
+  $('#approved-clone').click(function () {
     batchClone(approvedTable);
   });
 
@@ -498,15 +510,17 @@ $(function () {
       [2, 'desc'],
       [0, 'desc']
     ],
-    sDom: sDom,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
 
-  $('#cables-wrap').click(function (e) {
+  $('#cables-wrap').click(function () {
     fnWrap(cablesTable);
   });
 
-  $('#cables-unwrap').click(function (e) {
+  $('#cables-unwrap').click(function () {
     fnUnwrap(cablesTable);
   });
 
@@ -514,6 +528,8 @@ $(function () {
 
   initRequests(savedTable, submittedTable, rejectedTable, approvedTable, cablesTable);
 
+  tabShownEvent();
   selectEvent();
   filterEvent();
+  highlightedEvent();
 });

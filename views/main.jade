@@ -94,7 +94,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#saved-wrap.active Wrap
               button.btn.btn-info#saved-unwrap Unwrap
-          table#saved-table.table.table-bordered.table-hover
+          .table-scroll
+            table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           .btn-toolbar
             .btn-group
@@ -116,7 +117,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#submitted-wrap.active Wrap
               button.btn.btn-info#submitted-unwrap Unwrap
-          table#submitted-table.table.table-bordered.table-hover
+          .table-scroll
+            table#submitted-table.table.table-bordered.table-hover
 
         #approved.tab-pane
           .btn-toolbar
@@ -135,8 +137,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#approved-wrap.active Wrap
                 button.btn.btn-info#approved-unwrap Unwrap
-
-          table#approved-table.table.table-bordered.table-hover
+          .table-scroll
+            table#approved-table.table.table-bordered.table-hover
         #rejected.tab-pane
           .btn-toolbar
             .btn-group
@@ -158,15 +160,16 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#rejected-wrap.active Wrap
               button.btn.btn-info#rejected-unwrap Unwrap
-
-          table#rejected-table.table.table-bordered.table-hover
+          .table-scroll
+            table#rejected-table.table.table-bordered.table-hover
 
         #cables.tab-pane
           .btn-toolbar
             .btn-group(data-toggle='buttons-radio')
                 button.btn.btn-info#cables-wrap.active Wrap
                 button.btn.btn-info#cables-unwrap Unwrap
-          table#cables-table.table.table-bordered.table-hover
+          .table-scroll
+            table#cables-table.table.table-bordered.table-hover
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
