@@ -11,6 +11,15 @@ function selectEvent() {
   });
 }
 
+function tabShownEvent() {
+  $('a[data-toggle="tab"]').on('shown', function () {
+    var table = $.fn.dataTable.fnTables(true);
+    if (table.length > 0) {
+      $(table).dataTable().fnAdjustColumnSizing();
+    }
+  });
+}
+
 function highlightedEvent() {
   $('tbody').on('click', 'td', function (e) {
     if ($(e.target).closest('tr').hasClass('row-highlighted')) {
@@ -23,7 +32,7 @@ function highlightedEvent() {
 
 
 function filterEvent() {
-  $('.filter').on('keyup', 'input', function (e) {
+  $('.filter').on('change', 'input', function (e) {
     var bodyTable;
     var tableScroll = $(this).closest('.dataTables_scroll');
     if (tableScroll.length) {
@@ -48,9 +57,11 @@ function filterEvent() {
       index = $('tfoot.filter th', table).index(th);
       $('thead.filter th:nth-child(' + (index + 1) + ') input', wrapper).val(this.value);
     }
-    var scrollDiv = $(this).closest('.table-overflow');
+    var scrollDiv = $(this).closest('.table-overflow')[0];
     bodyTable.dataTable().fnFilter(this.value, index);
-    $(scrollDiv).scrollLeft($(this).offset().left);
+    if ($(this).offset().left > $(scrollDiv).offset().left + $(scrollDiv).width()) {
+      $(scrollDiv).scrollLeft($(this).offset().left - $(scrollDiv).width());
+    }
   });
 }
 
@@ -681,7 +692,7 @@ var oTableTools = {
 
 var sDom = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDom2i = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'i><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
-var sDom2InoF = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'r><'span6'i>>t<'row-fluid'<'span6'i><'span6'p>>";
+var sDom2InoF = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span4'l><'span4'<'text-center'r>><'span4'<'text-right'i>>>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDom2i1p = "<'row-fluid'<'span6'<'control-group'T>>><'row-fluid'<'span3'l><'span3'i><'span3'r><'span3'f>>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDomNoTools = "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";
 var sDomNoLength = "<'row-fluid'<'span6'<'control-group'T>><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>";

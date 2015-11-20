@@ -585,5 +585,5 @@ td.info.editable {
 }
 
 .table-overflow {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
