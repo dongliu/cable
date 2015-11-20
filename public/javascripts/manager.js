@@ -721,16 +721,10 @@ $(function () {
   /*obsoleted tab end*/
 
   /*all tabs*/
+  tabShownEvent();
   filterEvent();
   selectEvent();
   highlightedEvent();
-
-  $('a[data-toggle="tab"]').on('shown', function () {
-    var table = $.fn.dataTable.fnTables(true);
-    if (table.length > 0) {
-      $(table).dataTable().fnAdjustColumnSizing();
-    }
-  });
 
   $('#reload').click(function () {
     approvingTable.fnReloadAjax();

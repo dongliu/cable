@@ -223,10 +223,10 @@ $(function () {
     sAjaxSource: '/activecables/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
-    iDisplayLength: 25,
+    iDisplayLength: 10,
     aLengthMenu: [
-      [25, 50, 100, 500, 1000, -1],
-      [25, 50, 100, 500, 1000, 'All']
+      [10, 50, 100, -1],
+      [10, 50, 100, 'All']
     ],
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
@@ -238,11 +238,14 @@ $(function () {
       [6, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom2i1p,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
-  fnAddFilterHead('#active-table', activeAoCulumns);
-  fnAddFilterFoot('#active-table', activeAoCulumns);
+
+  fnAddFilterHeadScroll('#active-table', activeAoCulumns);
+  // fnAddFilterFoot('#active-table', activeAoCulumns);
   $('#active-wrap').click(function () {
     $('#active-table td').removeClass('nowrap');
     activeTable.fnAdjustColumnSizing();
@@ -267,10 +270,10 @@ $(function () {
     sAjaxSource: '/cables/statuses/5/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
-    iDisplayLength: 25,
+    iDisplayLength: 10,
     aLengthMenu: [
-      [25, 50, 100, 500, 1000, -1],
-      [25, 50, 100, 500, 1000, 'All']
+      [10, 50, 100, -1],
+      [10, 50, 100, 'All']
     ],
     oLanguage: {
       sLoadingRecords: 'Please wait - loading data from the server ...'
@@ -281,11 +284,13 @@ $(function () {
       [4, 'desc'],
       [1, 'desc']
     ],
-    sDom: sDom2i1p,
-    oTableTools: oTableTools
+    sDom: sDom2InoF,
+    oTableTools: oTableTools,
+    sScrollY: '50vh',
+    bScrollCollapse: true
   });
-  fnAddFilterHead('#obsoleted-table', obsoletedAoColumns);
-  fnAddFilterFoot('#obsoleted-table', obsoletedAoColumns);
+
+  fnAddFilterHeadScroll('#obsoleted-table', obsoletedAoColumns);
   $('#obsoleted-wrap').click(function () {
     fnWrap(obsoletedTable);
   });
@@ -298,8 +303,11 @@ $(function () {
 
   /*obsoleted tab end*/
   /*all tabs*/
+  tabShownEvent();
   filterEvent();
   selectEvent();
+  highlightedEvent();
+
   $('#reload').click(function () {
     activeTable.fnReloadAjax();
     obsoletedTable.fnReloadAjax();

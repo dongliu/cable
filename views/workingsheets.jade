@@ -52,7 +52,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#active-wrap.active Wrap
               button.btn.btn-info#active-unwrap Unwrap
-          table#active-table.table.table-bordered.table-hover
+          .table-overflow
+            table#active-table.table.table-bordered.table-hover
         #obsoleted.tab-pane
           .btn-toolbar
             //- .btn-group
@@ -66,7 +67,8 @@ block content
             .btn-group(data-toggle='buttons-radio')
               button.btn.btn-info#obsoleted-wrap.active Wrap
               button.btn.btn-info#obsoleted-unwrap Unwrap
-          table#obsoleted-table.table.table-bordered.table-hover
+          .table-overflow
+            table#obsoleted-table.table.table-bordered.table-hover
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
