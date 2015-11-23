@@ -388,20 +388,25 @@ text {
   overflow: hidden;
 }
 
-.row-selected td {
-  background-color: #c09853 !important;
+.table-hover tbody tr:hover.row-highlighted > td {
+  background-color: #ffff66;
+  opacity: 0.75;
 }
 
-.row-highlighted td{
+.table-hover tbody tr.row-highlighted > td {
   background-color: #ffff66;
 }
 
-/*ul.dropdown-menu input[type="checkbox"] {
-  margin-left: 0;
-}*/
-/*.ui-autocomplete {
-  z-index: 1510 !important;
-}*/
+.table-hover tbody tr:hover.row-selected > td {
+  background-color: #c09853;
+  opacity: 0.75;
+}
+
+.table-hover tbody tr.row-selected > td {
+  background-color: #c09853;
+}
+
+
 /*bootstrap doc stuff*/
 /*jumbotron*/
 
