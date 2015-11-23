@@ -4,6 +4,7 @@
 function selectEvent() {
   $('tbody').on('click', 'input.select-row', function (e) {
     if ($(this).prop('checked')) {
+      $(e.target).closest('tr').removeClass('row-highlighted');
       $(e.target).closest('tr').addClass('row-selected');
     } else {
       $(e.target).closest('tr').removeClass('row-selected');
@@ -22,10 +23,12 @@ function tabShownEvent() {
 
 function highlightedEvent() {
   $('tbody').on('click', 'td', function (e) {
-    if ($(e.target).closest('tr').hasClass('row-highlighted')) {
-      $(e.target).closest('tr').removeClass('row-highlighted');
-    } else {
-      $(e.target).closest('tr').addClass('row-highlighted');
+    if (!$(e.target).closest('tr').hasClass('row-selected') && !$(e.target).hasClass('select-row')) {
+      if ($(e.target).closest('tr').hasClass('row-highlighted')) {
+        $(e.target).closest('tr').removeClass('row-highlighted');
+      } else {
+        $(e.target).closest('tr').addClass('row-highlighted');
+      }
     }
   });
 }
