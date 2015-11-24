@@ -112,7 +112,7 @@ app.get('/login', auth.ensureAuthenticated, function (req, res) {
   res.send(400, 'please enable cookie in your browser');
 });
 
-app.get('/switch-to-normal', auth.ensureAuthenticated, routes.switch2normal);
+app.get('/main', auth.ensureAuthenticated, routes.switch2normal);
 
 // init the user service
 // GET /users

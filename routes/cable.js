@@ -8,13 +8,7 @@ var Cable = mongoose.model('Cable');
 var MultiChange = mongoose.model('MultiChange');
 var Change = mongoose.model('Change');
 var User = mongoose.model('User');
-
-var util = require('util');
-
 var auth = require('../lib/auth');
-
-var querystring = require('querystring');
-
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -55,18 +49,18 @@ function createCable(cableRequest, req, res, quantity, cables) {
     quantity = 1;
   }
   if (isNaN(quantity)) {
-    console.log('cable request ' + cableRequest._id + " is not a number!");
-    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+    console.log('cable request ' + cableRequest._id + 'is not a number!');
+    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity !== parseInt(quantity, 10)) {
-    console.log('cable request ' + cableRequest._id + " is not an integer!");
-    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+    console.log('cable request ' + cableRequest._id + ' is not an integer!');
+    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity < 1) {
-    console.log('cable request ' + cableRequest._id + " is less than 1!");
-    return res.send(400, 'cable request ' + cableRequest._id + " has a invalid quantity!");
+    console.log('cable request ' + cableRequest._id + ' is less than 1!');
+    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   var sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
@@ -108,18 +102,18 @@ function createCable(cableRequest, req, res, quantity, cables) {
       submittedBy: cableRequest.submittedBy,
       submittedOn: cableRequest.submittedOn,
       approvedBy: req.session.userid,
-      approvedOn: Date.now(),
+      approvedOn: Date.now()
     });
-    newCable.save(function (err, doc) {
-      if (err) {
+    newCable.save(function (e, doc) {
+      if (e) {
         // see test/duplicatedCableNumber.js for a test of this case
-        if (err.code && err.code === 11000) {
+        if (e.code && e.code === 11000) {
           console.log(nextNumber + ' already existed, try again ...');
           createCable(cableRequest, req, res, quantity, cables);
         } else {
-          console.error(err);
+          console.error(e);
           return res.json(500, {
-            error: err.message
+            error: e.message
           });
         }
       } else {
@@ -156,6 +150,20 @@ function updateCable(conditions, update, req, res) {
 }
 
 module.exports = function (app) {
+
+  app.get('/manager/requests', auth.ensureAuthenticated, function (req, res) {
+    return res.render('manage-requests', {
+      roles: req.session.roles
+    });
+  });
+
+  app.get('/manager/cables', auth.ensureAuthenticated, function (req, res) {
+    return res.render('manage-cables', {
+      roles: req.session.roles
+    });
+  });
+
+
   app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
@@ -265,17 +273,16 @@ module.exports = function (app) {
         if (request.status === 1 || request.status === 2) {
           return res.send(400, 'this resource is not allowed to be deleted');
         }
-        request.remove(function (err) {
-          if (err) {
-            console.error(err);
-            return res.send(500, err.message);
+        request.remove(function (e) {
+          if (e) {
+            console.error(e);
+            return res.send(500, e.message);
           }
           return res.send(200, 'deleted');
         });
       } else {
         return res.send(410, 'gone');
       }
-
     });
   });
 
@@ -324,10 +331,7 @@ module.exports = function (app) {
     });
   }
 
-  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
-      return res.send(403, "You are not authorized to access this resource. ");
-    }
+  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
       return res.send(400, 'the status ' + status + ' is invalid.');
@@ -604,10 +608,10 @@ module.exports = function (app) {
     res.render('workingsheets');
   });
 
-  app.get('/activecables/json', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
-      return res.send(403, "You are not authorized to access this resource. ");
-    }
+  app.get('/activecables/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
+    // if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
+    //   return res.send(403, 'You are not authorized to access this resource. ');
+    // }
     var low = 100;
     var up = 499;
     if (req.session.roles.indexOf('admin') !== -1) {
@@ -636,11 +640,11 @@ module.exports = function (app) {
           return res.json([]);
         }
 
-        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (err, docs) {
-          if (err) {
-            console.error(err);
+        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
+          if (e) {
+            console.error(e);
             return res.json(500, {
-              error: err.message
+              error: e.message
             });
           }
           return res.json(docs);
@@ -652,10 +656,7 @@ module.exports = function (app) {
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
-  app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
-      return res.send(403, "You are not authorized to access this resource. ");
-    }
+  app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
     var status = parseInt(req.params.s, 10);
     if (status < 0 || status > 5) {
       return res.json(400, {
@@ -676,7 +677,7 @@ module.exports = function (app) {
           return res.json(docs);
         });
       } else {
-        return res.send(403, "Only admin can access this resource. ");
+        return res.send(403, 'Only admin can access this resource. ');
       }
     } else {
       var low = status * 100;
@@ -707,11 +708,11 @@ module.exports = function (app) {
             return res.json([]);
           }
 
-          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (err, docs) {
-            if (err) {
-              console.error(err);
+          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
+            if (e) {
+              console.error(e);
               return res.json(500, {
-                error: err.message
+                error: e.message
               });
             }
             return res.json(docs);
@@ -777,7 +778,7 @@ module.exports = function (app) {
         _id: {
           $in: cable.changeHistory
         }
-      }).lean().exec(function (err1, changes) {
+      }).lean().exec(function changeCB(err1, changes) {
         if (err1) {
           console.error(err1);
           return res.send(500, err1.message);
@@ -786,7 +787,7 @@ module.exports = function (app) {
           _id: {
             $in: cable.changeHistory
           }
-        }).lean().exec(function (err2, multiChanges) {
+        }).lean().exec(function multiChangesCB(err2, multiChanges) {
           if (err2) {
             console.error(err2);
             return res.send(500, err1.message);
@@ -797,10 +798,7 @@ module.exports = function (app) {
     });
   });
 
-  app.put('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('manager') === -1) {
-      return res.send(403, "You are not authorized to access this resource. ");
-    }
+  app.put('/cables/:id/', auth.ensureAuthenticated, auth.verifyRoles(['manager']), function updateCB(req, res) {
     var conditions = {
       number: req.params.id
     };
@@ -810,7 +808,7 @@ module.exports = function (app) {
     var required = req.body.required;
 
     switch (req.body.action) {
-    case "update":
+    case 'update':
       if (req.body.oldValue === null) {
         // for string, treat null and '' as the same
         conditions[req.body.property] = {
@@ -829,7 +827,7 @@ module.exports = function (app) {
         __v: 1
       };
       break;
-    case "obsolete":
+    case 'obsolete':
       conditions.status = {
         $lte: 500
       };
@@ -837,49 +835,49 @@ module.exports = function (app) {
       update.obsoletedBy = req.session.userid;
       update.obsoletedOn = Date.now();
       break;
-    case "order":
+    case 'order':
       update.status = 101;
-      update.orderedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.orderedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.orderedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.orderedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "receive":
+    case 'receive':
       update.status = 102;
-      update.receivedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.receivedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.receivedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.receivedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "accept":
+    case 'accept':
       update.status = 103;
-      update.orderedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.orderedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.orderedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.orderedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "install":
+    case 'install':
       update.status = 200;
       break;
-    case "label":
+    case 'label':
       conditions.status = {
         $gte: 200
       };
       update.status = 201;
-      update.labeledBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.labeledOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.labeledBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.labeledOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "benchTerm":
+    case 'benchTerm':
       conditions.status = {
         $gte: 200
       };
       update.status = 202;
-      update.benchTerminatedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.benchTerminatedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.benchTerminatedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.benchTerminatedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "benchTest":
+    case 'benchTest':
       conditions.status = {
         $gte: 200
       };
       update.status = 203;
-      update.benchTestedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.benchTestedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.benchTestedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.benchTestedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "pull":
+    case 'pull':
       // check required steps
       conditions.status = {
         $gte: 200
@@ -901,21 +899,21 @@ module.exports = function (app) {
       }
       update.status = 249;
       break;
-    case "pulled":
+    case 'pulled':
       conditions.status = 249;
       update.status = 250;
-      update.pulledBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.pulledOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.pulledBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.pulledOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "fieldTerm":
+    case 'fieldTerm':
       conditions.status = {
         $gte: 250
       };
       update.status = 251;
-      update.fieldTerminatedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.fieldTerminatedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.fieldTerminatedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.fieldTerminatedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "fieldTest":
+    case 'fieldTest':
       conditions.status = {
         $gte: 250
       };
@@ -925,10 +923,10 @@ module.exports = function (app) {
         };
       }
       update.status = 252;
-      update.fieldTestedBy = (req.body.name === '') ? req.session.username : req.body.name;
-      update.fieldTestedOn = (req.body.date === '') ? Date.now() : Date(req.body.date);
+      update.fieldTestedBy = req.body.name === '' ? req.session.username : req.body.name;
+      update.fieldTestedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
       break;
-    case "use":
+    case 'use':
       // check required steps
       conditions.status = 252;
       if (required && required.fieldTerm) {

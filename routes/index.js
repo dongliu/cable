@@ -1,10 +1,6 @@
 var authConfig = require('../config/auth.json');
 
 exports.main = function (req, res) {
-  // return res.render('manager', {
-  //   roles: req.session.roles
-  // });
-
   if (req.session.roles && req.session.roles.length) {
     return res.render('manager', {
       roles: req.session.roles
