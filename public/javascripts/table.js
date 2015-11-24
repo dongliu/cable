@@ -23,7 +23,7 @@ function tabShownEvent() {
 
 function highlightedEvent() {
   $('tbody').on('click', 'td', function (e) {
-    if (!$(e.target).closest('tr').hasClass('row-selected') && !$(e.target).hasClass('select-row')) {
+    if (!$(e.target).closest('tr').hasClass('row-selected') && !$(e.target).hasClass('select-row') && !$(e.target).is('a')) {
       if ($(e.target).closest('tr').hasClass('row-highlighted')) {
         $(e.target).closest('tr').removeClass('row-highlighted');
       } else {
@@ -340,7 +340,7 @@ var editLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function (data, type, full) {
-    return '<a href="requests/' + data + '" target="_blank"><i class="fa fa-edit fa-lg"></i></a>';
+    return '<a href="/requests/' + data + '" target="_blank"><i class="fa fa-edit fa-lg"></i></a>';
   },
   bSortable: false
 };
@@ -349,7 +349,7 @@ var detailsLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function (data, type, full) {
-    return '<a href="requests/' + data + '/details" target="_blank"><i class="fa fa-file-text-o fa-lg"></i></a>';
+    return '<a href="/requests/' + data + '/details" target="_blank"><i class="fa fa-file-text-o fa-lg"></i></a>';
   },
   bSortable: false
 };
@@ -536,7 +536,7 @@ var numberColumn = {
   sTitle: 'Number',
   mData: 'number',
   mRender: function (data, type, full) {
-    return '<a href="cables/' + data + '/" target="_blank">' + data + '</a>';
+    return '<a href="/cables/' + data + '/" target="_blank">' + data + '</a>';
   },
   bFilter: true
 };
@@ -545,7 +545,7 @@ var requestNumberColumn = {
   sTitle: 'Request',
   mData: 'request_id',
   mRender: function (data, type, full) {
-    return '<a href="requests/' + data + '/" target="_blank">' + data + '</a>';
+    return '<a href="/requests/' + data + '/" target="_blank">' + data + '</a>';
   },
   bFilter: true
 };
