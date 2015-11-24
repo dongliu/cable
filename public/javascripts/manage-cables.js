@@ -53,8 +53,8 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
     type: 'PUT',
     contentType: 'application/json',
     data: JSON.stringify(data),
-    success: function () {
-      oTable.fnUpdate(data, oTable.fnGetPosition(td)[0]);
+    success: function (json) {
+      oTable.fnUpdate(json, oTable.fnGetPosition(td)[0]);
       $('#modal .modal-body').html('<div class="text-success">The update succeded!</div>');
     },
     error: function (jqXHR) {
@@ -503,7 +503,7 @@ $(function () {
   /*installed tab end*/
 
   /*obsoleted tab starts*/
-  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var obsoletedAoColumns = [numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
     sAjaxDataProp: '',
@@ -514,8 +514,8 @@ $(function () {
     },
     aoColumns: obsoletedAoColumns,
     aaSorting: [
-      [5, 'desc'],
-      [1, 'desc']
+      [4, 'desc'],
+      [0, 'desc']
     ],
     sDom: sDom2InoF,
     oTableTools: oTableTools,
