@@ -592,3 +592,8 @@ td.info.editable {
 .table-overflow {
   overflow-x: auto;
 }
+
+.main {
+  text-align: center;
+  color: #5a5a5a;
+}
