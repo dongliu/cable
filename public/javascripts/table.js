@@ -60,10 +60,13 @@ function filterEvent() {
       index = $('tfoot.filter th', table).index(th);
       $('thead.filter th:nth-child(' + (index + 1) + ') input', wrapper).val(this.value);
     }
-    var scrollDiv = $(this).closest('.table-overflow')[0];
     bodyTable.dataTable().fnFilter(this.value, index);
-    if ($(this).offset().left > $(scrollDiv).offset().left + $(scrollDiv).width()) {
-      $(scrollDiv).scrollLeft($(this).offset().left - $(scrollDiv).width());
+    var scrollDiv;
+    if ($(this).closest('.table-overflow').length) {
+      scrollDiv = $(this).closest('.table-overflow')[0];
+      if ($(this).offset().left > $(scrollDiv).offset().left + $(scrollDiv).width()) {
+        $(scrollDiv).scrollLeft($(this).offset().left - $(scrollDiv).width());
+      }
     }
   });
 }
@@ -196,7 +199,8 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
 
 function fnSelectAll(oTableLocal, selectedClass, checkboxClass, filtered) {
   fnDeselect(oTableLocal, selectedClass, checkboxClass);
-  var rows, i;
+  var rows;
+  var i;
   if (filtered) {
     rows = oTableLocal.$('tr', {
       "filter": "applied"
