@@ -25,17 +25,17 @@ block content
           span.caret
         ul.dropdown-menu
           li#cabletypes
-            a(href='./cabletypes/', target='_blank') FRIB approved cable types
+            a(href='/cabletypes/', target='_blank') FRIB approved cable types
           li#wbs
-            a(href='./frib/wbs', target='_blank') FRIB work breakdown structure
+            a(href='/frib/wbs', target='_blank') FRIB work breakdown structure
           li#wbs
-            a(href='./rea6/wbs', target='_blank') ReA 6 work breakdown structure
+            a(href='/rea6/wbs', target='_blank') ReA 6 work breakdown structure
       .btn-group
         button.btn.btn-primary#bar
           i.fa.fa-bar-chart.fa-lg
           | &nbsp;Bar chart
       .btn-group
-        a.btn.btn-info#allcables(href='./allcables', target='_blank')
+        a.btn.btn-info#allcables(href='/allcables', target='_blank')
           i.fa.fa-institution.fa-lg
           | &nbsp;All cables
       //- .btn-group
@@ -48,7 +48,7 @@ block content
             i.fa.fa-user.fa-lg
             | &nbsp;Users
       .btn-group
-        a.btn.btn-info(href='./about', target='_blank')
+        a.btn.btn-info(href='/about', target='_blank')
           i.fa.fa-info.fa-lg
           | &nbsp;About
     #message
@@ -117,6 +117,7 @@ block js
   script(type='text/javascript', src='/javascripts/util.js')
   script(type='text/javascript', src='/javascripts/ajaxhelper.js')
   script(type='text/javascript', src='/dependencies/Chart.js')
+  script(type='text/javascript', src='/javascripts/barchart.js')
   script(type='text/javascript', src='/javascripts/manage-requests.js')
 
 
