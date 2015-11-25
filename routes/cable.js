@@ -585,7 +585,7 @@ module.exports = function (app) {
   });
 
   app.get('/allcables', auth.ensureAuthenticated, function (req, res) {
-    res.render('allcables');
+    res.render('all-cables');
   });
 
 
