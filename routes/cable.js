@@ -151,6 +151,12 @@ function updateCable(conditions, update, req, res) {
 
 module.exports = function (app) {
 
+  app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
+    return res.render('manager', {
+      roles: req.session.roles
+    });
+  });
+
   app.get('/manager/requests', auth.ensureAuthenticated, function (req, res) {
     return res.render('manage-requests', {
       roles: req.session.roles
