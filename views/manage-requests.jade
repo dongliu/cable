@@ -39,11 +39,11 @@ block content
           i.fa.fa-briefcase.fa-lg
           | &nbsp;Manage cables
       .btn-group
-        a.btn.btn-info#allcables(href='/main', target='_blank')
+        a.btn.btn-info(href='/main', target='_blank')
           i.fa.fa-user.fa-lg
           | &nbsp;User view
       .btn-group
-        a.btn.btn-info#allcables(href='/allcables', target='_blank')
+        a.btn.btn-info(href='/allcables', target='_blank')
           i.fa.fa-institution.fa-lg
           | &nbsp;All cables
       if (roles.indexOf('admin') !== -1)
