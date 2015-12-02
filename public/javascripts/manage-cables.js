@@ -513,7 +513,15 @@ $(function () {
   selectEvent();
   highlightedEvent();
 
-  $('#obsolte').click(function () {
+  $('a[data-toggle="tab"]').on('shown', function (e) {
+    if ($(e.target).prop('href').indexOf('obsoleted') === -1) {
+      $('#obsolete').prop('disabled', false);
+    } else {
+      $('#obsolete').prop('disabled', true);
+    }
+  });
+
+  $('#obsolete').click(function () {
     var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
     batchAction(activeTable, 'obsolete', obsoletedTable);
   });
