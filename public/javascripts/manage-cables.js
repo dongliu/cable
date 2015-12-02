@@ -99,7 +99,7 @@ function updateTd(td, oTable) {
   });
 }
 
-function actionFromModal(cables, action, activeTable, obsoletedTable) {
+function actionFromModal(rows, action, activeTable, obsoletedTable) {
   $('#modal .modal-body .cable').each(function (index) {
     var that = this;
     $.ajax({
@@ -113,10 +113,10 @@ function actionFromModal(cables, action, activeTable, obsoletedTable) {
     }).done(function (cable) {
       $(that).prepend('<i class="icon-check"></i>');
       $(that).addClass('text-success');
-      fnSetDeselect(cables[index], 'row-selected', 'select-row');
+      fnSetDeselect(rows[index], 'row-selected', 'select-row');
       switch (action) {
       case 'obsolete':
-        activeTable.fnDeleteRow(cables[index]);
+        activeTable.fnDeleteRow(rows[index]);
         obsoletedTable.fnAddData(cable);
         break;
       default:
@@ -130,17 +130,53 @@ function actionFromModal(cables, action, activeTable, obsoletedTable) {
   });
 }
 
+function newRequestFromModal(cables, rows) {
+  $('#modal .modal-body .cable').each(function (index) {
+    var that = this;
+    var request = {
+      basic: cables[index].basic,
+      ownerProvided: cables[index].ownerProvided,
+      from: cables[index].from,
+      to: cables[index].to,
+      length: cables[index].length,
+      conduit: cables[index].conduit,
+      comments: cables[index].comments
+    };
+    $.ajax({
+      url: '/requests/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        action: 'clone',
+        request: request
+      }),
+      dataType: 'json'
+    }).done(function (json) {
+      $(that).prepend('<i class="icon-check"></i>');
+      $(that).append(' : <a target="_blank" href="' + json.location + '">' + json.location + '</a>');
+      $(that).addClass('text-success');
+      fnSetDeselect(rows[index], 'row-selected', 'select-row');
+    }).fail(function (jqXHR) {
+      $(that).prepend('<i class="icon-question"></i>');
+      $(that).append(' : ' + jqXHR.responseText);
+      $(that).addClass('text-error');
+    }).always();
+  });
+}
+
 function batchAction(oTable, action, obsoletedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
+  var rows = [];
   var required = [];
   if (selected.length) {
     $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
 
     selected.forEach(function (row) {
+      rows.push(row);
       var data = oTable.fnGetData(row);
-      cables.push(row);
+      cables.push(data);
       required.push(data.required);
       $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
@@ -149,7 +185,11 @@ function batchAction(oTable, action, obsoletedTable) {
     $('#modal').modal('show');
     $('#action').click(function () {
       $('#action').prop('disabled', true);
-      actionFromModal(cables, action, oTable, obsoletedTable);
+      if (action === 'create new request from') {
+        newRequestFromModal(cables, rows);
+      } else {
+        actionFromModal(rows, action, oTable, obsoletedTable);
+      }
     });
   } else {
     $('#modalLabel').html('Alert');
@@ -429,7 +469,7 @@ $(function () {
   /*installed tab end*/
 
   /*obsoleted tab starts*/
-  var obsoletedAoColumns = [numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
+  var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   obsoletedTable = $('#obsoleted-table').dataTable({
     sAjaxSource: '/cables/statuses/5/json',
     sAjaxDataProp: '',
@@ -440,8 +480,8 @@ $(function () {
     },
     aoColumns: obsoletedAoColumns,
     aaSorting: [
-      [4, 'desc'],
-      [0, 'desc']
+      [5, 'desc'],
+      [1, 'desc']
     ],
     sDom: sDom2InoF,
     oTableTools: oTableTools,
@@ -476,6 +516,11 @@ $(function () {
   $('#obsolte').click(function () {
     var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
     batchAction(activeTable, 'obsolete', obsoletedTable);
+  });
+
+  $('#new-request').click(function () {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    batchAction(activeTable, 'create new request from', obsoletedTable);
   });
 
   $('#reload').click(function () {
