@@ -21,6 +21,10 @@ block content
         button.btn.btn-primary#reload
           i.fa.fa-refresh.fa-lg
           | &nbsp;Reload
+      .btn-group
+        button.btn.btn-primary#clone
+          i.fa.fa-copy.fa-lg
+          | &nbsp;Clone
       .btn-group.dropdown
         a#meta.btn.dropdown-toggle(data-toggle='dropdown')
           i.fa.fa-gears.fa-lg
@@ -71,10 +75,6 @@ block content
                 i.fa.fa-check-square-o.fa-lg
                 | &nbsp;Submit for approval
             .btn-group
-              button.btn.btn-primary#saved-clone
-                i.fa.fa-copy.fa-lg
-                | &nbsp;Clone
-            .btn-group
               button.btn.btn-warning#saved-delete
                 i.fa.fa-trash-o.fa-lg
                 | &nbsp;Delete
@@ -93,10 +93,6 @@ block content
             table#saved-table.table.table-bordered.table-hover
         #submitted.tab-pane
           .btn-toolbar
-            .btn-group
-              button.btn.btn-primary#submitted-clone
-                i.fa.fa-copy.fa-lg
-                | &nbsp;Clone
             .btn-group
               button.btn.btn-warning#submitted-revert
                 i.fa.fa-step-backward.fa-lg
@@ -118,10 +114,6 @@ block content
         #approved.tab-pane
           .btn-toolbar
             .btn-group
-              button.btn.btn-primary#approved-clone
-                i.fa.fa-copy.fa-lg
-                | &nbsp;Clone
-            .btn-group
               button.btn.btn-info#approved-select-all(data-toggle='tooltip', title='select all the items in the table no matter visiable or not')
                 i.fa.fa-list.fa-lg
                 | &nbsp;Selection all
@@ -136,10 +128,6 @@ block content
             table#approved-table.table.table-bordered.table-hover
         #rejected.tab-pane
           .btn-toolbar
-            .btn-group
-              button.btn.btn-primary#rejected-clone
-                i.fa.fa-copy.fa-lg
-                | &nbsp;Clone
             .btn-group
               button.btn.btn-warning#rejected-delete
                 i.fa.fa-trash.fa-lg
