@@ -168,7 +168,6 @@ function batchAction(oTable, action, obsoletedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
   var rows = [];
-  var required = [];
   if (selected.length) {
     $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
     $('#modal .modal-body').empty();
@@ -177,7 +176,6 @@ function batchAction(oTable, action, obsoletedTable) {
       rows.push(row);
       var data = oTable.fnGetData(row);
       cables.push(data);
-      required.push(data.required);
       $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
