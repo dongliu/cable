@@ -23,7 +23,7 @@ function tabShownEvent() {
 
 function highlightedEvent() {
   $('tbody').on('click', 'td', function (e) {
-    if (!$(e.target).closest('tr').hasClass('row-selected') && !$(e.target).hasClass('select-row') && !$(e.target).is('a')) {
+    if (!$(e.target).closest('tr').hasClass('row-selected') && !$(e.target).hasClass('select-row') && !$(e.target).is('a') && !$(e.target).is('i')) {
       if ($(e.target).closest('tr').hasClass('row-highlighted')) {
         $(e.target).closest('tr').removeClass('row-highlighted');
       } else {
