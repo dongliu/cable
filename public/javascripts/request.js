@@ -1,17 +1,11 @@
 /*global clearInterval: false, clearTimeout: false, document: false, event: false, frames: false, history: false, Image: false, location: false, name: false, navigator: false, Option: false, parent: false, screen: false, setInterval: false, setTimeout: false, window: false, XMLHttpRequest: false, FormData: false */
 /*global moment: false, Binder: false, Bloodhound: false*/
-/*global selectColumn: false, formLinkColumn: false, titleColumn: false, createdOnColumn: false, updatedOnColumn: false, updatedByColumn: false, sharedWithColumn: false, fnAddFilterFoot: false, sDom: false, oTableTools: false, fnSelectAll: false, fnDeselect: false, createdByColumn: false, createdOnColumn: false, travelerConfigLinkColumn: false, statusColumn: false, deviceColumn: false, fnGetSelected: false, selectEvent: false, filterEvent: false*/
-/*global sysSub: false, json2List: false*/
+/*global sysSub: false, ajax401: false, disableAjaxCache: false*/
 
-var initModel;
-var binder;
-var requestForm;
-var wbs;
-
-function sendRequest(data) {
+function sendRequest(data, initModel, binder) {
   var path = window.location.pathname;
-
-  var url, type;
+  var url;
+  var type;
   if (/^\/requests\/new/.test(path) || data.action === 'clone') {
     url = '/requests/';
     type = 'POST';
@@ -56,94 +50,13 @@ function sendRequest(data) {
       }
     }
 
-  }).fail(function (jqXHR, status, error) {
+  }).fail(function () {
     // TODO change to modal
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>The save request failed. You might need to try again or contact the admin.</div>');
   }).always(function () {
     $('form[name="request"]').fadeTo('slow', 1);
   });
 }
-
-function findChild(object, childNumber) {
-  var i;
-  if (object.children) {
-    for (i = 0; i < object.children.length; i += 1) {
-      if (object.children[i].number === childNumber) {
-        return object.children[i];
-      }
-    }
-  }
-  return null;
-}
-
-function getNodeName(wbs, term) {
-  var parts = term.split('.');
-  var key = parts[0];
-  var locator = findChild(wbs, key);
-  var i;
-  if (locator === null) {
-    return 'unknown';
-  }
-
-  for (i = 1; i < parts.length; i += 1) {
-    key = key + '.' + parts[i];
-    locator = findChild(locator, key);
-    if (locator === null) {
-      return 'unknown';
-    }
-  }
-
-  return locator.name;
-}
-
-function getChildren(wbs, term) {
-  var parts = term.split('.');
-  var key = parts[0];
-  var locator = findChild(wbs, key);
-  var i;
-  if (locator === null) {
-    return [];
-  }
-
-  for (i = 1; i < parts.length; i += 1) {
-    key = key + '.' + parts[i];
-    locator = findChild(locator, key);
-    if (locator === null) {
-      return [];
-    }
-  }
-
-  if (locator.children && locator.children.length !== 0) {
-    return $.map(locator.children, function (o) {
-      return o.number;
-    });
-  }
-
-  return [];
-}
-
-function getType(type, term) {
-  var output = [];
-  var i;
-  for (i = 0; i < type.length; i += 1) {
-    if (type[i].name.toLowerCase().indexOf(term) !== -1) {
-      output.push(type[i].name);
-    }
-  }
-  return output;
-}
-
-function getList(list, term) {
-  var output = [];
-  var i;
-  for (i = 0; i < list.length; i += 1) {
-    if (list[i].toLowerCase().indexOf(term) !== -1) {
-      output.push(list[i]);
-    }
-  }
-  return output;
-}
-
 
 // system/subsystem/signal
 
@@ -225,33 +138,10 @@ function setCSS(cat, sub, signal) {
   }
 }
 
-function initwbs() {
-  $('#wbs').prop('disabled', false);
-  wbs = {};
-  var link;
-  if ($('#project option:selected').val() === 'frib') {
-    $('#fribwbs').show();
-    $('#rea6wbs').hide();
-    link = '/frib/wbs/json';
-  }
-  if ($('#project option:selected').val() === 'rea6') {
-    $('#fribwbs').hide();
-    $('#rea6wbs').show();
-    link = '/rea6/wbs/json';
-  }
-}
-
 
 $(function () {
-  // $.ajaxSetup({
-  //   cache: false
-  // });
-  $(document).ajaxError(function (event, jqxhr) {
-    if (jqxhr.status === 401) {
-      $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Please click <a href="/" target="_blank">home</a>, log in, and then save the changes on this page.</div>');
-      $(window).scrollTop($('#message div:last-child').offset().top - 40);
-    }
-  });
+  ajax401('');
+  disableAjaxCache();
 
   $('input').keypress(function (e) {
     if (e.which === 13) {
@@ -259,9 +149,13 @@ $(function () {
     }
   });
 
-  requestForm = document.forms[0];
+  var requestForm = document.forms[0];
+  var binder = new Binder.FormBinder(requestForm);
+  var initModel;
 
-  binder = new Binder.FormBinder(requestForm);
+  $.validator.addMethod('wbs', function (value, element) {
+    return this.optional(element) || /^T\d{1,5}$/.test(value);
+  }, 'Please check the WBS number, remove spaces and dots');
 
   var validator = $(requestForm).validate({
     errorElement: 'span',
@@ -278,19 +172,13 @@ $(function () {
     }
   });
 
+  $('#wbs').rules('add', {wbs: true});
+
   if ($('#requestId').length) {
     $('form[name="request"]').fadeTo('slow', 0.2);
   }
 
   css();
-
-  $('#project').change(function () {
-    initwbs();
-  });
-
-/*  $('#type-details').popover({
-    html: true
-  });*/
 
   var usernames = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('displayName'),
@@ -334,13 +222,6 @@ $(function () {
     source: cabletypes.ttAdapter()
   });
 
-  // $('#type').on('typeahead:selected', function (e, suggestion, dataset) {
-  //   console.log(dataset);
-  //   console.log(suggestion);
-  // });
-
-
-
   /*$('#penetration').autocomplete({
     minLength: 1,
     source: function (req, res) {
@@ -369,7 +250,9 @@ $(function () {
       dataType: 'json'
     }).done(function (json) {
       // load the data
-      var cat, sub, signal;
+      var cat;
+      var sub;
+      var signal;
       if (json.basic) {
         cat = json.basic.originCategory || null;
         sub = json.basic.originSubcategory || null;
@@ -381,29 +264,13 @@ $(function () {
 
       setCSS(cat, sub, signal);
 
-      // rooms();
 
       $('form[name="request"]').fadeTo('slow', 1);
 
-      if ($('#project').val()) {
-        initwbs();
-      }
-
-      // validator.form();
+      validator.form();
 
       initModel = _.cloneDeep(binder.serialize());
 
-      // cable type details
-      // if ($('#type').val() !== '') {
-      //   if (cableType.length === 0) {
-      //     $.getJSON('/cabletypes/json', function (data, status, xhr) {
-      //       cableType = data;
-      //       setTypeDetails($('#type').val(), cableType);
-      //     });
-      //   } else {
-      //     setTypeDetails($('#type').val(), cableType);
-      //   }
-      // }
       // show action buttons
 
       if (json.status === 0) {
@@ -422,15 +289,13 @@ $(function () {
         $('input, select, textarea').prop('disabled', true);
       }
 
-    }).fail(function (jqXHR, status, error) {
+    }).fail(function () {
       $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot find the saved request. You might need to try again or contact the admin.</div>');
     });
   } else {
-    // $('form[name="request"]').fadeTo('slow', 1);
     validator.form();
     initModel = _.cloneDeep(binder.serialize());
 
-    // $('#save').closest('.btn-group').show();
     $('#save').closest('.btn-group').removeClass('hide');
     $('#submit').closest('.btn-group').removeClass('hide');
     $('#reset').closest('.btn-group').removeClass('hide');
@@ -438,10 +303,7 @@ $(function () {
 
   $('#reset').click(function (e) {
     e.preventDefault();
-    // requestForm.reset();
-    // ($(this).closest('form')[0]).reset();
     binder.deserialize(initModel);
-    // initModel = _.cloneDeep(binder.serialize());
   });
 
   $('.form-actions button').not('#reset').click(function (e) {
@@ -458,7 +320,6 @@ $(function () {
 
         $('#modalLabel').html('The request cannot be sent');
         $('#modal .modal-body').html('No change has been made in the form');
-        // $('#modal .modal-footer').html();
         $('#modal').modal('show');
         return;
       }
@@ -466,23 +327,19 @@ $(function () {
 
     if (action === 'save' || action === 'submit' || action === 'adjust') {
       if ($(requestForm).valid()) {
-        sendRequest(data);
+        sendRequest(data, initModel, binder);
       } else {
         $('#modalLabel').html('The request is not validated');
         $('#modal .modal-body').html('The form has ' + validator.numberOfInvalids() + ' invalid input(s) to fix.');
-        // $('#modal .modal-footer').html();
         $('#modal').modal('show');
         return;
       }
     }
 
     if (action === 'clone' || action === 'reject' || action === 'approve') {
-      sendRequest(data);
+      sendRequest(data, initModel, binder);
     }
 
   });
 
 });
-
-
-
