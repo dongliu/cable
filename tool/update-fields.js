@@ -191,9 +191,6 @@ function checkCables() {
             updatedBy: 'system',
             updatedOn: Date.now()
           });
-          spec.updates.forEach(function (c) {
-            update[c.property] = c.newValue;
-          });
           if (!!multiChange) {
             update.updatedOn = Date.now();
             update.updatedBy = 'system';
