@@ -85,12 +85,15 @@ function updateCable(change, i) {
           console.log('cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
         }
       });
-      var multiChange = new MultiChange({
-        cableName: cable.number,
-        updates: updates,
-        updatedBy: 'system',
-        updatedOn: Date.now()
-      });
+      var multiChange;
+      if (updates.length > 0) {
+        multiChange = new MultiChange({
+          cableName: cable.number,
+          updates: updates,
+          updatedBy: 'system',
+          updatedOn: Date.now()
+        });
+      }
       if (multiChange) {
         update.updatedOn = Date.now();
         update.updatedBy = 'system';
@@ -120,7 +123,7 @@ function updateCable(change, i) {
           });
         }
       } else {
-        console.error('cannot create the change object for cable ' + cable.number);
+        console.error('no changes for cable ' + cable.number);
       }
     }
   });
