@@ -18,20 +18,20 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
     sOldValue = oldValue.join();
   }
   if (parseType && parseType === 'boolean') {
-    if (['true', 'false'].indexOf(newValue) === -1) {
+    if (['true', 'false'].indexOf(newValue.trim()) === -1) {
       $('#modal .modal-body').prepend('<div class="text-error">Please input true or false</div>');
       return;
     }
-    newValue = newValue === 'true';
+    newValue = newValue.trim() === 'true';
     if (newValue === oldValue) {
       $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
       return;
     }
-  }
-  if (sOldValue.trim() === newValue.trim()) {
+  } else if (sOldValue.trim() === newValue.trim()) {
     $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
     return;
   }
+
   var data = {};
   data.action = 'update';
   data.property = property;
