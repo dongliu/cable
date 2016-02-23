@@ -163,7 +163,9 @@ function checkCables() {
           var update = {};
           var updates = [];
           spec.updates.forEach(function (u) {
+            console.log(doc[u.property]);
             var index = u.oldValue.indexOf(doc[u.property]);
+            console.log(index);
             if (index !== -1) {
               console.log('cable ' + doc.number + ' ' + u.property + ' will be updated from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
               update[u.property] = u.newValue[index];
