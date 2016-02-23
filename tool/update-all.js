@@ -78,10 +78,10 @@ if (program.request) {
   }
 }
 
-if (spec.updates.oldValue.length !== spec.updates.newValue.length) {
-  console.error('the new value and old value array size should be the same.');
-  process.exit(1);
-}
+// if (spec.updates.oldValue.length !== spec.updates.newValue.length) {
+//   console.error('the new value and old value array size should be the same.');
+//   process.exit(1);
+// }
 
 console.log(JSON.stringify(spec, null, 2));
 
