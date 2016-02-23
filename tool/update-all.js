@@ -163,9 +163,7 @@ function checkCables() {
           var update = {};
           var updates = [];
           spec.updates.forEach(function (u) {
-            console.log(doc[u.property]);
-            var index = u.oldValue.indexOf(doc[u.property]);
-            console.log(index);
+            var index = u.oldValue.indexOf(doc.get(u.property));
             if (index !== -1) {
               console.log('cable ' + doc.number + ' ' + u.property + ' will be updated from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
               update[u.property] = u.newValue[index];
@@ -204,9 +202,9 @@ function checkCables() {
           var update = {};
           var updates = [];
           spec.updates.forEach(function (u) {
-            var index = u.oldValue.indexOf(doc[u.property]);
+            var index = u.oldValue.indexOf(doc.get(u.property));
             if (index !== -1) {
-              console.log('cable ' + doc.number + ' ' + u.property + ' change from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
+              console.log('cable ' + doc.number + ' ' + u.property + ' will be updated from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
               update[u.property] = u.newValue[index];
               updates.push({
                 property: u.property,
