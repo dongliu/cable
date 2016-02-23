@@ -32,8 +32,8 @@ program.version('0.0.1')
   .option('-c, --cable', 'update cables according to the spec')
   .option('-r, --request', 'update request according to the spec')
   .arguments('<spec>')
-  .action(function (spec) {
-    inputPath = spec;
+  .action(function (p) {
+    inputPath = p;
   });
 
 program.parse(process.argv);
@@ -125,12 +125,12 @@ function checkRequests() {
       console.log('find ' + docs.length + ' requests to process for the condition.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
-          console.log('need to update ' + (++current) + ' request with id ' + doc._id);
+          console.log('need to update ' + ++current + ' request with id ' + doc._id);
         });
         console.log('bye.');
       } else {
         docs.forEach(function (doc) {
-          console.log('updating ' + (++current) + ' request with id ' + doc._id);
+          console.log('updating ' + ++current + ' request with id ' + doc._id);
           var update = {};
           spec.updates.forEach(function (c) {
             update[c.property] = c.newValue;
@@ -142,9 +142,9 @@ function checkRequests() {
           };
           doc.update(update, {
             new: true
-          }, function (err, request) {
-            if (err) {
-              console.error(err);
+          }, function (updateErr) {
+            if (updateErr) {
+              console.error(updateErr);
             } else {
               requestsUpdated += 1;
             }
@@ -157,23 +157,6 @@ function checkRequests() {
   });
 }
 
-function oldValue(value, property, doc) {
-  if (value === '_whatever_') {
-    return doc.get(property);
-  }
-  return value;
-}
-
-// function any(a) {
-//   var i;
-//   for (i = 0; i < a.length; i += 1) {
-//     if ((a[i] !== -1)) {
-//       return true;
-//     }
-//   }
-//   return false;
-// }
-
 function checkCables() {
   console.log('Starting processing cables ...');
   Cable.find(spec.condition).exec(function (err, docs) {
@@ -181,7 +164,7 @@ function checkCables() {
     if (err) {
       console.error(err);
     } else {
-      console.log('find ' + docs.length + ' cables to check.');
+      console.log('find ' + docs.length + ' cables to update.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
           var found;
@@ -193,7 +176,7 @@ function checkCables() {
             return i !== -1;
           });
           if (found) {
-            console.log('need to update ' + (++current) + ' cable with number ' + doc.number);
+            console.log('need to update ' + ++current + ' cable with number ' + doc.number);
           }
         });
         console.log('bye.');
@@ -209,7 +192,7 @@ function checkCables() {
           });
           if (found) {
             cableToProcess += 1;
-            console.log('updating ' + (++current) + ' cable with number ' + doc.number);
+            console.log('updating ' + ++current + ' cable with number ' + doc.number);
             var update = {};
             var updates = [];
             index.forEach(function (match, i) {
@@ -229,15 +212,15 @@ function checkCables() {
               updatedBy: 'system',
               updatedOn: Date.now()
             });
-            if (!!multiChange) {
+            if (multiChange) {
               update.updatedOn = Date.now();
               update.updatedBy = 'system';
               update.$inc = {
                 __v: 1
               };
-              multiChange.save(function (err, c) {
-                if (err) {
-                  console.error(err);
+              multiChange.save(function (saveErr, c) {
+                if (saveErr) {
+                  console.error(saveErr);
                   cablesProcessed += 1;
                   itemsAllChecked(cableToProcess, cablesProcessed, allDone);
                 } else {
@@ -246,9 +229,9 @@ function checkCables() {
                   };
                   doc.update(update, {
                     new: true
-                  }, function (err, cable) {
-                    if (err) {
-                      console.error(err);
+                  }, function (updateErr) {
+                    if (updateErr) {
+                      console.error(updateErr);
                     } else {
                       cablesUpdated += 1;
                     }
