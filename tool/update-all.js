@@ -21,7 +21,6 @@ var inputPath;
 var realPath;
 var db;
 var spec;
-var cableToProcess = 0;
 var cablesProcessed = 0;
 var cablesUpdated = 0;
 var requestsProcessed = 0;
@@ -77,11 +76,6 @@ if (program.request) {
     spec.condition.status = 1;
   }
 }
-
-// if (spec.updates.oldValue.length !== spec.updates.newValue.length) {
-//   console.error('the new value and old value array size should be the same.');
-//   process.exit(1);
-// }
 
 console.log(JSON.stringify(spec, null, 2));
 
@@ -160,90 +154,108 @@ function checkRequests() {
 function checkCables() {
   console.log('Starting processing cables ...');
   Cable.find(spec.condition).exec(function (err, docs) {
-    var current = 0;
     if (err) {
       console.error(err);
     } else {
       console.log('find ' + docs.length + ' cables to update.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
-          var found;
-          var index = [];
-          spec.updates.replace.forEach(function (p) {
-            index.push(spec.updates.oldValue.indexOf(doc.get(p)));
-          });
-          found = index.some(function (i) {
-            return i !== -1;
-          });
-          if (found) {
-            console.log('need to update ' + ++current + ' cable with number ' + doc.number);
-          }
-        });
-        console.log('bye.');
-      } else {
-        docs.forEach(function (doc) {
-          var found;
-          var index = [];
-          spec.updates.replace.forEach(function (p) {
-            index.push(spec.updates.oldValue.indexOf(doc.get(p)));
-          });
-          found = index.some(function (i) {
-            return i !== -1;
-          });
-          if (found) {
-            cableToProcess += 1;
-            console.log('updating ' + ++current + ' cable with number ' + doc.number);
-            var update = {};
-            var updates = [];
-            index.forEach(function (match, i) {
-              if (match !== -1) {
-                console.log(spec.updates.replace[i] + ' : ' + spec.updates.oldValue[match] + ' -> ' + spec.updates.newValue[match]);
-                update[spec.updates.replace[i]] = spec.updates.newValue[match];
-                updates.push({
-                  property: spec.updates.replace[i],
-                  oldValue: spec.updates.oldValue[match],
-                  newValue: spec.updates.newValue[match]
-                });
-              }
-            });
-            var multiChange = new MultiChange({
-              cableName: doc.number,
-              updates: updates,
-              updatedBy: 'system',
-              updatedOn: Date.now()
-            });
+          var update = {};
+          var updates = [];
+          spec.updates.forEach(function (u) {
+            var index = u.oldValue.indexOf(doc[u.property]);
+            if (index !== -1) {
+              console.log('cable ' + doc.number + ' ' + u.property + ' change from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
+              update[u.property] = u.newValue[index];
+              updates.push({
+                property: u.property,
+                oldValue: u.oldValue[index],
+                newValue: u.newValue[index]
+              });
+            }
+            var multiChange;
+            if (updates.length > 0) {
+              multiChange = new MultiChange({
+                cableName: doc.number,
+                updates: updates,
+                updatedBy: 'system',
+                updatedOn: Date.now()
+              });
+            }
+
             if (multiChange) {
               update.updatedOn = Date.now();
               update.updatedBy = 'system';
               update.$inc = {
                 __v: 1
               };
-              multiChange.save(function (saveErr, c) {
-                if (saveErr) {
-                  console.error(saveErr);
-                  cablesProcessed += 1;
-                  itemsAllChecked(cableToProcess, cablesProcessed, allDone);
-                } else {
-                  update.$push = {
-                    changeHistory: c._id
-                  };
-                  doc.update(update, {
-                    new: true
-                  }, function (updateErr) {
-                    if (updateErr) {
-                      console.error(updateErr);
-                    } else {
-                      cablesUpdated += 1;
-                    }
-                    cablesProcessed += 1;
-                    itemsAllChecked(cableToProcess, cablesProcessed, allDone);
-                  });
-                }
-              });
+              console.log('cable ' + doc.number + ' needs to update ' + updates.length + 'properties');
             } else {
-              cablesProcessed += 1;
-              itemsAllChecked(cableToProcess, cablesProcessed, allDone);
+              console.log('cable ' + doc.number + ' has no property to update');
             }
+            cablesProcessed += 1;
+            itemsAllChecked(doc.length, cablesProcessed, allDone);
+          });
+        });
+        console.log('bye.');
+      } else {
+        docs.forEach(function (doc) {
+          var update = {};
+          var updates = [];
+          spec.updates.forEach(function (u) {
+            var index = u.oldValue.indexOf(doc[u.property]);
+            if (index !== -1) {
+              console.log('cable ' + doc.number + ' ' + u.property + ' change from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
+              update[u.property] = u.newValue[index];
+              updates.push({
+                property: u.property,
+                oldValue: u.oldValue[index],
+                newValue: u.newValue[index]
+              });
+            }
+          });
+          var multiChange;
+          if (updates.length > 0) {
+            multiChange = new MultiChange({
+              cableName: doc.number,
+              updates: updates,
+              updatedBy: 'system',
+              updatedOn: Date.now()
+            });
+          }
+
+          if (multiChange) {
+            update.updatedOn = Date.now();
+            update.updatedBy = 'system';
+            update.$inc = {
+              __v: 1
+            };
+            multiChange.save(function (saveErr, c) {
+              if (saveErr) {
+                console.error(saveErr);
+                cablesProcessed += 1;
+                itemsAllChecked(doc.length, cablesProcessed, allDone);
+              } else {
+                update.$push = {
+                  changeHistory: c._id
+                };
+                doc.update(update, {
+                  new: true
+                }, function (updateErr) {
+                  if (updateErr) {
+                    console.error(updateErr);
+                  } else {
+                    cablesUpdated += 1;
+                  }
+                  cablesProcessed += 1;
+                  itemsAllChecked(doc.length, cablesProcessed, allDone);
+                });
+              }
+            });
+          } else {
+            cablesProcessed += 1;
+            console.log('cable ' + doc.number + ' has no property to update');
+            itemsAllChecked(doc.length, cablesProcessed, allDone);
           }
         });
       }
