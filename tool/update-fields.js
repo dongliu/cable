@@ -5,8 +5,6 @@
  * @author Dong Liu
  */
 
-/*jslint es5: true*/
-
 var fs = require('fs');
 var path = require('path');
 
@@ -31,8 +29,8 @@ program.version('0.0.1')
   .option('-c, --cable', 'update cables according to the spec')
   .option('-r, --request', 'update request according to the spec')
   .arguments('<spec>')
-  .action(function (spec) {
-    inputPath = spec;
+  .action(function (s) {
+    inputPath = s;
   });
 
 program.parse(process.argv);
@@ -119,12 +117,12 @@ function checkRequests() {
       console.log('find ' + docs.length + ' requests to process for the condition.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
-          console.log('need to update ' + (++current) + ' request with id ' + doc._id);
+          console.log('need to update ' + ++current + ' request with id ' + doc._id);
         });
         console.log('bye.');
       } else {
         docs.forEach(function (doc) {
-          console.log('updating ' + (++current) + ' request with id ' + doc._id);
+          console.log('updating ' + ++current + ' request with id ' + doc._id);
           var update = {};
           spec.updates.forEach(function (c) {
             update[c.property] = c.newValue;
@@ -136,9 +134,9 @@ function checkRequests() {
           };
           doc.update(update, {
             new: true
-          }, function (err, request) {
-            if (err) {
-              console.error(err);
+          }, function (updateErr) {
+            if (updateErr) {
+              console.error(updateErr);
             } else {
               requestsUpdated += 1;
             }
@@ -168,16 +166,16 @@ function checkCables() {
       console.log('find ' + docs.length + ' cables for the condition.');
       if (program.dryrun) {
         docs.forEach(function (doc) {
-          console.log('need to update ' + (++current) + ' cable with number ' + doc.number);
+          console.log('need to update ' + ++current + ' cable with number ' + doc.number);
         });
         console.log('bye.');
       } else {
         docs.forEach(function (doc) {
-          console.log('updating ' + (++current) + ' cable with number ' + doc.number);
+          console.log('updating ' + ++current + ' cable with number ' + doc.number);
           var update = {};
           var updates = [];
 
-          spec.updates.forEach(function (c, index) {
+          spec.updates.forEach(function (c) {
             update[c.property] = c.newValue;
             updates.push({
               property: c.property,
@@ -185,21 +183,24 @@ function checkCables() {
               newValue: c.newValue
             });
           });
-          var multiChange = new MultiChange({
-            cableName: doc.number,
-            updates: updates,
-            updatedBy: 'system',
-            updatedOn: Date.now()
-          });
-          if (!!multiChange) {
+          var multiChange;
+          if (updates.length > 0) {
+            multiChange = new MultiChange({
+              cableName: doc.number,
+              updates: updates,
+              updatedBy: 'system',
+              updatedOn: Date.now()
+            });
+          }
+          if (multiChange) {
             update.updatedOn = Date.now();
             update.updatedBy = 'system';
             update.$inc = {
               __v: 1
             };
-            multiChange.save(function (err, c) {
-              if (err) {
-                console.error(err);
+            multiChange.save(function (saveErr, c) {
+              if (saveErr) {
+                console.error(saveErr);
                 cablesProcessed += 1;
                 itemsAllChecked(docs.length, cablesProcessed, allDone);
               } else {
@@ -208,9 +209,9 @@ function checkCables() {
                 };
                 doc.update(update, {
                   new: true
-                }, function (err, cable) {
-                  if (err) {
-                    console.error(err);
+                }, function (updateErr) {
+                  if (updateErr) {
+                    console.error(updateErr);
                   } else {
                     cablesUpdated += 1;
                   }
