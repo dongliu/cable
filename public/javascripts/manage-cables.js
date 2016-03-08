@@ -27,9 +27,12 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
       $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
       return;
     }
-  } else if (sOldValue.trim() === newValue.trim()) {
-    $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
-    return;
+  } else {
+    newValue = newValue.trim();
+    if (sOldValue.trim() === newValue) {
+      $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      return;
+    }
   }
 
   var data = {};
