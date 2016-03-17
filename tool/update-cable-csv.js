@@ -5,7 +5,6 @@
  * @author Dong Liu
  */
 
-/*jslint es5: true*/
 
 var csv = require('csv');
 
@@ -23,8 +22,6 @@ var line = 0;
 var changes = [];
 var parser;
 var properties = [];
-
-// var version = '';
 
 program.version('0.0.1')
   .option('-d, --dryrun', 'dry run')
@@ -71,13 +68,13 @@ function updateCable(change, i) {
       var updates = [];
 
       properties.forEach(function (p, index) {
-        if (cable.get(p) === change[2 * index + 1]) {
+        if (cable.get(p) === change[2 * index + 1] || change[2 * index + 1] === '_whatever_') {
           // empty means no change
           if (change[2 * index + 2].length !== 0) {
             update[p] = change[2 * index + 2];
             updates.push({
               property: p,
-              oldValue: change[2 * index + 1],
+              oldValue: cable.get(p),
               newValue: change[2 * index + 2]
             });
           }
