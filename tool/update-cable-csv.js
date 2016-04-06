@@ -70,7 +70,7 @@ function updateCable(change, i) {
       properties.forEach(function (p, index) {
         if (cable.get(p) === change[2 * index + 1] || change[2 * index + 1] === '_whatever_') {
           // empty means no change
-          if (change[2 * index + 2].length !== 0) {
+          if (change[2 * index + 2].length !== 0 && change[2 * index + 2] !== cable.get(p)) {
             update[p] = change[2 * index + 2];
             updates.push({
               property: p,
