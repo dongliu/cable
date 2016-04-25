@@ -8,37 +8,37 @@ $(document).ajaxError(function (event, jqxhr) {
   }
 });
 
-// var columns = typeColumns;
-
 function tdEdit(oTable) {
-  $('td', oTable.fnGetNodes()).editable(function (value, settings) {
+  $('td', oTable.fnGetNodes()).editable(function (value) {
     var that = this;
-    if (value === oTable.fnGetData(that)) {
-      return value;
+    var newValue = value.trim();
+    var oldValue = oTable.fnGetData(that).trim();
+    if (newValue === oldValue) {
+      return newValue;
     }
     var data = {};
     data.target = typeColumns[oTable.fnGetPosition(that)[2]].mData;
-    data.update = value;
-    data.original = oTable.fnGetData(that);
+    data.update = newValue;
+    data.original = oldValue;
     if (data.original === '') {
       data.original = null;
     }
     if (data.update === '') {
       data.update = null;
     }
-    var ajax = $.ajax({
+    $.ajax({
       url: '/cabletypes/' + oTable.fnGetData(that.parentNode)._id,
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify(data),
-      success: function (data) {
+      success: function () {
         var aPos = oTable.fnGetPosition(that);
-        oTable.fnUpdate(value, aPos[0], aPos[1]);
+        oTable.fnUpdate(newValue, aPos[0], aPos[1]);
         oTable.fnDisplayRow(that.parentNode);
-        // $(that).text(value);
+        $(that).text(newValue);
       },
-      error: function (jqXHR, status, error) {
-        $(that).text(oTable.fnGetData(that));
+      error: function (jqXHR) {
+        $(that).text(oldValue);
         oTable.fnDisplayRow(that.parentNode);
         $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot update the cable type : ' + jqXHR.responseText + '</div>');
         $(window).scrollTop($('#message div:last-child').offset().top - 40);
@@ -75,7 +75,7 @@ $(function () {
     cabletype.fnAddData(json);
     cabletype.fnDraw();
     tdEdit(cabletype);
-  }).fail(function (jqXHR, status, error) {
+  }).fail(function () {
     $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>Cannot reach the server for cable type information.</div>');
   }).always();
 });
