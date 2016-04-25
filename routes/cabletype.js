@@ -37,7 +37,7 @@ module.exports = function (app) {
 
   app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements']), function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
-      return res.send(403, "You are not authorized to access this resource. ");
+      return res.send(403, 'You are not authorized to access this resource. ');
     }
 
     if (!req.is('json')) {
@@ -88,15 +88,15 @@ module.exports = function (app) {
 
   app.put('/cabletypes/:id', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
-      return res.send(403, "You are not authorized to access this resource. ");
+      return res.send(403, 'You are not authorized to access this resource. ');
     }
     var conditions = {
       _id: req.params.id
     };
     if (req.body.original === null) {
       conditions[req.body.target] = {
-          $in: [null, '']
-        };
+        $in: [null, '']
+      };
     } else {
       conditions[req.body.target] = req.body.original;
     }
