@@ -1,16 +1,16 @@
+/*global Binder: false*/
 function sendRequest(data) {
-  var path = window.location.pathname;
   var url = '/cabletypes/';
   var type = 'POST';
   $('form[name="cabletype"]').fadeTo('slow', 0.2);
-  var request = $.ajax({
+  $.ajax({
     url: url,
     type: type,
     async: true,
     data: JSON.stringify(data),
     contentType: 'application/json',
     processData: false
-  }).done(function (data, textStatus, jqXHR) {
+  }).done(function (json, textStatus, jqXHR) {
     $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + jqXHR.responseText + '</div>');
   }).fail(function (jqXHR, status, error) {
     // TODO change to modal
@@ -28,7 +28,7 @@ function naming(conductorNumber, conductorSize, fribType, typeNumber) {
 
 $(function () {
   // keyup and mouseup catch all the change event
-  $('#conductor-number, #conductor-size, #frib-type, #type-number').bind('keyup mouseup', function (e) {
+  $('#conductor-number, #conductor-size, #frib-type, #type-number').bind('keyup mouseup', function () {
     $('#name').val(naming($('#conductor-number').val(), $('#conductor-size').val(), $('#frib-type').val(), $('#type-number').val()));
   });
 
