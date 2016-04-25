@@ -639,6 +639,16 @@ var typeColumns = [{
   sDefaultContent: '',
   bFilter: true
 }, {
+  sTitle: 'Manufacturer',
+  mData: 'manufacturer',
+  sDefaultContent: '',
+  bFilter: true
+}, {
+  sTitle: 'Part number',
+  mData: 'partNumber',
+  sDefaultContent: '',
+  bFilter: true
+}, {
   sTitle: 'Other Requirements',
   mData: 'otherRequirements',
   sDefaultContent: '',
