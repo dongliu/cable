@@ -62,6 +62,7 @@ function updateCable(change, i) {
     } else {
       if (!cable) {
         console.error('cannot find cable with id ' + change[0]);
+        return;
       }
 
       var update = {};
