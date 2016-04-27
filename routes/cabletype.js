@@ -35,7 +35,7 @@ module.exports = function (app) {
     });
   });
 
-  app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements']), function (req, res) {
+  app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements', 'manufacturer', 'partNumber']), function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.send(403, 'You are not authorized to access this resource. ');
     }

@@ -1,13 +1,14 @@
 /*jslint es5:true*/
 
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 var cableType = new Schema({
   name: {
     type: String,
     index: true,
     unique: true,
+    match: /\d+C_\w+_\w+_\d\d\d/,
     required: true
   },
   service: String,

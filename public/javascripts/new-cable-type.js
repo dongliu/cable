@@ -2,7 +2,7 @@
 function sendRequest(data) {
   var url = '/cabletypes/';
   var type = 'POST';
-  $('form[name="cabletype"]').fadeTo('slow', 0.2);
+  $('form[name="cabletype"]').fadeTo('slow', 0.5);
   $.ajax({
     url: url,
     type: type,
@@ -13,11 +13,8 @@ function sendRequest(data) {
   }).done(function (json, textStatus, jqXHR) {
     $('#message').append('<div class="alert alert-success"><button class="close" data-dismiss="alert">x</button>' + jqXHR.responseText + '</div>');
   }).fail(function (jqXHR, status, error) {
-    // TODO change to modal
-    console.log(status);
-    console.log(error);
-    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>The save request failed. You might need to try again or contact the admin.</div>');
-    $('form[name="request"]').fadeTo('slow', 0);
+    $('#message').append('<div class="alert alert-error"><button class="close" data-dismiss="alert">x</button>The save request failed: ' + jqXHR.responseText + '</div>');
+    $('form[name="cabletype"]').fadeTo('slow', 1);
   });
 }
 
@@ -57,6 +54,7 @@ $(function () {
     e.preventDefault();
     var currentModel = binder.serialize();
 
+    validator.form();
     if ($(form).valid()) {
       sendRequest(currentModel);
     } else {
