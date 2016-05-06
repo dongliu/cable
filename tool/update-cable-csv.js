@@ -52,6 +52,10 @@ db.once('open', function () {
   console.log('db connected');
 });
 
+function splitTags(s) {
+  return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
+}
+
 function updateCable(change, i) {
   console.log('processing change ' + i);
   Cable.findOne({
@@ -69,13 +73,23 @@ function updateCable(change, i) {
       var updates = [];
 
       properties.forEach(function (p, index) {
-        if (cable.get(p) === change[2 * index + 1] || change[2 * index + 1] === '_whatever_') {
+        var currentValue;
+        if (p === 'basic.tags') {
+          currentValue = cable.get(p) ? cable.get(p).join() : '';
+        } else {
+          currentValue = cable.get(p) || '';
+        }
+        if (currentValue === change[2 * index + 1] || change[2 * index + 1] === '_whatever_') {
           // empty means no change
-          if (change[2 * index + 2].length !== 0 && change[2 * index + 2] !== cable.get(p)) {
-            update[p] = change[2 * index + 2];
+          if (change[2 * index + 2].length !== 0 && change[2 * index + 2] !== currentValue) {
+            if (p === 'basic.tags') {
+              update[p] = splitTags(change[2 * index + 2]);
+            } else {
+              update[p] = change[2 * index + 2];
+            }
             updates.push({
               property: p,
-              oldValue: cable.get(p),
+              oldValue: currentValue,
               newValue: change[2 * index + 2]
             });
           }
