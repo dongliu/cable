@@ -251,6 +251,6 @@ var MultiChange = mongoose.model('MultiChange', multiChange);
 module.exports = {
   Cable: Cable,
   Change: Change,
-  MultiChange : MultiChange,
+  MultiChange: MultiChange,
   Request: Request
 };
