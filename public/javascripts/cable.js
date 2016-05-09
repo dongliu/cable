@@ -192,7 +192,22 @@ var template = {
     l: function (v) {
       $('#submittedOn').text(formatDateLong(v[0]));
     }
+  },
+
+  pulledBy: {
+    e: '$.pulledBy',
+    l: function (v) {
+      $('#pulledBy').prop('href', '/users/' + v + '/');
+      $('#pulledBy').text(v);
+    }
+  },
+  pulledOn: {
+    e: '$.pulledOn',
+    l: function (v) {
+      $('#pulledOn').text(formatDateLong(v[0]));
+    }
   }
+
 
 };
 

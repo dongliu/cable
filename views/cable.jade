@@ -6,7 +6,6 @@ block head
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  //- link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 
@@ -123,60 +122,13 @@ block content
         | on
         = ' '
         span#approvedOn
-    //- if (cable.orderedOn)
-    //-   dt ordered by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.orderedBy)}', target='_blank') #{cable.updatedBy}
-    //-   dt ordered on
-    //-   dd #{cable.orderedOn}
-    //- if (cable.receivedOn)
-    //-   dt received by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.receivedBy)}', target='_blank') #{cable.receivedBy}
-    //-   dt received on
-    //-   dd #{cable.receivedOn}
-    //- if (cable.acceptedOn)
-    //-   dt accepted by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.acceptedBy)}', target='_blank') #{cable.acceptedOn}
-    //-   dt accepted on
-    //-   dd #{cable.acceptedOn}
-    //- if (cable.labeledOn)
-    //-   dt labeled by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.labeledBy)}', target='_blank') #{cable.labeledBy}
-    //-   dt labeled on
-    //-   dd #{cable.labeledOn}
-    //- if (cable.benchTerminatedOn)
-    //-   dt bench terminated by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.benchTerminatedBy)}', target='_blank') #{cable.benchTerminatedBy}
-    //-   dt bench terminated on
-    //-   dd #{cable.benchTerminatedOn}
-    //- if (cable.benchTestedOn)
-    //-   dt bench tested by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.benchTestedBy)}', target='_blank') #{cable.benchTestedBy}
-    //-   dt bench tested on
-    //-   dd #{cable.benchTestedOn}
-    //- if (cable.pulledOn)
-    //-   dt pulled by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.pulledBy)}', target='_blank') #{cable.pulledBy}
-    //-   dt pulled on
-    //-   dd #{cable.pulledOn}
-    //- if (cable.fieldTerminatedOn)
-    //-   dt field terminated by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.fieldTerminatedBy)}', target='_blank') #{cable.fieldTerminatedBy}
-    //-   dt field terminated on
-    //-   dd #{cable.fieldTerminatedOn}
-    //- if (cable.fieldTestedOn)
-    //-   dt field tested by
-    //-   dd
-    //-     a(href='/users?#{fs.encodeName(cable.fieldTestedBy)}', target='_blank') #{cable.fieldTestedBy}
-    //-   dt field tested on
-    //-   dd #{cable.fieldTestedOn}
+      li pulled by
+        = ' '
+        a#pulledBy(target='_blank')
+        = ' '
+        | on
+        = ' '
+        span#pulledOn
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
