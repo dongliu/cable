@@ -73,15 +73,18 @@ function updateCable(change, i) {
       var updates = [];
 
       properties.forEach(function (p, index) {
-        var currentValue;
-        if (p === 'basic.tags') {
-          currentValue = cable.get(p) ? cable.get(p).join() : '';
-        } else {
-          currentValue = cable.get(p) || '';
+        var currentValue = cable.get(p);
+        switch (p) {
+        case 'basic.tags':
+          currentValue = currentValue ? currentValue.join() : '';
+          break;
+        case 'status':
+          change[2 * index + 1] = parseInt(change[2 * index + 1]);
+          change[2 * index + 2] = parseInt(change[2 * index + 2]);
         }
-        if (currentValue === change[2 * index + 1] || change[2 * index + 1] === '_whatever_') {
-          // empty means no change
-          if (change[2 * index + 2].length !== 0 && change[2 * index + 2] !== currentValue) {
+
+        if (change[2 * index + 1] === '_whatever_' || currentValue === change[2 * index + 1]) {
+          if (change[2 * index + 2] !== currentValue) {
             if (p === 'basic.tags') {
               update[p] = splitTags(change[2 * index + 2]);
             } else {
@@ -89,8 +92,8 @@ function updateCable(change, i) {
             }
             updates.push({
               property: p,
-              oldValue: currentValue,
-              newValue: change[2 * index + 2]
+              oldValue: cable.get(p),
+              newValue: update[p]
             });
           }
         } else {
