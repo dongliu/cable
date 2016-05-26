@@ -25,7 +25,6 @@ var line = 0;
 var requests = [];
 var lines = [];
 var parser;
-var processed = 0;
 var success = 0;
 
 var version = '';
@@ -68,7 +67,6 @@ function jobDone() {
     console.log(requests.length + ' requests were processed, and ' + success + ' requests were inserted. Bye.');
     mongoose.connection.close();
   }
-  process.exit();
 }
 
 function splitTags(s) {
@@ -77,15 +75,15 @@ function splitTags(s) {
 
 function isTrue(S) {
   var s = S.toLowerCase();
-  return (s === 'yes' || s === 'true');
+  return s === 'yes' || s === 'true';
 }
 
-function createRequest(requests, i) {
+function createRequest(i) {
   var request = requests[i];
   var namecodes;
   var newRequest;
   var quantityIndex = 10;
-  var v2 = (version.indexOf('v2') === 0);
+  var v2 = version.indexOf('v2') === 0;
   // need more validation function here
   if (v2) {
     quantityIndex = 11;
@@ -95,7 +93,7 @@ function createRequest(requests, i) {
     if (i === requests.length - 1) {
       return jobDone();
     }
-    return createRequest(requests, i + 1);
+    return createRequest(i + 1);
   }
   namecodes = naming.encode(request[3], request[4], request[5]);
   if (namecodes.indexOf(null) !== -1) {
@@ -103,7 +101,7 @@ function createRequest(requests, i) {
     if (i === requests.length - 1) {
       return jobDone();
     }
-    return createRequest(requests, i + 1);
+    return createRequest(i + 1);
   }
   if (v2) {
     newRequest = {
@@ -193,7 +191,7 @@ function createRequest(requests, i) {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        createRequest(requests, i + 1);
+        createRequest(i + 1);
       }
     });
   } else {
@@ -207,32 +205,32 @@ function createRequest(requests, i) {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        createRequest(requests, i + 1);
+        createRequest(i + 1);
       }
     });
   }
 }
 
 
-parser = csv.parse({trim: true});
+parser = csv.parse({
+  trim: true
+});
 
 parser.on('readable', function () {
-  var record;
-  do {
-    record = parser.read();
-    if (!!record) {
-      line += 1;
-      console.log('read ' + line + ' lines ...');
-      if (line === 2) {
-        version = record[0];
-        console.log('template version: ' + version);
-      }
-      if (record[0] === 'FRIB') {
-        requests.push(record);
-        lines.push(line);
-      }
+  var record = parser.read();
+  while (record) {
+    line += 1;
+    console.log('read ' + line + ' lines ...');
+    if (line === 2) {
+      version = record[0];
+      console.log('template version: ' + version);
     }
-  } while (!!record);
+    if (record[0] === 'FRIB') {
+      requests.push(record);
+      lines.push(line);
+    }
+    record = parser.read();
+  }
 });
 
 parser.on('error', function (err) {
@@ -240,7 +238,10 @@ parser.on('error', function (err) {
 });
 
 parser.on('finish', function () {
-  createRequest(requests, 0);
+  createRequest(0);
 });
 
 fs.createReadStream(realPath).pipe(parser);
+
+// keep running until the user interrupts
+process.stdin.resume();
