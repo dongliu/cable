@@ -71,6 +71,7 @@ function updateCable(change, i) {
 
       var update = {};
       var updates = [];
+      var conditionSatisfied = true;
 
       properties.forEach(function (p, index) {
         var currentValue = cable.get(p);
@@ -98,10 +99,13 @@ function updateCable(change, i) {
           }
         } else {
           console.log('cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
+          if (p === 'status') {
+            conditionSatisfied = false;
+          }
         }
       });
       var multiChange;
-      if (updates.length > 0) {
+      if (conditionSatisfied && updates.length > 0) {
         multiChange = new MultiChange({
           cableName: cable.number,
           updates: updates,
