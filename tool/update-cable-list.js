@@ -20,8 +20,6 @@ var inputPath;
 var realPath;
 var db;
 var spec;
-var cablesProcessed = 0;
-var cablesUpdated = 0;
 
 program.version('0.0.1')
   .option('-d, --dryrun', 'dryrun')
@@ -51,7 +49,7 @@ if (program.cable) {
   if (!spec.condition.status) {
     spec.condition.status = {
       $gte: 100,
-      $lte: 199
+      $lte: 299
     };
   }
 }
@@ -65,24 +63,6 @@ db.once('open', function () {
   console.log('db connected');
 });
 
-function allDone() {
-  if (program.dryrun) {
-    console.log('Please note that this is a dryrun.');
-  }
-  console.log(cablesUpdated + ' were updated.');
-  mongoose.connection.close();
-  console.log('Bye.');
-}
-
-function itemsAllChecked(total, processed, cb) {
-  if (total === processed) {
-    console.log(total + ' items are processed.');
-    if (cb) {
-      cb();
-    }
-  }
-}
-
 function checkCables() {
   console.log('Starting processing cables ...');
   Cable.find(spec.condition).exec(function (err, docs) {
@@ -90,53 +70,21 @@ function checkCables() {
       console.error(err);
     } else {
       console.log('find ' + docs.length + ' cables to update.');
-      if (program.dryrun) {
-        docs.forEach(function (doc) {
-          var update = {};
-          var updates = [];
-          spec.updates.forEach(function (u) {
-            var index = u.oldValue.indexOf(doc.get(u.property));
-            if (index !== -1) {
-              console.log('cable ' + doc.number + ' ' + u.property + ' will be updated from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
-              update[u.property] = u.newValue[index];
-              updates.push({
-                property: u.property,
-                oldValue: u.oldValue[index],
-                newValue: u.newValue[index]
-              });
-            }
-          });
-          var multiChange;
-          if (updates.length > 0) {
-            multiChange = new MultiChange({
-              cableName: doc.number,
-              updates: updates,
-              updatedBy: 'system',
-              updatedOn: Date.now()
+      docs.forEach(function (doc) {
+        var update = {};
+        var updates = [];
+        var index;
+        spec.updates.forEach(function (u) {
+          if (u.oldValue === '_whatever_') {
+            update[u.property] = u.newValue;
+            updates.push({
+              property: u.property,
+              oldValue: doc.get(u.property),
+              newValue: u.newValue
             });
-          }
-
-          if (multiChange) {
-            update.updatedOn = Date.now();
-            update.updatedBy = 'system';
-            update.$inc = {
-              __v: 1
-            };
-            console.log('cable ' + doc.number + ' needs to update ' + updates.length + ' properties');
           } else {
-            console.log('cable ' + doc.number + ' has no property to update');
-          }
-          cablesProcessed += 1;
-          itemsAllChecked(docs.length, cablesProcessed, allDone);
-        });
-      } else {
-        docs.forEach(function (doc) {
-          var update = {};
-          var updates = [];
-          spec.updates.forEach(function (u) {
-            var index = u.oldValue.indexOf(doc.get(u.property));
+            index = u.oldValue.indexOf(doc.get(u.property));
             if (index !== -1) {
-              console.log('cable ' + doc.number + ' ' + u.property + ' will be updated from ' + u.oldValue[index] + ' to ' + u.newValue[index]);
               update[u.property] = u.newValue[index];
               updates.push({
                 property: u.property,
@@ -144,52 +92,50 @@ function checkCables() {
                 newValue: u.newValue[index]
               });
             }
-          });
-          var multiChange;
-          if (updates.length > 0) {
-            multiChange = new MultiChange({
-              cableName: doc.number,
-              updates: updates,
-              updatedBy: 'system',
-              updatedOn: Date.now()
-            });
           }
+        });
+        var multiChange;
+        if (updates.length > 0) {
+          multiChange = new MultiChange({
+            cableName: doc.number,
+            updates: updates,
+            updatedBy: 'system',
+            updatedOn: Date.now()
+          });
+        }
 
-          if (multiChange) {
-            update.updatedOn = Date.now();
-            update.updatedBy = 'system';
-            update.$inc = {
-              __v: 1
-            };
-            multiChange.save(function (saveErr, c) {
-              if (saveErr) {
-                console.error(saveErr);
-                cablesProcessed += 1;
-                itemsAllChecked(doc.length, cablesProcessed, allDone);
+        if (multiChange) {
+          update.updatedOn = Date.now();
+          update.updatedBy = 'system';
+          update.$inc = {
+            __v: 1
+          };
+          if (program.dryrun) {
+            console.log('cable ' + doc.number + ' will be updated with ' + JSON.stringify(update, null, 2));
+          } else {
+            multiChange.save(function (err1, c) {
+              if (err) {
+                console.error(err1);
               } else {
                 update.$push = {
                   changeHistory: c._id
                 };
                 doc.update(update, {
                   new: true
-                }, function (updateErr) {
-                  if (updateErr) {
-                    console.error(updateErr);
+                }, function (err2) {
+                  if (err2) {
+                    console.error(err2);
                   } else {
-                    cablesUpdated += 1;
+                    console.log('cable ' + doc.number + ' was updated with ' + JSON.stringify(update, null, 2));
                   }
-                  cablesProcessed += 1;
-                  itemsAllChecked(docs.length, cablesProcessed, allDone);
                 });
               }
             });
-          } else {
-            cablesProcessed += 1;
-            console.log('cable ' + doc.number + ' has no property to update');
-            itemsAllChecked(docs.length, cablesProcessed, allDone);
           }
-        });
-      }
+        } else {
+          console.log('cable ' + doc.number + ' has no property to update');
+        }
+      });
     }
   });
 }
