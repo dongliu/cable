@@ -45,13 +45,11 @@ if (!fs.existsSync(realPath)) {
 
 spec = require(realPath);
 
-if (program.cable) {
-  if (!spec.condition.status) {
-    spec.condition.status = {
-      $gte: 100,
-      $lte: 299
-    };
-  }
+if (!spec.condition.status) {
+  spec.condition.status = {
+    $gte: 100,
+    $lte: 299
+  };
 }
 
 console.log(JSON.stringify(spec, null, 2));
