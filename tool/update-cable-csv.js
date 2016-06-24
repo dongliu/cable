@@ -86,16 +86,20 @@ function updateCable(change, i) {
 
         if (change[2 * index + 1] === '_whatever_' || currentValue === change[2 * index + 1]) {
           if (change[2 * index + 2] !== currentValue) {
-            if (p === 'basic.tags') {
-              update[p] = splitTags(change[2 * index + 2]);
+            if ([undefined, null, ''].indexOf(change[2 * index + 2]) !== -1 && [undefined, null, ''].indexOf(currentValue) !== -1) {
+              // do nothing
             } else {
-              update[p] = change[2 * index + 2];
+              if (p === 'basic.tags') {
+                update[p] = splitTags(change[2 * index + 2]);
+              } else {
+                update[p] = change[2 * index + 2];
+              }
+              updates.push({
+                property: p,
+                oldValue: cable.get(p),
+                newValue: update[p]
+              });
             }
-            updates.push({
-              property: p,
-              oldValue: cable.get(p),
-              newValue: update[p]
-            });
           }
         } else {
           console.log('cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
