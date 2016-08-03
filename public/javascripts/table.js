@@ -477,25 +477,25 @@ var basicColumns = [{
   bFilter: true
 }];
 var fromColumns = [{
-  sTitle: 'From rack',
+  sTitle: 'From location',
   sDefaultContent: '',
   mData: 'from.rack',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'termination device',
+  sTitle: 'From termination device',
   sDefaultContent: '',
   mData: 'from.terminationDevice',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'termination type',
+  sTitle: 'From termination type',
   sDefaultContent: '',
   mData: 'from.terminationType',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'wiring drawing',
+  sTitle: 'From wiring drawing',
   sDefaultContent: '',
   mData: 'from.wiringDrawing',
   sClass: 'editable',
@@ -503,25 +503,25 @@ var fromColumns = [{
 }];
 
 var toColumns = [{
-  sTitle: 'To rack',
+  sTitle: 'To location',
   sDefaultContent: '',
   mData: 'to.rack',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'termination device',
+  sTitle: 'To termination device',
   sDefaultContent: '',
   mData: 'to.terminationDevice',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'termination type',
+  sTitle: 'To termination type',
   sDefaultContent: '',
   mData: 'to.terminationType',
   sClass: 'editable',
   bFilter: true
 }, {
-  sTitle: 'wiring drawing',
+  sTitle: 'To wiring drawing',
   sDefaultContent: '',
   mData: 'to.wiringDrawing',
   sClass: 'editable',
