@@ -74,6 +74,7 @@ function updateSub(json) {
       }).text(v));
     }
   });
+  $('#sub').next('.add-on').text($('#sub option:selected').val());
 }
 
 function updateSignal(json) {
@@ -90,6 +91,7 @@ function updateSignal(json) {
       }).text(json[cat].signal[k].name));
     }
   });
+  $('#signal').next('.add-on').text($('#signal option:selected').val());
 }
 
 function update(select, json) {
