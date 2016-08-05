@@ -5,6 +5,13 @@ var Schema = mongoose.Schema;
 var Mixed = Schema.Types.Mixed;
 var ObjectId = Schema.Types.ObjectId;
 
+// shared configuration for request and cable schemas
+var projectValues = ['FRIB', 'REA'];
+var originCategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+var originSubcategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+var signalClassificationValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
+var traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS', 'N/A'];
+
 // request status
 // 0: saved
 // 1: submitted
@@ -15,7 +22,7 @@ var request = new Schema({
   basic: {
     project: {
       type: String,
-      enum: ['FRIB', 'REA'],
+      enum: projectValues,
       uppercase: true,
       required: true
     },
@@ -26,24 +33,24 @@ var request = new Schema({
     },
     originCategory: {
       type: String,
-      enum: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      enum: originCategoryValues,
       required: true
     },
     originSubcategory: {
       type: String,
-      enum: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      enum: originSubcategoryValues,
       required: true
     },
     signalClassification: {
       type: String,
-      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'],
+      enum: signalClassificationValues,
       required: true
     },
     cableType: String,
     service: String,
     traySection: {
       type: String,
-      enum: ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS', 'N/A']
+      enum: traySectionValues
     },
     tags: [String],
     quantity: {
@@ -143,7 +150,7 @@ var cable = new Schema({
   basic: {
     project: {
       type: String,
-      enum: ['FRIB', 'REA'],
+      enum: projectValues,
       uppercase: true,
       required: true
     },
@@ -154,24 +161,24 @@ var cable = new Schema({
     },
     originCategory: {
       type: String,
-      enum: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      enum: originCategoryValues,
       required: true
     },
     originSubcategory: {
       type: String,
-      enum: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      enum: originSubcategoryValues,
       required: true
     },
     signalClassification: {
       type: String,
-      enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+      enum: signalClassificationValues,
       required: true
     },
     cableType: String,
     service: String,
     traySection: {
       type: String,
-      enum: ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS']
+      enum: traySectionValues
     },
     tags: [String]
   },
