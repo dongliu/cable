@@ -500,6 +500,13 @@ var fromColumns = [{
   mData: 'from.wiringDrawing',
   sClass: 'editable',
   bFilter: true
+}, {
+  sTitle: 'From ready for termination',
+  sDefaultContent: false,
+  mData: 'from.readyForTerm',
+  sClass: 'editable',
+  sParseType: 'boolean',
+  bFilter: true
 }];
 
 var toColumns = [{
@@ -525,6 +532,13 @@ var toColumns = [{
   sDefaultContent: '',
   mData: 'to.wiringDrawing',
   sClass: 'editable',
+  bFilter: true
+}, {
+  sTitle: 'To ready for termination',
+  sDefaultContent: false,
+  mData: 'to.readyForTerm',
+  sClass: 'editable',
+  sParseType: 'boolean',
   bFilter: true
 }];
 

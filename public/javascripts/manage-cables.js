@@ -102,16 +102,17 @@ function updateTd(td, oTable) {
   });
 }
 
-function actionFromModal(rows, action, activeTable, obsoletedTable) {
+function actionFromModal(rows, action, data, activeTable, obsoletedTable) {
+  if( !data ) {
+    data = { action: action };
+  }
   $('#modal .modal-body .cable').each(function (index) {
     var that = this;
     $.ajax({
       url: '/cables/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
-      data: JSON.stringify({
-        action: action
-      }),
+      data: JSON.stringify(data),
       dataType: 'json'
     }).done(function (cable) {
       $(that).prepend('<i class="icon-check"></i>');
@@ -121,6 +122,10 @@ function actionFromModal(rows, action, activeTable, obsoletedTable) {
       case 'obsolete':
         activeTable.fnDeleteRow(rows[index]);
         obsoletedTable.fnAddData(cable);
+        break;
+      case 'to ready for termination':
+      case 'from ready for termination':
+        activeTable.fnUpdate(cable, rows[index]);
         break;
       default:
         // do nothing
@@ -167,7 +172,7 @@ function newRequestFromModal(cables, rows) {
   });
 }
 
-function batchAction(oTable, action, obsoletedTable) {
+function batchAction(oTable, action, data, obsoletedTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
   var rows = [];
@@ -189,7 +194,7 @@ function batchAction(oTable, action, obsoletedTable) {
       if (action === 'create new request from') {
         newRequestFromModal(cables, rows);
       } else {
-        actionFromModal(rows, action, oTable, obsoletedTable);
+        actionFromModal(rows, action, data, oTable, obsoletedTable);
       }
     });
   } else {
@@ -419,6 +424,28 @@ $(function () {
     fnDeselect(installingTable, 'row-selected', 'select-row');
   });
 
+  $('#installing-to-ready-for-term').click(function (e) {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    var data = {
+      action: 'update',
+      property: 'to.readyForTerm',
+      oldValue: false,
+      newValue: true
+    };
+    batchAction(activeTable, 'to ready for termination', data, obsoletedTable);
+  });
+
+  $('#installing-from-ready-for-term').click(function (e) {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    var data = {
+      action: 'update',
+      property: 'from.readyForTerm',
+      oldValue: false,
+      newValue: true
+    };
+    batchAction(activeTable, 'from ready for termination', data, obsoletedTable);
+  });
+
   /*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
       batchCableAction(installingTable, $(this).val(), null, installingTable);
     });
@@ -524,12 +551,12 @@ $(function () {
 
   $('#obsolete').click(function () {
     var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
-    batchAction(activeTable, 'obsolete', obsoletedTable);
+    batchAction(activeTable, 'obsolete', null, obsoletedTable);
   });
 
   $('#new-request').click(function () {
     var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
-    batchAction(activeTable, 'create new request from', obsoletedTable);
+    batchAction(activeTable, 'create new request from', null, obsoletedTable);
   });
 
   $('#reload').click(function () {

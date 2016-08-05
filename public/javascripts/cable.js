@@ -130,6 +130,10 @@ var template = {
     wiringDrawing: {
       e: '$,wiringDrawing',
       l: 'span[name="from.wireDrawing"]'
+    },
+    readyForTerm: {
+      e: '$.readyForTerm',
+      l: 'span[name="from.readyForTerm"]'
     }
   },
 
@@ -150,6 +154,10 @@ var template = {
     wiringDrawing: {
       e: '$,wiringDrawing',
       l: 'span[name="to.wireDrawing"]'
+    },
+    readyForTerm: {
+      e: '$.readyForTerm',
+      l: 'span[name="to.readyForTerm"]'
     }
   },
 

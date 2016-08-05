@@ -188,7 +188,8 @@ var cable = new Schema({
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
-    label: String
+    label: String,
+    readyForTerm: Boolean
   },
 
   to: {
@@ -196,7 +197,8 @@ var cable = new Schema({
     terminationDevice: String,
     terminationType: String,
     wiringDrawing: String,
-    label: String
+    label: String,
+    readyForTerm: Boolean
   },
 
   required: {
