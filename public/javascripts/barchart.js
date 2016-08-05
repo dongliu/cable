@@ -59,6 +59,7 @@ var barChart = (function (me, $) {
       barShowStroke: false,
       animation: false
     });
+    return barChartData;
   }
 
   function tableBar(oTable) {
@@ -69,7 +70,7 @@ var barChart = (function (me, $) {
       $('#modalLabel').html('Plot a bar chart for all items in the table');
     }
     $('#modal .modal-body').empty();
-    $('#modal .modal-body').html('<canvas id="barChart" height="400" width="600"></canvas>');
+    $('#modal .modal-body').html('<canvas id="barChart" height="400" width="600"></canvas><a id="barChartShowData" class="hidden" href="#">Show Data</a><textarea id="barChartData" class="hidden" readonly="readonly" style="height:400px;width:600px;"></textarea><div><a id="barChartHideData" href="#" class="hidden">Show Plot</a></div>');
 
     $('#modal .modal-footer').html('<form class="form-inline"><select id="bar-key"><option value="basic.wbs">WBS</option><option value="status">Status</option><option value="basic.traySection">Tray section</option><option value="basic.cableType">Cable type</option><option value="basic.engineer">Engineer</option><option value="conduit">Conduit</option></select> <button id="plot" class="btn btn-primary">Plot</button> <button data-dismiss="modal" aria-hidden="true" class="btn">Close</button></form>');
 
@@ -77,9 +78,27 @@ var barChart = (function (me, $) {
 
     $('#plot').click(function (e) {
       e.preventDefault();
+      // Reset element visibility. Chart must be visible when created.
+      $('#barChartData,#barChartHideData').addClass('hidden');
+      $('#barChart,#barChartShowData').removeClass('hidden');
       var ctx = $('#barChart')[0].getContext('2d');
       var groupBy = $('#bar-key').val();
-      drawChart(ctx, selected, oTable, groupBy);
+      var data = drawChart(ctx, selected, oTable, groupBy);
+      var csv = [ '"' + $('#bar-key option:selected').text() + '", "count"'];
+      for( var idx=0; idx<data.labels.length; idx+=1 ) {
+        csv.push('"' + data.labels[idx] + '", ' + data.datasets[0].data[idx]);
+      }
+      $('#barChartData').val(csv.join('\n'));
+    });
+
+    $('#barChartShowData').click(function (e) {
+      $('#barChart,#barChartShowData').addClass('hidden');
+      $('#barChartData,#barChartHideData').removeClass('hidden');
+    });
+
+    $('#barChartHideData').click(function (e) {
+      $('#barChartData,#barChartHideData').addClass('hidden');
+      $('#barChart,#barChartShowData').removeClass('hidden');
     });
   }
   return tableBar;

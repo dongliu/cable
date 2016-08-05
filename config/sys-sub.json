@@ -1,4 +1,15 @@
 {
+  "0": {
+    "name": "Reserved",
+    "subcategory": {
+      "0": "Reserved"
+    },
+    "signal": {
+      "N": {
+        "name": "None"
+      }
+    }
+  },
   "1": {
     "name": "PPS",
     "subcategory": {
