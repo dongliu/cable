@@ -79,6 +79,10 @@ function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
 
+function formatDateShort(date) {
+  return date ? moment(date).format('YYYY-MM-DD') : '';
+}
+
 function formatCableStatus(s) {
   var status = {
     '100': 'approved',
@@ -507,6 +511,27 @@ var fromColumns = [{
   sClass: 'editable',
   sParseType: 'boolean',
   bFilter: true
+}, {
+  sTitle: 'From terminated on',
+  sDefaultContent: '',
+  mData: function (source, type, val) {
+    if( source.from && source.from.terminatedOn ) {
+      if( type === 'sort' ) {
+        return source.from.terminatedOn;
+      } else {
+        return formatDateShort(source.from.terminatedOn);
+      }
+    }
+    return '';
+  },
+  sClass: 'editable',
+  bFilter: true
+}, {
+   sTitle: 'From terminated by',
+   sDefaultContent: '',
+   mData: 'from.terminatedBy',
+   sClass: 'editable',
+   bFilter: true
 }];
 
 var toColumns = [{
@@ -540,6 +565,27 @@ var toColumns = [{
   sClass: 'editable',
   sParseType: 'boolean',
   bFilter: true
+}, {
+  sTitle: 'To terminated on',
+  sDefaultContent: '',
+  mData: function (source, type, val) {
+    if( source.to && source.to.terminatedOn ) {
+      if( type === 'sort' ) {
+        return source.to.terminatedOn;
+      } else {
+        return formatDateShort(source.to.terminatedOn);
+      }
+    }
+    return '';
+  },
+  sClass: 'editable',
+  bFilter: true
+}, {
+   sTitle: 'To terminated by',
+   sDefaultContent: '',
+   mData: 'to.terminatedBy',
+   sClass: 'editable',
+   bFilter: true
 }];
 
 var conduitColumn = {

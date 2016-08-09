@@ -123,6 +123,8 @@ function actionFromModal(rows, action, data, activeTable, obsoletedTable) {
         activeTable.fnDeleteRow(rows[index]);
         obsoletedTable.fnAddData(cable);
         break;
+      case 'To terminated':
+      case 'From terminated':
       case 'to ready for termination':
       case 'from ready for termination':
         activeTable.fnUpdate(cable, rows[index]);
@@ -204,6 +206,41 @@ function batchAction(oTable, action, data, obsoletedTable) {
     $('#modal').modal('show');
   }
 }
+
+
+function batchActionWithNameAndDate(oTable, action, data, obsoletedTable) {
+  var selected = fnGetSelected(oTable, 'row-selected');
+  var cables = [];
+  var rows = [];
+  if (selected.length) {
+    $('#modalLabel').html(action + ' the following ' + selected.length + ' cables? ');
+    $('#modal .modal-body').empty();
+    $('#modal .modal-body').append('<form class="form-horizontal" id="modalform"><div class="control-group"><label class="control-label">Staff name</label><div class="controls ui-front"><input id="modal-name" type="text" class="input-small" placeholder="Last, First"></div></div><div class="control-group"><label class="control-label">Date</label><div class="controls"><input id="modal-date" type="text" class="input-small" placeholder="date"></div></div></form>');
+    selected.forEach(function (row) {
+      rows.push(row);
+      var data = oTable.fnGetData(row);
+      cables.push(row);
+      $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
+    });
+    $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal-name').autocomplete(nameAuto('#modal-name', {})); //nameCache));
+    $('#modal-date').datepicker({ dateFormat: 'yy-mm-dd' });
+    $('#modal').modal('show');
+    $('#action').click(function (e) {
+      if( !data ) {
+        data = { action: action };
+      }
+      data.name = $('#modal-name').val();
+      data.date = $('#modal-date').datepicker('getDate');
+      actionFromModal(rows, action, data, oTable, obsoletedTable);
+    });
+  } else {
+    $('#modalLabel').html('Alert');
+    $('#modal .modal-body').html('No request has been selected!');
+    $('#modal .modal-footer').html('<button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
+    $('#modal').modal('show');
+  }
+};
 
 
 /*function batchCableAction(oTable, action, procuringTable, installingTable, installedTable) {
@@ -445,6 +482,23 @@ $(function () {
     };
     batchAction(activeTable, 'from ready for termination', data, obsoletedTable);
   });
+
+  $('#installing-to-terminated').click(function (e) {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    var data = {
+      action: 'to-terminated',
+    };
+    batchActionWithNameAndDate(activeTable, 'To terminated', data, obsoletedTable);
+  });
+
+  $('#installing-from-terminated').click(function (e) {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    var data = {
+      action: 'from-terminated',
+    };
+    batchActionWithNameAndDate(activeTable, 'From terminated', data, obsoletedTable);
+  });
+
 
   /*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
       batchCableAction(installingTable, $(this).val(), null, installingTable);

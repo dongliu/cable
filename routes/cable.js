@@ -149,6 +149,66 @@ function updateCable(conditions, update, req, res) {
   });
 }
 
+function updateCableWithChanges(conditions, update, changes, req, res) {
+  var idx = 0, change = null;
+  for( idx=0; idx<changes.length; idx+=1 ) {
+    if (changes[idx].oldValue === null) {
+      // for string, treat null and '' as the same
+      conditions[changes[idx].property] = {
+        $in: [null, '']
+      };
+    } else if (changes[idx].oldValue === false) {
+      // for boolean, treat false and '' as the same
+      conditions[changes[idx].property] = {
+        $in: [null, false]
+      };
+    } else {
+      conditions[changes[idx].property] = changes[idx].oldValue;
+    }
+    update[changes[idx].property] = changes[idx].newValue;
+  }
+  update.$inc = {
+    __v: 1
+  };
+  if( changes.length === 1 ) {
+    change = new Change({
+      cableName: req.params.id,
+      property: changes[0].property,
+      oldValue: changes[0].oldValue,
+      newValue: changes[0].newValue,
+      updatedBy: req.session.userid,
+      updatedOn: Date.now()
+    });
+  } else if( changes.length > 1 ) {
+    change = new MultiChange({
+      cableName: req.params.id,
+      updates: [],
+      updatedBy: req.session.userid,
+      updatedOn: Date.now()
+    });
+    for( idx=0; idx<changes.length; idx+=1 ) {
+      change.updates.push({
+        property: changes[idx].property,
+        oldValue: changes[idx].oldValue,
+        newValue: changes[idx].newValue
+      });
+    }
+  }
+  if( change ) {
+    change.save(function (err, doc) {
+      if (err) {
+        return res.send(500, 'cannot save the change');
+      }
+      update.$push = {
+        changeHistory: doc._id
+      };
+      updateCable(conditions, update, req, res);
+    });
+  } else {
+      updateCable(conditions, update, req, res);
+  }
+};
+
 module.exports = function (app) {
 
   app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
@@ -809,6 +869,7 @@ module.exports = function (app) {
       number: req.params.id
     };
     var update = {};
+    var changes = [];
     var inValidAction = false;
 
     var required = req.body.required;
@@ -833,6 +894,36 @@ module.exports = function (app) {
         __v: 1
       };
       break;
+    case 'to-terminated':
+      changes.push({
+        property:'to.terminatedBy',
+        newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
+        oldValue: null
+      });
+      changes.push({
+        property: 'to.terminatedOn',
+        newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
+        oldValue: null
+      });
+      update.updatedOn = Date.now();
+      update.updatedBy = req.session.userid;
+      updateCableWithChanges(conditions, update, changes, req, res);
+      return;
+    case 'from-terminated':
+      changes.push({
+        property:'from.terminatedBy',
+        newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
+        oldValue: null
+      });
+      changes.push({
+        property: 'from.terminatedOn',
+        newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
+        oldValue: null
+      });
+      update.updatedOn = Date.now();
+      update.updatedBy = req.session.userid;
+      updateCableWithChanges(conditions, update, changes, req, res);
+      return;
     case 'obsolete':
       conditions.status = {
         $lte: 500
@@ -975,6 +1066,5 @@ module.exports = function (app) {
         updateCable(conditions, update, req, res);
       });
     }
-
   });
 };

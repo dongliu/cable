@@ -159,13 +159,21 @@ block content
                 i.fa.fa-check-square-o.fa-lg
                 | &nbsp;Field tested
             .btn-group
+              button.btn.btn-primary#installing-from-ready-for-term(value='from-ready-for-term')
+                i.fa.fa-check-square-o.fa-lg
+                | &nbsp;From Ready for Termination
+            .btn-group
+              button.btn.btn-primary#installing-from-terminated(value='from-terminated')
+                i.fa.fa-check-square-o.fa-lg
+                | &nbsp;From Terminated
+            .btn-group
               button.btn.btn-primary#installing-to-ready-for-term(value='to-ready-for-term')
                 i.fa.fa-check-square-o.fa-lg
                 | &nbsp;To Ready for Termination
             .btn-group
-              button.btn.btn-primary#installing-from-ready-for-term(value='from-ready-for-term')
+              button.btn.btn-primary#installing-to-terminated(value='to-terminated')
                 i.fa.fa-check-square-o.fa-lg
-                | &nbsp;From Ready for Termination
+                | &nbsp;To Terminated
             .btn-group
               button.btn.btn-primary#installing-to-use(value='use')
                 i.fa.fa-check-square-o.fa-lg
@@ -197,6 +205,7 @@ block content
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
+  script(type='text/javascript', src='/jquery/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
