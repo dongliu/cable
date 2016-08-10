@@ -17,16 +17,19 @@ function nameAuto(input, nameCache){
   return {
     minLength: 1,
     source: function(req, res) {
+      var filter = function (term, names) {
+          var i, output = [];
+          for (i=0; i<names.length; i+=1) {
+            if (names[i].toLowerCase().indexOf(term) === 0) {
+              output.push(names[i]);
+            }
+          }
+          return output;
+      };
       var term = req.term.toLowerCase();
-      var output = [];
       var key = term.charAt(0);
       if (key in nameCache) {
-        for (var i = 0; i < nameCache[key].length; i += 1) {
-          if (nameCache[key][i].toLowerCase().indexOf(term) === 0) {
-            output.push(nameCache[key][i]);
-          }
-        }
-        res(output);
+        res(filter(term, nameCache[key]));
         return;
       }
       $.getJSON('/adusernames', {term: key}, function(data, status, xhr) {
@@ -36,8 +39,8 @@ function nameAuto(input, nameCache){
             names.push(data[i].displayName);
           }
         }
-        nameCache[term] = names;
-        res(names);
+        nameCache[key] = names;
+        res(filter(term, nameCache[key]));
       });
     },
     select: function(event, ui) {
