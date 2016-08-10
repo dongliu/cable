@@ -125,8 +125,8 @@ function actionFromModal(rows, action, data, activeTable, obsoletedTable) {
         break;
       case 'To terminated':
       case 'From terminated':
-      case 'to ready for termination':
-      case 'from ready for termination':
+      case 'To ready for termination':
+      case 'From ready for termination':
         activeTable.fnUpdate(cable, rows[index]);
         break;
       default:
@@ -223,7 +223,7 @@ function batchActionWithNameAndDate(oTable, action, data, obsoletedTable) {
       $('#modal .modal-body').append('<div class="cable" id="' + data.number + '">' + data.number + '||' + formatCableStatus(data.status) + '||' + moment(data.approvedOn).format('YYYY-MM-DD HH:mm:ss') + '||' + data.submittedBy + '||' + data.basic.project + '</div>');
     });
     $('#modal .modal-footer').html('<button id="action" class="btn btn-primary">Confirm</button><button data-dismiss="modal" aria-hidden="true" class="btn">Return</button>');
-    $('#modal-name').autocomplete(nameAuto('#modal-name', {})); //nameCache));
+    $('#modal-name').autocomplete(nameAuto('#modal-name', {}));
     $('#modal-date').datepicker({ dateFormat: 'yy-mm-dd' });
     $('#modal').modal('show');
     $('#action').click(function (e) {
@@ -469,7 +469,7 @@ $(function () {
       oldValue: false,
       newValue: true
     };
-    batchAction(activeTable, 'to ready for termination', data, obsoletedTable);
+    batchAction(activeTable, 'To ready for termination', data, obsoletedTable);
   });
 
   $('#installing-from-ready-for-term').click(function (e) {
@@ -480,7 +480,7 @@ $(function () {
       oldValue: false,
       newValue: true
     };
-    batchAction(activeTable, 'from ready for termination', data, obsoletedTable);
+    batchAction(activeTable, 'From ready for termination', data, obsoletedTable);
   });
 
   $('#installing-to-terminated').click(function (e) {
