@@ -10,6 +10,11 @@ block head
   link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/font-awesome-4.2.0/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
+  style(type='text/css')
+    | .ui-autocomplete {
+    |   max-height: 95px;
+    |   overflow-y: auto;
+    | }
 
 block content
   .container-fluid
