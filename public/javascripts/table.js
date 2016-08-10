@@ -201,13 +201,15 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
   }
 }
 
-function fnSelectAll(oTableLocal, selectedClass, checkboxClass, filtered) {
-  fnDeselect(oTableLocal, selectedClass, checkboxClass);
+function fnSelectAll(oTableLocal, selectedClass, checkboxClass, current) {
   var rows;
   var i;
-  if (filtered) {
+  if (current) {
     rows = oTableLocal.$('tr', {
-      "filter": "applied"
+      'page':'current',
+      // If 'current' is given then the
+      // following two options are forced:
+      // 'filter':'applied' and 'order':'current'
     });
   } else {
     rows = oTableLocal.$('tr');
