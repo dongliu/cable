@@ -79,6 +79,10 @@ function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
 
+function formatDateShort(date) {
+  return date ? moment(date).format('YYYY-MM-DD') : '';
+}
+
 function formatCableStatus(s) {
   var status = {
     '100': 'approved',
@@ -197,13 +201,15 @@ function fnDeselect(oTableLocal, selectedClass, checkboxClass) {
   }
 }
 
-function fnSelectAll(oTableLocal, selectedClass, checkboxClass, filtered) {
-  fnDeselect(oTableLocal, selectedClass, checkboxClass);
+function fnSelectAll(oTableLocal, selectedClass, checkboxClass, current) {
   var rows;
   var i;
-  if (filtered) {
+  if (current) {
     rows = oTableLocal.$('tr', {
-      "filter": "applied"
+      'page':'current',
+      // If 'current' is given then the
+      // following two options are forced:
+      // 'filter':'applied' and 'order':'current'
     });
   } else {
     rows = oTableLocal.$('tr');
@@ -500,6 +506,34 @@ var fromColumns = [{
   mData: 'from.wiringDrawing',
   sClass: 'editable',
   bFilter: true
+}, {
+  sTitle: 'From ready for termination',
+  sDefaultContent: false,
+  mData: 'from.readyForTerm',
+  sClass: 'editable',
+  sParseType: 'boolean',
+  bFilter: true
+}, {
+  sTitle: 'From terminated on',
+  sDefaultContent: '',
+  mData: function (source, type, val) {
+    if( source.from && source.from.terminatedOn ) {
+      if( type === 'sort' ) {
+        return source.from.terminatedOn;
+      } else {
+        return formatDateShort(source.from.terminatedOn);
+      }
+    }
+    return '';
+  },
+  sClass: 'editable',
+  bFilter: true
+}, {
+   sTitle: 'From terminated by',
+   sDefaultContent: '',
+   mData: 'from.terminatedBy',
+   sClass: 'editable',
+   bFilter: true
 }];
 
 var toColumns = [{
@@ -526,6 +560,34 @@ var toColumns = [{
   mData: 'to.wiringDrawing',
   sClass: 'editable',
   bFilter: true
+}, {
+  sTitle: 'To ready for termination',
+  sDefaultContent: false,
+  mData: 'to.readyForTerm',
+  sClass: 'editable',
+  sParseType: 'boolean',
+  bFilter: true
+}, {
+  sTitle: 'To terminated on',
+  sDefaultContent: '',
+  mData: function (source, type, val) {
+    if( source.to && source.to.terminatedOn ) {
+      if( type === 'sort' ) {
+        return source.to.terminatedOn;
+      } else {
+        return formatDateShort(source.to.terminatedOn);
+      }
+    }
+    return '';
+  },
+  sClass: 'editable',
+  bFilter: true
+}, {
+   sTitle: 'To terminated by',
+   sDefaultContent: '',
+   mData: 'to.terminatedBy',
+   sClass: 'editable',
+   bFilter: true
 }];
 
 var conduitColumn = {

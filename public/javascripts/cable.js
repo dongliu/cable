@@ -28,11 +28,20 @@ function formatDateLong(date) {
   return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
 }
 
+function formatDateShort(date) {
+  return date ? moment(date).format('YYYY-MM-DD') : '';
+}
+
 function history(found) {
-  var i, output = '';
+  var i, t, output = '';
   if (found.length > 0) {
     for (i = 0; i < found.length; i += 1) {
-      output = output + 'changed to <strong>' + found[i].newValue + '</strong> from <strong>' + found[i].oldValue + '</strong> by <strong>' + found[i].updatedBy + '</strong> on <strong>' + formatDateLong(found[i].updatedOn) + '</strong>; ';
+      t = JSONPath({}, template, '$.' + found[i].property);
+      if( (t.length > 0) && (typeof(t[0].h) === 'function') ) {
+        output = output + 'changed to <strong>' + t[0].h(found[i].newValue) + '</strong> from <strong>' + t[0].h(found[i].oldValue) + '</strong> by <strong>' + found[i].updatedBy + '</strong> on <strong>' + formatDateLong(found[i].updatedOn) + '</strong>; ';
+      } else {
+        output = output + 'changed to <strong>' + found[i].newValue + '</strong> from <strong>' + found[i].oldValue + '</strong> by <strong>' + found[i].updatedBy + '</strong> on <strong>' + formatDateLong(found[i].updatedOn) + '</strong>; ';
+      }
     }
   }
   return output;
@@ -130,6 +139,23 @@ var template = {
     wiringDrawing: {
       e: '$,wiringDrawing',
       l: 'span[name="from.wireDrawing"]'
+    },
+    readyForTerm: {
+      e: '$.readyForTerm',
+      l: 'span[name="from.readyForTerm"]'
+    },
+    terminatedOn: {
+      e: '$.terminatedOn',
+      l: function (v) {
+        $('span[name="from.terminatedOn"]').text(formatDateShort(v[0]));
+      },
+      h: function (v) {
+        return v ? formatDateShort(v) : 'null';
+      }
+    },
+    terminatedBy: {
+      e: '$.terminatedBy',
+      l: 'span[name="from.terminatedBy"]'
     }
   },
 
@@ -150,6 +176,23 @@ var template = {
     wiringDrawing: {
       e: '$,wiringDrawing',
       l: 'span[name="to.wireDrawing"]'
+    },
+    readyForTerm: {
+      e: '$.readyForTerm',
+      l: 'span[name="to.readyForTerm"]'
+    },
+    terminatedOn: {
+      e: '$.terminatedOn',
+      l: function (v) {
+        $('span[name="to.terminatedOn"]').text(formatDateShort(v[0]));
+      },
+      h: function (v) {
+        return v ? formatDateShort(v) : 'null';
+      }
+    },
+    terminatedBy: {
+      e: '$.terminatedBy',
+      l: 'span[name="to.terminatedBy"]'
     }
   },
 

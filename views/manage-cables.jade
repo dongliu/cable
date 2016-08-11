@@ -10,6 +10,11 @@ block head
   link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
   link(rel='stylesheet', href='/font-awesome-4.2.0/css/font-awesome.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
+  style(type='text/css')
+    | .ui-autocomplete {
+    |   max-height: 95px;
+    |   overflow-y: auto;
+    | }
 
 block content
   .container-fluid
@@ -130,38 +135,54 @@ block content
               button.btn.btn-info#installing-wrap.active Wrap
               button.btn.btn-info#installing-unwrap Unwrap
           .btn-toolbar
+            //- .btn-group
+            //-   button.btn#installing-label(value='label')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Labeled
+            //- .btn-group
+            //-   button.btn#installing-benchTerm(value='benchTerm')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Bench terminated
+            //- .btn-group
+            //-   button.btn#installing-benchTest(value='benchTest')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Bench tested
+            //- .btn-group
+            //-   button.btn.btn-primary#installing-to-pull(value='pull')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Ready to pull
+            //- .btn-group
+            //-   button.btn#installing-pull(value='pulled')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Pulled
+            //- .btn-group
+            //-   button.btn#installing-fieldTerm(value='fieldTerm')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Field terminated
+            //- .btn-group
+            //-   button.btn#installing-fieldTest(value='fieldTest')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Field tested
             .btn-group
-              button.btn#installing-label(value='label')
+              button.btn.btn-primary#installing-from-ready-for-term(value='from-ready-for-term')
                 i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Labeled
+                | &nbsp;From Ready for Termination
             .btn-group
-              button.btn#installing-benchTerm(value='benchTerm')
+              button.btn.btn-primary#installing-from-terminated(value='from-terminated')
                 i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Bench terminated
+                | &nbsp;From Terminated
             .btn-group
-              button.btn#installing-benchTest(value='benchTest')
+              button.btn.btn-primary#installing-to-ready-for-term(value='to-ready-for-term')
                 i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Bench tested
+                | &nbsp;To Ready for Termination
             .btn-group
-              button.btn.btn-primary#installing-to-pull(value='pull')
+              button.btn.btn-primary#installing-to-terminated(value='to-terminated')
                 i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Ready to pull
-            .btn-group
-              button.btn#installing-pull(value='pulled')
-                i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Pulled
-            .btn-group
-              button.btn#installing-fieldTerm(value='fieldTerm')
-                i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Field terminated
-            .btn-group
-              button.btn#installing-fieldTest(value='fieldTest')
-                i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Field tested
-            .btn-group
-              button.btn.btn-primary#installing-to-use(value='use')
-                i.fa.fa-check-square-o.fa-lg
-                | &nbsp;Ready to use
+                | &nbsp;To Terminated
+            //- .btn-group
+            //-   button.btn.btn-primary#installing-to-use(value='use')
+            //-     i.fa.fa-check-square-o.fa-lg
+            //-     | &nbsp;Ready to use
           .table-overflow
             table#installing-table.table.table-bordered.table-hover.table-condensed
         #installed.tab-pane
@@ -189,6 +210,7 @@ block content
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
+  script(type='text/javascript', src='/jquery/jquery-ui-1.10.2.custom.js')
   script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
