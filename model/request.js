@@ -128,6 +128,7 @@ var request = new Schema({
 //   251: field terminated
 //   252: field tested
 // working: 3xx
+//   300: installed
 // failed: 4xx
 // obsoleted: 5xx
 //   501: not needed
@@ -243,6 +244,8 @@ var cable = new Schema({
   fieldTerminatedOn: Date,
   fieldTestedBy: String,
   fieldTestedOn: Date,
+  installedBy: String,
+  installedOn: Date,
   changeHistory: [ObjectId]
 });
 

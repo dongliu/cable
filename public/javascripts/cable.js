@@ -249,9 +249,21 @@ var template = {
     l: function (v) {
       $('#pulledOn').text(formatDateLong(v[0]));
     }
+  },
+
+  installedBy: {
+    e: '$.installedBy',
+    l: function (v) {
+      $('#installedBy').prop('href', '/users/' + v + '/');
+      $('#installedBy').text(v);
+    }
+  },
+  installedOn: {
+    e: '$.installedOn',
+    l: function (v) {
+      $('#installedOn').text(formatDateLong(v[0]));
+    }
   }
-
-
 };
 
 function jsonETL(json, template) {

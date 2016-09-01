@@ -924,6 +924,26 @@ module.exports = function (app) {
       update.updatedBy = req.session.userid;
       updateCableWithChanges(conditions, update, changes, req, res);
       return;
+    case 'installed':
+      changes.push({
+        property:'installedBy',
+        newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
+        oldValue: null
+      });
+      changes.push({
+        property: 'installedOn',
+        newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
+        oldValue: null
+      });
+      changes.push({
+        property: 'status',
+        newValue: 300,
+        oldValue: 250
+      });
+      update.updatedOn = Date.now();
+      update.updatedBy = req.session.userid;
+      updateCableWithChanges(conditions, update, changes, req, res);
+      return;
     case 'obsolete':
       conditions.status = {
         $lte: 500

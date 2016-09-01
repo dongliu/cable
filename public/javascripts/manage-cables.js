@@ -102,7 +102,7 @@ function updateTd(td, oTable) {
   });
 }
 
-function actionFromModal(rows, action, data, activeTable, obsoletedTable) {
+function actionFromModal(rows, action, data, activeTable, destinationTable) {
   if( !data ) {
     data = { action: action };
   }
@@ -121,13 +121,17 @@ function actionFromModal(rows, action, data, activeTable, obsoletedTable) {
       switch (action) {
       case 'obsolete':
         activeTable.fnDeleteRow(rows[index]);
-        obsoletedTable.fnAddData(cable);
+        destinationTable.fnAddData(cable);
         break;
       case 'To terminated':
       case 'From terminated':
       case 'To ready for termination':
       case 'From ready for termination':
         activeTable.fnUpdate(cable, rows[index]);
+        break;
+      case 'Ready to use':
+        activeTable.fnDeleteRow(rows[index]);
+        destinationTable.fnAddData(cable);
         break;
       default:
         // do nothing
@@ -208,7 +212,7 @@ function batchAction(oTable, action, data, obsoletedTable) {
 }
 
 
-function batchActionWithNameAndDate(oTable, action, data, obsoletedTable) {
+function batchActionWithNameAndDate(oTable, action, data, destinationTable) {
   var selected = fnGetSelected(oTable, 'row-selected');
   var cables = [];
   var rows = [];
@@ -232,7 +236,7 @@ function batchActionWithNameAndDate(oTable, action, data, obsoletedTable) {
       }
       data.name = $('#modal-name').val();
       data.date = $('#modal-date').datepicker('getDate');
-      actionFromModal(rows, action, data, oTable, obsoletedTable);
+      actionFromModal(rows, action, data, oTable, destinationTable);
     });
   } else {
     $('#modalLabel').html('Alert');
@@ -502,11 +506,15 @@ $(function () {
 
   /*  $('#installing-label, #installing-benchTerm, #installing-benchTest, #installing-to-pull, #installing-pull, #installing-fieldTerm, #installing-fieldTest').click(function (e) {
       batchCableAction(installingTable, $(this).val(), null, installingTable);
-    });
-
-    $('#installing-to-use').click(function (e) {
-      batchCableAction(installingTable, $(this).val(), null, installingTable, installedTable);
     });*/
+
+  $('#installing-installed').click(function (e) {
+    var activeTable = $($.fn.dataTable.fnTables(true)[0]).dataTable();
+    var data = {
+      action: 'installed',
+    };
+    batchActionWithNameAndDate(activeTable, 'Ready to use', data, installedTable);
+  });
 
   /*installing tab ends*/
 
