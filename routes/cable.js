@@ -656,7 +656,7 @@ module.exports = function (app) {
 
 
   // get all the cables
-  app.get('/allcables/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/allcables/json', auth.ensureAuthWithToken, function (req, res) {
     var low = 100;
     var up = 499;
     Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
@@ -807,7 +807,7 @@ module.exports = function (app) {
 
   });
 
-  app.get('/cables/:id/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cables/:id/json', auth.ensureAuthWithToken, function (req, res) {
     Cable.findOne({
       number: req.params.id
     }).exec(function (err, cable) {
