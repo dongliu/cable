@@ -895,6 +895,7 @@ module.exports = function (app) {
       };
       break;
     case 'to-terminated':
+      conditions['to.readyForTerm'] = true;
       changes.push({
         property:'to.terminatedBy',
         newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
@@ -910,6 +911,7 @@ module.exports = function (app) {
       updateCableWithChanges(conditions, update, changes, req, res);
       return;
     case 'from-terminated':
+      conditions['from.readyForTerm'] = true;
       changes.push({
         property:'from.terminatedBy',
         newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
@@ -919,6 +921,32 @@ module.exports = function (app) {
         property: 'from.terminatedOn',
         newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
         oldValue: null
+      });
+      update.updatedOn = Date.now();
+      update.updatedBy = req.session.userid;
+      updateCableWithChanges(conditions, update, changes, req, res);
+      return;
+    case 'installed':
+      conditions['to.readyForTerm'] = true;
+      conditions['to.terminatedBy'] = { $nin: [null, '']};
+      conditions['to.terminatedOn'] = { $ne: null};
+      conditions['from.readyForTerm'] = true;
+      conditions['from.terminatedBy'] = { $nin: [null, '']};
+      conditions['from.terminatedOn'] = { $ne: null};
+      changes.push({
+        property:'installedBy',
+        newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
+        oldValue: null
+      });
+      changes.push({
+        property: 'installedOn',
+        newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
+        oldValue: null
+      });
+      changes.push({
+        property: 'status',
+        newValue: 300,
+        oldValue: 250
       });
       update.updatedOn = Date.now();
       update.updatedBy = req.session.userid;
