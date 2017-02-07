@@ -136,6 +136,10 @@ var template = {
       e: '$.terminationType',
       l: 'span[name="from.terminationType"]'
     },
+    terminationPort: {
+      e: '$.terminationPort',
+      l: 'span[name="from.terminationPort"]'
+    },
     wiringDrawing: {
       e: '$,wiringDrawing',
       l: 'span[name="from.wireDrawing"]'
@@ -172,6 +176,10 @@ var template = {
     terminationType: {
       e: '$.terminationType',
       l: 'span[name="to.terminationType"]'
+    },
+    terminationPort: {
+      e: '$.terminationPort',
+      l: 'span[name="to.terminationPort"]'
     },
     wiringDrawing: {
       e: '$,wiringDrawing',

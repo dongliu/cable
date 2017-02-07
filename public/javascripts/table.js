@@ -501,6 +501,12 @@ var fromColumns = [{
   sClass: 'editable',
   bFilter: true
 }, {
+  sTitle: 'From termination port',
+  sDefaultContent: '',
+  mData: 'from.terminationPort',
+  sClass: 'editable',
+  bFilter: true
+}, {
   sTitle: 'From wiring drawing',
   sDefaultContent: '',
   mData: 'from.wiringDrawing',
@@ -552,6 +558,12 @@ var toColumns = [{
   sTitle: 'To termination type',
   sDefaultContent: '',
   mData: 'to.terminationType',
+  sClass: 'editable',
+  bFilter: true
+}, {
+  sTitle: 'To termination port',
+  sDefaultContent: '',
+  mData: 'to.terminationPort',
   sClass: 'editable',
   bFilter: true
 }, {
