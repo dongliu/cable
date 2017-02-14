@@ -111,13 +111,18 @@ function updateCable(change, i, callback) {
         }
       } else {
         console.error('Error: cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
-        if (p === 'status') {
-          conditionSatisfied = false;
-        }
+        conditionSatisfied = false;
       }
     });
 
-    if (!(conditionSatisfied && updates.length > 0)) {
+    if (!conditionSatisfied) {
+      err = new Error(' conditions not satisfied for cable ' + cable.number)
+      console.error(err);
+      callback(err);
+      return;
+    }
+
+    if (updates.length <= 0) {
       err = new Error(' no changes for cable ' + cable.number)
       console.error(err);
       callback(err);
