@@ -33,14 +33,14 @@ program.version('0.0.1')
 program.parse(process.argv);
 
 if (inputPath === undefined) {
-  console.error('need the input source csv file path!');
+  console.error('error: need the input source csv file path!');
   process.exit(1);
 }
 
 realPath = path.resolve(process.cwd(), inputPath);
 
 if (!fs.existsSync(realPath)) {
-  console.error(realPath + ' does not exist.');
+  console.error('error: ' + realPath + ' does not exist.');
   console.error('Please input a valid csv file path.');
   process.exit(1);
 }
@@ -62,10 +62,10 @@ function updateCable(change, i) {
     number: change[0]
   }).exec(function (err, cable) {
     if (err) {
-      console.error(err);
+      console.error('error: ' + err);
     } else {
       if (!cable) {
-        console.error('cannot find cable with id ' + change[0]);
+        console.error('error: cannot find cable with id ' + change[0]);
         return;
       }
 
@@ -102,7 +102,7 @@ function updateCable(change, i) {
             }
           }
         } else {
-          console.log('cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
+          console.error('error: cable ' + cable.number + ' ' + p + ' is ' + cable.get(p) + ', expect ' + change[2 * index + 1]);
           if (p === 'status') {
             conditionSatisfied = false;
           }
@@ -146,7 +146,7 @@ function updateCable(change, i) {
           });
         }
       } else {
-        console.error('no changes for cable ' + cable.number);
+        console.error('error: no changes for cable ' + cable.number);
       }
     }
   });
@@ -166,7 +166,7 @@ parser.on('readable', function () {
     console.log('read ' + line + ' lines ...');
     if (line === 1) {
       if (record[0] !== 'number') {
-        console.log('the first column should be number');
+        console.error('error: first column must be number');
         process.exit(1);
       }
       for (i = 1; i < record.length; i += 1) {
@@ -186,7 +186,7 @@ parser.on('readable', function () {
 });
 
 parser.on('error', function (err) {
-  console.log(err.message);
+  console.error('error: ' + err.message);
 });
 
 parser.on('finish', function () {
