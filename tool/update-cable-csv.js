@@ -127,7 +127,7 @@ function updateCable(change, i) {
           console.log('cable ' + cable.number + ' will be updated with ' + JSON.stringify(update, null, 2));
         } else {
           multiChange.save(function (err1, c) {
-            if (err) {
+            if (err1) {
               console.error(err1);
             } else {
               update.$push = {
