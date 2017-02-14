@@ -19,6 +19,7 @@ var inputPath;
 var realPath;
 var db;
 var line = 0;
+var done = 0;
 var changes = [];
 var parser;
 var properties = [];
@@ -56,21 +57,25 @@ function splitTags(s) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
-function updateCable(change, i) {
+function updateCable(change, i, callback) {
   console.log('processing change ' + i);
-  Cable.findOne({
-    number: change[0]
-  }).exec(function (err, cable) {
-    if (err) {
-      console.error('error: ' + err);
-    } else {
+  Cable.findOne({ number: change[0] }).exec(function (err, cable) {
+      if (err) {
+        console.error('error: ' + err);
+        callback(err);
+        return;
+      }
+
       if (!cable) {
-        console.error('error: cannot find cable with id ' + change[0]);
+        err = new Error('cannot find cable with id ' + change[0]);
+        console.error('error: ' + err);
+        callback(err);
         return;
       }
 
       var update = {};
       var updates = [];
+      var multiChange = null;
       var conditionSatisfied = true;
 
       properties.forEach(function (p, index) {
@@ -108,47 +113,54 @@ function updateCable(change, i) {
           }
         }
       });
-      var multiChange;
-      if (conditionSatisfied && updates.length > 0) {
-        multiChange = new MultiChange({
-          cableName: cable.number,
-          updates: updates,
-          updatedBy: 'system',
-          updatedOn: Date.now()
-        });
+
+      if (!(conditionSatisfied && updates.length > 0)) {
+        err = new Error(' no changes for cable ' + cable.number)
+        console.error('warning: ' + err);
+        callback(err);
+        return;
       }
-      if (multiChange) {
+
         update.updatedOn = Date.now();
         update.updatedBy = 'system';
         update.$inc = {
           __v: 1
         };
+
         if (program.dryrun) {
           console.log('cable ' + cable.number + ' will be updated with ' + JSON.stringify(update, null, 2));
-        } else {
+          callback(null);
+          return;
+        }
+
+          multiChange = new MultiChange({
+            cableName: cable.number,
+            updates: updates,
+            updatedBy: 'system',
+            updatedOn: Date.now()
+          });
+
           multiChange.save(function (err1, c) {
             if (err1) {
-              console.error(err1);
-            } else {
+              console.error('error: ' + err1);
+              callback(err1);
+              return;
+            }
+
               update.$push = {
                 changeHistory: c._id
               };
-              cable.update(update, {
-                new: true
-              }, function (err2) {
+
+              cable.update(update, { new: true }, function (err2) {
                 if (err2) {
-                  console.error(err2);
-                } else {
-                  console.log('cable ' + cable.number + ' was updated with ' + JSON.stringify(update, null, 2));
+                  console.error('error: ' + err2);
+                  callback(err2);
+                  return;
                 }
+                console.log('cable ' + cable.number + ' was updated with ' + JSON.stringify(update, null, 2));
+                callback(null);
               });
-            }
-          });
-        }
-      } else {
-        console.error('error: no changes for cable ' + cable.number);
-      }
-    }
+      });
   });
 
 }
@@ -187,17 +199,20 @@ parser.on('readable', function () {
 
 parser.on('error', function (err) {
   console.error('error: ' + err.message);
+  process.exit(1);
 });
 
 parser.on('finish', function () {
   console.log('Finished parsing the csv file at ' + Date.now());
   console.log('Starting to apply changes.');
   changes.forEach(function (change, index) {
-    updateCable(change, index);
+    updateCable(change, index, function(err) {
+      done += 1;
+      if (done === changes.length) {
+        mongoose.disconnect();
+      }
+    });
   });
 });
 
 fs.createReadStream(realPath).pipe(parser);
-
-// keep running until the user interrupts
-process.stdin.resume();
