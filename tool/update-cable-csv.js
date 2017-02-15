@@ -82,6 +82,32 @@ function updateCable(change, i, callback) {
     var conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
+      var currentType = Cable.schema.paths[p];
+      if (!currentType) {
+        err = new Error('cable does not have path "' + p + '"');
+        console.error(err.toString());
+        callback(err);
+        return;
+      }
+
+      if (change[2 * index + 1] !== '_whatever_') {
+        try {
+          change[2 * index + 1] = currentType.cast(change[2 * index + 1]);
+        } catch(e) {
+          console.error(e.toString());
+          callback(e);
+          return;
+        }
+      }
+
+      try {
+        change[2 * index + 2] = currentType.cast(change[2 * index + 2]);
+      } catch(e) {
+        console.error(e.toString());
+        callback(e);
+        return;
+      }
+
       var currentValue = cable.get(p);
       switch (p) {
       case 'basic.tags':
@@ -90,6 +116,18 @@ function updateCable(change, i, callback) {
       case 'status':
         change[2 * index + 1] = parseInt(change[2 * index + 1]);
         change[2 * index + 2] = parseInt(change[2 * index + 2]);
+      }
+
+      // Work around to ensure that date objects are properly compared.
+      if (currentValue instanceof Date) {
+        if (change[2 * index + 1] instanceof Date
+            && change[2 * index + 1].getTime() === currentValue.getTime()) {
+          change[2 * index + 1] = currentValue;
+        }
+        if (change[2 * index + 2] instanceof Date
+            && change[2 * index + 2].getTime() === currentValue.getTime()) {
+          change[2 * index + 2] = currentValue;
+        }
       }
 
       if (change[2 * index + 1] === '_whatever_' || currentValue === change[2 * index + 1]) {
