@@ -49,7 +49,7 @@ if (!fs.existsSync(realPath)) {
 mongoose.connect('mongodb://localhost/cable_frib');
 db = mongoose.connection;
 db.on('error', function(err) {
-  console.error(err);
+  console.error(err.toString());
   process.exit(1);
 });
 db.once('open', function () {
@@ -64,14 +64,14 @@ function updateCable(change, i, callback) {
   console.log('processing change ' + i);
   Cable.findOne({ number: change[0] }).exec(function (err, cable) {
     if (err) {
-      console.error(err);
+      console.error(err.toString());
       callback(err);
       return;
     }
 
     if (!cable) {
       err = new Error('cannot find cable with id ' + change[0]);
-      console.error(err);
+      console.error(err.toString());
       callback(err);
       return;
     }
@@ -116,16 +116,15 @@ function updateCable(change, i, callback) {
     });
 
     if (!conditionSatisfied) {
-      err = new Error(' conditions not satisfied for cable ' + cable.number)
-      console.error(err);
+      err = new Error('conditions not satisfied for cable ' + cable.number);
+      console.error(err.toString());
       callback(err);
       return;
     }
 
     if (updates.length <= 0) {
-      err = new Error(' no changes for cable ' + cable.number)
-      console.error(err);
-      callback(err);
+      console.log('cable ' + cable.number + ' will not be updated (no changes)');
+      callback();
       return;
     }
 
@@ -137,7 +136,7 @@ function updateCable(change, i, callback) {
 
     if (program.dryrun) {
       console.log('cable ' + cable.number + ' will be updated with ' + JSON.stringify(update, null, 2));
-      callback(null);
+      callback();
       return;
     }
 
@@ -150,7 +149,7 @@ function updateCable(change, i, callback) {
 
     multiChange.save(function (err1, c) {
       if (err1) {
-        console.error(err1);
+        console.error(err1.toString());
         callback(err1);
         return;
       }
@@ -161,7 +160,7 @@ function updateCable(change, i, callback) {
 
       cable.update(update, { new: true }, function (err2) {
         if (err2) {
-          console.error(err2);
+          console.error(err2.toString());
           callback(err2);
           return;
         }
@@ -206,7 +205,7 @@ parser.on('readable', function () {
 });
 
 parser.on('error', function (err) {
-  console.error(err);
+  console.error(err.toString());
   process.exit(1);
 });
 
