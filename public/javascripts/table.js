@@ -398,6 +398,7 @@ var lengthColumn = {
   sDefaultContent: '',
   mData: 'length',
   sClass: 'editable',
+  sParseType: 'number',
   bFilter: true
 };
 

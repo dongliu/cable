@@ -20,17 +20,34 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
   if (parseType && parseType === 'boolean') {
     if (['true', 'false'].indexOf(newValue.trim()) === -1) {
       $('#modal .modal-body').prepend('<div class="text-error">Please input true or false</div>');
+      $('#update').prop('disabled', false);
       return;
     }
     newValue = newValue.trim() === 'true';
     if (newValue === oldValue) {
       $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      $('#update').prop('disabled', false);
+      return;
+    }
+  } else if (parseType && parseType === 'number') {
+    if (newValue !== '') {
+      newValue = parseFloat(newValue);
+      if (Number.isNaN(newValue)) {
+        $('#modal .modal-body').prepend('<div class="text-error">Please input a number</div>');
+        $('#update').prop('disabled', false);
+        return
+      }
+    }
+    if (sOldValue === newValue) {
+      $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      $('#update').prop('disabled', false);
       return;
     }
   } else {
     newValue = newValue.trim();
     if (sOldValue.trim() === newValue) {
       $('#modal .modal-body').prepend('<div class="text-error">The new value is the same as the old one!</div>');
+      $('#update').prop('disabled', false);
       return;
     }
   }
