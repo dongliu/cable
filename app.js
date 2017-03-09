@@ -19,6 +19,10 @@ var CableType = require('./model/meta.js').CableType;
 var Request = require('./model/request.js').Request;
 var User = require('./model/user.js').User;
 
+var config = {
+  mongo: require('./config/mongo.json')
+};
+
 var mongoOptions = {
   db: {
     native_parser: true
@@ -32,7 +36,18 @@ var mongoOptions = {
   }
 };
 
-mongoose.connect('mongodb://localhost/cable_frib', mongoOptions);
+if (config.mongo.user && config.mongo.pass) {
+  mongoOptions.user = config.mongo.user;
+  mongoOptions.pass = config.mongo.pass;
+}
+
+if (config.mongo.auth) {
+  mongoOptions.auth = config.mongo.auth;
+}
+
+var mongoURL = 'mongodb://' + (config.mongo.address || 'localhost') + ':' + (config.mongo.port || '27017') + '/' + (config.mongo.db || 'cable');
+
+mongoose.connect(mongoURL, mongoOptions);
 
 mongoose.connection.on('connected', function () {
   console.log('Mongoose default connection opened.');

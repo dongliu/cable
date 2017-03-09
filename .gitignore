@@ -7,6 +7,7 @@ doc/
 # config/
 config/ad.json
 config/auth.json
+config/mongo.json
 
 # Git related files. #
 *.orig
