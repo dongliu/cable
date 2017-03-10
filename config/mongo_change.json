@@ -1,11 +1,29 @@
 {
- "address": "127.0.0.1",
- "port": "27017",
- "db": "cable",
- "user": "user",
- "pass": "pass",
- "auth": {
-    "authdb": "admin"
+  "address": "127.0.0.1",
+  "port": "27017",
+  "db": "cable",
+  "options": {
+    "user": "user",
+    "pass": "pass",
+
+
+    "auth": {
+      "authdb": "admin"
+    },
+
+    "db": {
+      "native_parser": true
+    },
+
+    "server": {
+      "ssl": true,
+      "sslValidate": true,
+      "poolSize": 5,
+      "socketOptions": {
+        "connectTimeoutMS": 30000,
+        "keepAlive": 1
+      }
+    }
   }
 }
 

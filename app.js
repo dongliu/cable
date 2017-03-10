@@ -23,29 +23,11 @@ var config = {
   mongo: require('./config/mongo.json')
 };
 
-var mongoOptions = {
-  db: {
-    native_parser: true
-  },
-  server: {
-    poolSize: 5,
-    socketOptions: {
-      connectTimeoutMS: 30000,
-      keepAlive: 1
-    }
-  }
-};
-
-if (config.mongo.user && config.mongo.pass) {
-  mongoOptions.user = config.mongo.user;
-  mongoOptions.pass = config.mongo.pass;
-}
-
-if (config.mongo.auth) {
-  mongoOptions.auth = config.mongo.auth;
-}
-
 var mongoURL = 'mongodb://' + (config.mongo.address || 'localhost') + ':' + (config.mongo.port || '27017') + '/' + (config.mongo.db || 'cable');
+
+var mongoOptions = config.mongo.options || {};
+
+mongoose.Promise = global.Promise;
 
 mongoose.connect(mongoURL, mongoOptions);
 
