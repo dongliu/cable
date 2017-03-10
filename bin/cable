@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+// TODO: Move server startup to this file.
+require('../app.js');
+
