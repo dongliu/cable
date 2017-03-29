@@ -344,6 +344,7 @@ module.exports = function (app) {
             console.error(e);
             return res.send(500, e.message);
           }
+          console.log('request ' + req.params.id + ' was deleted');
           return res.send(200, 'deleted');
         });
       } else {
