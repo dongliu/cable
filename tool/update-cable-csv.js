@@ -111,6 +111,12 @@ function updateCable(change, i, callback) {
       var currentValue = cable.get(p);
       switch (p) {
       case 'basic.tags':
+        if (Array.isArray(change[2 * index + 1])) {
+          change[2 * index + 1] = change[2 * index + 1].join();
+        }
+        if (Array.isArray(change[2 * index + 2])) {
+          change[2 * index + 2] = change[2 * index + 2].join();
+        }
         currentValue = currentValue ? currentValue.join() : '';
         break;
       case 'status':
