@@ -46,7 +46,17 @@ if (!fs.existsSync(realPath)) {
   process.exit(1);
 }
 
-mongoose.connect('mongodb://localhost/cable_frib');
+var config = {
+  mongo: require('../config/mongo.json')
+};
+
+var mongoURL = 'mongodb://' + (config.mongo.address || 'localhost') + ':' + (config.mongo.port || '27017') + '/' + (config.mongo.db || 'cable');
+
+var mongoOptions = config.mongo.options || {};
+
+mongoose.Promise = global.Promise;
+
+mongoose.connect(mongoURL, mongoOptions);
 db = mongoose.connection;
 db.on('error', function(err) {
   console.error(err.toString());
