@@ -84,8 +84,9 @@ function createRequest(i) {
   var newRequest;
   var quantityIndex = 10;
   var v2 = version.indexOf('v2') === 0;
+  var v3 = version.indexOf('v3') === 0;
   // need more validation function here
-  if (v2) {
+  if (v2 || v3) {
     quantityIndex = 11;
   }
   if (!validator.isInt(request[quantityIndex])) {
@@ -103,7 +104,46 @@ function createRequest(i) {
     }
     return createRequest(i + 1);
   }
-  if (v2) {
+  if (v3) {
+    newRequest = {
+      basic: {
+        project: request[0],
+        engineer: request[2],
+        wbs: request[1],
+        originCategory: namecodes[0],
+        originSubcategory: namecodes[1],
+        signalClassification: namecodes[2],
+        cableType: request[7],
+        service: request[9],
+        traySection: request[6],
+        tags: splitTags(request[10]),
+        quantity: request[11]
+      },
+      from: {
+        rack: request[12],
+        terminationDevice: request[13],
+        terminationType: request[14],
+        terminationPort: request[15],
+        wiringDrawing: request[16]
+      },
+      to: {
+        rack: request[17],
+        terminationDevice: request[18],
+        terminationType: request[19],
+        terminationPort: request[20],
+        wiringDrawing: request[21]
+      },
+      ownerProvided: isTrue(request[8]),
+      conduit: request[22],
+      length: request[23],
+      comments: request[24],
+      status: 1,
+      createdBy: 'system',
+      createdOn: Date.now(),
+      submittedBy: 'system',
+      submittedOn: Date.now()
+    };
+  } else if (v2) {
     newRequest = {
       basic: {
         project: request[0],
