@@ -65,6 +65,7 @@ var request = new Schema({
     rack: String,
     terminationDevice: String,
     terminationType: String,
+    terminationPort: String,
     wiringDrawing: String,
     label: String
   },
@@ -73,6 +74,7 @@ var request = new Schema({
     rack: String,
     terminationDevice: String,
     terminationType: String,
+    terminationPort: String,
     wiringDrawing: String,
     label: String
   },

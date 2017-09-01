@@ -98,7 +98,7 @@ function createRequest(i) {
   }
   namecodes = naming.encode(request[3], request[4], request[5]);
   if (namecodes.indexOf(null) !== -1) {
-    console.log('Line ' + lines[i] + ': cannot encode the name of: ' + namecodes);
+    console.log('Line ' + lines[i] + ': cannot encode the name of: ' + request[3] + '/' + request[4] + '/' + request[5]);
     if (i === requests.length - 1) {
       return jobDone();
     }
