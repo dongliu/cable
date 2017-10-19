@@ -7,7 +7,7 @@ var ObjectId = Schema.Types.ObjectId;
 
 // shared configuration for request and cable schemas
 var projectValues = ['FRIB', 'REA'];
-var originCategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+var originCategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A'];
 var originSubcategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 var signalClassificationValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
 var traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS', 'N/A'];
