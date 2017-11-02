@@ -486,5 +486,105 @@
         "name": "Personal Protection System"
       }
     }
+  },
+  "A": {
+    "name": "Business IT",
+    "subcategory": {
+      "0": "Network",
+      "1": "Security Camera",
+      "2": "Audio/Video System"
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": {
+        "name": "High Power RF"
+      },
+      "C": {
+        "name": "Medium Level Signal"
+      },
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "<600 VAC Power"
+      },
+      "K": {
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
+      }
+    }
+  },
+  "B": {
+    "name": "SECAR",
+    "subcategory": {
+      "0": "Magnets",
+      "1": "High Voltage",
+      "2": "Controls",
+      "3": "Vacuum",
+      "4": "Diagnostics",
+      "5": "Detector",
+      "6": "Safety"
+    },
+    "signal": {
+      "A": {
+        "name": "Miscellaneous"
+      },
+      "B": {
+        "name": "High Power RF"
+      },
+      "C": {
+        "name": "Medium Level Signal"
+      },
+      "D": {
+        "name": "<600 VDC",
+        "disc": "e.g. magnet and other power"
+      },
+      "E": {
+        "name": "Very Low Level Signal",
+        "disc": "e.g. diagnostics"
+      },
+      "F": {
+        "name": "Low Level Signal"
+      },
+      "G": {
+        "name": "Ground"
+      },
+      "H": {
+        "name": ">600 VDC"
+      },
+      "J": {
+        "name": "<600 VAC Power"
+      },
+      "K": {
+        "name": "600-15k VAC Power"
+      },
+      "L": {
+        "name": "Reference"
+      },
+      "M": {
+        "name": "Personal Protection System"
+      }
+    }
   }
 }
