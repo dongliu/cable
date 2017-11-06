@@ -265,7 +265,7 @@ parser.on('readable', function () {
       version = record[0];
       console.log('template version: ' + version);
     }
-    if (record[0] === 'FRIB') {
+    if (line > 2) {
       requests.push(record);
       lines.push(line);
     }
