@@ -156,7 +156,7 @@ $(function () {
   var initModel;
 
   $.validator.addMethod('wbs', function (value, element) {
-    return this.optional(element) || /^T\d{1,5}$/.test(value);
+    return this.optional(element) || /^[A-Z]\d{1,5}$/.test(value);
   }, 'Please check the WBS number, remove spaces and dots');
 
   var validator = $(requestForm).validate({
