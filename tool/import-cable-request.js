@@ -231,7 +231,9 @@ function createRequest(i) {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        createRequest(i + 1);
+        setImmediate(function() {
+          createRequest(i + 1);
+        });
       }
     });
   } else {
@@ -245,7 +247,9 @@ function createRequest(i) {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        createRequest(i + 1);
+        setImmediate(function() {
+          createRequest(i + 1);
+        });
       }
     });
   }
