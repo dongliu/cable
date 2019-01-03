@@ -29,5 +29,10 @@ exports.logout = function (req, res) {
       }
     });
   }
-  res.redirect(authConfig.cas + '/logout');
+  if (authConfig.type === 'cas') {
+    res.redirect(authConfig.cas + '/logout');
+  } else {
+    //ldap
+    res.redirect('/ldaplogin/');
+  }
 };
