@@ -1,23 +1,24 @@
 /*jslint es5:true*/
 
-var express = require('express'),
-  slash = require('express-slash'),
-  routes = require('./routes'),
-  about = require('./routes/about'),
-  numbering = require('./routes/numbering'),
-  http = require('http'),
-  fs = require('fs'),
-  sysSub = require(__dirname + '/config/sys-sub.json'),
-  penetration = require(__dirname + '/config/penetration.json'),
-  path = require('path');
+var express = require('express');
+var slash = require('express-slash');
+var routes = require('./routes');
+var about = require('./routes/about');
+var numbering = require('./routes/numbering');
+var https = require('https');
+var fs = require('fs');
+var sysSub = require(__dirname + '/config/sys-sub.json');
+var penetration = require(__dirname + '/config/penetration.json');
+var path = require('path');
 
 var rotator = require('file-stream-rotator');
 
 var mongoose = require('mongoose');
 mongoose.connection.close();
-var CableType = require('./model/meta.js').CableType;
-var Request = require('./model/request.js').Request;
-var User = require('./model/user.js').User;
+
+require('./model/meta.js');
+require('./model/request.js');
+require('./model/user.js');
 
 var mongoOptions = {
   db: {
@@ -32,7 +33,23 @@ var mongoOptions = {
   }
 };
 
-mongoose.connect('mongodb://localhost/cable_frib', mongoOptions);
+var mongoAddress = 'mongodb://localhost/cable_frib';
+
+if (process.env.MONGO_CONFIG) {
+  var mongoConfig = require(__dirname + '/config/mongo.json');
+  mongoAddress = 'mongodb://' + mongoConfig.server_address + ':' + mongoConfig.server_port + '/' + mongoConfig.db_name;
+  if (mongoConfig.username) {
+    mongoOptions.user = mongoConfig.username;
+  }
+  if (mongoConfig.password) {
+    mongoOptions.pass = mongoConfig.password;
+  }
+  if (mongoConfig.auth) {
+    mongoOptions.auth = mongoConfig.auth;
+  }
+}
+
+mongoose.connect(mongoAddress, mongoOptions);
 
 mongoose.connection.on('connected', function () {
   console.log('Mongoose default connection opened.');
@@ -97,6 +114,8 @@ app.configure(function () {
   app.use(slash());
 });
 
+app.locals.orgName = 'Lab';
+
 app.configure('development', function () {
   app.use(express.errorHandler());
 });
@@ -131,8 +150,6 @@ require('./routes/wbs')(app);
 
 require('./routes/room')(app);
 
-
-
 // init the cable services
 // GET /requests
 // POST /requests
@@ -150,6 +167,8 @@ require('./routes/cabletype')(app);
 // GET /profile
 require('./routes/profile')(app);
 
+require('./routes/ldaplogin')(app);
+
 app.get('/numbering', numbering.index);
 
 
@@ -164,10 +183,16 @@ app.get('/sys-sub', function (req, res) {
 
 app.get('/logout', routes.logout);
 
-var server = http.createServer(app).listen(app.get('port'), function () {
-  console.log("Express server listening on port " + app.get('port'));
-});
 
+var appCredentials = {
+  key: fs.readFileSync('./config/server.key'),
+  cert: fs.readFileSync('./config/server.crt')
+};
+
+var appPort = app.get('port');
+var server = https.createServer(appCredentials, app).listen(appPort, function () {
+  console.log('Express server listening on ssl port ' + appPort);
+});
 
 function cleanup() {
   server._connections = 0;
@@ -176,12 +201,12 @@ function cleanup() {
     console.log('ldap client stops.');
   });
   server.close(function () {
-    console.log("Express server close.");
+    console.log('Express server close.');
     process.exit();
   });
 
   setTimeout(function () {
-    console.error("Could not close connections in time, forcing shut down");
+    console.error('Could not close connections in time, forcing shut down');
     process.exit(1);
   }, 30 * 1000);
 
