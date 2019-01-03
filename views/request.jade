@@ -3,9 +3,9 @@ extends layout
 block head
   meta(charset='urf-8')
   if (locals.id)
-    title FRIB Cable :: request :: #{id}
+    title #{orgName} Cable :: request :: #{id}
   else
-    title FRIB Cable :: new request
+    title #{orgName} Cable :: new request
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
