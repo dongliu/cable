@@ -15,7 +15,7 @@ module.exports = function (app) {
   app.get('/:project/wbs/:number', function(req, res) {
     var parts = req.params.number.split('.');
     var key = parts[0];
-    var locator = findChild(wbs[project], key);
+    var locator = findChild(wbs[req.params.project], key);
     if (locator === null) {
        return res.json(null);
     }
