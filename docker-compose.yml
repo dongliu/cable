@@ -1,0 +1,18 @@
+version: "3"
+networks:
+  default:
+    external:
+      name: traveler-dev
+services:
+  cable-app:
+    build: .
+    volumes:
+      - .:/app
+      # exclude the node_modules
+      - /app/node_modules
+      - /app/config
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - MONGO_CONFIG=true
