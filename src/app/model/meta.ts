@@ -1,30 +1,30 @@
 /*jslint es5:true*/
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+import mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var cableType = new Schema({
+const cableType = new Schema({
   name: {
     type: String,
     index: true,
     unique: true,
     match: /\d+C_\w+_\w+_\d\d\d/,
-    required: true
+    required: true,
   },
   service: String,
   conductorNumber: {
     type: Number,
-    required: true
+    required: true,
   },
   conductorSize: {
     type: String,
-    required: true
+    required: true,
   },
   fribType: {
     type: String,
     enum: {
       values: ['7-Pole', 'Multi', 'PwrAC', 'PwrDC', 'ArmPwrDC', 'Coax', 'Hardline', 'RigidLine', 'Cat6', 'TCtypeJ', 'TCtypeK', 'Sfib', 'SMfiber', 'MMfiber', 'PMMfiberRAD', 'Triax'],
-      message: 'enum validator failed for "{PATH}" with value "{VALUE}"'
+      message: 'enum validator failed for "{PATH}" with value "{VALUE}"',
     },
     required: true
   },
@@ -46,12 +46,12 @@ var cableType = new Schema({
   createdBy: String,
   createdOn: Date,
   updatedBy: String,
-  updatedOn: Date
+  updatedOn: Date,
 });
 
 
 var CableType = mongoose.model('CableType', cableType);
 
-module.exports = {
+export = {
   CableType: CableType
 };

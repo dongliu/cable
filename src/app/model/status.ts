@@ -1,1 +1,1 @@
-var status = ['saved', 'submitted', 'rejected', 'adjusted', 'approved', 'installed', 'passed', 'failed', 'replaced'];
+//var status = ['saved', 'submitted', 'rejected', 'adjusted', 'approved', 'installed', 'passed', 'failed', 'replaced'];

@@ -1,13 +1,13 @@
 /*jslint es5:true*/
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+import mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var user = new Schema({
+const user = new Schema({
   adid: {
     type: String,
     lowercase: true,
     index: true,
-    unique: true
+    unique: true,
   },
   name: String,
   email: String,
@@ -19,11 +19,11 @@ var user = new Schema({
   lastVisitedOn: Date,
   subscribe: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-var User = mongoose.model('User', user);
-module.exports = {
-  User: User
+const User = mongoose.model('User', user);
+export = {
+  User: User,
 };

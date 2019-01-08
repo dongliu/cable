@@ -1,16 +1,16 @@
 /*jslint es5:true*/
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var Mixed = Schema.Types.Mixed;
-var ObjectId = Schema.Types.ObjectId;
+import mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const Mixed = Schema.Types.Mixed;
+const ObjectId = Schema.Types.ObjectId;
 
 // shared configuration for request and cable schemas
-var projectValues = ['FRIB', 'REA', 'SECAR', 'BECOLA', 'SRFHB', 'BUSINESS'];
-var originCategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B'];
-var originSubcategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-var signalClassificationValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
-var traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS', 'N/A'];
+const projectValues = ['FRIB', 'REA', 'SECAR', 'BECOLA', 'SRFHB', 'BUSINESS'];
+const originCategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B'];
+const originSubcategoryValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const signalClassificationValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
+const traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-AC', 'REF', 'PPS', 'N/A'];
 
 // request status
 // 0: saved
@@ -18,47 +18,47 @@ var traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV-A
 // 2: approved
 // 3: rejected
 
-var request = new Schema({
+const request = new Schema({
   basic: {
     project: {
       type: String,
       enum: projectValues,
       uppercase: true,
-      required: true
+      required: true,
     },
     engineer: String,
     wbs: {
       type: String,
-      required: true
+      required: true,
     },
     originCategory: {
       type: String,
       enum: originCategoryValues,
-      required: true
+      required: true,
     },
     originSubcategory: {
       type: String,
       enum: originSubcategoryValues,
-      required: true
+      required: true,
     },
     signalClassification: {
       type: String,
       enum: signalClassificationValues,
-      required: true
+      required: true,
     },
     cableType: String,
     service: String,
     traySection: {
       type: String,
-      enum: traySectionValues
+      enum: traySectionValues,
     },
     tags: [String],
     quantity: {
       type: Number,
       min: 1,
       max: 100,
-      default: 1
-    }
+      default: 1,
+    },
   },
 
   from: {
@@ -67,7 +67,7 @@ var request = new Schema({
     terminationType: String,
     terminationPort: String,
     wiringDrawing: String,
-    label: String
+    label: String,
   },
 
   to: {
@@ -76,19 +76,19 @@ var request = new Schema({
     terminationType: String,
     terminationPort: String,
     wiringDrawing: String,
-    label: String
+    label: String,
   },
 
   required: {
     label: Boolean,
     benchTerm: Boolean,
     benchTest: Boolean,
-    fieldTerm: Boolean
+    fieldTerm: Boolean,
   },
 
   ownerProvided: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   length: Number,
@@ -98,7 +98,7 @@ var request = new Schema({
   comments: String,
   status: {
     type: Number,
-    index: true
+    index: true,
   },
   createdBy: String,
   createdOn: Date,
@@ -111,7 +111,7 @@ var request = new Schema({
   approvedBy: String,
   approvedOn: Date,
   rejectedBy: String,
-  rejectedOn: Date
+  rejectedOn: Date,
 });
 
 // cable status
@@ -135,55 +135,55 @@ var request = new Schema({
 // obsoleted: 5xx
 //   501: not needed
 
-var cable = new Schema({
+const cable = new Schema({
   request_id: String,
   number: {
     type: String,
     index: true,
-    unique: true
+    unique: true,
   },
   status: {
     type: Number,
-    index: true
+    index: true,
   },
   ownerProvided: {
     type: Boolean,
-    default: false
+    default: false,
   },
   basic: {
     project: {
       type: String,
       enum: projectValues,
       uppercase: true,
-      required: true
+      required: true,
     },
     engineer: String,
     wbs: {
       type: String,
-      required: true
+      required: true,
     },
     originCategory: {
       type: String,
       enum: originCategoryValues,
-      required: true
+      required: true,
     },
     originSubcategory: {
       type: String,
       enum: originSubcategoryValues,
-      required: true
+      required: true,
     },
     signalClassification: {
       type: String,
       enum: signalClassificationValues,
-      required: true
+      required: true,
     },
     cableType: String,
     service: String,
     traySection: {
       type: String,
-      enum: traySectionValues
+      enum: traySectionValues,
     },
-    tags: [String]
+    tags: [String],
   },
 
   from: {
@@ -195,7 +195,7 @@ var cable = new Schema({
     label: String,
     readyForTerm: Boolean,
     terminatedBy: String,
-    terminatedOn: Date
+    terminatedOn: Date,
   },
 
   to: {
@@ -207,14 +207,14 @@ var cable = new Schema({
     label: String,
     readyForTerm: Boolean,
     terminatedBy: String,
-    terminatedOn: Date
+    terminatedOn: Date,
   },
 
   required: {
     label: Boolean,
     benchTerm: Boolean,
     benchTest: Boolean,
-    fieldTerm: Boolean
+    fieldTerm: Boolean,
   },
 
   length: Number,
@@ -250,40 +250,40 @@ var cable = new Schema({
   fieldTestedOn: Date,
   installedBy: String,
   installedOn: Date,
-  changeHistory: [ObjectId]
+  changeHistory: [ObjectId],
 });
 
-var change = new Schema({
+const change = new Schema({
   cableName: String,
   property: String,
   oldValue: Mixed,
   newValue: Mixed,
   updatedBy: String,
-  updatedOn: Date
+  updatedOn: Date,
 });
 
-var update = new Schema({
+const update = new Schema({
   property: String,
   oldValue: Mixed,
-  newValue: Mixed
+  newValue: Mixed,
 });
 
-var multiChange = new Schema({
+const multiChange = new Schema({
   cableName: String,
   updates: [update],
   updatedBy: String,
-  updatedOn: Date
+  updatedOn: Date,
 });
 
-var Request = mongoose.model('Request', request);
-var Cable = mongoose.model('Cable', cable);
-var Change = mongoose.model('Change', change);
-var MultiChange = mongoose.model('MultiChange', multiChange);
+const Request = mongoose.model('Request', request);
+const Cable = mongoose.model('Cable', cable);
+const Change = mongoose.model('Change', change);
+const MultiChange = mongoose.model('MultiChange', multiChange);
 
 
-module.exports = {
+export = {
   Cable: Cable,
   Change: Change,
   MultiChange: MultiChange,
-  Request: Request
+  Request: Request,
 };

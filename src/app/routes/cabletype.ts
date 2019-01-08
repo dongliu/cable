@@ -1,14 +1,17 @@
-var mongoose = require('mongoose');
-var CableType = mongoose.model('CableType');
+/* tslint:disable:no-console */
 
-var auth = require('../lib/auth');
+import mongoose = require('mongoose');
+//const CableType = mongoose.model('CableType');
+const CableType = require('../model/meta').CableType;
 
-var util = require('../lib/util');
+import auth = require('../lib/auth');
 
-module.exports = function (app) {
+import util = require('../lib/util');
+
+export default function(app) {
   app.get('/cabletypes/', auth.ensureAuthenticated, function (req, res) {
     res.render('cabletype', {
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
@@ -44,7 +47,7 @@ module.exports = function (app) {
       return res.send(415, 'json request expected.');
     }
 
-    var newType = req.body;
+    const newType = req.body;
 
     // generate the type name here
     newType.name = newType.conductorNumber + 'C_' + newType.conductorSize + '_' + newType.fribType + '_' + newType.typeNumber;
@@ -60,7 +63,7 @@ module.exports = function (app) {
         }
         return res.send(500, err.message || err.err);
       }
-      var url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id + '/';
+      const url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id + '/';
       res.set('Location', url);
       return res.send(201, 'A new cable type is created at <a href="' + url + '"">' + url + '</a>');
     });
@@ -78,7 +81,7 @@ module.exports = function (app) {
       }
       if (type) {
         res.render('typedetails', {
-          type: type
+          type: type,
         });
       } else {
         res.send(410, 'The type ' + req.params.id + ' is gone.');
@@ -90,8 +93,8 @@ module.exports = function (app) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.send(403, 'You are not authorized to access this resource. ');
     }
-    var conditions = {
-      _id: req.params.id
+    const conditions = {
+      _id: req.params.id,
     };
     if (req.body.original === null) {
       conditions[req.body.target] = {
@@ -100,12 +103,12 @@ module.exports = function (app) {
     } else {
       conditions[req.body.target] = req.body.original;
     }
-    var update = {};
+    const update: any = {};
     update[req.body.target] = req.body.update;
     update.updatedOn = Date.now();
     update.updatedBy = req.session.userid;
     CableType.findOneAndUpdate(conditions, update, {
-      new: true
+      new: true,
     }, function (err, type) {
       // the err is not a mongoose error
       if (err) {

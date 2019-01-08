@@ -1,28 +1,32 @@
+/* tslint:disable:no-console */
+
 // authentication and authorization functions
-var Client = require('cas.js');
-var url = require('url');
-var ad = require('../config/ad.json');
-var authConfig = require('../config/auth.json');
+import Client = require('cas.js');
+import url = require('url');
+const ad = require('../../config/ad.json');
+const authConfig = require('../../config/auth.json');
 // var pause = require('pause');
 
-var ldapClient = require('../lib/ldap-client');
+const ldapClient: any = require('../lib/ldap-client');
 
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
+import mongoose = require('mongoose');
+const User = mongoose.model('User');
 
-var cas = new Client({
+const cas = new Client({
   base_url: authConfig.cas,
   service: authConfig.service,
-  version: 1.0
+  version: 1.0,
 });
 
 // Authorize request using API token otherwise use standard method.
 function ensureAuthWithToken(req, res, next) {
-  var len, idx, tok = req.query.token;
+  let len;
+  let idx;
+  const tok = req.query.token;
   if (tok && Array.isArray(authConfig.tokens)) {
     len = authConfig.tokens.length;
-    for(idx=0; idx<len; idx+=1) {
-      if(tok === authConfig.tokens[idx]) {
+    for (idx = 0; idx < len; idx += 1) {
+      if (tok === authConfig.tokens[idx]) {
         next();
         return;
       }
@@ -32,14 +36,14 @@ function ensureAuthWithToken(req, res, next) {
 }
 
 function ensureAuthenticated(req, res, next) {
-  var ticketUrl = url.parse(req.url, true);
+  const ticketUrl = url.parse(req.url, true);
   if (req.session.userid) {
     if (req.query.ticket) {
       // remove the ticket query param
       delete ticketUrl.query.ticket;
       return res.redirect(301, url.format({
         pathname: ticketUrl.pathname,
-        query: ticketUrl.query
+        query: ticketUrl.query,
       }));
     }
     next();
@@ -52,11 +56,11 @@ function ensureAuthenticated(req, res, next) {
         return res.send(401, err.message);
       }
       if (result.validated) {
-        var userid = result.username.toLowerCase();
+        const userid = result.username.toLowerCase();
         req.session.userid = userid;
         User.findOne({
           adid: userid
-        }).exec(function (err0, user) {
+        }).exec(function (err0, user: any) {
           if (err0) {
             console.error(err0);
             return res.send(500, 'internal error with db');
@@ -78,11 +82,11 @@ function ensureAuthenticated(req, res, next) {
             // halt.resume();
           }
           // create a new user
-          var searchFilter = ad.searchFilter.replace('_id', userid);
-          var opts = {
+          const searchFilter = ad.searchFilter.replace('_id', userid);
+          const opts = {
             filter: searchFilter,
             attributes: ad.objAttributes,
-            scope: 'sub'
+            scope: 'sub',
           };
           ldapClient.search(ad.searchBase, opts, false, function (err2, ldapResult) {
             if (err2) {
@@ -97,7 +101,7 @@ function ensureAuthenticated(req, res, next) {
               return res.send(500, userid + ' is not unique!');
             }
 
-            var first = new User({
+            const first: any = new User({
               adid: userid,
               name: ldapResult[0].displayName,
               email: ldapResult[0].mail,
@@ -105,7 +109,7 @@ function ensureAuthenticated(req, res, next) {
               phone: ldapResult[0].telephoneNumber,
               mobile: ldapResult[0].mobile,
               roles: [],
-              lastVisitedOn: Date.now()
+              lastVisitedOn: Date.now(),
             });
 
             first.save(function (err3, newUser) {
@@ -137,7 +141,7 @@ function ensureAuthenticated(req, res, next) {
     // if this is ajax call, then tell the browser about this without redirect
     res.set('WWW-Authenticate', 'CAS realm="' + url.format({
       protocol: 'http',
-      hostname: ticketUrl.hostname
+      hostname: ticketUrl.hostname,
     }) + '"');
     res.send(401, 'xhr cannot be authenticated');
   } else {
@@ -152,7 +156,7 @@ function verifyRoles(roles) {
     if (roles.length === 0) {
       return next();
     }
-    var i;
+    let i;
     if (req.session.roles) {
       for (i = 0; i < roles.length; i += 1) {
         if (req.session.roles.indexOf(roles[i]) > -1) {
@@ -168,8 +172,8 @@ function verifyRoles(roles) {
 }
 
 
-module.exports = {
+export = {
   ensureAuthWithToken: ensureAuthWithToken,
   ensureAuthenticated: ensureAuthenticated,
-  verifyRoles: verifyRoles
+  verifyRoles: verifyRoles,
 };

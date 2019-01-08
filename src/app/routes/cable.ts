@@ -1,14 +1,19 @@
-/*jslint es5: true*/
+/* tslint:disable:no-console */
 
-var sysSub = require('../config/sys-sub.json');
+const sysSub = require('../../config/sys-sub.json');
 
-var mongoose = require('mongoose');
-var Request = mongoose.model('Request');
-var Cable = mongoose.model('Cable');
-var MultiChange = mongoose.model('MultiChange');
-var Change = mongoose.model('Change');
-var User = mongoose.model('User');
-var auth = require('../lib/auth');
+import mongoose = require('mongoose');
+//const Request = mongoose.model('Request');
+const Request = require('../model/request').Request;
+//const Cable = mongoose.model('Cable');
+const Cable = require('../model/request').Cable;
+//const MultiChange = mongoose.model('MultiChange');
+const MultiChange = require('../model/request').MultiChange;
+//const Change = mongoose.model('Change');
+const Change = require('../model/request').Change;
+//const User = mongoose.model('User');
+const User = require('../model/user').User;
+const auth = require('../lib/auth');
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -24,10 +29,10 @@ var auth = require('../lib/auth');
 //   501: not needed
 
 
-//TODO: need a server side validation in the future
+// TODO: need a server side validation in the future
 
 function pad(num) {
-  var s = num.toString();
+  let s = num.toString();
   if (s.length === 6) {
     return s;
   }
@@ -36,7 +41,7 @@ function pad(num) {
 }
 
 function increment(number) {
-  var sequence = parseInt(number.substring(3), 10);
+  const sequence = parseInt(number.substring(3), 10);
   if (sequence === 999999) {
     return null;
   }
@@ -63,17 +68,17 @@ function createCable(cableRequest, req, res, quantity, cables) {
     return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
-  var sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
+  const sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
   Cable.findOne({
     number: {
-      $regex: '^' + sss + '\\d{6}'
-    }
+      $regex: '^' + sss + '\\d{6}',
+    },
   }, 'number', {
     sort: {
-      number: -1
-    }
+      number: -1,
+    },
   }).lean().exec(function (err, cable) {
-    var nextNumber;
+    let nextNumber;
     if (err) {
       console.error(err);
       // revert the request state?
@@ -85,7 +90,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
       nextNumber = sss + '000000';
     }
     // console.log(nextNumber);
-    var newCable = new Cable({
+    const newCable = new Cable({
       number: nextNumber,
       status: 100,
       request_id: cableRequest._id,
@@ -102,7 +107,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
       submittedBy: cableRequest.submittedBy,
       submittedOn: cableRequest.submittedOn,
       approvedBy: req.session.userid,
-      approvedOn: Date.now()
+      approvedOn: Date.now(),
     });
     newCable.save(function (e, doc) {
       if (e) {
@@ -113,7 +118,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
         } else {
           console.error(e);
           return res.json(500, {
-            error: e.message
+            error: e.message,
           });
         }
       } else {
@@ -123,7 +128,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
         if (quantity < 2) {
           return res.json(200, {
             request: cableRequest,
-            cables: cables
+            cables: cables,
           });
         }
         createCable(cableRequest, req, res, quantity - 1, cables);
@@ -134,7 +139,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
 
 function updateCable(conditions, update, req, res) {
   Cable.findOneAndUpdate(conditions, update, {
-    new: true
+    new: true,
   }, function (err, cable) {
     if (err) {
       console.error(err);
@@ -150,17 +155,18 @@ function updateCable(conditions, update, req, res) {
 }
 
 function updateCableWithChanges(conditions, update, changes, req, res) {
-  var idx = 0, change = null;
-  for( idx=0; idx<changes.length; idx+=1 ) {
+  let idx = 0;
+  let change = null;
+  for (idx = 0; idx < changes.length; idx += 1) {
     if (changes[idx].oldValue === null) {
       // for string, treat null and '' as the same
       conditions[changes[idx].property] = {
-        $in: [null, '']
+        $in: [null, ''],
       };
     } else if (changes[idx].oldValue === false) {
       // for boolean, treat false and '' as the same
       conditions[changes[idx].property] = {
-        $in: [null, false]
+        $in: [null, false],
       };
     } else {
       conditions[changes[idx].property] = changes[idx].oldValue;
@@ -168,64 +174,64 @@ function updateCableWithChanges(conditions, update, changes, req, res) {
     update[changes[idx].property] = changes[idx].newValue;
   }
   update.$inc = {
-    __v: 1
+    __v: 1,
   };
-  if( changes.length === 1 ) {
+  if (changes.length === 1) {
     change = new Change({
       cableName: req.params.id,
       property: changes[0].property,
       oldValue: changes[0].oldValue,
       newValue: changes[0].newValue,
       updatedBy: req.session.userid,
-      updatedOn: Date.now()
+      updatedOn: Date.now(),
     });
   } else if( changes.length > 1 ) {
     change = new MultiChange({
       cableName: req.params.id,
       updates: [],
       updatedBy: req.session.userid,
-      updatedOn: Date.now()
+      updatedOn: Date.now(),
     });
-    for( idx=0; idx<changes.length; idx+=1 ) {
+    for (idx = 0; idx < changes.length; idx += 1) {
       change.updates.push({
         property: changes[idx].property,
         oldValue: changes[idx].oldValue,
-        newValue: changes[idx].newValue
+        newValue: changes[idx].newValue,
       });
     }
   }
-  if( change ) {
+  if (change) {
     change.save(function (err, doc) {
       if (err) {
         return res.send(500, 'cannot save the change');
       }
       update.$push = {
-        changeHistory: doc._id
+        changeHistory: doc._id,
       };
       updateCable(conditions, update, req, res);
     });
   } else {
       updateCable(conditions, update, req, res);
   }
-};
+}
 
-module.exports = function (app) {
+export default function(app) {
 
   app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
     return res.render('manager', {
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
   app.get('/manager/requests', auth.ensureAuthenticated, function (req, res) {
     return res.render('manage-requests', {
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
   app.get('/manager/cables', auth.ensureAuthenticated, function (req, res) {
     return res.render('manage-cables', {
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
@@ -233,7 +239,7 @@ module.exports = function (app) {
   app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
     return res.render('request', {
       sysSub: sysSub,
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
@@ -242,11 +248,11 @@ module.exports = function (app) {
   // need more work when sharing is enabled
   app.get('/requests', auth.ensureAuthenticated, function (req, res) {
     Request.find({
-      createdBy: req.session.userid
+      createdBy: req.session.userid,
     }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       return res.json(requests);
@@ -255,11 +261,11 @@ module.exports = function (app) {
 
   app.get('/requests/json', auth.ensureAuthenticated, function (req, res) {
     Request.find({
-      createdBy: req.session.userid
+      createdBy: req.session.userid,
     }).lean().exec(function (err, requests) {
       if (err) {
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       return res.json(requests);
@@ -271,9 +277,9 @@ module.exports = function (app) {
     if (!req.is('json')) {
       return res.send(415, 'json request expected.');
     }
-    var request = {};
-    var requests = [];
-    var i;
+    let request: any = {};
+    const requests = [];
+    let i;
     if (req.body.request) {
       request = req.body.request;
       if (req.body.action === 'clone') {
@@ -304,10 +310,10 @@ module.exports = function (app) {
             console.error(err);
             return res.send(500, err.message);
           }
-          var url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+          const url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
           res.set('Location', url);
           res.json(201, {
-            location: '/requests/' + cableRequest.id
+            location: '/requests/' + cableRequest.id,
           });
         });
       }
@@ -322,12 +328,12 @@ module.exports = function (app) {
     return res.render('request', {
       sysSub: sysSub,
       id: req.params.id,
-      roles: req.session.roles
+      roles: req.session.roles,
     });
   });
 
   app.delete('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
-    Request.findById(req.params.id).exec(function (err, request) {
+    Request.findById(req.params.id).exec(function (err, request: any) {
       if (err) {
         console.error(err);
         return res.send(500, err.message);
@@ -375,7 +381,7 @@ module.exports = function (app) {
       }
       if (cableRequest) {
         res.render('requestdetails', {
-          request: cableRequest
+          request: cableRequest,
         });
       } else {
         res.send(410, 'The request ' + req.params.id + ' is gone.');
@@ -391,7 +397,7 @@ module.exports = function (app) {
       if (err) {
         console.error(err);
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       return res.json(docs);
@@ -399,21 +405,21 @@ module.exports = function (app) {
   }
 
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
-    var status = parseInt(req.params.s, 10);
+    const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
       return res.send(400, 'the status ' + status + ' is invalid.');
     }
-    var query;
+    let query;
     // admin see all
     if (req.session.roles.indexOf('admin') !== -1) {
       query = {
-        status: status
+        status: status,
       };
       findRequest(query, res);
     } else {
       // manager see his own wbs
       User.findOne({
-        adid: req.session.userid
+        adid: req.session.userid,
       }).lean().exec(function (err, user) {
         if (err) {
           console.error(err);
@@ -427,9 +433,9 @@ module.exports = function (app) {
         }
         query = {
           'basic.wbs': {
-            $in: user.wbs
+            $in: user.wbs,
           },
-          status: status
+          status: status,
         };
         findRequest(query, res);
       });
@@ -437,8 +443,8 @@ module.exports = function (app) {
   });
 
   function authorize(req, res, next) {
-    var roles = req.session.roles;
-    var action = req.body.action;
+    const roles = req.session.roles;
+    const action = req.body.action;
     if (!req.body.action) {
       return res.send(400, 'no action found.');
     }
@@ -458,21 +464,21 @@ module.exports = function (app) {
 
   // update a request
   app.put('/requests/:id/', auth.ensureAuthenticated, authorize, function (req, res) {
-    var request = req.body.request || {};
+    const request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
 
     if (req.body.action === 'save') {
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 0
+        status: 0,
       }, request, {
-        new: true
+        new: true,
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         if (cableRequest) {
@@ -480,7 +486,7 @@ module.exports = function (app) {
         }
         console.error(req.params.id + ' gone');
         return res.json(410, {
-          error: req.params.id + ' gone'
+          error: req.params.id + ' gone',
         });
       });
     }
@@ -493,14 +499,14 @@ module.exports = function (app) {
 
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 0
+        status: 0,
       }, request, {
-        new: true
+        new: true,
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         if (cableRequest) {
@@ -508,7 +514,7 @@ module.exports = function (app) {
         }
         console.error(req.params.id + ' cannot be submitted');
         return res.json(410, {
-          error: req.params.id + ' cannot be submitted'
+          error: req.params.id + ' cannot be submitted',
         });
       });
     }
@@ -521,14 +527,14 @@ module.exports = function (app) {
       console.dir(request);
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 1
+        status: 1,
       }, request, {
-        new: true
+        new: true,
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         if (cableRequest) {
@@ -536,7 +542,7 @@ module.exports = function (app) {
         }
         console.error(req.params.id + ' cannot be reverted');
         return res.json(400, {
-          error: req.params.id + ' cannot be reverted'
+          error: req.params.id + ' cannot be reverted',
         });
       });
     }
@@ -544,14 +550,14 @@ module.exports = function (app) {
     if (req.body.action === 'adjust') {
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 1
+        status: 1,
       }, request, {
-        new: true
+        new: true,
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         if (cableRequest) {
@@ -559,7 +565,7 @@ module.exports = function (app) {
         }
         console.error(req.params.id + ' gone');
         return res.json(410, {
-          error: req.params.id + ' gone'
+          error: req.params.id + ' gone',
         });
       });
     }
@@ -570,14 +576,14 @@ module.exports = function (app) {
       request.status = 3;
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 1
+        status: 1,
       }, request, {
-        new: true
+        new: true,
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         if (cableRequest) {
@@ -585,7 +591,7 @@ module.exports = function (app) {
         }
         console.error(req.params.id + ' gone');
         return res.json(410, {
-          error: req.params.id + ' gone'
+          error: req.params.id + ' gone',
         });
       });
     }
@@ -596,15 +602,15 @@ module.exports = function (app) {
       request.status = 2;
       Request.findOneAndUpdate({
         _id: req.params.id,
-        status: 1
+        status: 1,
       }, request, {
-        new: true
+        new: true,
       }).exec(
-        function (err, cableRequest) {
+        function (err, cableRequest: any) {
           if (err) {
             console.error(err);
             return res.json(500, {
-              error: err.message
+              error: err.message,
             });
           }
           if (cableRequest) {
@@ -612,7 +618,7 @@ module.exports = function (app) {
           } else {
             console.error(req.params.id + ' gone');
             return res.json(410, {
-              error: req.params.id + ' gone'
+              error: req.params.id + ' gone',
             });
           }
         }
@@ -640,11 +646,11 @@ module.exports = function (app) {
   // get the user's cables
   app.get('/cables/json', auth.ensureAuthenticated, function (req, res) {
     Cable.find({
-      submittedBy: req.session.userid
+      submittedBy: req.session.userid,
     }).lean().exec(function (err, cables) {
       if (err) {
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       return res.json(cables);
@@ -658,13 +664,13 @@ module.exports = function (app) {
 
   // get all the cables
   app.get('/allcables/json', auth.ensureAuthWithToken, function (req, res) {
-    var low = 100;
-    var up = 499;
+    const low = 100;
+    const up = 499;
     Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
       if (err) {
         console.error(err);
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       return res.json(docs);
@@ -679,14 +685,14 @@ module.exports = function (app) {
     // if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
     //   return res.send(403, 'You are not authorized to access this resource. ');
     // }
-    var low = 100;
-    var up = 499;
+    const low = 100;
+    const up = 499;
     if (req.session.roles.indexOf('admin') !== -1) {
       Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
         if (err) {
           console.error(err);
           return res.json(500, {
-            error: err.message
+            error: err.message,
           });
         }
         return res.json(docs);
@@ -694,7 +700,7 @@ module.exports = function (app) {
     } else {
       // manager see his own wbs
       User.findOne({
-        adid: req.session.userid
+        adid: req.session.userid,
       }).lean().exec(function (err, user) {
         if (err) {
           console.error(err);
@@ -711,7 +717,7 @@ module.exports = function (app) {
           if (e) {
             console.error(e);
             return res.json(500, {
-              error: e.message
+              error: e.message,
             });
           }
           return res.json(docs);
@@ -724,10 +730,10 @@ module.exports = function (app) {
   // status: 1 for procuring, 2 for installing, 3 for installed
 
   app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
-    var status = parseInt(req.params.s, 10);
+    const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 5) {
       return res.json(400, {
-        error: 'wrong status'
+        error: 'wrong status',
       });
     }
 
@@ -738,7 +744,7 @@ module.exports = function (app) {
           if (err) {
             console.error(err);
             return res.json(500, {
-              error: err.message
+              error: err.message,
             });
           }
           return res.json(docs);
@@ -747,14 +753,14 @@ module.exports = function (app) {
         return res.send(403, 'Only admin can access this resource. ');
       }
     } else {
-      var low = status * 100;
-      var up = status * 100 + 99;
+      const low = status * 100;
+      const up = status * 100 + 99;
       if (req.session.roles.indexOf('admin') !== -1) {
         Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
           if (err) {
             console.error(err);
             return res.json(500, {
-              error: err.message
+              error: err.message,
             });
           }
           return res.json(docs);
@@ -762,7 +768,7 @@ module.exports = function (app) {
       } else {
         // manager see his own wbs
         User.findOne({
-          adid: req.session.userid
+          adid: req.session.userid,
         }).lean().exec(function (err, user) {
           if (err) {
             console.error(err);
@@ -779,7 +785,7 @@ module.exports = function (app) {
             if (e) {
               console.error(e);
               return res.json(500, {
-                error: e.message
+                error: e.message,
               });
             }
             return res.json(docs);
@@ -791,7 +797,7 @@ module.exports = function (app) {
 
   app.get('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
-      number: req.params.id
+      number: req.params.id,
     }).lean().exec(function (err, cable) {
       if (err) {
         console.error(err);
@@ -800,7 +806,7 @@ module.exports = function (app) {
       if (cable) {
         return res.render('cable', {
           sysSub: sysSub,
-          number: req.params.id
+          number: req.params.id,
         });
       }
       return res.send(403, 'cannot find cable ' + req.params.id);
@@ -810,12 +816,12 @@ module.exports = function (app) {
 
   app.get('/cables/:id/json', auth.ensureAuthWithToken, function (req, res) {
     Cable.findOne({
-      number: req.params.id
+      number: req.params.id,
     }).exec(function (err, cable) {
       if (err) {
         console.error(err);
         return res.json(500, {
-          error: err.message
+          error: err.message,
         });
       }
       res.json(cable);
@@ -828,7 +834,7 @@ module.exports = function (app) {
 
   app.get('/cables/:id/changes/json', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
-      number: req.params.id
+      number: req.params.id,
     }, 'changeHistory').lean().exec(function (err, cable) {
       if (err) {
         console.error(err);
@@ -843,7 +849,7 @@ module.exports = function (app) {
       }
       Change.find({
         _id: {
-          $in: cable.changeHistory
+          $in: cable.changeHistory,
         }
       }).lean().exec(function changeCB(err1, changes) {
         if (err1) {
@@ -852,7 +858,7 @@ module.exports = function (app) {
         }
         MultiChange.find({
           _id: {
-            $in: cable.changeHistory
+            $in: cable.changeHistory,
           }
         }).lean().exec(function multiChangesCB(err2, multiChanges) {
           if (err2) {
@@ -866,46 +872,46 @@ module.exports = function (app) {
   });
 
   app.put('/cables/:id/', auth.ensureAuthenticated, auth.verifyRoles(['manager']), function updateCB(req, res) {
-    var conditions = {
-      number: req.params.id
+    const conditions: any = {
+      number: req.params.id,
     };
-    var update = {};
-    var changes = [];
-    var inValidAction = false;
+    const update: any = {};
+    const changes = [];
+    let inValidAction = false;
 
-    var required = req.body.required;
+    const required = req.body.required;
 
     switch (req.body.action) {
     case 'update':
       if (req.body.oldValue === null) {
         // for string, treat null and '' as the same
         conditions[req.body.property] = {
-          $in: [null, '']
+          $in: [null, ''],
         };
       } else if (req.body.oldValue === false) {
         // for boolean, treat false and '' as the same
         conditions[req.body.property] = {
-          $in: [null, false]
+          $in: [null, false],
         };
       } else {
         conditions[req.body.property] = req.body.oldValue;
       }
       update[req.body.property] = req.body.newValue;
       update.$inc = {
-        __v: 1
+        __v: 1,
       };
       break;
     case 'to-terminated':
       conditions['to.readyForTerm'] = true;
       changes.push({
-        property:'to.terminatedBy',
+        property: 'to.terminatedBy',
         newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
-        oldValue: null
+        oldValue: null,
       });
       changes.push({
         property: 'to.terminatedOn',
         newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
-        oldValue: null
+        oldValue: null,
       });
       update.updatedOn = Date.now();
       update.updatedBy = req.session.userid;
@@ -914,14 +920,14 @@ module.exports = function (app) {
     case 'from-terminated':
       conditions['from.readyForTerm'] = true;
       changes.push({
-        property:'from.terminatedBy',
+        property: 'from.terminatedBy',
         newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
-        oldValue: null
+        oldValue: null,
       });
       changes.push({
         property: 'from.terminatedOn',
         newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
-        oldValue: null
+        oldValue: null,
       });
       update.updatedOn = Date.now();
       update.updatedBy = req.session.userid;
@@ -935,19 +941,19 @@ module.exports = function (app) {
       conditions['from.terminatedBy'] = { $nin: [null, '']};
       conditions['from.terminatedOn'] = { $ne: null};
       changes.push({
-        property:'installedBy',
+        property: 'installedBy',
         newValue: (!req.body.name || req.body.name === '') ? req.session.username : req.body.name,
-        oldValue: null
+        oldValue: null,
       });
       changes.push({
         property: 'installedOn',
         newValue: (!req.body.date || req.body.date === '') ? new Date() : new Date(req.body.date),
-        oldValue: null
+        oldValue: null,
       });
       changes.push({
         property: 'status',
         newValue: 300,
-        oldValue: 250
+        oldValue: 250,
       });
       update.updatedOn = Date.now();
       update.updatedBy = req.session.userid;
@@ -955,7 +961,7 @@ module.exports = function (app) {
       return;
     case 'obsolete':
       conditions.status = {
-        $lte: 500
+        $lte: 500,
       };
       update.status = 501;
       update.obsoletedBy = req.session.userid;
@@ -964,44 +970,44 @@ module.exports = function (app) {
     case 'order':
       update.status = 101;
       update.orderedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.orderedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.orderedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'receive':
       update.status = 102;
       update.receivedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.receivedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.receivedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'accept':
       update.status = 103;
       update.orderedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.orderedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.orderedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'install':
       update.status = 200;
       break;
     case 'label':
       conditions.status = {
-        $gte: 200
+        $gte: 200,
       };
       update.status = 201;
       update.labeledBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.labeledOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.labeledOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'benchTerm':
       conditions.status = {
-        $gte: 200
+        $gte: 200,
       };
       update.status = 202;
       update.benchTerminatedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.benchTerminatedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.benchTerminatedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'benchTest':
       conditions.status = {
-        $gte: 200
+        $gte: 200,
       };
       update.status = 203;
       update.benchTestedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.benchTestedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.benchTestedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'pull':
       // check required steps
@@ -1010,17 +1016,17 @@ module.exports = function (app) {
       };
       if (required && required.label) {
         conditions.labeledBy = {
-          $exists: true
+          $exists: true,
         };
       }
       if (required && required.benchTerm) {
         conditions.benchTerminatedBy = {
-          $exists: true
+          $exists: true,
         };
       }
       if (required && required.benchTest) {
         conditions.benchTestedBy = {
-          $exists: true
+          $exists: true,
         };
       }
       update.status = 249;
@@ -1029,39 +1035,39 @@ module.exports = function (app) {
       conditions.status = 249;
       update.status = 250;
       update.pulledBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.pulledOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.pulledOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'fieldTerm':
       conditions.status = {
-        $gte: 250
+        $gte: 250,
       };
       update.status = 251;
       update.fieldTerminatedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.fieldTerminatedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.fieldTerminatedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'fieldTest':
       conditions.status = {
-        $gte: 250
+        $gte: 250,
       };
       if (required && required.fieldTerm) {
         conditions.fieldTerminatedBy = {
-          $exists: true
+          $exists: true,
         };
       }
       update.status = 252;
       update.fieldTestedBy = req.body.name === '' ? req.session.username : req.body.name;
-      update.fieldTestedOn = req.body.date === '' ? Date.now() : Date(req.body.date);
+      update.fieldTestedOn = req.body.date === '' ? Date.now() : (Date as any)(req.body.date);
       break;
     case 'use':
       // check required steps
       conditions.status = 252;
       if (required && required.fieldTerm) {
         conditions.fieldTerminatedBy = {
-          $exists: true
+          $exists: true,
         };
       }
       conditions.fieldTestedBy = {
-        $exists: true
+        $exists: true,
       };
       update.status = 300;
       break;
@@ -1076,7 +1082,7 @@ module.exports = function (app) {
     if (req.body.action !== 'update') {
       updateCable(conditions, update, req, res);
     } else {
-      var change = new Change({
+      const change = new Change({
         cableName: req.params.id,
         property: req.body.property,
         oldValue: req.body.oldValue,
@@ -1090,10 +1096,10 @@ module.exports = function (app) {
           return res.send(500, 'cannot save the change');
         }
         update.$push = {
-          changeHistory: doc._id
+          changeHistory: doc._id,
         };
         updateCable(conditions, update, req, res);
       });
     }
   });
-};
+}

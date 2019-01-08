@@ -1,4 +1,6 @@
 
-exports.index = function(req, res){
-  res.render('numbering');
+export = {
+  index: function(req, res){
+    res.render('numbering');
+  },
 };

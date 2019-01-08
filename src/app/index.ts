@@ -25,6 +25,19 @@ import * as promises from './shared/promises';
 import * as status from './shared/status';
 import * as tasks from './shared/tasks';
 
+import routes = require('./routes');
+import about = require('./routes/about');
+const sysSub = require(__dirname + '/../config/sys-sub.json');
+const penetration = require(__dirname + '/../config/penetration.json');
+
+import cable from './routes/cable';
+import cabletype from './routes/cabletype';
+import numbering = require('./routes/numbering');
+import profile from './routes/profile';
+import room from './routes/room';
+import user from './routes/user';
+import wbs from './routes/wbs';
+
 // package metadata
 interface Package {
   name?: {};
@@ -343,6 +356,34 @@ async function doStart(): Promise<express.Application> {
   app.get('/logout', (req, res) => {
     auth.getProvider().logout(req);
     res.redirect(res.locals.basePath || '/');
+  });
+
+
+  app.get('/about', about.index);
+  app.get('/', auth.ensureAuthenticated, routes.main);
+
+  app.get('/main', auth.ensureAuthenticated, routes.switch2normal);
+
+  user(app);
+
+  wbs(app);
+
+  room(app);
+
+  cable(app);
+
+  cabletype(app);
+
+  profile(app);
+
+  app.get('/numbering', numbering.index);
+
+  app.get('/penetration', function (req, res) {
+    res.json(penetration);
+  });
+
+  app.get('/sys-sub', function (req, res) {
+    res.json(sysSub);
   });
 
   app.use('/status', status.router);

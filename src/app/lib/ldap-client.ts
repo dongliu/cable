@@ -1,14 +1,14 @@
-var ldap = require('ldapjs');
+import ldap = require('ldapjs');
 
-var ad = require('../config/ad.json');
+const ad = require('../../config/ad.json');
 
-var client = ldap.createClient({
+const client = ldap.createClient({
   url: ad.url,
   maxConnections: 5,
   connectTimeout: 10 * 1000,
   timeout: 15 * 1000,
   bindDN: ad.adminDn,
-  bindCredentials: ad.adminPassword
+  bindCredentials: ad.adminPassword,
 });
 
 function search(base, opts, raw, cb) {
@@ -17,7 +17,7 @@ function search(base, opts, raw, cb) {
       console.log(JSON.stringify(err));
       return cb(err);
     }
-    var items = [];
+    const items = [];
     result.on('searchEntry', function (entry) {
       if (raw) {
         items.push(entry.raw);
@@ -31,7 +31,7 @@ function search(base, opts, raw, cb) {
     });
     result.on('end', function (result) {
       if (result.status !== 0) {
-        var err = 'non-zero status from LDAP search: ' + result.status;
+        const err = 'non-zero status from LDAP search: ' + result.status;
         console.log(JSON.stringify(err));
         return cb(err);
       }
@@ -45,7 +45,7 @@ function search(base, opts, raw, cb) {
   });
 }
 
-module.exports = {
+export = {
   client: client,
-  search: search
+  search: search,
 };

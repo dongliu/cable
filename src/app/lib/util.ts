@@ -1,7 +1,8 @@
 /*a simple middlewere to check if the request contains required properties*/
 function filterBody(strings) {
   return function (req, res, next) {
-    var k, found = false;
+    let k;
+    let found = false;
     for (k in req.body) {
       if (req.body.hasOwnProperty(k)) {
         if (strings.indexOf(k) !== -1) {
@@ -19,6 +20,6 @@ function filterBody(strings) {
   };
 }
 
-module.exports = {
-  filterBody: filterBody
+export = {
+  filterBody: filterBody,
 };
