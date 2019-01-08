@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "./bin/app",
+    "build-all": "grunt build-all",
     "grunt": "./node_modules/.bin/grunt",
     "mocha": "./node_modules/.bin/mocha",
     "nyc": "./node_modules/.bin/nyc",
