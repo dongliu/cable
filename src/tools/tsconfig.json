@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2016",
+        "alwaysStrict": false,
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "strictNullChecks": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "skipLibCheck": true,
+        "sourceMap": false
+    }
+}
