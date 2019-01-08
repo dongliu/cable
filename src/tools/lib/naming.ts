@@ -1,4 +1,4 @@
-var numbering = require('../config/sys-sub.json');
+const numbering = require('../../../config/sys-sub.json');
 
 
 /**
@@ -10,8 +10,10 @@ var numbering = require('../config/sys-sub.json');
  */
 
 function nameEncoding(cat, sub, sig) {
-  var c, b, g;
-  var result = [null, null, null];
+  let c;
+  let b;
+  let g;
+  const result = [null, null, null];
   for (c in numbering) {
     if (numbering.hasOwnProperty(c) && numbering[c].name === cat) {
       result[0] = c;
@@ -31,6 +33,6 @@ function nameEncoding(cat, sub, sig) {
   return result;
 }
 
-module.exports = {
-  encode: nameEncoding
+export = {
+  encode: nameEncoding,
 };

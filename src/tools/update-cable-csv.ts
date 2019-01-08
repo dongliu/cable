@@ -1,28 +1,29 @@
 #!/usr/bin/env node
-
+/* tslint:disable:no-console */
 /**
  * @fileOverview Read a csv file with cable number and change details and apply them to mongoDB.
  * @author Dong Liu
  */
 
 
-var csv = require('csv');
+import csv = require('csv');
 
-var fs = require('fs');
-var path = require('path');
-var mongoose = require('mongoose');
-var Cable = require('../model/request.js').Cable;
-var MultiChange = require('../model/request.js').MultiChange;
-var program = require('commander');
+import fs = require('fs');
+import path = require('path');
+import mongoose = require('mongoose');
+import request = require('../app/model/request');
+const Cable: any = request.Cable;
+const MultiChange: any = request.MultiChange;
+import program = require('commander');
 
-var inputPath;
-var realPath;
-var db;
-var line = 0;
-var done = 0;
-var changes = [];
-var parser;
-var properties = [];
+let inputPath;
+let realPath;
+let db;
+let line = 0;
+let done = 0;
+const changes = [];
+let parser;
+const properties = [];
 
 program.version('0.0.1')
   .option('-d, --dryrun', 'dry run')
@@ -76,10 +77,10 @@ function updateCable(change, i, callback) {
       return;
     }
 
-    var update = {};
-    var updates = [];
-    var multiChange = null;
-    var conditionSatisfied = true;
+    const update: any = {};
+    const updates = [];
+    let multiChange = null;
+    let conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
       var currentType = Cable.schema.paths[p];
@@ -108,7 +109,7 @@ function updateCable(change, i, callback) {
         return;
       }
 
-      var currentValue = cable.get(p);
+      let currentValue = cable.get(p);
       switch (p) {
       case 'basic.tags':
         if (Array.isArray(change[2 * index + 1])) {
@@ -175,7 +176,7 @@ function updateCable(change, i, callback) {
     update.updatedOn = Date.now();
     update.updatedBy = 'system';
     update.$inc = {
-      __v: 1
+      __v: 1,
     };
 
     if (program.dryrun) {
@@ -188,7 +189,7 @@ function updateCable(change, i, callback) {
       cableName: cable.number,
       updates: updates,
       updatedBy: 'system',
-      updatedOn: Date.now()
+      updatedOn: Date.now(),
     });
 
     multiChange.save(function (err1, c) {
@@ -199,7 +200,7 @@ function updateCable(change, i, callback) {
       }
 
       update.$push = {
-        changeHistory: c._id
+        changeHistory: c._id,
       };
 
       cable.update(update, { new: true }, function (err2) {
@@ -221,8 +222,8 @@ parser = csv.parse({
 });
 
 parser.on('readable', function () {
-  var record = parser.read();
-  var i;
+  let record = parser.read();
+  let i;
 
   while (record) {
     line += 1;

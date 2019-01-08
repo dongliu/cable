@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+/* tslint:disable:no-console */
 /**
  * @fileOverview read a csv file with cable request details and insert them into mongo.
  * @author Dong Liu
@@ -7,27 +7,28 @@
 
 /*jslint es5: true*/
 
-var csv = require('csv');
+import csv = require('csv');
 
-var fs = require('fs');
-var path = require('path');
-var mongoose = require('mongoose');
-var validator = require('validator');
-var Request = require('../model/request.js').Request;
-var program = require('commander');
+import fs = require('fs');
+import path = require('path');
+import mongoose = require('mongoose');
+import validator = require('validator');
+import request = require('../app/model/request');
+const Request = request.Request;
+import program = require('commander');
 
-var naming = require('../lib/naming');
+import naming = require('./lib/naming');
 
-var inputPath;
-var realPath;
-var db;
-var line = 0;
-var requests = [];
-var lines = [];
-var parser;
-var success = 0;
+let inputPath;
+let realPath;
+let db;
+let line = 0;
+const requests = [];
+const lines = [];
+let parser;
+let success = 0;
 
-var version = '';
+let version = '';
 
 program.version('0.0.1')
   .option('-v, --validate', 'validate data from spreadsheet')
@@ -74,17 +75,17 @@ function splitTags(s) {
 }
 
 function isTrue(S) {
-  var s = S.toLowerCase();
+  const s = S.toLowerCase();
   return s === 'yes' || s === 'true';
 }
 
 function createRequest(i) {
-  var request = requests[i];
-  var namecodes;
-  var newRequest;
-  var quantityIndex = 10;
-  var v2 = version.indexOf('v2') === 0;
-  var v3 = version.indexOf('v3') === 0;
+  const request = requests[i];
+  let namecodes;
+  let newRequest;
+  let quantityIndex = 10;
+  const v2 = version.indexOf('v2') === 0;
+  const v3 = version.indexOf('v3') === 0;
   // need more validation function here
   if (v2 || v3) {
     quantityIndex = 11;
@@ -117,21 +118,21 @@ function createRequest(i) {
         service: request[9],
         traySection: request[6],
         tags: splitTags(request[10]),
-        quantity: request[11]
+        quantity: request[11],
       },
       from: {
         rack: request[12],
         terminationDevice: request[13],
         terminationType: request[14],
         terminationPort: request[15],
-        wiringDrawing: request[16]
+        wiringDrawing: request[16],
       },
       to: {
         rack: request[17],
         terminationDevice: request[18],
         terminationType: request[19],
         terminationPort: request[20],
-        wiringDrawing: request[21]
+        wiringDrawing: request[21],
       },
       ownerProvided: isTrue(request[8]),
       conduit: request[22],
@@ -141,7 +142,7 @@ function createRequest(i) {
       createdBy: 'system',
       createdOn: Date.now(),
       submittedBy: 'system',
-      submittedOn: Date.now()
+      submittedOn: Date.now(),
     };
   } else if (v2) {
     newRequest = {
@@ -162,13 +163,13 @@ function createRequest(i) {
         rack: request[12],
         terminationDevice: request[13],
         terminationType: request[14],
-        wiringDrawing: request[15]
+        wiringDrawing: request[15],
       },
       to: {
         rack: request[16],
         terminationDevice: request[17],
         terminationType: request[18],
-        wiringDrawing: request[19]
+        wiringDrawing: request[19],
       },
       ownerProvided: isTrue(request[8]),
       conduit: request[20],
@@ -178,7 +179,7 @@ function createRequest(i) {
       createdBy: 'system',
       createdOn: Date.now(),
       submittedBy: 'system',
-      submittedOn: Date.now()
+      submittedOn: Date.now(),
     };
   } else {
     newRequest = {
@@ -193,21 +194,21 @@ function createRequest(i) {
         service: request[8],
         traySection: request[6],
         tags: splitTags(request[9]),
-        quantity: request[10]
+        quantity: request[10],
       },
 
       from: {
         rack: request[11],
         terminationDevice: request[12],
         terminationType: request[13],
-        wiringDrawing: request[14]
+        wiringDrawing: request[14],
       },
 
       to: {
         rack: request[15],
         terminationDevice: request[16],
         terminationType: request[17],
-        wiringDrawing: request[18]
+        wiringDrawing: request[18],
       },
       ownerProvided: false,
       conduit: request[19],
@@ -217,7 +218,7 @@ function createRequest(i) {
       createdBy: 'system',
       createdOn: Date.now(),
       submittedBy: 'system',
-      submittedOn: Date.now()
+      submittedOn: Date.now(),
     };
   }
   if (program.validate) {
@@ -257,11 +258,11 @@ function createRequest(i) {
 
 
 parser = csv.parse({
-  trim: true
+  trim: true,
 });
 
 parser.on('readable', function () {
-  var record = parser.read();
+  let record = parser.read();
   while (record) {
     line += 1;
     console.log('read ' + line + ' lines ...');

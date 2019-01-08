@@ -1,21 +1,22 @@
+/* tslint:disable:no-console */
+import csv = require('csv');
 
-var csv = require('csv');
+import fs = require('fs');
+import path = require('path');
+import mongoose = require('mongoose');
+const ObjectId = require('mongoose').Types.ObjectId;
+import request = require('../app/model/request');
+const Request: any = request.Request;
+import program = require('commander');
 
-var fs = require('fs');
-var path = require('path');
-var mongoose = require('mongoose');
-var ObjectId = require('mongoose').Types.ObjectId;
-var Request = require('../model/request.js').Request;
-var program = require('commander');
-
-var inputPath;
-var realPath;
-var db;
-var line = 0;
-var done = 0;
-var changes = [];
-var parser;
-var properties = [];
+let inputPath;
+let realPath;
+let db;
+let line = 0;
+let done = 0;
+let changes = [];
+let parser;
+let properties = [];
 
 
 program.version('0.0.1')
@@ -30,6 +31,10 @@ program.parse(process.argv);
 if (inputPath === undefined) {
   console.error('Error: need the input source csv file path!');
   process.exit(1);
+}
+
+function splitTags(s) {
+  return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
 realPath = path.resolve(process.cwd(), inputPath);
@@ -66,12 +71,12 @@ function updateRequest(change, i, callback) {
       return;
     }
 
-    var update = {};
-    var updates = [];
-    var conditionSatisfied = true;
+    const update: any = {};
+    const updates = [];
+    let conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
-      var currentType = Request.schema.paths[p];
+      const currentType = Request.schema.paths[p];
       if (!currentType) {
         err = new Error('request does not have path "' + p + '"');
         console.error(err.toString());
@@ -82,7 +87,7 @@ function updateRequest(change, i, callback) {
       if (change[2 * index + 1] !== '_whatever_') {
         try {
           change[2 * index + 1] = currentType.cast(change[2 * index + 1]);
-        } catch(e) {
+        } catch (e) {
           console.error(e.toString());
           callback(e);
           return;
@@ -91,13 +96,13 @@ function updateRequest(change, i, callback) {
 
       try {
         change[2 * index + 2] = currentType.cast(change[2 * index + 2]);
-      } catch(e) {
+      } catch (e) {
         console.error(e.toString());
         callback(e);
         return;
       }
 
-      var currentValue = request.get(p);
+      let currentValue = request.get(p);
       switch (p) {
       case 'basic.tags':
         if (Array.isArray(change[2 * index + 1])) {
@@ -138,7 +143,7 @@ function updateRequest(change, i, callback) {
             updates.push({
               property: p,
               oldValue: request.get(p),
-              newValue: update[p]
+              newValue: update[p],
             });
           }
         }
@@ -164,7 +169,7 @@ function updateRequest(change, i, callback) {
     update.updatedOn = Date.now();
     update.updatedBy = 'system';
     update.$inc = {
-      __v: 1
+      __v: 1,
     };
 
     if (program.dryrun) {
@@ -184,15 +189,15 @@ function updateRequest(change, i, callback) {
     });
   });
 
-};
+}
 
 parser = csv.parse({
-  trim: true
+  trim: true,
 });
 
 parser.on('readable', function () {
-  var record = parser.read();
-  var i;
+  let record = parser.read();
+  let i;
 
   while (record) {
     line += 1;
