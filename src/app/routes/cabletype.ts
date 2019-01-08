@@ -126,4 +126,4 @@ export default function(app) {
       return res.send(410, 'cannot find type ' + req.params.id);
     });
   });
-};
+}
