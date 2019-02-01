@@ -18,7 +18,13 @@ import * as mongoose from 'mongoose';
 import * as morgan from 'morgan';
 import * as favicon from 'serve-favicon';
 
-import * as auth from './shared/auth';
+// Import libaries to initialize models (order matters!)
+import metamodel = require('./model/meta.js');
+import reqmodel = require('./model/request.js');
+import usermodel = require('./model/user.js');
+
+import auth = require('./lib/auth');
+// import * as auth from './shared/auth';
 import * as handlers from './shared/handlers';
 import * as logging from './shared/logging';
 import * as promises from './shared/promises';
@@ -74,6 +80,9 @@ export type State = 'STARTING' | 'STARTED' | 'STOPPING' | 'STOPPED';
 
 // application singleton
 let app: express.Application;
+
+// AD Client
+let adClient;
 
 // application logging
 export let info = logging.info;
@@ -302,6 +311,15 @@ async function doStart(): Promise<express.Application> {
     error('Mongoose connection error: %s', err);
   });
 
+  // Need to import these libraries so they
+  // are initialized in the correct order,
+  // but TypeScript will removed unused
+  // imports, so need to do something:
+  info('Model %s Initialized', metamodel.CableType.name);
+  info('Model %s Initialized', reqmodel.Request.name);
+  info('Model %s Initialized', reqmodel.Cable.name);
+  info('Model %s Initialized', usermodel.User.name);
+
   // view engine configuration
   app.set('views', path.resolve(__dirname, '..', 'views'));
   app.set('view engine', 'pug');
@@ -319,13 +337,13 @@ async function doStart(): Promise<express.Application> {
   }));
 
   // Authentication handlers (must follow session middleware)
-  app.use(auth.getProvider().initialize());
+  // app.use(auth.getProvider().initialize());
 
   // Request logging configuration (must follow authc middleware)
-  morgan.token('remote-user', (req) => {
-    const username = auth.getUsername(req);
-    return username || 'anonymous';
-  });
+  // morgan.token('remote-user', (req) => {
+  //   const username = auth.getUsername(req);
+  //   return username || 'anonymous';
+  // });
 
   if (env === 'production') {
     app.use(morgan('short'));
@@ -343,21 +361,19 @@ async function doStart(): Promise<express.Application> {
   app.use(bodyparser.json());
   app.use(bodyparser.urlencoded({
     extended: false,
-  }));
+  })  );
 
-  app.get('/login', auth.getProvider().authenticate({ rememberParams: [ 'bounce' ]}), (req, res) => {
-    if (req.query.bounce) {
-      res.redirect(req.query.bounce);
-      return;
+  app.get('/login', auth.ensureAuthenticated, function (req, res: any) {
+    if (req.session.userid) {
+      return res.redirect('/');
     }
-    res.redirect(res.locals.basePath || '/');
+    // something wrong
+    res.send(400, 'please enable cookie in your browser');
   });
 
-  app.get('/logout', (req, res) => {
-    auth.getProvider().logout(req);
-    res.redirect(res.locals.basePath || '/');
-  });
+  app.get('/logout', routes.logout);
 
+  adClient = require('./lib/ldap-client').client;
 
   app.get('/about', about.index);
   app.get('/', auth.ensureAuthenticated, routes.main);
@@ -424,6 +440,22 @@ async function doStop(): Promise<void> {
     for (const soc of activeSockets) {
       soc.destroy();
     }
+  }
+
+  // Unbind AD Client
+  try {
+    await new Promise((resolve, reject) => {
+      adClient.unbind(function (err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+    info('ldap client stops.');
+  } catch (err) {
+    warn('AD unbind failure: %s', err);
   }
 
   // disconnect Mongoose (MongoDB)
