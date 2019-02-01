@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -15,7 +15,7 @@ block content
   .container
     #message
     h3 Request
-      =' '
+      = ' '
       span#request_id #{request._id}
     #details
 block js

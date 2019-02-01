@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -14,19 +14,19 @@ block head
 block content
   .container-fluid
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+    .modal.hide.fade#modal(tabindex='-1', role='dialog', data-backdrop='static', aria-labelledby='modalLabel', aria-hidden='true')
       .modal-header
         h3#modalLabel
       .modal-body
       .modal-footer
     .btn-toolbar
       .btn-group
-        button.btn.btn-primary#reload
+        button.btn.btn-primary#reload(type='button')
           i.fa.fa-refresh.fa-lg
-          | &nbsp;Reload
+            | &nbsp;Reload
       .btn-group
-          button.btn.btn-primary#bar
-            i.fa.fa-bar-chart.fa-lg
+        button.btn.btn-primary#bar(type='button')
+          i.fa.fa-bar-chart.fa-lg
             | &nbsp;Bar chart
     .tabbable.tabs-left#tabs
       ul.nav.nav-tabs
@@ -35,26 +35,26 @@ block content
         li
           a(href='#obsoleted', data-toggle='tab') Obsoleted cables
       .tab-content
-        #active.tab-pane.active
+        .tab-pane.active#active
           .btn-toolbar
             .btn-group
-              button.btn.btn-warning#obsolte
+              button.btn.btn-warning#obsolte(type='button')
                 i.fa.fa-trash.fa-lg
                 | &nbsp;Obsolete
             .btn-group
-              button.btn.btn-info#active-select-all
+              button.btn.btn-info#active-select-all(type='button')
                 i.fa.fa-list.fa-lg
                 | &nbsp;Select all in current view
             .btn-group
-              button.btn.btn-info#active-select-none
+              button.btn.btn-info#active-select-none(type='button')
                 i.fa.fa-square-o.fa-lg
                 | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
-              button.btn.btn-info#active-wrap.active Wrap
-              button.btn.btn-info#active-unwrap Unwrap
+              button.btn.btn-info.active#active-wrap(type='button') Wrap
+              button.btn.btn-info#active-unwrap(type='button') Unwrap
           .table-overflow
-            table#active-table.table.table-bordered.table-hover
-        #obsoleted.tab-pane
+            table.table.table-bordered.table-hover#active-table
+        .tab-pane#obsoleted
           .btn-toolbar
             //- .btn-group
             //-   button.btn.btn-info#obsoleted-select-all
@@ -65,10 +65,10 @@ block content
             //-     i.fa.fa-square-o.fa-lg
             //-     | &nbsp;Clear selection
             .btn-group(data-toggle='buttons-radio')
-              button.btn.btn-info#obsoleted-wrap.active Wrap
-              button.btn.btn-info#obsoleted-unwrap Unwrap
+              button.btn.btn-info.active#obsoleted-wrap(type='button') Wrap
+              button.btn.btn-info#obsoleted-unwrap(type='button') Unwrap
           .table-overflow
-            table#obsoleted-table.table.table-bordered.table-hover
+            table.table.table-bordered.table-hover#obsoleted-table
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')

@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -11,7 +11,7 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  .container-fluid(style="margin-top: 10px")
+  .container-fluid(style='margin-top: 10px')
     #message
     if (roles && roles.indexOf('admin') !== -1)
       .btn-toolbar
@@ -19,7 +19,7 @@ block content
           a.btn.btn-primary#manage(href='/cabletypes/manage')
             i.fa.fa-edit.fa-lg
             | &nbsp;Manage cable types
-    table#cable-type.table.table-bordered.table-hover
+    table.table.table-bordered.table-hover#cable-type
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')

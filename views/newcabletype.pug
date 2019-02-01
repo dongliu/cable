@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -11,12 +11,12 @@ block head
 block content
   .container
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+    .modal.hide.fade#modal(tabindex='-1', role='dialog', data-backdrop='static', aria-labelledby='modalLabel', aria-hidden='true')
       .modal-header
         h3#modalLabel
       .modal-body
       .modal-footer
-        button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
+        button.btn.btn-primary(type='button', data-dismiss='modal', aria-hidden='true') Return to edit
     form.form-horizontal(name='cabletype')
       h3 New FRIB cable type
       //- fieldset
@@ -32,7 +32,7 @@ block content
       .control-group
         .control-label Type
         .controls
-          select#frib-type.input(name='fribType')
+          select.input#frib-type(name='fribType')
             option 7-Pole
             option Multi
             option PwrAC
@@ -66,7 +66,7 @@ block content
       .control-group
         .control-label Pairing
         .controls
-          select#pairing.input(name='pairing')
+          select.input#pairing(name='pairing')
             option N/A
             option unpaired
             option twisted pair
@@ -74,7 +74,7 @@ block content
       .control-group
         .control-label Shielding
         .controls
-          select#shielding.input(name='shielding')
+          select.input#shielding(name='shielding')
             option N/A
             option unshielded
             option overall shielded
@@ -94,7 +94,7 @@ block content
       .control-group
         .control-label Raceway
         .controls
-          select#raceway.input(name='raceway')
+          select.input#raceway(name='raceway')
             option N/A
             option Cable Tray, Conduit
       .control-group

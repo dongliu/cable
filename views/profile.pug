@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -10,10 +10,10 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  .container(style="margin-top: 10px")
+  .container(style='margin-top: 10px;')
     #message
-    #profile.well
-      img(src="/adusers/#{user.adid}/photo")
+    .well#profile
+      img(src='/adusers/' + user.adid + '/photo', alt=user.adid)
       dl
         dt Name
         dd #{user.name}
@@ -38,7 +38,7 @@ block content
               else
                 input#sub(type='checkbox')
               | subscribe &nbsp
-            button#modify.btn(type='submit') Modify
+            button.btn#modify(type='submit') Modify
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')

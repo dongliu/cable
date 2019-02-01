@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -16,20 +16,20 @@ block content
     var sysSub = !{JSON.stringify(sysSub)};
   .container
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+    .modal.hide.fade#modal(tabindex='-1', role='dialog', data-backdrop='static', aria-labelledby='modalLabel', aria-hidden='true')
       .modal-header
         h3#modalLabel
       .modal-body
       .modal-footer
-        button.btn.btn-primary(data-dismiss='modal',aria-hidden='true') Return to edit
+        button.btn.btn-primary(type='button', data-dismiss='modal', aria-hidden='true') Return to edit
     form.form-horizontal(name='request')
       if (locals.id)
         h3 Cable Request &nbsp;
           span#requestId #{id}
       else
         h3 New Cable Request
-      include requestform
-      include request_action
+      include requestform.pug
+      include request_action.pug
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')

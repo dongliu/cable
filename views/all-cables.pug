@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -11,35 +11,35 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  .container-fluid(style="margin-top: 10px")
+  .container-fluid(style='margin-top: 10px')
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+    .modal.hide.fade#modal(tabindex='-1', role='dialog', data-backdrop='static', aria-labelledby='modalLabel', aria-hidden='true')
       .modal-header
         h3#modalLabel
       .modal-body
       .modal-footer
     .btn-toolbar
-        .btn-group
-          button.btn.btn-primary#reload
-            i.fa.fa-refresh.fa-lg
-            | &nbsp;Reload
-        .btn-group
-          button.btn.btn-primary#bar
-            i.fa.fa-bar-chart.fa-lg
-            | &nbsp;Bar chart
-        .btn-group(data-toggle='buttons-radio')
-          button.btn.btn-info#all-wrap.active Wrap
-          button.btn.btn-info#all-unwrap Unwrap
-        .btn-group
-          a.btn.btn-info#gotobottom(href='#gototop')
-            i.fa.fa-arrow-down.fa-lg
-            | &nbsp;Jump to bottom
-    table#all-cable.table.table-bordered.table-hover
+      .btn-group
+        button.btn.btn-primary#reload(type='button')
+          i.fa.fa-refresh.fa-lg
+          | &nbsp;Reload
+      .btn-group
+        button.btn.btn-primary#bar(type='button')
+          i.fa.fa-bar-chart.fa-lg
+          | &nbsp;Bar chart
+      .btn-group(data-toggle='buttons-radio')
+        button.btn.btn-info.active#all-wrap(type='button') Wrap
+        button.btn.btn-info#all-unwrap(type='button') Unwrap
+      .btn-group
+        a.btn.btn-info#gotobottom(href='#gototop')
+          i.fa.fa-arrow-down.fa-lg
+          | &nbsp;Jump to bottom
+    table.table.table-bordered.table-hover#all-cable
     .btn-toolbar
-        .btn-group
-          a.btn.btn-info#gototop(href='#gotobottom')
-            i.fa.fa-arrow-up.fa-lg
-            | &nbsp;Jump to top
+      .btn-group
+        a.btn.btn-info#gototop(href='#gotobottom')
+          i.fa.fa-arrow-up.fa-lg
+          | &nbsp;Jump to top
 
 
 block js

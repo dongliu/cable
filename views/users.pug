@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -11,10 +11,10 @@ block head
   link(rel='stylesheet', href='/stylesheets/style.css')
 
 block content
-  .container(style="margin-top: 10px")
+  .container(style='margin-top: 10px')
     .well
       form.form-inline
-        input#username.typeahead.input(type='text', placeholder='Last, First', name='name')
+        input.typeahead.input#username(type='text', placeholder='Last, First', name='name')
         != ' '
         label.checkbox.inline
           input#manager(type='checkbox', value='manager')
@@ -26,7 +26,7 @@ block content
         != ' '
         button.btn.btn-primary#add(type='submit') Add
     #message
-    #modal.modal.hide.fade(tabindex='-1',role='dialog',data-backdrop='static',aria-labelledby='modalLabel',aria-hidden='true')
+    .modal.hide.fade#modal(tabindex='-1', role='dialog', data-backdrop='static', aria-labelledby='modalLabel', aria-hidden='true')
       .modal-header
         h3#modalLabel
       .modal-body
@@ -34,19 +34,19 @@ block content
     h3 User list
     .btn-toolbar
       .btn-group
-        button.btn.btn-info#user-reload
+        button.btn.btn-info#user-reload(type='button')
           i.fa.fa-refresh.fa-lg
-          | &nbsp;Reload users
+            | &nbsp;Reload users
       .btn-group
-        button.btn.btn-info#user-modify
+        button.btn.btn-info#user-modify(type='button')
           i.fa.fa-wrench.fa-lg
-          | &nbsp;Modify role
+            | &nbsp;Modify role
       .btn-group
-        button.btn.btn-warning#user-update
+        button.btn.btn-warning#user-update(type='button')
           i.fa.fa-wrench.fa-lg
-          | &nbsp;Update profile from AD
+            | &nbsp;Update profile from AD
 
-    table#users.table.table-bordered.table-hover
+    table.table.table-bordered.table-hover#users
 
 block js
   script(type='text/javascript', src='/jquery/jquery-1.9.1.js')

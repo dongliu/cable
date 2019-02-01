@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -15,11 +15,11 @@ block content
   .container
     #message
     h3 Cable
-      =' '
+      = ' '
       span#cableId #{number}
     .btn-group(data-toggle='buttons-radio')
-      button.btn.btn-info#show-history.active Show update history
-      button.btn.btn-info#hide-history Hide update history
+      button.btn.btn-info.active#show-history(type='button') Show update history
+      button.btn.btn-info#hide-history(type='button') Hide update history
     h4 reference request
     a#request(target='_blank')
     h4 status

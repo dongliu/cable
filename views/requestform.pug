@@ -3,7 +3,7 @@ legend Basic information
 .control-group
   .control-label Project
   .controls
-    select#project.input(type='text', name='basic.project', required)
+    select.input#project(type='text', name='basic.project', required)
       option(value='', disabled=true, selected) choose
       option(value='FRIB') FRIB
       option(value='REA') ReA
@@ -23,27 +23,27 @@ legend Basic information
   .control-label Origin category
   .controls
     .input-append
-      select#cat.input(disabled=true, name='basic.originCategory', required)
+      select.input#cat(disabled=true, name='basic.originCategory', required)
         option(value='', disabled=true, selected) choose
       span.add-on &nbsp;
 .control-group
   .control-label Origin subcategory
   .controls
     .input-append
-      select#sub.input(disabled=true, name='basic.originSubcategory', required)
+      select.input#sub(disabled=true, name='basic.originSubcategory', required)
         option(value='', disabled=true, selected) choose
       span.add-on &nbsp;
 .control-group
   .control-label Signal classification
   .controls
     .input-append
-      select#signal.input(disabled=true, name='basic.signalClassification', required)
+      select.input#signal(disabled=true, name='basic.signalClassification', required)
         option(value='', disabled=true, selected) choose
       span.add-on &nbsp;
 .control-group
   .control-label Tray section
   .controls
-    select#tray-section.input(name='basic.traySection')
+    select.input#tray-section(name='basic.traySection')
       option HPRF
       option DC
       option VLLS
@@ -66,16 +66,16 @@ legend Basic information
 .control-group
   .control-label Tags
   .controls
-    input#tags(type='text', name='basic.tags', class='type[stringArray]')
+    input#tags(type='text', name='basic.tags', class=type[stringArray])
     span.help-inline Seperate tags by ","
 .control-group
   .control-label Quantity
   .controls
-    input#quantity(type='text', name='basic.quantity', class='type[number]', value=1, required, min=1)
+    input#quantity(type='text', name='basic.quantity', class=type[number], value=1, required, min=1)
 .control-group
   .control-label Owner provided
   .controls
-    select#ownerProvided.input(type='boolean', name='ownerProvided')
+    select.input#ownerProvided(type='boolean', name='ownerProvided')
       option(value='false') No
       option(value='true') Yes
 //- fieldset

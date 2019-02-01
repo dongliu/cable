@@ -1,4 +1,4 @@
-extends layout
+extends layout.pug
 
 block head
   meta(charset='urf-8')
@@ -21,15 +21,15 @@ block content
       tbody
         tr
           td
-            select#system.input-small(disabled=true)
+            select.input-small#system(disabled=true)
               option(value='', disabled=true) choose
           td
-            select#sub.input-small(disabled=true)
+            select.input-small#sub(disabled=true)
           td
-            select#signal.input-small(disabled=true)
+            select.input-small#signal(disabled=true)
               option(value='', disabled=true) choose
           td
-            input#sequence.input-small(placeholder='######', disabled=true)
+            input.input-small#sequence(type='text', placeholder='######', disabled=true)
     .well
       p Decoding information
       p System: &nbsp;
@@ -47,7 +47,3 @@ block js
   script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
   script(type='text/javascript', src='/javascripts/knockout-2.2.1.js')
   script(type='text/javascript', src='/javascripts/number.js')
-
-
-
-
