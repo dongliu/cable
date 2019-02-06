@@ -4,41 +4,81 @@
  * @fileOverview Read a csv file with cable number and change details and apply them to mongoDB.
  * @author Dong Liu
  */
+import * as fs from 'fs';
+import * as path from 'path';
 
+import * as csv from 'csv';
+import * as mongoose from 'mongoose';
+import rc = require('rc');
 
-import csv = require('csv');
+import * as request from '../app/model/request';
+const Cable = request.Cable as mongoose.Model<mongoose.Document & { number: {}}, {}>;
+const MultiChange = request.MultiChange;
 
-import fs = require('fs');
-import path = require('path');
-import mongoose = require('mongoose');
-import request = require('../app/model/request');
-const Cable: any = request.Cable;
-const MultiChange: any = request.MultiChange;
-import program = require('commander');
+interface Config {
+  configs?: string[];
+  h?: {};
+  help?: {};
+  mongo: {
+    user?: {};
+    pass?: {};
+    host?: {};
+    port: {};
+    addr: {};
+    db: {};
+    options: {};
+  };
+  dryrun?: {};
+  updateBy?: {};
+  _?: Array<{}>;
+}
 
-let inputPath;
-let realPath;
-let db;
+let inputPath: string;
+let realPath: string;
+let db: mongoose.Connection;
 let line = 0;
 let done = 0;
 const changes = [];
 let parser;
 const properties = [];
 
-program.version('0.0.1')
-  .option('-d, --dryrun', 'dry run')
-  .arguments('<source>')
-  .action(function (source) {
-    inputPath = source;
-  });
+const cfg: Config = {
+  mongo: {
+    port: '27017',
+    addr: 'localhost',
+    db: 'swdb-dev',
+    options: {
+      // Use the "new" URL parser (Remove deprecation warning in Mongoose 5.x!)
+      useNewUrlParser: true,
+    },
+  },
+};
 
-program.parse(process.argv);
+rc('update-cable-csv', cfg);
+if (cfg.configs) {
+  for (const file of cfg.configs) {
+    console.log('Load configuration: %s', file);
+  }
+}
 
-if (inputPath === undefined) {
+if (cfg.h || cfg.help) {
+  console.log(`Usage: update-cable-csv [ options ] data.csv
+
+  Options
+      --help               display help information
+      --config [rcfile]    load configuration from rcfile
+      --dryrun [dryrun]    validate CSV data (default: true)
+      --updateBy [username]  username to use for saving history
+  `);
+  process.exit(1);
+}
+
+if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
   console.error('Error: need the input source csv file path!');
   process.exit(1);
 }
 
+inputPath = String(cfg._[0]);
 realPath = path.resolve(process.cwd(), inputPath);
 
 if (!fs.existsSync(realPath)) {
@@ -47,15 +87,36 @@ if (!fs.existsSync(realPath)) {
   process.exit(1);
 }
 
-mongoose.connect('mongodb://localhost/cable_frib');
+const updateBy = cfg.updateBy ? String(cfg.updateBy).trim().toUpperCase() : '';
+if (!updateBy) {
+  console.error(`Error: Parameter 'updateBy' is required`);
+  process.exit(1);
+}
+
+// Configure Mongoose (MongoDB)
+let mongoUrl = 'mongodb://';
+if (cfg.mongo.user) {
+  mongoUrl += encodeURIComponent(String(cfg.mongo.user));
+  if (cfg.mongo.pass) {
+    mongoUrl += ':' + encodeURIComponent(String(cfg.mongo.pass));
+  }
+  mongoUrl += '@';
+}
+if (!cfg.mongo.host) {
+  cfg.mongo.host = `${cfg.mongo.addr}:${cfg.mongo.port}`;
+}
+mongoUrl +=  `${cfg.mongo.host}/${cfg.mongo.db}`;
+
+mongoose.connect(mongoUrl, cfg.mongo.options);
 db = mongoose.connection;
 db.on('error', function(err) {
   console.error(err.toString());
   process.exit(1);
 });
 db.once('open', function () {
-  console.log('db connected');
+  console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
 });
+
 
 function splitTags(s) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
@@ -83,7 +144,7 @@ function updateCable(change, i, callback) {
     let conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
-      var currentType = Cable.schema.paths[p];
+      var currentType = Cable.schema.path(p);
       if (!currentType) {
         err = new Error('cable does not have path "' + p + '"');
         console.error(err.toString());
@@ -93,7 +154,7 @@ function updateCable(change, i, callback) {
 
       if (change[2 * index + 1] !== '_whatever_') {
         try {
-          change[2 * index + 1] = currentType.cast(change[2 * index + 1]);
+          change[2 * index + 1] = (currentType as any).cast(change[2 * index + 1]);
         } catch(e) {
           console.error(e.toString());
           callback(e);
@@ -102,7 +163,7 @@ function updateCable(change, i, callback) {
       }
 
       try {
-        change[2 * index + 2] = currentType.cast(change[2 * index + 2]);
+        change[2 * index + 2] = (currentType as any).cast(change[2 * index + 2]);
       } catch(e) {
         console.error(e.toString());
         callback(e);
@@ -179,7 +240,7 @@ function updateCable(change, i, callback) {
       __v: 1,
     };
 
-    if (program.dryrun) {
+    if (cfg.dryrun !== false && cfg.dryrun !== 'false') {
       console.log('cable ' + cable.number + ' will be updated with ' + JSON.stringify(update, null, 2));
       callback();
       return;

@@ -6,22 +6,43 @@
  */
 
 /*jslint es5: true*/
+import * as fs from 'fs';
+import * as path from 'path';
 
 import csv = require('csv');
+import * as mongoose from 'mongoose';
+import rc = require('rc');
 
-import fs = require('fs');
-import path = require('path');
-import mongoose = require('mongoose');
 import validator = require('validator');
-import request = require('../app/model/request');
+import * as request from '../app/model/request';
 const Request = request.Request;
-import program = require('commander');
 
 import naming = require('./lib/naming');
 
-let inputPath;
-let realPath;
-let db;
+interface Config {
+  configs?: string[];
+  h?: {};
+  help?: {};
+  mongo: {
+    user?: {};
+    pass?: {};
+    host?: {};
+    port: {};
+    addr: {};
+    db: {};
+    options: {};
+  };
+  dryrun?: {};
+  updateBy?: {};
+  _?: Array<{}>;
+  metadata: {
+    syssubsystem_path?: string;
+  };
+}
+
+let inputPath: string;
+let realPath: string;
+let db: mongoose.Connection;
 let line = 0;
 const requests = [];
 const lines = [];
@@ -30,39 +51,100 @@ let success = 0;
 
 let version = '';
 
-program.version('0.0.1')
-  .option('-v, --validate', 'validate data from spreadsheet')
-  .arguments('<source>')
-  .action(function (source) {
-    inputPath = source;
-  });
 
-program.parse(process.argv);
+const cfg: Config = {
+  mongo: {
+    port: '27017',
+    addr: 'localhost',
+    db: 'swdb-dev',
+    options: {
+      // Use the "new" URL parser (Remove deprecation warning in Mongoose 5.x!)
+      useNewUrlParser: true,
+    },
+  },
+  metadata: {
+    // no defaults
+  },
+};
 
-if (inputPath === undefined) {
-  console.error('need the input source csv file path!');
+rc('import-cable-request', cfg);
+if (cfg.configs) {
+  for (const file of cfg.configs) {
+    console.log('Load configuration: %s', file);
+  }
+}
+
+if (cfg.h || cfg.help) {
+  console.log(`Usage: import-cable-requests [ options ] data.csv
+
+  Options
+      --help               display help information
+      --config [rcfile]    load configuration from rcfile
+      --dryrun [dryrun]    validate CSV data (default: true)
+      --updateBy [username]  username to use for saving history
+  `);
   process.exit(1);
 }
 
-realPath = path.resolve(process.cwd(), inputPath);
+if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
+  console.error('Error: need the input source csv file path!');
+  process.exit(1);
+}
 
+inputPath = String(cfg._[0]);
+realPath = path.resolve(process.cwd(), inputPath);
 if (!fs.existsSync(realPath)) {
   console.error(realPath + ' does not exist.');
   console.error('Please input a valid csv file path.');
   process.exit(1);
 }
 
-if (!program.validate) {
-  mongoose.connect('mongodb://localhost/cable_frib');
+if (!cfg.metadata.syssubsystem_path) {
+  console.error('system-subsystem data file path not found');
+  process.exit(1);
+}
+
+if (!fs.existsSync(String(cfg.metadata.syssubsystem_path))) {
+  console.error('system-subsystem data file not found: %s', cfg.metadata.syssubsystem_path);
+  process.exit(1);
+}
+
+let syssub: any;
+try {
+  syssub = JSON.parse(fs.readFileSync(String(cfg.metadata.syssubsystem_path), 'utf8'));
+} catch (err) {
+  console.error('system-subsystem data read error: %s', err);
+  process.exit(1);
+}
+
+
+const validate = (cfg.dryrun !== false && cfg.dryrun !== 'false');
+
+if (!validate) {
+  // Configure Mongoose (MongoDB)
+  let mongoUrl = 'mongodb://';
+  if (cfg.mongo.user) {
+    mongoUrl += encodeURIComponent(String(cfg.mongo.user));
+    if (cfg.mongo.pass) {
+      mongoUrl += ':' + encodeURIComponent(String(cfg.mongo.pass));
+    }
+    mongoUrl += '@';
+  }
+  if (!cfg.mongo.host) {
+    cfg.mongo.host = `${cfg.mongo.addr}:${cfg.mongo.port}`;
+  }
+  mongoUrl +=  `${cfg.mongo.host}/${cfg.mongo.db}`;
+
+  mongoose.connect(mongoUrl, cfg.mongo.options);
   db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', function () {
-    console.log('db connected');
+    console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
   });
 }
 
 function jobDone() {
-  if (program.validate) {
+  if (validate) {
     console.log(requests.length + ' requests were processed, and ' + success + ' requests were valid. Bye.');
   } else {
     console.log(requests.length + ' requests were processed, and ' + success + ' requests were inserted. Bye.');
@@ -97,7 +179,7 @@ function createRequest(i) {
     }
     return createRequest(i + 1);
   }
-  namecodes = naming.encode(request[3], request[4], request[5]);
+  namecodes = naming.encode(request[3], request[4], request[5], syssub);
   if (namecodes.indexOf(null) !== -1) {
     console.log('Line ' + lines[i] + ': cannot encode the name of: ' + request[3] + '/' + request[4] + '/' + request[5]);
     if (i === requests.length - 1) {
@@ -221,7 +303,7 @@ function createRequest(i) {
       submittedOn: Date.now(),
     };
   }
-  if (program.validate) {
+  if (validate) {
     newRequest = new Request(newRequest);
     newRequest.validate(function (err) {
       if (err) {
