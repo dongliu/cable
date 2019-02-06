@@ -1,6 +1,6 @@
 /*jslint es5:true*/
+import * as mongoose from 'mongoose';
 
-import mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Mixed = Schema.Types.Mixed;
 const ObjectId = Schema.Types.ObjectId;
@@ -275,15 +275,7 @@ const multiChange = new Schema({
   updatedOn: Date,
 });
 
-const Request = mongoose.model('Request', request);
-const Cable = mongoose.model('Cable', cable);
-const Change = mongoose.model('Change', change);
-const MultiChange = mongoose.model('MultiChange', multiChange);
-
-
-export = {
-  Cable: Cable,
-  Change: Change,
-  MultiChange: MultiChange,
-  Request: Request,
-};
+export const Request = mongoose.model('Request', request);
+export const Cable = mongoose.model('Cable', cable);
+export const Change = mongoose.model('Change', change);
+export const MultiChange = mongoose.model('MultiChange', multiChange);

@@ -1,13 +1,14 @@
 /* tslint:disable:no-console */
 
 import * as express from 'express';
-import mongoose = require('mongoose');
 
-const User = mongoose.model('User');
-import auth = require('../lib/auth');
+import * as auth from '../lib/auth';
+
+import { User } from '../model/user';
+
 
 export function init(app: express.Application) {
-  app.get('/profile', auth.ensureAuthenticated, function (req: express.Request, res: express.Response, next: express.NextFunction) {
+  app.get('/profile', auth.ensureAuthenticated, function (req: express.Request, res: express.Response) {
     // render the profile page
     User.findOne({
       adid: req.session.userid,

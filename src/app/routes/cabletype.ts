@@ -1,14 +1,13 @@
 /* tslint:disable:no-console */
+import * as express from 'express';
 
-import mongoose = require('mongoose');
-//const CableType = mongoose.model('CableType');
-const CableType = require('../model/meta').CableType;
+import { CableType } from '../model/meta';
 
 import auth = require('../lib/auth');
 
 import util = require('../lib/util');
 
-export default function(app) {
+export function init(app: express.Application) {
   app.get('/cabletypes/', auth.ensureAuthenticated, function (req, res) {
     res.render('cabletype', {
       roles: req.session.roles,
@@ -19,20 +18,20 @@ export default function(app) {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('cabletypemgmt');
     }
-    return res.send(403, 'You are not authorized to access this resource');
+    return res.status(403).send('You are not authorized to access this resource');
   });
 
   app.get('/cabletypes/new', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('newcabletype');
     }
-    return res.send(403, 'You are not authorized to access this resource');
+    return res.status(403).send('You are not authorized to access this resource');
   });
 
   app.get('/cabletypes/json', auth.ensureAuthenticated, function (req, res) {
     CableType.find(function (err, docs) {
       if (err) {
-        return res.send(500, err.message);
+        return res.status(500).send(err.message);
       }
       res.json(docs);
     });
@@ -40,11 +39,11 @@ export default function(app) {
 
   app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements', 'manufacturer', 'partNumber']), function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
-      return res.send(403, 'You are not authorized to access this resource. ');
+      return res.status(403).send('You are not authorized to access this resource. ');
     }
 
     if (!req.is('json')) {
-      return res.send(415, 'json request expected.');
+      return res.status(415).send('json request expected.');
     }
 
     const newType = req.body;
@@ -59,13 +58,13 @@ export default function(app) {
         console.dir(err);
         console.error(err.message || err.err);
         if (err.code && err.code === 11000) {
-          return res.send(400, 'The type name ' + newType.name + ' was already used.');
+          return res.status(400).send('The type name ' + newType.name + ' was already used.');
         }
-        return res.send(500, err.message || err.err);
+        return res.status(500).send(err.message || err.err);
       }
       const url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id + '/';
       res.set('Location', url);
-      return res.send(201, 'A new cable type is created at <a href="' + url + '"">' + url + '</a>');
+      return res.status(201).send('A new cable type is created at <a href="' + url + '"">' + url + '</a>');
     });
   });
 
@@ -77,21 +76,21 @@ export default function(app) {
     CableType.findById(req.params.id).lean().exec(function (err, type) {
       if (err) {
         console.error(err);
-        return res.send(500, err.message);
+        return res.status(500).send(err.message);
       }
       if (type) {
         res.render('typedetails', {
           type: type,
         });
       } else {
-        res.send(410, 'The type ' + req.params.id + ' is gone.');
+        res.status(410).send('The type ' + req.params.id + ' is gone.');
       }
     });
   });
 
   app.put('/cabletypes/:id', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
-      return res.send(403, 'You are not authorized to access this resource. ');
+      return res.status(403).send('You are not authorized to access this resource. ');
     }
     const conditions = {
       _id: req.params.id,
@@ -116,14 +115,14 @@ export default function(app) {
           console.dir(err.errmsg);
         }
         if (err.lastErrorObject && err.lastErrorObject.code === 11001) {
-          return res.send(400, req.body.update + ' is already taken');
+          return res.status(400).send(req.body.update + ' is already taken');
         }
-        return res.send(500, err.message || err.errmsg);
+        return res.status(500).send(err.message || err.errmsg);
       }
       if (type) {
         return res.send(204);
       }
-      return res.send(410, 'cannot find type ' + req.params.id);
+      return res.status(410).send('cannot find type ' + req.params.id);
     });
   });
 }

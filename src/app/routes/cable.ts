@@ -1,17 +1,16 @@
 /* tslint:disable:no-console */
+import * as express from 'express';
 
-import mongoose = require('mongoose');
-//const Request = mongoose.model('Request');
-const Request = require('../model/request').Request;
-//const Cable = mongoose.model('Cable');
-const Cable = require('../model/request').Cable;
-//const MultiChange = mongoose.model('MultiChange');
-const MultiChange = require('../model/request').MultiChange;
-//const Change = mongoose.model('Change');
-const Change = require('../model/request').Change;
-//const User = mongoose.model('User');
-const User = require('../model/user').User;
-const auth = require('../lib/auth');
+import * as requestModel from '../model/request';
+import { User } from '../model/user';
+
+import * as auth from '../lib/auth';
+
+const Cable = requestModel.Cable;
+const Request = requestModel.Request;
+const MultiChange = requestModel.MultiChange;
+const Change = requestModel.Change;
+
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -59,17 +58,17 @@ function createCable(cableRequest, req, res, quantity, cables) {
   }
   if (isNaN(quantity)) {
     console.log('cable request ' + cableRequest._id + 'is not a number!');
-    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
+    return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity !== parseInt(quantity, 10)) {
     console.log('cable request ' + cableRequest._id + ' is not an integer!');
-    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
+    return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity < 1) {
     console.log('cable request ' + cableRequest._id + ' is less than 1!');
-    return res.send(400, 'cable request ' + cableRequest._id + ' has a invalid quantity!');
+    return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   const sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
@@ -86,7 +85,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
     if (err) {
       console.error(err);
       // revert the request state?
-      return res.send(500, err.message);
+      return res.status(500).send(err.message);
     }
     if (cable) {
       nextNumber = increment(cable.number);
@@ -121,7 +120,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
           createCable(cableRequest, req, res, quantity, cables);
         } else {
           console.error(e);
-          return res.json(500, {
+          return res.status(500).json({
             error: e.message,
           });
         }
@@ -130,7 +129,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
         cables.push(doc.toJSON());
         // should be equal to 1 when return
         if (quantity < 2) {
-          return res.json(200, {
+          return res.status(200).json({
             request: cableRequest,
             cables: cables,
           });
@@ -147,14 +146,14 @@ function updateCable(conditions, update, req, res) {
   }, function (err, cable) {
     if (err) {
       console.error(err);
-      return res.send(500, 'cannot save the update.');
+      return res.status(500).send('cannot save the update.');
     }
     if (cable) {
-      return res.json(200, cable.toJSON());
+      return res.status(200).json(cable.toJSON());
     }
     console.error(req.params.id + ' with conditions for the update cannot be found');
     console.error(conditions);
-    return res.send(409, req.params.id + ' with conditions for the update cannot be found.');
+    return res.status(409).send(req.params.id + ' with conditions for the update cannot be found.');
   });
 }
 
@@ -207,7 +206,7 @@ function updateCableWithChanges(conditions, update, changes, req, res) {
   if (change) {
     change.save(function (err, doc) {
       if (err) {
-        return res.send(500, 'cannot save the change');
+        return res.status(500).send('cannot save the change');
       }
       update.$push = {
         changeHistory: doc._id,
@@ -219,7 +218,7 @@ function updateCableWithChanges(conditions, update, changes, req, res) {
   }
 }
 
-export function init(app) {
+export function init(app: express.Application) {
 
   app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
     return res.render('manager', {
@@ -255,7 +254,7 @@ export function init(app) {
       createdBy: req.session.userid,
     }).lean().exec(function (err, requests) {
       if (err) {
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -268,7 +267,7 @@ export function init(app) {
       createdBy: req.session.userid,
     }).lean().exec(function (err, requests) {
       if (err) {
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -279,7 +278,7 @@ export function init(app) {
   // create a new request from a form or clone
   app.post('/requests/', auth.ensureAuthenticated, function (req, res) {
     if (!req.is('json')) {
-      return res.send(415, 'json request expected.');
+      return res.status(415).send('json request expected.');
     }
     let request: any = {};
     const requests = [];
@@ -301,28 +300,28 @@ export function init(app) {
         Request.create(requests, function (err) {
           if (err) {
             console.dir(err);
-            res.send(500, err.message);
+            res.status(500).send(err.message);
           } else {
-            res.send(201, req.body.quantity + ' requests created');
+            res.status(201).send(req.body.quantity + ' requests created');
           }
         });
       } else if (req.body.quantity && req.body.quantity >= 21) {
-        res.send(400, 'the quantity needs to be less than 21.');
+        res.status(400).send('the quantity needs to be less than 21.');
       } else {
         (new Request(request)).save(function (err, cableRequest) {
           if (err) {
             console.error(err);
-            return res.send(500, err.message);
+            return res.status(500).send(err.message);
           }
           const url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
           res.set('Location', url);
-          res.json(201, {
+          res.status(201).json({
             location: '/requests/' + cableRequest.id,
           });
         });
       }
     } else {
-      res.send(400, 'need request description');
+      res.status(400).send('need request description');
     }
   });
 
@@ -340,25 +339,25 @@ export function init(app) {
     Request.findById(req.params.id).exec(function (err, request: any) {
       if (err) {
         console.error(err);
-        return res.send(500, err.message);
+        return res.status(500).send(err.message);
       }
       if (request) {
         if (req.session.userid !== request.createdBy) {
-          return res.send(403, 'current user is not allowed to delete this resource');
+          return res.status(403).send('current user is not allowed to delete this resource');
         }
         if (request.status === 1 || request.status === 2) {
-          return res.send(400, 'this resource is not allowed to be deleted');
+          return res.status(400).send('this resource is not allowed to be deleted');
         }
         request.remove(function (e) {
           if (e) {
             console.error(e);
-            return res.send(500, e.message);
+            return res.status(500).send(e.message);
           }
           console.log('request ' + req.params.id + ' was deleted');
-          return res.send(200, 'deleted');
+          return res.status(200).send('deleted');
         });
       } else {
-        return res.send(410, 'gone');
+        return res.status(410).send('gone');
       }
     });
   });
@@ -367,7 +366,7 @@ export function init(app) {
     Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
         console.error(err);
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message
         });
       }
@@ -379,7 +378,7 @@ export function init(app) {
     Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
       if (err) {
         console.error(err);
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message
         });
       }
@@ -388,7 +387,7 @@ export function init(app) {
           request: cableRequest,
         });
       } else {
-        res.send(410, 'The request ' + req.params.id + ' is gone.');
+        res.status(410).send('The request ' + req.params.id + ' is gone.');
       }
     });
   });
@@ -400,7 +399,7 @@ export function init(app) {
     Request.find(query).lean().exec(function (err, docs) {
       if (err) {
         console.error(err);
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -411,7 +410,7 @@ export function init(app) {
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
-      return res.send(400, 'the status ' + status + ' is invalid.');
+      return res.status(400).send('the status ' + status + ' is invalid.');
     }
     let query;
     // admin see all
@@ -427,10 +426,10 @@ export function init(app) {
       }).lean().exec(function (err, user) {
         if (err) {
           console.error(err);
-          return res.send(500, err.message);
+          return res.status(500).send(err.message);
         }
         if (!user) {
-          return res.send(404, 'cannot identify you.');
+          return res.status(404).send('cannot identify you.');
         }
         if (user.wbs === undefined || user.wbs.length === 0) {
           return res.json([]);
@@ -450,11 +449,11 @@ export function init(app) {
     const roles = req.session.roles;
     const action = req.body.action;
     if (!req.body.action) {
-      return res.send(400, 'no action found.');
+      return res.status(400).send('no action found.');
     }
     if (action === 'adjust' || action === 'approve' || action === 'reject') {
       if (roles.length === 0 || roles.indexOf('manager') === -1) {
-        return res.send(404, 'You are not authorized to modify this resource. ');
+        return res.status(404).send('You are not authorized to modify this resource. ');
       }
       // assume no way to guess the request id
       next();
@@ -462,7 +461,7 @@ export function init(app) {
       // assume no way to guess the request id
       next();
     } else {
-      return res.send(400, 'action not understood.');
+      return res.status(400).send('action not understood.');
     }
   }
 
@@ -481,15 +480,15 @@ export function init(app) {
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
         if (cableRequest) {
-          return res.json(200, cableRequest.toJSON());
+          return res.status(200).json(cableRequest.toJSON());
         }
         console.error(req.params.id + ' gone');
-        return res.json(410, {
+        return res.status(410).json({
           error: req.params.id + ' gone',
         });
       });
@@ -509,15 +508,15 @@ export function init(app) {
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
         if (cableRequest) {
-          return res.json(200, cableRequest.toJSON());
+          return res.status(200).json(cableRequest.toJSON());
         }
         console.error(req.params.id + ' cannot be submitted');
-        return res.json(410, {
+        return res.status(410).json({
           error: req.params.id + ' cannot be submitted',
         });
       });
@@ -537,15 +536,15 @@ export function init(app) {
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
         if (cableRequest) {
-          return res.json(200, cableRequest.toJSON());
+          return res.status(200).json(cableRequest.toJSON());
         }
         console.error(req.params.id + ' cannot be reverted');
-        return res.json(400, {
+        return res.status(400).json({
           error: req.params.id + ' cannot be reverted',
         });
       });
@@ -560,15 +559,15 @@ export function init(app) {
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
         if (cableRequest) {
-          return res.json(200, cableRequest.toJSON());
+          return res.status(200).json(cableRequest.toJSON());
         }
         console.error(req.params.id + ' gone');
-        return res.json(410, {
+        return res.status(410).json({
           error: req.params.id + ' gone',
         });
       });
@@ -586,15 +585,15 @@ export function init(app) {
       }, function (err, cableRequest) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
         if (cableRequest) {
-          return res.json(200, cableRequest.toJSON());
+          return res.status(200).json(cableRequest.toJSON());
         }
         console.error(req.params.id + ' gone');
-        return res.json(410, {
+        return res.status(410).json({
           error: req.params.id + ' gone',
         });
       });
@@ -613,7 +612,7 @@ export function init(app) {
         function (err, cableRequest: any) {
           if (err) {
             console.error(err);
-            return res.json(500, {
+            return res.status(500).json({
               error: err.message,
             });
           }
@@ -621,7 +620,7 @@ export function init(app) {
             createCable(cableRequest.toJSON(), req, res, cableRequest.basic.quantity, []);
           } else {
             console.error(req.params.id + ' gone');
-            return res.json(410, {
+            return res.status(410).json({
               error: req.params.id + ' gone',
             });
           }
@@ -638,7 +637,7 @@ export function init(app) {
         submittedBy: req.session.userid
       }).lean().exec(function (err, cables) {
         if (err) {
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message
           });
         }
@@ -653,7 +652,7 @@ export function init(app) {
       submittedBy: req.session.userid,
     }).lean().exec(function (err, cables) {
       if (err) {
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -673,7 +672,7 @@ export function init(app) {
     Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
       if (err) {
         console.error(err);
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -687,7 +686,7 @@ export function init(app) {
 
   app.get('/activecables/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
     // if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
-    //   return res.send(403, 'You are not authorized to access this resource. ');
+    //   return res.status(403).send('You are not authorized to access this resource. ');
     // }
     const low = 100;
     const up = 499;
@@ -695,7 +694,7 @@ export function init(app) {
       Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
         if (err) {
           console.error(err);
-          return res.json(500, {
+          return res.status(500).json({
             error: err.message,
           });
         }
@@ -708,10 +707,10 @@ export function init(app) {
       }).lean().exec(function (err, user) {
         if (err) {
           console.error(err);
-          return res.send(500, err.message);
+          return res.status(500).send(err.message);
         }
         if (!user) {
-          return res.send(404, 'cannot identify you.');
+          return res.status(404).send('cannot identify you.');
         }
         if (user.wbs === undefined || user.wbs.length === 0) {
           return res.json([]);
@@ -720,7 +719,7 @@ export function init(app) {
         Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
           if (e) {
             console.error(e);
-            return res.json(500, {
+            return res.status(500).json({
               error: e.message,
             });
           }
@@ -736,7 +735,7 @@ export function init(app) {
   app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 5) {
-      return res.json(400, {
+      return res.status(400).json({
         error: 'wrong status',
       });
     }
@@ -747,14 +746,14 @@ export function init(app) {
         Cable.find({}).lean().exec(function (err, docs) {
           if (err) {
             console.error(err);
-            return res.json(500, {
+            return res.status(500).json({
               error: err.message,
             });
           }
           return res.json(docs);
         });
       } else {
-        return res.send(403, 'Only admin can access this resource. ');
+        return res.status(403).send('Only admin can access this resource. ');
       }
     } else {
       const low = status * 100;
@@ -763,7 +762,7 @@ export function init(app) {
         Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
           if (err) {
             console.error(err);
-            return res.json(500, {
+            return res.status(500).json({
               error: err.message,
             });
           }
@@ -776,10 +775,10 @@ export function init(app) {
         }).lean().exec(function (err, user) {
           if (err) {
             console.error(err);
-            return res.send(500, err.message);
+            return res.status(500).send(err.message);
           }
           if (!user) {
-            return res.send(404, 'cannot identify you.');
+            return res.status(404).send('cannot identify you.');
           }
           if (user.wbs === undefined || user.wbs.length === 0) {
             return res.json([]);
@@ -788,7 +787,7 @@ export function init(app) {
           Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
             if (e) {
               console.error(e);
-              return res.json(500, {
+              return res.status(500).json({
                 error: e.message,
               });
             }
@@ -805,7 +804,7 @@ export function init(app) {
     }).lean().exec(function (err, cable) {
       if (err) {
         console.error(err);
-        return res.send(500, err.message);
+        return res.status(500).send(err.message);
       }
       if (cable) {
         return res.render('cable', {
@@ -813,7 +812,7 @@ export function init(app) {
           number: req.params.id,
         });
       }
-      return res.send(403, 'cannot find cable ' + req.params.id);
+      return res.status(403).send('cannot find cable ' + req.params.id);
     });
 
   });
@@ -824,7 +823,7 @@ export function init(app) {
     }).exec(function (err, cable) {
       if (err) {
         console.error(err);
-        return res.json(500, {
+        return res.status(500).json({
           error: err.message,
         });
       }
@@ -842,7 +841,7 @@ export function init(app) {
     }, 'changeHistory').lean().exec(function (err, cable) {
       if (err) {
         console.error(err);
-        return res.send(500, err.message);
+        return res.status(500).send(err.message);
       }
       // console.log(cable);
       if (!cable.hasOwnProperty('changeHistory')) {
@@ -858,7 +857,7 @@ export function init(app) {
       }).lean().exec(function changeCB(err1, changes) {
         if (err1) {
           console.error(err1);
-          return res.send(500, err1.message);
+          return res.status(500).send(err1.message);
         }
         MultiChange.find({
           _id: {
@@ -867,7 +866,7 @@ export function init(app) {
         }).lean().exec(function multiChangesCB(err2, multiChanges) {
           if (err2) {
             console.error(err2);
-            return res.send(500, err1.message);
+            return res.status(500).send(err1.message);
           }
           res.json(changes.concat(multiChanges));
         });
@@ -1079,7 +1078,7 @@ export function init(app) {
       inValidAction = true;
     }
     if (inValidAction) {
-      return res.send(400, 'invalid action');
+      return res.status(400).send('invalid action');
     }
     update.updatedOn = Date.now();
     update.updatedBy = req.session.userid;
@@ -1097,7 +1096,7 @@ export function init(app) {
       change.save(function (err, doc) {
         if (err) {
           console.error(err);
-          return res.send(500, 'cannot save the change');
+          return res.status(500).send('cannot save the change');
         }
         update.$push = {
           changeHistory: doc._id,

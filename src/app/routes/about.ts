@@ -2,9 +2,8 @@
 /*
  * GET about page.
  */
+import * as express from 'express';
 
-export = {
-  index: function(req, res){
-    res.render('about', { username: req.session.username});
-  },
-};
+export function index(req: express.Request, res: express.Response) {
+  res.render('about', { username: req.session.username});
+}

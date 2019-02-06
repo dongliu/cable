@@ -34,11 +34,11 @@ import * as tasks from './shared/tasks';
 import ldapClient = require('./lib/ldap-client');
 
 import routes = require('./routes');
-import about = require('./routes/about');
+import * as about from './routes/about';
 
 import * as cable from './routes/cable';
-import cabletype from './routes/cabletype';
-import numbering = require('./routes/numbering');
+import * as cabletype from './routes/cabletype';
+import * as numbering from './routes/numbering';
 import * as profile from './routes/profile';
 import * as room from './routes/room';
 import * as user from './routes/user';
@@ -456,6 +456,9 @@ async function doStart(): Promise<express.Application> {
   // static file configuration
   app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
+  // Redirect requests ending in '/' and set response locals 'basePath'
+  app.use(handlers.basePathHandler());
+
   // body-parser configuration
   app.use(bodyparser.json());
   app.use(bodyparser.urlencoded({
@@ -498,7 +501,7 @@ async function doStart(): Promise<express.Application> {
   cable.setSysSubData(sysSub);
   cable.init(app);
 
-  cabletype(app);
+  cabletype.init(app);
 
   profile.init(app);
 

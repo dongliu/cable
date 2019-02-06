@@ -26,11 +26,11 @@ const cableType = new Schema({
       values: ['7-Pole', 'Multi', 'PwrAC', 'PwrDC', 'ArmPwrDC', 'Coax', 'Hardline', 'RigidLine', 'Cat6', 'TCtypeJ', 'TCtypeK', 'Sfib', 'SMfiber', 'MMfiber', 'PMMfiberRAD', 'Triax'],
       message: 'enum validator failed for "{PATH}" with value "{VALUE}"',
     },
-    required: true
+    required: true,
   },
   typeNumber: {
     type: String,
-    required: true
+    required: true,
   },
   pairing: String,
   shielding: String,
@@ -49,9 +49,4 @@ const cableType = new Schema({
   updatedOn: Date,
 });
 
-
-var CableType = mongoose.model('CableType', cableType);
-
-export = {
-  CableType: CableType
-};
+export const CableType = mongoose.model('CableType', cableType);
