@@ -1,5 +1,14 @@
 /* tslint:disable:no-console */
-const authConfig = require('../../config/auth.json');
+
+interface AuthConfig {
+  cas: string;
+}
+
+let authConfig: AuthConfig;
+
+export function setAuthConfig(config: AuthConfig) {
+  authConfig = config;
+}
 
 export function main(req, res) {
   if (req.session.roles && req.session.roles.length) {

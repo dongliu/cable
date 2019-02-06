@@ -73,5 +73,27 @@
     //  // Useful for testing with self-signed certs
     //  "rejectUnauthorized": true
     //}
+  },
+  "ad": {
+    "url": "ldap://example.com",
+    "adminDn": "cn=user,ou=Group,dc=example,dc=com",
+    "adminPassword": "passw0rd",
+    "searchBase": "ou=Group,dc=example,dc=com",
+    "searchFilter": "(&(objectClass=user)(sAMAccountName=_id))",
+    "nameFilter": "(&(objectClass=user)(displayName=_name))",
+    "objAttributes": ["sAMAccountName","displayName","company", "mail"],
+    "rawAttributes": ["photo"]
+  },
+  "access_tokens": [
+    // "ExampleToken"
+  ],
+  "metadata": {
+    "syssubsystem_path":"",
+    "penetration_path":"",
+    "wbs_frib_path":"",
+    "wbs_rea6_path":"",
+    "rooms_frib_path":"",
+    "rooms_nscl_path":"",
+    "rooms_srf_path":""
   }
 }

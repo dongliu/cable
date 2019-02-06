@@ -1,15 +1,20 @@
+import * as express from 'express';
+
 import path = require('path');
 
-const frib = require('../../config/fribroom.json');
-const nscl = require('../../config/nscl.json');
-const srf = require('../../config/srfroom.json');
-const building = {
-  frib: frib,
-  nscl: nscl,
-  srf: srf,
-};
+interface BuildingConfig {
+  frib: any;
+  nscl: any;
+  srf: any;
+}
 
-export default function(app) {
+let building: BuildingConfig;
+
+export function setBuildingConfig(config: BuildingConfig) {
+  building = config;
+}
+
+export function init(app: express.Application) {
   app.get('/:building/rooms', function(req, res) {
     res.render('room', {
       json: path.join(req.path, '/json'),

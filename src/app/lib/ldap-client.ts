@@ -1,17 +1,28 @@
 import ldap = require('ldapjs');
 
-const ad = require('../../config/ad.json');
+interface ADConfig {
+  url: string;
+  adminDn: string;
+  adminPassword: string;
+}
 
-const client = ldap.createClient({
-  url: ad.url,
-  maxConnections: 5,
-  connectTimeout: 10 * 1000,
-  timeout: 15 * 1000,
-  bindDN: ad.adminDn,
-  bindCredentials: ad.adminPassword,
-});
+export let client: any;
 
-function search(base, opts, raw, cb) {
+let ad: ADConfig;
+
+export function setADConfig(config: ADConfig) {
+  ad = config;
+  client = ldap.createClient({
+    url: ad.url,
+    maxConnections: 5,
+    connectTimeout: 10 * 1000,
+    timeout: 15 * 1000,
+    bindDN: ad.adminDn,
+    bindCredentials: ad.adminPassword,
+  });
+}
+
+export function search(base, opts, raw, cb) {
   client.search(base, opts, function (err, result) {
     if (err) {
       console.log(JSON.stringify(err));
@@ -44,8 +55,3 @@ function search(base, opts, raw, cb) {
     });
   });
 }
-
-export = {
-  client: client,
-  search: search,
-};

@@ -1,5 +1,3 @@
-const numbering = require('../../../config/sys-sub.json');
-
 
 /**
  * encode category, subcatogory, and signal to name code
@@ -9,7 +7,7 @@ const numbering = require('../../../config/sys-sub.json');
  * @return  {string[]}   the three codes, an array with less than three elements indicates error.
  */
 
-function nameEncoding(cat, sub, sig) {
+function nameEncoding(cat, sub, sig, numbering) {
   let c;
   let b;
   let g;

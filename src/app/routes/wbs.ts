@@ -1,9 +1,19 @@
-const frib = require('../../config/wbs.json');
-const rea6 = require('../../config/rea6.json');
-const wbs = {frib: frib, rea6: rea6};
 import path = require('path');
 
-export default function(app) {
+import * as express from 'express';
+
+interface WBSConfig {
+  frib: any;
+  rea6: any;
+}
+
+let wbs: WBSConfig;
+
+export function setWBSConfig(config: WBSConfig) {
+  wbs = config;
+}
+
+export function init(app: express.Application) {
   app.get('/:project/wbs', function(req, res) {
     res.render('wbs', {project: req.params.project, json: path.join(req.path, '/json')});
   });

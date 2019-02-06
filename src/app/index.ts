@@ -31,18 +31,18 @@ import * as promises from './shared/promises';
 import * as status from './shared/status';
 import * as tasks from './shared/tasks';
 
+import ldapClient = require('./lib/ldap-client');
+
 import routes = require('./routes');
 import about = require('./routes/about');
-const sysSub = require(__dirname + '/../config/sys-sub.json');
-const penetration = require(__dirname + '/../config/penetration.json');
 
-import cable from './routes/cable';
+import * as cable from './routes/cable';
 import cabletype from './routes/cabletype';
 import numbering = require('./routes/numbering');
-import profile from './routes/profile';
-import room from './routes/room';
-import user from './routes/user';
-import wbs from './routes/wbs';
+import * as profile from './routes/profile';
+import * as room from './routes/room';
+import * as user from './routes/user';
+import * as wbs from './routes/wbs';
 
 // package metadata
 interface Package {
@@ -72,6 +72,30 @@ interface Config {
     addr: {};
     db: {};
     options: {};
+  };
+  ad: {
+    url?: {};
+    adminDn?: {};
+    adminPassword?: {};
+    searchBase?: {};
+    searchFilter?: {};
+    nameFilter?: {};
+    objAttributes?: {};
+    rawAttributes?: {};
+  };
+  cas: {
+    cas_url?: {};
+    service_base_url?: {};
+  };
+  access_tokens: {};
+  metadata: {
+    syssubsystem_path?: {};
+    penetration_path?: {};
+    wbs_frib_path?: {};
+    wbs_rea6_path?: {};
+    rooms_frib_path?: {};
+    rooms_nscl_path?: {};
+    rooms_srf_path?: {};
   };
 }
 
@@ -217,6 +241,18 @@ async function doStart(): Promise<express.Application> {
         useNewUrlParser: true,
       },
     },
+    ad: {
+      // no defaults
+    },
+    cas: {
+      // no defaults
+    },
+    access_tokens: [
+      // no tokens
+    ],
+    metadata: {
+      // no defaults
+    },
   };
 
   if (name && (typeof name === 'string')) {
@@ -311,6 +347,69 @@ async function doStart(): Promise<express.Application> {
     error('Mongoose connection error: %s', err);
   });
 
+  // Authentication Configuration
+
+  auth.setADConfig({
+    objAttributes: Array.isArray(cfg.ad.objAttributes) ? cfg.ad.objAttributes.map(String) : [],
+    searchBase: String(cfg.ad.searchBase),
+    searchFilter: String(cfg.ad.searchFilter),
+  });
+
+  auth.setAuthConfig({
+    cas: String(cfg.cas.cas_url),
+    service: String(cfg.cas.service_base_url),
+    tokens: Array.isArray(cfg.access_tokens) ? cfg.access_tokens.map(String) : [],
+  });
+
+  ldapClient.setADConfig({
+    url: String(cfg.ad.url),
+    adminDn: String(cfg.ad.adminDn),
+    adminPassword: String(cfg.ad.adminPassword),
+  });
+
+  // Read metadata from data files
+  if (!cfg.metadata.syssubsystem_path) {
+    throw new Error('System-Subsystem data file path is required');
+  }
+  const sysSub = JSON.parse(await readFile(String(cfg.metadata.syssubsystem_path), 'utf8'));
+  info('System-Subsytem data file read: %s', cfg.metadata.syssubsystem_path);
+
+  if (!cfg.metadata.penetration_path) {
+    throw new Error('Penetration data file path is required');
+  }
+  const penetration = JSON.parse(await readFile(String(cfg.metadata.penetration_path), 'utf8'));
+  info('Penetration data file read: %s', cfg.metadata.penetration_path);
+
+  if (!cfg.metadata.wbs_frib_path) {
+    throw new Error('WBS (FRIB) data file path is required');
+  }
+  const wbsFRIB = JSON.parse(await readFile(String(cfg.metadata.wbs_frib_path), 'utf8'));
+  info('WBS (FRIB) data file read: %s', cfg.metadata.wbs_frib_path);
+
+  if (!cfg.metadata.wbs_rea6_path) {
+    throw new Error('WBS (REA6) data file path is required');
+  }
+  const wbsREA6 = JSON.parse(await readFile(String(cfg.metadata.wbs_rea6_path), 'utf8'));
+  info('WBS (REA6) data file read: %s', cfg.metadata.wbs_rea6_path);
+
+  if (!cfg.metadata.rooms_frib_path) {
+    throw new Error('Rooms (FRIB) data file path is required');
+  }
+  const roomsFRIB = JSON.parse(await readFile(String(cfg.metadata.rooms_frib_path), 'utf8'));
+  info('Rooms (FRIB) data file read: %s', cfg.metadata.rooms_frib_path);
+
+  if (!cfg.metadata.rooms_nscl_path) {
+    throw new Error('Rooms (NSCL) data file path is required');
+  }
+  const roomsNSCL = JSON.parse(await readFile(String(cfg.metadata.rooms_nscl_path), 'utf8'));
+  info('Rooms (NSCL) data file read: %s', cfg.metadata.rooms_nscl_path);
+
+  if (!cfg.metadata.rooms_srf_path) {
+    throw new Error('Rooms (NSCL) data file path is required');
+  }
+  const roomsSRF = JSON.parse(await readFile(String(cfg.metadata.rooms_srf_path), 'utf8'));
+  info('Rooms (SRF) data file read: %s', cfg.metadata.rooms_srf_path);
+
   // Need to import these libraries so they
   // are initialized in the correct order,
   // but TypeScript will removed unused
@@ -371,6 +470,7 @@ async function doStart(): Promise<express.Application> {
     res.send(400, 'please enable cookie in your browser');
   });
 
+  routes.setAuthConfig({ cas: String(cfg.cas.cas_url) });
   app.get('/logout', routes.logout);
 
   adClient = require('./lib/ldap-client').client;
@@ -380,17 +480,27 @@ async function doStart(): Promise<express.Application> {
 
   app.get('/main', auth.ensureAuthenticated, routes.switch2normal);
 
-  user(app);
+  user.setADConfig({
+    objAttributes: Array.isArray(cfg.ad.objAttributes) ? cfg.ad.objAttributes.map(String) : [],
+    rawAttributes: Array.isArray(cfg.ad.rawAttributes) ? cfg.ad.rawAttributes.map(String) : [],
+    nameFilter: String(cfg.ad.nameFilter),
+    searchBase: String(cfg.ad.searchBase),
+    searchFilter: String(cfg.ad.searchFilter),
+  });
+  user.init(app);
 
-  wbs(app);
+  wbs.setWBSConfig({ frib: wbsFRIB, rea6: wbsREA6 });
+  wbs.init(app);
 
-  room(app);
+  room.setBuildingConfig({ frib: roomsFRIB, nscl: roomsNSCL, srf: roomsSRF });
+  room.init(app);
 
-  cable(app);
+  cable.setSysSubData(sysSub);
+  cable.init(app);
 
   cabletype(app);
 
-  profile(app);
+  profile.init(app);
 
   app.get('/numbering', numbering.index);
 

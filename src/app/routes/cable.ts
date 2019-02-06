@@ -1,7 +1,5 @@
 /* tslint:disable:no-console */
 
-const sysSub = require('../../config/sys-sub.json');
-
 import mongoose = require('mongoose');
 //const Request = mongoose.model('Request');
 const Request = require('../model/request').Request;
@@ -30,6 +28,12 @@ const auth = require('../lib/auth');
 
 
 // TODO: need a server side validation in the future
+
+let sysSub: any;
+
+export function setSysSubData(data: any) {
+  sysSub = data;
+}
 
 function pad(num) {
   let s = num.toString();
@@ -215,7 +219,7 @@ function updateCableWithChanges(conditions, update, changes, req, res) {
   }
 }
 
-export default function(app) {
+export function init(app) {
 
   app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
     return res.render('manager', {

@@ -1,16 +1,29 @@
 /* tslint:disable:no-console */
 
-const ad = require('../../config/ad.json');
-
 import ldapClient = require('../lib/ldap-client');
 
 import mongoose = require('mongoose');
 const User = require('../model/user').User;
-//const User = mongoose.model('User');
+// const User = mongoose.model('User');
 
 import auth = require('../lib/auth');
 
 const Roles = ['manager', 'admin'];
+
+interface ADConfig {
+  nameFilter: string;
+  searchBase: string;
+  searchFilter: string;
+  objAttributes: string[];
+  rawAttributes: string[];
+}
+
+let ad: ADConfig;
+
+export function setADConfig(config: ADConfig) {
+  ad = config;
+}
+
 
 function addUser(req, res) {
   const nameFilter = ad.nameFilter.replace('_name', req.body.name);
@@ -111,7 +124,7 @@ function updateUserProfile(user, res) {
   });
 }
 
-export default function(app) {
+export function init(app) {
 
   app.get('/users/', auth.ensureAuthenticated, function (req, res) {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {

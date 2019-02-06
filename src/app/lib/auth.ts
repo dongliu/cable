@@ -1,25 +1,53 @@
 /* tslint:disable:no-console */
+import * as express from 'express';
 
 // authentication and authorization functions
 import Client = require('cas.js');
 import url = require('url');
-const ad = require('../../config/ad.json');
-const authConfig = require('../../config/auth.json');
 // var pause = require('pause');
+
+type Request = express.Request;
+type Response = express.Response;
+type NextFunction = express.NextFunction;
 
 const ldapClient: any = require('../lib/ldap-client');
 
 import mongoose = require('mongoose');
 const User = mongoose.model('User');
 
-const cas = new Client({
-  base_url: authConfig.cas,
-  service: authConfig.service,
-  version: 1.0,
-});
+interface ADConfig {
+  searchFilter: string;
+  objAttributes: string[];
+  searchBase: string;
+}
+
+interface AuthConfig {
+  cas: string;
+  service: string;
+  tokens: string[];
+}
+
+let ad: ADConfig;
+
+export function setADConfig(config: ADConfig) {
+  ad = config;
+}
+
+let cas: any;
+
+let authConfig: AuthConfig;
+
+export function setAuthConfig(config: AuthConfig) {
+  authConfig = config;
+  cas = new Client({
+    base_url: authConfig.cas,
+    service: authConfig.service,
+    version: 1.0,
+  });
+}
 
 // Authorize request using API token otherwise use standard method.
-function ensureAuthWithToken(req, res, next) {
+export function ensureAuthWithToken(req: Request, res: Response, next: NextFunction) {
   let len;
   let idx;
   const tok = req.query.token;
@@ -35,7 +63,7 @@ function ensureAuthWithToken(req, res, next) {
   ensureAuthenticated(req, res, next);
 }
 
-function ensureAuthenticated(req, res, next) {
+export function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   const ticketUrl = url.parse(req.url, true);
   if (req.session.userid) {
     if (req.query.ticket) {
@@ -53,7 +81,7 @@ function ensureAuthenticated(req, res, next) {
     cas.validate(req.query.ticket, function (err, casresponse, result) {
       if (err) {
         console.error(err.message);
-        return res.send(401, err.message);
+        return res.status(401).send(err.message);
       }
       if (result.validated) {
         const userid = result.username.toLowerCase();
@@ -63,7 +91,7 @@ function ensureAuthenticated(req, res, next) {
         }).exec(function (err0, user: any) {
           if (err0) {
             console.error(err0);
-            return res.send(500, 'internal error with db');
+            return res.status(500).send('internal error with db');
           }
           if (user) {
             req.session.roles = user.roles;
@@ -91,14 +119,14 @@ function ensureAuthenticated(req, res, next) {
           ldapClient.search(ad.searchBase, opts, false, function (err2, ldapResult) {
             if (err2) {
               console.error(err2.name + ' : ' + err2.message);
-              return res.send(500, 'something wrong with ad');
+              return res.status(500).send('something wrong with ad');
             }
             if (ldapResult.length === 0) {
               console.warn('cannot find ' + userid);
-              return res.send(500, userid + ' is not found!');
+              return res.status(500).send(userid + ' is not found!');
             }
             if (ldapResult.length > 1) {
-              return res.send(500, userid + ' is not unique!');
+              return res.status(500).send(userid + ' is not unique!');
             }
 
             const first: any = new User({
@@ -117,7 +145,7 @@ function ensureAuthenticated(req, res, next) {
                 // cannot save this user
                 console.error(err3);
                 console.error(first.toJSON());
-                return res.send(500, 'Cannot log in. Please contact the admin. Thanks.');
+                return res.status(500).send('Cannot log in. Please contact the admin. Thanks.');
               }
               console.info('A new user logs in: ' + newUser);
               // halt.resume();
@@ -134,7 +162,7 @@ function ensureAuthenticated(req, res, next) {
         });
       } else {
         console.error('CAS reject this ticket: ' + req.query.ticket);
-        return res.send(401, 'CAS reject this ticket.');
+        return res.status(401).send('CAS reject this ticket.');
       }
     });
   } else if (req.xhr) {
@@ -143,7 +171,7 @@ function ensureAuthenticated(req, res, next) {
       protocol: 'http',
       hostname: ticketUrl.hostname,
     }) + '"');
-    res.send(401, 'xhr cannot be authenticated');
+    res.status(401).send('xhr cannot be authenticated');
   } else {
     req.session.landing = req.url;
     res.redirect(authConfig.cas + '/login?service=' + encodeURIComponent(authConfig.service));
@@ -151,7 +179,7 @@ function ensureAuthenticated(req, res, next) {
 
 }
 
-function verifyRoles(roles) {
+export function verifyRoles(roles): express.RequestHandler {
   return function (req, res, next) {
     if (roles.length === 0) {
       return next();
@@ -163,17 +191,10 @@ function verifyRoles(roles) {
           return next();
         }
       }
-      res.send(403, 'You are not authorized to access this resource. ');
+      res.status(403).send('You are not authorized to access this resource. ');
     } else {
       console.log('Cannot identify your roles.');
-      res.send(500, 'something wrong with your session');
+      res.status(500).send('something wrong with your session');
     }
   };
 }
-
-
-export = {
-  ensureAuthWithToken: ensureAuthWithToken,
-  ensureAuthenticated: ensureAuthenticated,
-  verifyRoles: verifyRoles,
-};
