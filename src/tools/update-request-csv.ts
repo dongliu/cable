@@ -8,7 +8,6 @@ import rc = require('rc');
 
 import {
   CableRequest,
-  ICableRequest,
 } from '../app/model/request';
 
 const ObjectId = mongoose.Types.ObjectId;

@@ -4,13 +4,13 @@ import * as express from 'express';
 import ldapClient = require('../lib/ldap-client');
 
 import {
-  User,
   IUser,
+  User,
 } from '../model/user';
 
 import auth = require('../lib/auth');
 
-const Roles = ['manager', 'admin'];
+// const Roles = ['manager', 'admin'];
 
 interface ADConfig {
   nameFilter: string;
