@@ -1,6 +1,34 @@
 /*jslint es5:true*/
+import * as mongoose from 'mongoose';
 
-import mongoose = require('mongoose');
+export interface ICableType {
+  name: string;
+  service?: string;
+  conductorNumber: number;
+  conductorSize: string;
+  fribType: string;
+  typeNumber: string;
+  pairing?: string;
+  shielding?: string;
+  outerDiameter?: string;
+  voltageRating?: string;
+  raceway?: string;
+  tunnelHotcell?: boolean;
+  otherRequirements?: string;
+  manufacturer?: string;
+  partNumber?: string;
+  altManufacturer?: string;
+  altPartNumber?: string;
+  createdBy?: string;
+  createdOn?: Date;
+  updatedBy?: string;
+  updatedOn?: Date;
+}
+
+export interface CableType extends ICableType, mongoose.Document {
+  // nothing extra now
+}
+
 const Schema = mongoose.Schema;
 
 const cableType = new Schema({
@@ -49,4 +77,4 @@ const cableType = new Schema({
   updatedOn: Date,
 });
 
-export const CableType = mongoose.model('CableType', cableType);
+export const CableType = mongoose.model<CableType>('CableType', cableType);

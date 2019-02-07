@@ -1,16 +1,21 @@
 /* tslint:disable:no-console */
 import * as express from 'express';
 
-import * as requestModel from '../model/request';
-import { User } from '../model/user';
-
 import * as auth from '../lib/auth';
 
-const Cable = requestModel.Cable;
-const Request = requestModel.Request;
-const MultiChange = requestModel.MultiChange;
-const Change = requestModel.Change;
+import {
+  Cable,
+  Change,
+  ICable,
+  ICableRequest,
+  IMultiChange,
+  MultiChange,
+  Request as CableRequest,
+} from '../model/request';
 
+import {
+  User,
+} from '../model/user';
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -80,7 +85,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
     sort: {
       number: -1,
     },
-  }).lean().exec(function (err, cable) {
+  }).lean().exec(function (err, cable: ICable) {
     let nextNumber;
     if (err) {
       console.error(err);
@@ -250,9 +255,9 @@ export function init(app: express.Application) {
   // this is different from the request with status parameter
   // need more work when sharing is enabled
   app.get('/requests', auth.ensureAuthenticated, function (req, res) {
-    Request.find({
+    CableRequest.find({
       createdBy: req.session.userid,
-    }).lean().exec(function (err, requests) {
+    }).lean().exec(function (err, requests: ICableRequest[]) {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -263,9 +268,9 @@ export function init(app: express.Application) {
   });
 
   app.get('/requests/json', auth.ensureAuthenticated, function (req, res) {
-    Request.find({
+    CableRequest.find({
       createdBy: req.session.userid,
-    }).lean().exec(function (err, requests) {
+    }).lean().exec(function (err, requests: ICableRequest[]) {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -297,7 +302,7 @@ export function init(app: express.Application) {
         for (i = 0; i < req.body.quantity; i += 1) {
           requests.push(request);
         }
-        Request.create(requests, function (err) {
+        CableRequest.create(requests, function (err) {
           if (err) {
             console.dir(err);
             res.status(500).send(err.message);
@@ -308,7 +313,7 @@ export function init(app: express.Application) {
       } else if (req.body.quantity && req.body.quantity >= 21) {
         res.status(400).send('the quantity needs to be less than 21.');
       } else {
-        (new Request(request)).save(function (err, cableRequest) {
+        (new CableRequest(request)).save(function (err, cableRequest) {
           if (err) {
             console.error(err);
             return res.status(500).send(err.message);
@@ -336,7 +341,7 @@ export function init(app: express.Application) {
   });
 
   app.delete('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
-    Request.findById(req.params.id).exec(function (err, request: any) {
+    CableRequest.findById(req.params.id).exec(function (err, request) {
       if (err) {
         console.error(err);
         return res.status(500).send(err.message);
@@ -363,7 +368,7 @@ export function init(app: express.Application) {
   });
 
   app.get('/requests/:id/json', auth.ensureAuthenticated, function (req, res) {
-    Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
+    CableRequest.findById(req.params.id).lean().exec(function (err, cableRequest: ICableRequest) {
       if (err) {
         console.error(err);
         return res.status(500).json({
@@ -375,7 +380,7 @@ export function init(app: express.Application) {
   });
 
   app.get('/requests/:id/details', auth.ensureAuthenticated, function (req, res) {
-    Request.findById(req.params.id).lean().exec(function (err, cableRequest) {
+    CableRequest.findById(req.params.id).lean().exec(function (err, cableRequest: ICableRequest) {
       if (err) {
         console.error(err);
         return res.status(500).json({
@@ -396,7 +401,7 @@ export function init(app: express.Application) {
   // a manager can only view the saved requests that has his wbs numbers
 
   function findRequest(query, res) {
-    Request.find(query).lean().exec(function (err, docs) {
+    CableRequest.find(query).lean().exec(function (err, docs: ICableRequest[]) {
       if (err) {
         console.error(err);
         return res.status(500).json({
@@ -472,7 +477,7 @@ export function init(app: express.Application) {
     request.updatedOn = Date.now();
 
     if (req.body.action === 'save') {
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 0,
       }, request, {
@@ -500,7 +505,7 @@ export function init(app: express.Application) {
       request.submittedOn = Date.now();
       request.status = 1;
 
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 0,
       }, request, {
@@ -528,7 +533,7 @@ export function init(app: express.Application) {
       request.status = 0;
 
       console.dir(request);
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 1,
       }, request, {
@@ -551,7 +556,7 @@ export function init(app: express.Application) {
     }
 
     if (req.body.action === 'adjust') {
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 1,
       }, request, {
@@ -577,7 +582,7 @@ export function init(app: express.Application) {
       request.rejectedBy = req.session.userid;
       request.rejectedOn = Date.now();
       request.status = 3;
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 1,
       }, request, {
@@ -603,13 +608,13 @@ export function init(app: express.Application) {
       request.approvedBy = req.session.userid;
       request.approvedOn = Date.now();
       request.status = 2;
-      Request.findOneAndUpdate({
+      CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 1,
       }, request, {
         new: true,
       }).exec(
-        function (err, cableRequest: any) {
+        function (err, cableRequest) {
           if (err) {
             console.error(err);
             return res.status(500).json({
@@ -650,7 +655,7 @@ export function init(app: express.Application) {
   app.get('/cables/json', auth.ensureAuthenticated, function (req, res) {
     Cable.find({
       submittedBy: req.session.userid,
-    }).lean().exec(function (err, cables) {
+    }).lean().exec(function (err, cables: ICable[]) {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -669,7 +674,7 @@ export function init(app: express.Application) {
   app.get('/allcables/json', auth.ensureAuthWithToken, function (req, res) {
     const low = 100;
     const up = 499;
-    Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+    Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable[]) {
       if (err) {
         console.error(err);
         return res.status(500).json({
@@ -691,7 +696,7 @@ export function init(app: express.Application) {
     const low = 100;
     const up = 499;
     if (req.session.roles.indexOf('admin') !== -1) {
-      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable[]) {
         if (err) {
           console.error(err);
           return res.status(500).json({
@@ -716,7 +721,7 @@ export function init(app: express.Application) {
           return res.json([]);
         }
 
-        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
+        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs: ICable[]) {
           if (e) {
             console.error(e);
             return res.status(500).json({
@@ -743,7 +748,7 @@ export function init(app: express.Application) {
     if (status === 0) {
       if (req.session.roles.indexOf('admin') !== -1) {
         // get all the cables
-        Cable.find({}).lean().exec(function (err, docs) {
+        Cable.find({}).lean().exec(function (err, docs: ICable[]) {
           if (err) {
             console.error(err);
             return res.status(500).json({
@@ -759,7 +764,7 @@ export function init(app: express.Application) {
       const low = status * 100;
       const up = status * 100 + 99;
       if (req.session.roles.indexOf('admin') !== -1) {
-        Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs) {
+        Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable) {
           if (err) {
             console.error(err);
             return res.status(500).json({
@@ -784,7 +789,7 @@ export function init(app: express.Application) {
             return res.json([]);
           }
 
-          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs) {
+          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs: ICable[]) {
             if (e) {
               console.error(e);
               return res.status(500).json({
@@ -801,7 +806,7 @@ export function init(app: express.Application) {
   app.get('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
     Cable.findOne({
       number: req.params.id,
-    }).lean().exec(function (err, cable) {
+    }).lean().exec(function (err, cable: ICable | null) {
       if (err) {
         console.error(err);
         return res.status(500).send(err.message);
@@ -862,8 +867,8 @@ export function init(app: express.Application) {
         MultiChange.find({
           _id: {
             $in: cable.changeHistory,
-          }
-        }).lean().exec(function multiChangesCB(err2, multiChanges) {
+          },
+        }).lean().exec(function multiChangesCB(err2, multiChanges: IMultiChange[]) {
           if (err2) {
             console.error(err2);
             return res.status(500).send(err1.message);

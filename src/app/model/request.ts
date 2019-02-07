@@ -1,6 +1,196 @@
 /*jslint es5:true*/
 import * as mongoose from 'mongoose';
 
+export interface ICableRequest {
+  basic: {
+    project: string;
+    engineer?: string;
+    wbs: string;
+    originCategory: string;
+    originSubcategory: string;
+    signalClassification: string;
+    cableType?: string,
+    service?: string,
+    traySection?: string;
+    tags?: string[];
+    quantity: number;
+  };
+
+  from: {
+    rack?: string;
+    terminationDevice?: string,
+    terminationType?: string,
+    terminationPort?: string,
+    wiringDrawing?: string,
+    label?: string,
+  };
+
+  to: {
+    rack?: string;
+    terminationDevice?: string;
+    terminationType?: string;
+    terminationPort?: string;
+    wiringDrawing?: string;
+    label?: string;
+  };
+
+  required: {
+    label?: boolean;
+    benchTerm?: boolean;
+    benchTest?: boolean;
+    fieldTerm?: boolean;
+  };
+
+  ownerProvided: boolean;
+
+  length?: number;
+  conduit?: string;
+  routing?: Array<{}>;
+
+  comments?: string;
+  status?: number;
+  createdBy?: string;
+  createdOn?: Date;
+  updatedBy?: string;
+  updatedOn?: Date;
+  submittedBy?: string;
+  submittedOn?: Date;
+  revertedBy?: string;
+  revertedOn?: Date;
+  approvedBy?: string;
+  approvedOn?: Date;
+  rejectedBy?: string;
+  rejectedOn?: Date;
+}
+
+export interface CableRequest extends ICableRequest, mongoose.Document {
+  // nothing extra now
+}
+
+export interface ICable {
+  request_id: string;
+  number: string;
+  status: number;
+  ownerProvided: boolean;
+
+  basic: {
+    project: string;
+    engineer?: string;
+    wbs: string;
+    originCategory: string;
+    originSubcategory: string;
+    signalClassification: string;
+    cableType?: string;
+    service?: string;
+    traySection: string;
+    tags: string[];
+  };
+
+  from: {
+    rack?: string,
+    terminationDevice?: string;
+    terminationType?: string;
+    terminationPort?: string;
+    wiringDrawing?: string;
+    label?: string;
+    readyForTerm?: boolean;
+    terminatedBy?: string;
+    terminatedOn?: Date;
+  };
+
+  to: {
+    rack?: string;
+    terminationDevice?: string;
+    terminationType?: string;
+    terminationPort?: string;
+    wiringDrawing?: string;
+    label?: string;
+    readyForTerm?: boolean;
+    terminatedBy?: string;
+    terminatedOn?: Date;
+  };
+
+  required: {
+    label?: boolean;
+    benchTerm?: boolean;
+    benchTest?: boolean;
+    fieldTerm?: boolean;
+  };
+
+  length?: number;
+  conduit?: string;
+  routing?: Array<{}>;
+
+  comments?: string;
+  submittedBy?: string;
+  submittedOn?: Date;
+  approvedBy?: string;
+  approvedOn?: Date;
+  updatedOn?: Date;
+  updatedBy?: string;
+  obsoletedOn?: Date;
+  obsoletedBy?: string;
+  orderedBy?: string;
+  orderedOn?: Date;
+  receivedBy?: string;
+  receivedOn?: Date;
+  acceptedBy?: string;
+  acceptedOn?: Date;
+  labeledBy?: string;
+  labeledOn?: Date;
+  benchTerminatedBy?: string;
+  benchTerminatedOn?: Date;
+  benchTestedBy?: string;
+  benchTestedOn?: Date;
+  pulledBy?: string;
+  pulledOn?: Date;
+  fieldTerminatedBy?: string;
+  fieldTerminatedOn?: Date;
+  fieldTestedBy?: string;
+  fieldTestedOn?: Date;
+  installedBy?: string;
+  installedOn?: Date;
+  changeHistory: mongoose.Types.ObjectId[];
+}
+
+export interface Cable extends ICable, mongoose.Document {
+  // nothing extra now
+}
+
+export interface IChange {
+  cableName?: string;
+  property?: string;
+  oldValue?: {};
+  newValue?: {};
+  updatedBy?: string;
+  updatedOn?: Date;
+}
+
+export interface Change extends IChange, mongoose.Document {
+  // nothing extra now
+}
+
+export interface IUpdate {
+  property?: string;
+  oldValue?: {};
+  newValue?: {};
+}
+
+export interface Update extends IUpdate, mongoose.Document {
+  // nothing extra now
+}
+
+export interface IMultiChange {
+  cableName?: string;
+  updates?: IUpdate[];
+  updatedBy?: string;
+  updatedOn?: Date;
+}
+
+export interface MultiChange extends IMultiChange, mongoose.Document {
+  // nothing extra now
+}
+
 const Schema = mongoose.Schema;
 const Mixed = Schema.Types.Mixed;
 const ObjectId = Schema.Types.ObjectId;
@@ -18,7 +208,7 @@ const traySectionValues = ['HPRF', 'DC', 'VLLS', 'LLS', 'HVDC', 'MLS', 'AC', 'MV
 // 2: approved
 // 3: rejected
 
-const request = new Schema({
+const requestSchema = new Schema({
   basic: {
     project: {
       type: String,
@@ -135,7 +325,7 @@ const request = new Schema({
 // obsoleted: 5xx
 //   501: not needed
 
-const cable = new Schema({
+const cableSchema = new Schema({
   request_id: String,
   number: {
     type: String,
@@ -253,7 +443,7 @@ const cable = new Schema({
   changeHistory: [ObjectId],
 });
 
-const change = new Schema({
+const changeSchema = new Schema({
   cableName: String,
   property: String,
   oldValue: Mixed,
@@ -262,20 +452,20 @@ const change = new Schema({
   updatedOn: Date,
 });
 
-const update = new Schema({
+const updateSchema = new Schema({
   property: String,
   oldValue: Mixed,
   newValue: Mixed,
 });
 
-const multiChange = new Schema({
+const multiChangeSchema = new Schema({
   cableName: String,
-  updates: [update],
+  updates: [updateSchema],
   updatedBy: String,
   updatedOn: Date,
 });
 
-export const Request = mongoose.model('Request', request);
-export const Cable = mongoose.model('Cable', cable);
-export const Change = mongoose.model('Change', change);
-export const MultiChange = mongoose.model('MultiChange', multiChange);
+export const Request = mongoose.model<CableRequest>('Request', requestSchema);
+export const Cable = mongoose.model<Cable>('Cable', cableSchema);
+export const Change = mongoose.model<Change>('Change', changeSchema);
+export const MultiChange = mongoose.model<MultiChange>('MultiChange', multiChangeSchema);

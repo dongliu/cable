@@ -18,11 +18,6 @@ import * as mongoose from 'mongoose';
 import * as morgan from 'morgan';
 import * as favicon from 'serve-favicon';
 
-// Import libaries to initialize models (order matters!)
-import metamodel = require('./model/meta.js');
-import reqmodel = require('./model/request.js');
-import usermodel = require('./model/user.js');
-
 import auth = require('./lib/auth');
 // import * as auth from './shared/auth';
 import * as handlers from './shared/handlers';
@@ -409,15 +404,6 @@ async function doStart(): Promise<express.Application> {
   }
   const roomsSRF = JSON.parse(await readFile(String(cfg.metadata.rooms_srf_path), 'utf8'));
   info('Rooms (SRF) data file read: %s', cfg.metadata.rooms_srf_path);
-
-  // Need to import these libraries so they
-  // are initialized in the correct order,
-  // but TypeScript will removed unused
-  // imports, so need to do something:
-  info('Model %s Initialized', metamodel.CableType.name);
-  info('Model %s Initialized', reqmodel.Request.name);
-  info('Model %s Initialized', reqmodel.Cable.name);
-  info('Model %s Initialized', usermodel.User.name);
 
   // view engine configuration
   app.set('views', path.resolve(__dirname, '..', 'views'));

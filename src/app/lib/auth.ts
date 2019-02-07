@@ -4,16 +4,14 @@ import * as express from 'express';
 // authentication and authorization functions
 import Client = require('cas.js');
 import url = require('url');
-// var pause = require('pause');
+
+import * as ldapClient from './ldap-client';
+
+import { User } from '../model/user';
 
 type Request = express.Request;
 type Response = express.Response;
 type NextFunction = express.NextFunction;
-
-const ldapClient: any = require('../lib/ldap-client');
-
-import mongoose = require('mongoose');
-const User = mongoose.model('User');
 
 interface ADConfig {
   searchFilter: string;
