@@ -451,7 +451,7 @@ async function doStart(): Promise<express.Application> {
     extended: false,
   })  );
 
-  app.get('/login', auth.ensureAuthenticated, function (req, res: any) {
+  app.get('/login', auth.ensureAuthenticated, (req, res: any) => {
     if (req.session.userid) {
       return res.redirect('/');
     }
@@ -493,11 +493,11 @@ async function doStart(): Promise<express.Application> {
 
   app.get('/numbering', numbering.index);
 
-  app.get('/penetration', function (req, res) {
+  app.get('/penetration', (req, res) => {
     res.json(penetration);
   });
 
-  app.get('/sys-sub', function (req, res) {
+  app.get('/sys-sub', (req, res) => {
     res.json(sysSub);
   });
 
@@ -544,7 +544,7 @@ async function doStop(): Promise<void> {
   // Unbind AD Client
   try {
     await new Promise((resolve, reject) => {
-      adClient.unbind(function (err: any) {
+      adClient.unbind((err: any) => {
         if (err) {
           reject(err);
           return;

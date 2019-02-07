@@ -1,4 +1,6 @@
-import ldap = require('ldapjs');
+import * as ldap from 'ldapjs';
+
+import { info } from '../shared/logging';
 
 interface ADConfig {
   url: string;
@@ -23,28 +25,28 @@ export function setADConfig(config: ADConfig) {
 }
 
 export function search(base: string, opts: ldap.SearchOptions, raw: boolean, cb: (err: any, entry?: any[]) => void) {
-  client.search(base, opts, function (err, result) {
+  client.search(base, opts, (err, result) => {
     if (err) {
-      console.log(JSON.stringify(err));
+      info(JSON.stringify(err));
       return cb(err);
     }
     const items: any[] = [];
-    result.on('searchEntry', function (entry) {
+    result.on('searchEntry', (entry) => {
       if (raw) {
         items.push(entry.raw);
       } else {
         items.push(entry.object);
       }
     });
-    result.on('error', function (err) {
-      console.log(JSON.stringify(err));
-      return cb(err);
+    result.on('error', (err0) => {
+      info(JSON.stringify(err0));
+      return cb(err0);
     });
-    result.on('end', function (result) {
-      if (result.status !== 0) {
-        const err = 'non-zero status from LDAP search: ' + result.status;
-        console.log(JSON.stringify(err));
-        return cb(err);
+    result.on('end', (result0) => {
+      if (result0.status !== 0) {
+        const err0 = 'non-zero status from LDAP search: ' + result0.status;
+        info(JSON.stringify(err0));
+        return cb(err0);
       }
       switch (items.length) {
       case 0:

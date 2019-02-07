@@ -8,28 +8,28 @@ import auth = require('../lib/auth');
 import util = require('../lib/util');
 
 export function init(app: express.Application) {
-  app.get('/cabletypes/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cabletypes/', auth.ensureAuthenticated, (req, res) => {
     res.render('cabletype', {
       roles: req.session.roles,
     });
   });
 
-  app.get('/cabletypes/manage', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cabletypes/manage', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('cabletypemgmt');
     }
     return res.status(403).send('You are not authorized to access this resource');
   });
 
-  app.get('/cabletypes/new', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cabletypes/new', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles.indexOf('admin') !== -1) {
       return res.render('newcabletype');
     }
     return res.status(403).send('You are not authorized to access this resource');
   });
 
-  app.get('/cabletypes/json', auth.ensureAuthenticated, function (req, res) {
-    CableType.find(function (err, docs) {
+  app.get('/cabletypes/json', auth.ensureAuthenticated, (req, res) => {
+    CableType.find((err, docs) => {
       if (err) {
         return res.status(500).send(err.message);
       }
@@ -37,7 +37,8 @@ export function init(app: express.Application) {
     });
   });
 
-  app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements', 'manufacturer', 'partNumber']), function (req, res) {
+  // tslint:disable:max-line-length
+  app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements', 'manufacturer', 'partNumber']), (req, res) => {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource. ');
     }
@@ -49,11 +50,12 @@ export function init(app: express.Application) {
     const newType = req.body;
 
     // generate the type name here
+    // tslint:disable:max-line-length
     newType.name = newType.conductorNumber + 'C_' + newType.conductorSize + '_' + newType.fribType + '_' + newType.typeNumber;
     newType.createdBy = req.session.userid;
     newType.createdOn = Date.now();
 
-    (new CableType(newType)).save(function (err, type) {
+    (new CableType(newType)).save((err, type) => {
       if (err) {
         console.dir(err);
         console.error(err.message || err.err);
@@ -68,12 +70,12 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/cabletypes/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cabletypes/:id/', auth.ensureAuthenticated, (req, res) => {
     res.redirect('/cabletypes/' + req.params.id + '/details');
   });
 
-  app.get('/cabletypes/:id/details', auth.ensureAuthenticated, function (req, res) {
-    CableType.findById(req.params.id).lean().exec(function (err, type) {
+  app.get('/cabletypes/:id/details', auth.ensureAuthenticated, (req, res) => {
+    CableType.findById(req.params.id).lean().exec((err, type) => {
       if (err) {
         console.error(err);
         return res.status(500).send(err.message);
@@ -88,7 +90,7 @@ export function init(app: express.Application) {
     });
   });
 
-  app.put('/cabletypes/:id', auth.ensureAuthenticated, function (req, res) {
+  app.put('/cabletypes/:id', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource. ');
     }
@@ -108,7 +110,7 @@ export function init(app: express.Application) {
     update.updatedBy = req.session.userid;
     CableType.findOneAndUpdate(conditions, update, {
       new: true,
-    }, function (err, type) {
+    }, (err, type) => {
       // the err is not a mongoose error
       if (err) {
         if (err.errmsg) {

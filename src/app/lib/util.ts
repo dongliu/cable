@@ -1,8 +1,8 @@
 import * as express from 'express';
 
-/*a simple middlewere to check if the request contains required properties*/
+/* a simple middlewere to check if the request contains required properties */
 function filterBody(strings: string[]): express.RequestHandler {
-  return function (req, res, next) {
+  return (req, res, next) => {
     let k;
     let found = false;
     for (k in req.body) {

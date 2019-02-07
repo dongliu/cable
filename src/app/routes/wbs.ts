@@ -15,15 +15,15 @@ export function setWBSConfig(config: WBSConfig) {
 }
 
 export function init(app: express.Application) {
-  app.get('/:project/wbs', function(req, res) {
+  app.get('/:project/wbs', (req, res) => {
     res.render('wbs', {project: req.params.project, json: path.join(req.path, '/json')});
   });
 
-  app.get('/:project/wbs/json', function(req, res) {
+  app.get('/:project/wbs/json', (req, res) => {
     res.json(wbs[req.params.project]);
   });
 
-  app.get('/:project/wbs/:number', function(req, res) {
+  app.get('/:project/wbs/:number', (req, res) => {
     const parts: string[] = req.params.number.split('.');
     let key = parts[0];
     let locator = findChild(wbs[req.params.project], key);
@@ -43,9 +43,9 @@ export function init(app: express.Application) {
 }
 
 function findChild(object: any, childNumber: string) {
-  for (let i = 0; i < object.children.length; i += 1) {
-    if (object.children[i].number === childNumber) {
-      return object.children[i];
+  for (const child of object.children) {
+    if (child.number === childNumber) {
+      return child;
     }
   }
   return null;

@@ -16,13 +16,13 @@ export function setBuildingConfig(config: BuildingConfig) {
 }
 
 export function init(app: express.Application) {
-  app.get('/:building/rooms', function(req, res) {
+  app.get('/:building/rooms', (req, res) => {
     res.render('room', {
       json: path.join(req.path, '/json'),
     });
   });
 
-  app.get('/:building/rooms/json', function(req, res) {
+  app.get('/:building/rooms/json', (req, res) => {
     res.json(building[req.params.building]);
   });
 }

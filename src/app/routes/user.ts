@@ -1,5 +1,9 @@
-/* tslint:disable:no-console */
 import * as express from 'express';
+
+import {
+  error,
+  info,
+} from '../shared/logging';
 
 import ldapClient = require('../lib/ldap-client');
 
@@ -35,9 +39,9 @@ function addUser(req: express.Request, res: express.Response) {
     scope: 'sub',
   };
 
-  ldapClient.search(ad.searchBase, opts, false, function (err, result) {
+  ldapClient.search(ad.searchBase, opts, false, (err, result) => {
     if (err) {
-      console.error(err.name + ' : ' + err.message);
+      error(err.name + ' : ' + err.message);
       return res.status(500).json(err);
     }
 
@@ -67,13 +71,13 @@ function addUser(req: express.Request, res: express.Response) {
       roles: roles,
     });
 
-    user.save(function (err, newUser: any) {
-      if (err) {
-        if (err.message) {
-          console.error(err);
-          return res.status(500).send(err.message);
+    user.save((err0, newUser: any) => {
+      if (err0) {
+        if (err0.message) {
+          error(err0);
+          return res.status(500).send(err0.message);
         }
-        console.log(err);
+        info(err0);
         return res.status(500).send('cannot save the new user in db.');
       }
 
@@ -92,7 +96,7 @@ function updateUserProfile(user: User, res: express.Response) {
     attributes: ad.objAttributes,
     scope: 'sub',
   };
-  ldapClient.search(ad.searchBase, opts, false, function (err, result) {
+  ldapClient.search(ad.searchBase, opts, false, (err, result) => {
     if (err) {
       return res.status(500).json(err);
     }
@@ -117,9 +121,9 @@ function updateUserProfile(user: User, res: express.Response) {
       update.mobile = result[0].mobile;
     }
 
-    user.update(update, function (err) {
-      if (err) {
-        return res.status(500).json(err);
+    user.update(update, (err0) => {
+      if (err0) {
+        return res.status(500).json(err0);
       }
       res.send(204);
     });
@@ -128,19 +132,19 @@ function updateUserProfile(user: User, res: express.Response) {
 
 export function init(app: express.Application) {
 
-  app.get('/users/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('only admin allowed');
     }
     return res.render('users');
   });
 
-  app.get('/usernames/:name', auth.ensureAuthenticated, function (req, res) {
+  app.get('/usernames/:name', auth.ensureAuthenticated, (req, res) => {
     User.findOne({
-      name: req.params.name
-    }).lean().exec(function (err, user) {
+      name: req.params.name,
+    }).lean().exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (user) {
@@ -153,7 +157,7 @@ export function init(app: express.Application) {
     });
   });
 
-  app.post('/users/', auth.ensureAuthenticated, function (req, res) {
+  app.post('/users/', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('only admin allowed');
     }
@@ -165,7 +169,7 @@ export function init(app: express.Application) {
     // check if already in db
     User.findOne({
       name: req.body.name,
-    }).lean().exec(function (err, user) {
+    }).lean().exec((err, user) => {
       if (err) {
         return res.status(500).send(err.message);
       }
@@ -179,11 +183,11 @@ export function init(app: express.Application) {
 
 
 
-  app.get('/users/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/json', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
-      return res.status(403).send("You are not authorized to access this resource. ");
+      return res.status(403).send('You are not authorized to access this resource.');
     }
-    User.find().lean().exec(function (err, users) {
+    User.find().lean().exec((err, users) => {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -194,12 +198,12 @@ export function init(app: express.Application) {
   });
 
 
-  app.get('/users/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/:id/', auth.ensureAuthenticated, (req, res) => {
     User.findOne({
       adid: req.params.id,
-    }).lean().exec(function (err, user) {
+    }).lean().exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (user) {
@@ -212,18 +216,18 @@ export function init(app: express.Application) {
     });
   });
 
-  app.put('/users/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.put('/users/:id/', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
-      return res.status(403).send("You are not authorized to access this resource. ");
+      return res.status(403).send('You are not authorized to access this resource.');
     }
     if (!req.is('json')) {
       return res.status(415).send('json request expected.');
     }
     User.findOneAndUpdate({
       adid: req.params.id,
-    }, req.body).lean().exec(function (err, user) {
+    }, req.body).lean().exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
           error: err.message,
         });
@@ -236,18 +240,18 @@ export function init(app: express.Application) {
   });
 
 
-  app.post('/users/:id/wbs/', auth.ensureAuthenticated, function (req, res) {
+  app.post('/users/:id/wbs/', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
-      return res.status(403).send("You are not authorized to access this resource. ");
+      return res.status(403).send('You are not authorized to access this resource.');
     }
     if (!req.is('json')) {
       return res.status(415).send('json request expected.');
     }
     User.findOne({
       adid: req.params.id,
-    }).exec(function (err, user) {
+    }).exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (!user) {
@@ -257,25 +261,25 @@ export function init(app: express.Application) {
         (user as IUser).wbs = [];
       }
       user.wbs.addToSet(req.body.newwbs);
-      user.save(function (err) {
-        if (err) {
-          console.error(err);
-          return res.status(500).send(err.message);
+      user.save((err0) => {
+        if (err0) {
+          error(err0);
+          return res.status(500).send(err0.message);
         }
         return res.status(201).send(req.body.newwbs + ' was added to the wbs list.');
       });
     });
   });
 
-  app.delete('/users/:id/wbs/:wbs', auth.ensureAuthenticated, function (req, res) {
+  app.delete('/users/:id/wbs/:wbs', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
-      return res.status(403).send("You are not authorized to access this resource. ");
+      return res.status(403).send('You are not authorized to access this resource.');
     }
     User.findOne({
       adid: req.params.id,
-    }).exec(function (err, user) {
+    }).exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (!user) {
@@ -285,10 +289,10 @@ export function init(app: express.Application) {
         return res.send(204);
       }
       user.wbs.pull(req.params.wbs);
-      user.save(function (err) {
-        if (err) {
-          console.error(err);
-          return res.status(500).send(err.message);
+      user.save((err0) => {
+        if (err0) {
+          error(err0);
+          return res.status(500).send(err0.message);
         }
         return res.send(204);
       });
@@ -296,12 +300,12 @@ export function init(app: express.Application) {
   });
 
   // get from the db not ad
-  app.get('/users/:id/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/:id/json', auth.ensureAuthenticated, (req, res) => {
     User.findOne({
       adid: req.params.id,
-    }).lean().exec(function (err, user) {
+    }).lean().exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
           error: err.mesage,
         });
@@ -310,15 +314,15 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/users/:id/refresh', auth.ensureAuthenticated, function (req, res) {
+  app.get('/users/:id/refresh', auth.ensureAuthenticated, (req, res) => {
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
-      return res.status(403).send("You are not authorized to access this resource. ");
+      return res.status(403).send('You are not authorized to access this resource.');
     }
     User.findOne({
       adid: req.params.id,
-    }).exec(function (err, user) {
+    }).exec((err, user) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (user) {
@@ -332,7 +336,7 @@ export function init(app: express.Application) {
 
   // resource /adusers
 
-  app.get('/adusers/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/adusers/:id/', auth.ensureAuthenticated, (req, res) => {
 
     const searchFilter = ad.searchFilter.replace('_id', req.params.id);
     const opts = {
@@ -340,7 +344,7 @@ export function init(app: express.Application) {
       attributes: ad.objAttributes,
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, false, function (err, result) {
+    ldapClient.search(ad.searchBase, opts, false, (err, result) => {
       if (err) {
         return res.status(500).json(err);
       }
@@ -361,7 +365,7 @@ export function init(app: express.Application) {
   });
 
 
-  app.get('/adusers/:id/photo', auth.ensureAuthenticated, function (req, res) {
+  app.get('/adusers/:id/photo', auth.ensureAuthenticated, (req, res) => {
 
     const searchFilter = ad.searchFilter.replace('_id', req.params.id);
     const opts = {
@@ -369,7 +373,7 @@ export function init(app: express.Application) {
       attributes: ad.rawAttributes,
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, true, function (err, result) {
+    ldapClient.search(ad.searchBase, opts, true, (err, result) => {
       if (err) {
         return res.status(500).json(err);
       }
@@ -389,7 +393,7 @@ export function init(app: express.Application) {
 
   });
 
-  app.get('/adusernames', auth.ensureAuthenticated, function (req, res) {
+  app.get('/adusernames', auth.ensureAuthenticated, (req, res) => {
     const query = req.query.term;
     let nameFilter;
     let opts;
@@ -403,7 +407,7 @@ export function init(app: express.Application) {
       attributes: ['displayName'],
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, false, function (err, result) {
+    ldapClient.search(ad.searchBase, opts, false, (err, result) => {
       if (err) {
         return res.status(500).json(err.message);
       }

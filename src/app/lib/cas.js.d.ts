@@ -18,7 +18,7 @@ declare module 'cas.js' {
   class Client {
     constructor(options: ClientOptions)
 
-    public validate(ticket: string, cb: ValidateCallback): void
+    public validate(ticket: string, cb: ValidateCallback): void;
   }
 
   export = Client;

@@ -1,6 +1,11 @@
-/* tslint:disable:no-console */
 import * as express from 'express';
 import * as mongoose from 'mongoose';
+
+import {
+  error,
+  info,
+  warn,
+} from '../shared/logging';
 
 import * as auth from '../lib/auth';
 
@@ -30,7 +35,14 @@ type NextFunction = express.NextFunction;
 // procuring
 //   100: approved 101: ordered 102: received 103: accepted
 // installing
-//   200: ready for installation 201: labeled 202: bench terminated 203: bench tested 249: ready for pull 250: pulled 251: field terminated 252: field tested
+//   200: ready for installation
+//   201: labeled
+//   202: bench terminated
+//   203: bench tested
+//   249: ready for pull
+//   250: pulled
+//   251: field terminated
+//   252: field tested
 // working: 3xx
 // failed: 4xx
 // obsoleted: 5xx
@@ -54,31 +66,32 @@ function pad(num: number) {
   return s.substring(s.length - 6);
 }
 
-function increment(number: string) {
-  const sequence = parseInt(number.substring(3), 10);
+function increment(n: string) {
+  const sequence = parseInt(n.substring(3), 10);
   if (sequence === 999999) {
     return null;
   }
-  return number.substring(0, 3) + pad(sequence + 1);
+  return n.substring(0, 3) + pad(sequence + 1);
 }
 
+// tslint:disable:max-line-length
 function createCable(cableRequest: CableRequest, req: Request, res: Response, quantity: number | null, cables: ICable[]) {
   // fix the unspecified quantity in some requests
   if (quantity === null) {
     quantity = 1;
   }
   if (isNaN(quantity)) {
-    console.log('cable request ' + cableRequest._id + 'is not a number!');
+    warn('cable request ' + cableRequest._id + 'is not a number!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity !== Math.round(quantity)) {
-    console.log('cable request ' + cableRequest._id + ' is not an integer!');
+    warn('cable request ' + cableRequest._id + ' is not an integer!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
   if (quantity < 1) {
-    console.log('cable request ' + cableRequest._id + ' is less than 1!');
+    warn('cable request ' + cableRequest._id + ' is less than 1!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
@@ -91,10 +104,10 @@ function createCable(cableRequest: CableRequest, req: Request, res: Response, qu
     sort: {
       number: -1,
     },
-  }).lean().exec(function (err, cable: ICable) {
+  }).lean().exec((err, cable: ICable) => {
     let nextNumber: string;
     if (err) {
-      console.error(err);
+      error(err);
       // revert the request state?
       return res.status(500).send(err.message);
     }
@@ -103,7 +116,6 @@ function createCable(cableRequest: CableRequest, req: Request, res: Response, qu
     } else {
       nextNumber = sss + '000000';
     }
-    // console.log(nextNumber);
     const newCable = new Cable({
       number: nextNumber,
       status: 100,
@@ -123,20 +135,20 @@ function createCable(cableRequest: CableRequest, req: Request, res: Response, qu
       approvedBy: req.session.userid,
       approvedOn: Date.now(),
     });
-    newCable.save(function (e, doc) {
+    newCable.save((e, doc) => {
       if (e) {
         // see test/duplicatedCableNumber.js for a test of this case
         if (e.code && e.code === 11000) {
-          console.log(nextNumber + ' already existed, try again ...');
+          warn(nextNumber + ' already existed, try again ...');
           createCable(cableRequest, req, res, quantity, cables);
         } else {
-          console.error(e);
+          error(e);
           return res.status(500).json({
             error: e.message,
           });
         }
       } else {
-        console.log('new cable ' + nextNumber + ' was created.');
+        info('new cable ' + nextNumber + ' was created.');
         cables.push(doc.toJSON());
         // should be equal to 1 when return
         if (quantity < 2) {
@@ -154,16 +166,16 @@ function createCable(cableRequest: CableRequest, req: Request, res: Response, qu
 function updateCable(conditions: any, update: any, req: Request, res: Response) {
   Cable.findOneAndUpdate(conditions, update, {
     new: true,
-  }, function (err, cable) {
+  }, (err, cable) => {
     if (err) {
-      console.error(err);
+      error(err);
       return res.status(500).send('cannot save the update.');
     }
     if (cable) {
       return res.status(200).json(cable.toJSON());
     }
-    console.error(req.params.id + ' with conditions for the update cannot be found');
-    console.error(conditions);
+    error(req.params.id + ' with conditions for the update cannot be found');
+    error(conditions);
     return res.status(409).send(req.params.id + ' with conditions for the update cannot be found.');
   });
 }
@@ -216,7 +228,7 @@ function updateCableWithChanges(conditions: any, update: any, changes: IChange[]
     change = mchange;
   }
   if (change) {
-    change.save(function (err, doc) {
+    change.save((err, doc) => {
       if (err) {
         return res.status(500).send('cannot save the change');
       }
@@ -232,26 +244,26 @@ function updateCableWithChanges(conditions: any, update: any, changes: IChange[]
 
 export function init(app: express.Application) {
 
-  app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), function (req, res) {
+  app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), (req, res) => {
     return res.render('manager', {
       roles: req.session.roles,
     });
   });
 
-  app.get('/manager/requests', auth.ensureAuthenticated, function (req, res) {
+  app.get('/manager/requests', auth.ensureAuthenticated, (req, res) => {
     return res.render('manage-requests', {
       roles: req.session.roles,
     });
   });
 
-  app.get('/manager/cables', auth.ensureAuthenticated, function (req, res) {
+  app.get('/manager/cables', auth.ensureAuthenticated, (req, res) => {
     return res.render('manage-cables', {
       roles: req.session.roles,
     });
   });
 
 
-  app.get('/requests/new', auth.ensureAuthenticated, function (req, res) {
+  app.get('/requests/new', auth.ensureAuthenticated, (req, res) => {
     return res.render('request', {
       sysSub: sysSub,
       roles: req.session.roles,
@@ -261,10 +273,10 @@ export function init(app: express.Application) {
   // get the requests owned by the current user
   // this is different from the request with status parameter
   // need more work when sharing is enabled
-  app.get('/requests', auth.ensureAuthenticated, function (req, res) {
+  app.get('/requests', auth.ensureAuthenticated, (req, res) => {
     CableRequest.find({
       createdBy: req.session.userid,
-    }).lean().exec(function (err, requests: ICableRequest[]) {
+    }).lean().exec((err, requests: ICableRequest[]) => {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -274,10 +286,10 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/requests/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/requests/json', auth.ensureAuthenticated, (req, res) => {
     CableRequest.find({
       createdBy: req.session.userid,
-    }).lean().exec(function (err, requests: ICableRequest[]) {
+    }).lean().exec((err, requests: ICableRequest[]) => {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -288,7 +300,7 @@ export function init(app: express.Application) {
   });
 
   // create a new request from a form or clone
-  app.post('/requests/', auth.ensureAuthenticated, function (req, res) {
+  app.post('/requests/', auth.ensureAuthenticated, (req, res) => {
     if (!req.is('json')) {
       return res.status(415).send('json request expected.');
     }
@@ -309,9 +321,9 @@ export function init(app: express.Application) {
         for (i = 0; i < req.body.quantity; i += 1) {
           requests.push(request);
         }
-        CableRequest.create(requests, function (err) {
+        CableRequest.create(requests, (err) => {
           if (err) {
-            console.dir(err);
+            error(err);
             res.status(500).send(err.message);
           } else {
             res.status(201).send(req.body.quantity + ' requests created');
@@ -320,9 +332,9 @@ export function init(app: express.Application) {
       } else if (req.body.quantity && req.body.quantity >= 21) {
         res.status(400).send('the quantity needs to be less than 21.');
       } else {
-        (new CableRequest(request)).save(function (err, cableRequest) {
+        (new CableRequest(request)).save((err, cableRequest) => {
           if (err) {
-            console.error(err);
+            error(err);
             return res.status(500).send(err.message);
           }
           const url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
@@ -339,7 +351,7 @@ export function init(app: express.Application) {
 
   // get the request details
   // add authorization check here
-  app.get('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/requests/:id/', auth.ensureAuthenticated, (req, res) => {
     return res.render('request', {
       sysSub: sysSub,
       id: req.params.id,
@@ -347,10 +359,10 @@ export function init(app: express.Application) {
     });
   });
 
-  app.delete('/requests/:id/', auth.ensureAuthenticated, function (req, res) {
-    CableRequest.findById(req.params.id).exec(function (err, request) {
+  app.delete('/requests/:id/', auth.ensureAuthenticated, (req, res) => {
+    CableRequest.findById(req.params.id).exec((err, request) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (request) {
@@ -360,12 +372,12 @@ export function init(app: express.Application) {
         if (request.status === 1 || request.status === 2) {
           return res.status(400).send('this resource is not allowed to be deleted');
         }
-        request.remove(function (e) {
+        request.remove((e) => {
           if (e) {
-            console.error(e);
+            error(e);
             return res.status(500).send(e.message);
           }
-          console.log('request ' + req.params.id + ' was deleted');
+          info('request ' + req.params.id + ' was deleted');
           return res.status(200).send('deleted');
         });
       } else {
@@ -374,24 +386,24 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/requests/:id/json', auth.ensureAuthenticated, function (req, res) {
-    CableRequest.findById(req.params.id).lean().exec(function (err, cableRequest: ICableRequest) {
+  app.get('/requests/:id/json', auth.ensureAuthenticated, (req, res) => {
+    CableRequest.findById(req.params.id).lean().exec((err, cableRequest: ICableRequest) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
-          error: err.message
+          error: err.message,
         });
       }
       res.json(cableRequest);
     });
   });
 
-  app.get('/requests/:id/details', auth.ensureAuthenticated, function (req, res) {
-    CableRequest.findById(req.params.id).lean().exec(function (err, cableRequest: ICableRequest) {
+  app.get('/requests/:id/details', auth.ensureAuthenticated, (req, res) => {
+    CableRequest.findById(req.params.id).lean().exec((err, cableRequest: ICableRequest) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
-          error: err.message
+          error: err.message,
         });
       }
       if (cableRequest) {
@@ -408,9 +420,9 @@ export function init(app: express.Application) {
   // a manager can only view the saved requests that has his wbs numbers
 
   function findRequest(query: any, res: Response) {
-    CableRequest.find(query).lean().exec(function (err, docs: ICableRequest[]) {
+    CableRequest.find(query).lean().exec((err, docs: ICableRequest[]) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
           error: err.message,
         });
@@ -419,7 +431,7 @@ export function init(app: express.Application) {
     });
   }
 
-  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
+  app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), (req, res) => {
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
       return res.status(400).send('the status ' + status + ' is invalid.');
@@ -435,9 +447,9 @@ export function init(app: express.Application) {
       // manager see his own wbs
       User.findOne({
         adid: req.session.userid,
-      }).lean().exec(function (err, user) {
+      }).lean().exec((err, user) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).send(err.message);
         }
         if (!user) {
@@ -450,7 +462,7 @@ export function init(app: express.Application) {
           'basic.wbs': {
             $in: user.wbs,
           },
-          status: status,
+          'status': status,
         };
         findRequest(query, res);
       });
@@ -478,7 +490,7 @@ export function init(app: express.Application) {
   }
 
   // update a request
-  app.put('/requests/:id/', auth.ensureAuthenticated, authorize, function (req, res) {
+  app.put('/requests/:id/', auth.ensureAuthenticated, authorize, (req, res) => {
     const request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
@@ -489,9 +501,9 @@ export function init(app: express.Application) {
         status: 0,
       }, request, {
         new: true,
-      }, function (err, cableRequest) {
+      }, (err, cableRequest) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -499,7 +511,7 @@ export function init(app: express.Application) {
         if (cableRequest) {
           return res.status(200).json(cableRequest.toJSON());
         }
-        console.error(req.params.id + ' gone');
+        error(req.params.id + ' gone');
         return res.status(410).json({
           error: req.params.id + ' gone',
         });
@@ -517,9 +529,9 @@ export function init(app: express.Application) {
         status: 0,
       }, request, {
         new: true,
-      }, function (err, cableRequest) {
+      }, (err, cableRequest) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -527,7 +539,7 @@ export function init(app: express.Application) {
         if (cableRequest) {
           return res.status(200).json(cableRequest.toJSON());
         }
-        console.error(req.params.id + ' cannot be submitted');
+        error(req.params.id + ' cannot be submitted');
         return res.status(410).json({
           error: req.params.id + ' cannot be submitted',
         });
@@ -539,15 +551,15 @@ export function init(app: express.Application) {
       request.revertedOn = Date.now();
       request.status = 0;
 
-      console.dir(request);
+      error(request);
       CableRequest.findOneAndUpdate({
         _id: req.params.id,
         status: 1,
       }, request, {
         new: true,
-      }, function (err, cableRequest) {
+      }, (err, cableRequest) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -555,7 +567,7 @@ export function init(app: express.Application) {
         if (cableRequest) {
           return res.status(200).json(cableRequest.toJSON());
         }
-        console.error(req.params.id + ' cannot be reverted');
+        error(req.params.id + ' cannot be reverted');
         return res.status(400).json({
           error: req.params.id + ' cannot be reverted',
         });
@@ -568,9 +580,9 @@ export function init(app: express.Application) {
         status: 1,
       }, request, {
         new: true,
-      }, function (err, cableRequest) {
+      }, (err, cableRequest) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -578,7 +590,7 @@ export function init(app: express.Application) {
         if (cableRequest) {
           return res.status(200).json(cableRequest.toJSON());
         }
-        console.error(req.params.id + ' gone');
+        error(req.params.id + ' gone');
         return res.status(410).json({
           error: req.params.id + ' gone',
         });
@@ -594,9 +606,9 @@ export function init(app: express.Application) {
         status: 1,
       }, request, {
         new: true,
-      }, function (err, cableRequest) {
+      }, (err, cableRequest) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -604,7 +616,7 @@ export function init(app: express.Application) {
         if (cableRequest) {
           return res.status(200).json(cableRequest.toJSON());
         }
-        console.error(req.params.id + ' gone');
+        error(req.params.id + ' gone');
         return res.status(410).json({
           error: req.params.id + ' gone',
         });
@@ -621,9 +633,9 @@ export function init(app: express.Application) {
       }, request, {
         new: true,
       }).exec(
-        function (err, cableRequest) {
+        (err, cableRequest) => {
           if (err) {
-            console.error(err);
+            error(err);
             return res.status(500).json({
               error: err.message,
             });
@@ -631,12 +643,12 @@ export function init(app: express.Application) {
           if (cableRequest) {
             createCable(cableRequest.toJSON(), req, res, cableRequest.basic.quantity, []);
           } else {
-            console.error(req.params.id + ' gone');
+            error(req.params.id + ' gone');
             return res.status(410).json({
               error: req.params.id + ' gone',
             });
           }
-        }
+        },
       );
     }
 
@@ -659,10 +671,10 @@ export function init(app: express.Application) {
 
 
   // get the user's cables
-  app.get('/cables/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cables/json', auth.ensureAuthenticated, (req, res) => {
     Cable.find({
       submittedBy: req.session.userid,
-    }).lean().exec(function (err, cables: ICable[]) {
+    }).lean().exec((err, cables: ICable[]) => {
       if (err) {
         return res.status(500).json({
           error: err.message,
@@ -672,18 +684,18 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/allcables', auth.ensureAuthenticated, function (req, res) {
+  app.get('/allcables', auth.ensureAuthenticated, (req, res) => {
     res.render('all-cables');
   });
 
 
   // get all the cables
-  app.get('/allcables/json', auth.ensureAuthWithToken, function (req, res) {
+  app.get('/allcables/json', auth.ensureAuthWithToken, (req, res) => {
     const low = 100;
     const up = 499;
-    Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable[]) {
+    Cable.where('status').gte(low).lte(up).lean().exec((err, docs: ICable[]) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
           error: err.message,
         });
@@ -692,20 +704,20 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/workingsheets', auth.ensureAuthenticated, function (req, res) {
+  app.get('/workingsheets', auth.ensureAuthenticated, (req, res) => {
     res.render('workingsheets');
   });
 
-  app.get('/activecables/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
+  app.get('/activecables/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), (req, res) => {
     // if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
     //   return res.status(403).send('You are not authorized to access this resource. ');
     // }
     const low = 100;
     const up = 499;
     if (req.session.roles.indexOf('admin') !== -1) {
-      Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable[]) {
+      Cable.where('status').gte(low).lte(up).lean().exec((err, docs: ICable[]) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).json({
             error: err.message,
           });
@@ -716,9 +728,9 @@ export function init(app: express.Application) {
       // manager see his own wbs
       User.findOne({
         adid: req.session.userid,
-      }).lean().exec(function (err, user) {
+      }).lean().exec((err, user) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).send(err.message);
         }
         if (!user) {
@@ -728,9 +740,9 @@ export function init(app: express.Application) {
           return res.json([]);
         }
 
-        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs: ICable[]) {
+        Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec((e, docs: ICable[]) => {
           if (e) {
-            console.error(e);
+            error(e);
             return res.status(500).json({
               error: e.message,
             });
@@ -744,7 +756,7 @@ export function init(app: express.Application) {
 
   // status: 1 for procuring, 2 for installing, 3 for installed
 
-  app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), function (req, res) {
+  app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), (req, res) => {
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 5) {
       return res.status(400).json({
@@ -755,9 +767,9 @@ export function init(app: express.Application) {
     if (status === 0) {
       if (req.session.roles.indexOf('admin') !== -1) {
         // get all the cables
-        Cable.find({}).lean().exec(function (err, docs: ICable[]) {
+        Cable.find({}).lean().exec((err, docs: ICable[]) => {
           if (err) {
-            console.error(err);
+            error(err);
             return res.status(500).json({
               error: err.message,
             });
@@ -771,9 +783,9 @@ export function init(app: express.Application) {
       const low = status * 100;
       const up = status * 100 + 99;
       if (req.session.roles.indexOf('admin') !== -1) {
-        Cable.where('status').gte(low).lte(up).lean().exec(function (err, docs: ICable) {
+        Cable.where('status').gte(low).lte(up).lean().exec((err, docs: ICable) => {
           if (err) {
-            console.error(err);
+            error(err);
             return res.status(500).json({
               error: err.message,
             });
@@ -784,9 +796,9 @@ export function init(app: express.Application) {
         // manager see his own wbs
         User.findOne({
           adid: req.session.userid,
-        }).lean().exec(function (err, user) {
+        }).lean().exec((err, user) => {
           if (err) {
-            console.error(err);
+            error(err);
             return res.status(500).send(err.message);
           }
           if (!user) {
@@ -796,9 +808,9 @@ export function init(app: express.Application) {
             return res.json([]);
           }
 
-          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec(function (e, docs: ICable[]) {
+          Cable.where('status').gte(low).lte(up).where('basic.wbs').in(user.wbs).lean().exec((e, docs: ICable[]) => {
             if (e) {
-              console.error(e);
+              error(e);
               return res.status(500).json({
                 error: e.message,
               });
@@ -810,12 +822,12 @@ export function init(app: express.Application) {
     }
   });
 
-  app.get('/cables/:id/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cables/:id/', auth.ensureAuthenticated, (req, res) => {
     Cable.findOne({
       number: req.params.id,
-    }).lean().exec(function (err, cable: ICable | null) {
+    }).lean().exec((err, cable: ICable | null) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       if (cable) {
@@ -829,12 +841,12 @@ export function init(app: express.Application) {
 
   });
 
-  app.get('/cables/:id/json', auth.ensureAuthWithToken, function (req, res) {
+  app.get('/cables/:id/json', auth.ensureAuthWithToken, (req, res) => {
     Cable.findOne({
       number: req.params.id,
-    }).exec(function (err, cable) {
+    }).exec((err, cable) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).json({
           error: err.message,
         });
@@ -843,16 +855,16 @@ export function init(app: express.Application) {
     });
   });
 
-  app.get('/cables/:id/changes/', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cables/:id/changes/', auth.ensureAuthenticated, (req, res) => {
     res.send('not implemented');
   });
 
-  app.get('/cables/:id/changes/json', auth.ensureAuthenticated, function (req, res) {
+  app.get('/cables/:id/changes/json', auth.ensureAuthenticated, (req, res) => {
     Cable.findOne({
       number: req.params.id,
-    }, 'changeHistory').lean().exec(function (err, cable) {
+    }, 'changeHistory').lean().exec((err, cable) => {
       if (err) {
-        console.error(err);
+        error(err);
         return res.status(500).send(err.message);
       }
       // console.log(cable);
@@ -865,10 +877,10 @@ export function init(app: express.Application) {
       Change.find({
         _id: {
           $in: cable.changeHistory,
-        }
+        },
       }).lean().exec(function changeCB(err1, changes) {
         if (err1) {
-          console.error(err1);
+          error(err1);
           return res.status(500).send(err1.message);
         }
         MultiChange.find({
@@ -877,7 +889,7 @@ export function init(app: express.Application) {
           },
         }).lean().exec(function multiChangesCB(err2, multiChanges: IMultiChange[]) {
           if (err2) {
-            console.error(err2);
+            error(err2);
             return res.status(500).send(err1.message);
           }
           res.json(changes.concat(multiChanges));
@@ -1027,7 +1039,7 @@ export function init(app: express.Application) {
     case 'pull':
       // check required steps
       conditions.status = {
-        $gte: 200
+        $gte: 200,
       };
       if (required && required.label) {
         conditions.labeledBy = {
@@ -1103,11 +1115,11 @@ export function init(app: express.Application) {
         oldValue: req.body.oldValue,
         newValue: req.body.newValue,
         updatedBy: req.session.userid,
-        updatedOn: Date.now()
+        updatedOn: Date.now(),
       });
-      change.save(function (err, doc) {
+      change.save((err, doc) => {
         if (err) {
-          console.error(err);
+          error(err);
           return res.status(500).send('cannot save the change');
         }
         update.$push = {

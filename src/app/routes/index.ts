@@ -1,5 +1,6 @@
-/* tslint:disable:no-console */
 import * as express from 'express';
+
+import { error } from '../shared/logging';
 
 interface AuthConfig {
   cas: string;
@@ -30,13 +31,13 @@ export function switch2normal(req: express.Request, res: express.Response) {
 }
 
 
-//TODO implement the cas 2.0 logout
+// TODO implement the cas 2.0 logout
 
 export function logout(req: express.Request, res: express.Response) {
   if (req.session) {
-    req.session.destroy(function (err) {
+    req.session.destroy((err) => {
       if (err) {
-        console.error(err);
+        error(err);
       }
     });
   }

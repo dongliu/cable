@@ -77,7 +77,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
   } else if (req.query.ticket) {
     // redirected by CAS
     // var halt = pause(req);
-    cas.validate(req.query.ticket, function (err, casresponse, result) {
+    cas.validate(req.query.ticket, (err, casresponse, result) => {
       if (err) {
         console.error(err.message);
         return res.status(401).send(err.message);
@@ -87,7 +87,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
         req.session.userid = userid;
         User.findOne({
           adid: userid,
-        }).exec(function (err0, user) {
+        }).exec((err0, user) => {
           if (err0) {
             console.error(err0);
             return res.status(500).send('internal error with db');
@@ -96,7 +96,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
             req.session.roles = user.roles;
             req.session.username = user.name;
             user.lastVisitedOn = new Date();
-            user.save(function (err1) {
+            user.save((err1) => {
               if (err1) {
                 console.error(err1.message);
               }
@@ -115,7 +115,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
             attributes: ad.objAttributes,
             scope: 'sub',
           };
-          ldapClient.search(ad.searchBase, opts, false, function (err2, ldapResult) {
+          ldapClient.search(ad.searchBase, opts, false, (err2, ldapResult) => {
             if (err2) {
               console.error(err2.name + ' : ' + err2.message);
               return res.status(500).send('something wrong with ad');
@@ -139,7 +139,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
               lastVisitedOn: Date.now(),
             });
 
-            first.save(function (err3, newUser) {
+            first.save((err3, newUser) => {
               if (err3) {
                 // cannot save this user
                 console.error(err3);
@@ -179,7 +179,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
 }
 
 export function verifyRoles(roles: string[]): express.RequestHandler {
-  return function (req, res, next) {
+  return (req, res, next) => {
     if (roles.length === 0) {
       return next();
     }
