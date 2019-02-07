@@ -1,5 +1,7 @@
+import * as express from 'express';
+
 /*a simple middlewere to check if the request contains required properties*/
-function filterBody(strings) {
+function filterBody(strings: string[]): express.RequestHandler {
   return function (req, res, next) {
     let k;
     let found = false;
@@ -15,7 +17,7 @@ function filterBody(strings) {
     if (found) {
       next();
     } else {
-      return res.send(400, 'cannot find required information in body');
+      return res.status(400).send('cannot find required information in body');
     }
   };
 }

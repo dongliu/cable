@@ -101,7 +101,7 @@ export type State = 'STARTING' | 'STARTED' | 'STOPPING' | 'STOPPED';
 let app: express.Application;
 
 // AD Client
-let adClient;
+let adClient: any;
 
 // application logging
 export let info = logging.info;
@@ -544,7 +544,7 @@ async function doStop(): Promise<void> {
   // Unbind AD Client
   try {
     await new Promise((resolve, reject) => {
-      adClient.unbind(function (err) {
+      adClient.unbind(function (err: any) {
         if (err) {
           reject(err);
           return;

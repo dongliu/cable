@@ -3,6 +3,7 @@ import path = require('path');
 import * as express from 'express';
 
 interface WBSConfig {
+  [key: string]: any;
   frib: any;
   rea6: any;
 }
@@ -23,7 +24,7 @@ export function init(app: express.Application) {
   });
 
   app.get('/:project/wbs/:number', function(req, res) {
-    const parts = req.params.number.split('.');
+    const parts: string[] = req.params.number.split('.');
     let key = parts[0];
     let locator = findChild(wbs[req.params.project], key);
     if (locator === null) {
@@ -41,7 +42,7 @@ export function init(app: express.Application) {
   });
 }
 
-function findChild(object, childNumber) {
+function findChild(object: any, childNumber: string) {
   for (let i = 0; i < object.children.length; i += 1) {
     if (object.children[i].number === childNumber) {
       return object.children[i];

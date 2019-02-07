@@ -3,7 +3,10 @@ import * as express from 'express';
 
 import ldapClient = require('../lib/ldap-client');
 
-import { User } from '../model/user';
+import {
+  User,
+  IUser,
+} from '../model/user';
 
 import auth = require('../lib/auth');
 
@@ -82,7 +85,7 @@ function addUser(req: express.Request, res: express.Response) {
   });
 }
 
-function updateUserProfile(user, res: express.Response) {
+function updateUserProfile(user: User, res: express.Response) {
   const searchFilter = ad.searchFilter.replace('_id', user.adid);
   const opts = {
     filter: searchFilter,
@@ -242,7 +245,7 @@ export function init(app: express.Application) {
     }
     User.findOne({
       adid: req.params.id,
-    }).exec(function (err, user: any) {
+    }).exec(function (err, user) {
       if (err) {
         console.error(err);
         return res.status(500).send(err.message);
@@ -251,7 +254,7 @@ export function init(app: express.Application) {
         return res.status(404).send('cannot find user ' + req.params.id);
       }
       if (user.wbs === undefined) {
-        user.wbs = [];
+        (user as IUser).wbs = [];
       }
       user.wbs.addToSet(req.body.newwbs);
       user.save(function (err) {
@@ -270,7 +273,7 @@ export function init(app: express.Application) {
     }
     User.findOne({
       adid: req.params.id,
-    }).exec(function (err, user: any) {
+    }).exec(function (err, user) {
       if (err) {
         console.error(err);
         return res.status(500).send(err.message);

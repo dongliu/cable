@@ -1,9 +1,10 @@
 /* tslint:disable:no-console */
+import * as url from 'url';
+
 import * as express from 'express';
 
 // authentication and authorization functions
 import Client = require('cas.js');
-import url = require('url');
 
 import * as ldapClient from './ldap-client';
 
@@ -31,7 +32,7 @@ export function setADConfig(config: ADConfig) {
   ad = config;
 }
 
-let cas: any;
+let cas: Client;
 
 let authConfig: AuthConfig;
 
@@ -85,8 +86,8 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
         const userid = result.username.toLowerCase();
         req.session.userid = userid;
         User.findOne({
-          adid: userid
-        }).exec(function (err0, user: any) {
+          adid: userid,
+        }).exec(function (err0, user) {
           if (err0) {
             console.error(err0);
             return res.status(500).send('internal error with db');
@@ -94,7 +95,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
           if (user) {
             req.session.roles = user.roles;
             req.session.username = user.name;
-            user.lastVisitedOn = Date.now();
+            user.lastVisitedOn = new Date();
             user.save(function (err1) {
               if (err1) {
                 console.error(err1.message);
@@ -127,7 +128,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
               return res.status(500).send(userid + ' is not unique!');
             }
 
-            const first: any = new User({
+            const first = new User({
               adid: userid,
               name: ldapResult[0].displayName,
               email: ldapResult[0].mail,
@@ -177,7 +178,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
 
 }
 
-export function verifyRoles(roles): express.RequestHandler {
+export function verifyRoles(roles: string[]): express.RequestHandler {
   return function (req, res, next) {
     if (roles.length === 0) {
       return next();

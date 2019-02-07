@@ -3,6 +3,7 @@ import * as express from 'express';
 import path = require('path');
 
 interface BuildingConfig {
+  [key: string]: any;
   frib: any;
   nscl: any;
   srf: any;

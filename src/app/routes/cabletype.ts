@@ -92,12 +92,12 @@ export function init(app: express.Application) {
     if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource. ');
     }
-    const conditions = {
+    const conditions: any = {
       _id: req.params.id,
     };
     if (req.body.original === null) {
       conditions[req.body.target] = {
-        $in: [null, '']
+        $in: [null, ''],
       };
     } else {
       conditions[req.body.target] = req.body.original;

@@ -2,13 +2,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as csv from 'csv';
+import * as csv from 'csv-parse';
 import * as mongoose from 'mongoose';
 import rc = require('rc');
 
-import * as request from '../app/model/request';
+import {
+  CableRequest,
+  ICableRequest,
+} from '../app/model/request';
+
 const ObjectId = mongoose.Types.ObjectId;
-const Request = request.Request;
+
 
 interface Config {
   configs?: string[];
@@ -33,9 +37,9 @@ let realPath;
 let db;
 let line = 0;
 let done = 0;
-let changes = [];
-let parser;
-let properties = [];
+let changes: any[] = [];
+let parser: csv.Parser;
+let properties: any[] = [];
 
 const cfg: Config = {
   mongo: {
@@ -73,7 +77,7 @@ if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
   process.exit(1);
 }
 
-function splitTags(s) {
+function splitTags(s?: string) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
@@ -116,9 +120,9 @@ db.once('open', function () {
   console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
 });
 
-function updateRequest(change, i, callback) {
+function updateRequest(change: any, i: number, callback: (err?: any) => void) {
   console.log('processing change ' + i);
-  Request.findOne({ _id: ObjectId(change[0]) }).exec(function (err, request) {
+  CableRequest.findOne({ _id: ObjectId(change[0]) }).exec(function (err, request) {
     if (err) {
       console.error(err.toString());
       callback(err);
@@ -137,7 +141,7 @@ function updateRequest(change, i, callback) {
     let conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
-      const currentType = Request.schema.path(p);
+      const currentType = CableRequest.schema.path(p);
       if (!currentType) {
         err = new Error('request does not have path "' + p + '"');
         console.error(err.toString());
@@ -252,7 +256,7 @@ function updateRequest(change, i, callback) {
 
 }
 
-parser = csv.parse({
+parser = csv({
   trim: true,
 });
 

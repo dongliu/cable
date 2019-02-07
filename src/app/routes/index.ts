@@ -23,7 +23,7 @@ export function main(req: express.Request, res: express.Response) {
 }
 
 
-export function switch2normal(req, res) {
+export function switch2normal(req: express.Request, res: express.Response) {
   return res.render('main', {
     roles: req.session.roles,
   });

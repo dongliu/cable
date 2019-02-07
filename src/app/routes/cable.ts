@@ -1,21 +1,27 @@
 /* tslint:disable:no-console */
 import * as express from 'express';
+import * as mongoose from 'mongoose';
 
 import * as auth from '../lib/auth';
 
 import {
   Cable,
+  CableRequest,
   Change,
   ICable,
   ICableRequest,
+  IChange,
   IMultiChange,
   MultiChange,
-  Request as CableRequest,
 } from '../model/request';
 
 import {
   User,
 } from '../model/user';
+
+type Request = express.Request;
+type Response = express.Response;
+type NextFunction = express.NextFunction;
 
 // request status
 // 0: saved 1: submitted 2: approved 3: rejected
@@ -39,7 +45,7 @@ export function setSysSubData(data: any) {
   sysSub = data;
 }
 
-function pad(num) {
+function pad(num: number) {
   let s = num.toString();
   if (s.length === 6) {
     return s;
@@ -48,7 +54,7 @@ function pad(num) {
   return s.substring(s.length - 6);
 }
 
-function increment(number) {
+function increment(number: string) {
   const sequence = parseInt(number.substring(3), 10);
   if (sequence === 999999) {
     return null;
@@ -56,7 +62,7 @@ function increment(number) {
   return number.substring(0, 3) + pad(sequence + 1);
 }
 
-function createCable(cableRequest, req, res, quantity, cables) {
+function createCable(cableRequest: CableRequest, req: Request, res: Response, quantity: number | null, cables: ICable[]) {
   // fix the unspecified quantity in some requests
   if (quantity === null) {
     quantity = 1;
@@ -66,7 +72,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
-  if (quantity !== parseInt(quantity, 10)) {
+  if (quantity !== Math.round(quantity)) {
     console.log('cable request ' + cableRequest._id + ' is not an integer!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
@@ -86,7 +92,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
       number: -1,
     },
   }).lean().exec(function (err, cable: ICable) {
-    let nextNumber;
+    let nextNumber: string;
     if (err) {
       console.error(err);
       // revert the request state?
@@ -145,7 +151,7 @@ function createCable(cableRequest, req, res, quantity, cables) {
   });
 }
 
-function updateCable(conditions, update, req, res) {
+function updateCable(conditions: any, update: any, req: Request, res: Response) {
   Cable.findOneAndUpdate(conditions, update, {
     new: true,
   }, function (err, cable) {
@@ -162,9 +168,9 @@ function updateCable(conditions, update, req, res) {
   });
 }
 
-function updateCableWithChanges(conditions, update, changes, req, res) {
+function updateCableWithChanges(conditions: any, update: any, changes: IChange[], req: Request, res: Response) {
   let idx = 0;
-  let change = null;
+  let change: mongoose.Document | null = null;
   for (idx = 0; idx < changes.length; idx += 1) {
     if (changes[idx].oldValue === null) {
       // for string, treat null and '' as the same
@@ -193,20 +199,21 @@ function updateCableWithChanges(conditions, update, changes, req, res) {
       updatedBy: req.session.userid,
       updatedOn: Date.now(),
     });
-  } else if( changes.length > 1 ) {
-    change = new MultiChange({
+  } else if (changes.length > 1 ) {
+    const mchange = new MultiChange({
       cableName: req.params.id,
       updates: [],
       updatedBy: req.session.userid,
       updatedOn: Date.now(),
     });
     for (idx = 0; idx < changes.length; idx += 1) {
-      change.updates.push({
+      mchange.updates.push({
         property: changes[idx].property,
         oldValue: changes[idx].oldValue,
         newValue: changes[idx].newValue,
       });
     }
+    change = mchange;
   }
   if (change) {
     change.save(function (err, doc) {
@@ -400,7 +407,7 @@ export function init(app: express.Application) {
   // get the request list based on query
   // a manager can only view the saved requests that has his wbs numbers
 
-  function findRequest(query, res) {
+  function findRequest(query: any, res: Response) {
     CableRequest.find(query).lean().exec(function (err, docs: ICableRequest[]) {
       if (err) {
         console.error(err);
@@ -450,7 +457,7 @@ export function init(app: express.Application) {
     }
   });
 
-  function authorize(req, res, next) {
+  function authorize(req: Request, res: Response, next: NextFunction) {
     const roles = req.session.roles;
     const action = req.body.action;
     if (!req.body.action) {
@@ -884,7 +891,7 @@ export function init(app: express.Application) {
       number: req.params.id,
     };
     const update: any = {};
-    const changes = [];
+    const changes: IChange[] = [];
     let inValidAction = false;
 
     const required = req.body.required;

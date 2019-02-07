@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as csv from 'csv';
+import * as csv from 'csv-parse';
 import * as mongoose from 'mongoose';
 import rc = require('rc');
 
@@ -38,9 +38,9 @@ let realPath: string;
 let db: mongoose.Connection;
 let line = 0;
 let done = 0;
-const changes = [];
-let parser;
-const properties = [];
+const changes: any[] = [];
+let parser: csv.Parser;
+const properties: any[] = [];
 
 const cfg: Config = {
   mongo: {
@@ -118,11 +118,11 @@ db.once('open', function () {
 });
 
 
-function splitTags(s) {
+function splitTags(s?: string) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
-function updateCable(change, i, callback) {
+function updateCable(change: any[], i: number, callback: (err?: any) => void) {
   console.log('processing change ' + i);
   Cable.findOne({ number: change[0] }).exec(function (err, cable) {
     if (err) {
@@ -139,12 +139,12 @@ function updateCable(change, i, callback) {
     }
 
     const update: any = {};
-    const updates = [];
+    const updates: any[] = [];
     let multiChange = null;
     let conditionSatisfied = true;
 
     properties.forEach(function (p, index) {
-      var currentType = Cable.schema.path(p);
+      let currentType = Cable.schema.path(p);
       if (!currentType) {
         err = new Error('cable does not have path "' + p + '"');
         console.error(err.toString());
@@ -278,7 +278,7 @@ function updateCable(change, i, callback) {
 
 }
 
-parser = csv.parse({
+parser = csv({
   trim: true
 });
 
@@ -310,7 +310,7 @@ parser.on('readable', function () {
   }
 });
 
-parser.on('error', function (err) {
+parser.on('error', function (err: any) {
   console.error(err.toString());
   process.exit(1);
 });

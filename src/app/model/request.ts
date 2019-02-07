@@ -34,7 +34,7 @@ export interface ICableRequest {
     label?: string;
   };
 
-  required: {
+  required?: {
     label?: boolean;
     benchTerm?: boolean;
     benchTest?: boolean;
@@ -110,7 +110,7 @@ export interface ICable {
     terminatedOn?: Date;
   };
 
-  required: {
+  required?: {
     label?: boolean;
     benchTerm?: boolean;
     benchTest?: boolean;
@@ -465,7 +465,7 @@ const multiChangeSchema = new Schema({
   updatedOn: Date,
 });
 
-export const Request = mongoose.model<CableRequest>('Request', requestSchema);
+export const CableRequest = mongoose.model<CableRequest>('Request', requestSchema);
 export const Cable = mongoose.model<Cable>('Cable', cableSchema);
 export const Change = mongoose.model<Change>('Change', changeSchema);
 export const MultiChange = mongoose.model<MultiChange>('MultiChange', multiChangeSchema);

@@ -9,13 +9,15 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import csv = require('csv');
+import * as csv from 'csv-parse';
 import * as mongoose from 'mongoose';
 import rc = require('rc');
+import * as validator from 'validator';
 
-import validator = require('validator');
-import * as request from '../app/model/request';
-const Request = request.Request;
+import {
+  CableRequest,
+  ICableRequest,
+} from '../app/model/request';
 
 import naming = require('./lib/naming');
 
@@ -44,9 +46,9 @@ let inputPath: string;
 let realPath: string;
 let db: mongoose.Connection;
 let line = 0;
-const requests = [];
-const lines = [];
-let parser;
+const requests: any[] = [];
+const lines: any[] = [];
+let parser: csv.Parser;
 let success = 0;
 
 let version = '';
@@ -152,19 +154,19 @@ function jobDone() {
   }
 }
 
-function splitTags(s) {
+function splitTags(s?: string) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
-function isTrue(S) {
+function isTrue(S: string) {
   const s = S.toLowerCase();
   return s === 'yes' || s === 'true';
 }
 
-function createRequest(i) {
+function createRequest(i: number): Request | undefined {
   const request = requests[i];
   let namecodes;
-  let newRequest;
+  let newRequest: ICableRequest;
   let quantityIndex = 10;
   const v2 = version.indexOf('v2') === 0;
   const v3 = version.indexOf('v3') === 0;
@@ -175,7 +177,8 @@ function createRequest(i) {
   if (!validator.isInt(request[quantityIndex])) {
     console.log('Line ' + lines[i] + ': the quantity is not an integer: ' + request[quantityIndex]);
     if (i === requests.length - 1) {
-      return jobDone();
+      jobDone();
+      return;
     }
     return createRequest(i + 1);
   }
@@ -183,7 +186,8 @@ function createRequest(i) {
   if (namecodes.indexOf(null) !== -1) {
     console.log('Line ' + lines[i] + ': cannot encode the name of: ' + request[3] + '/' + request[4] + '/' + request[5]);
     if (i === requests.length - 1) {
-      return jobDone();
+      jobDone();
+      return;
     }
     return createRequest(i + 1);
   }
@@ -222,9 +226,9 @@ function createRequest(i) {
       comments: request[24],
       status: 1,
       createdBy: 'system',
-      createdOn: Date.now(),
+      createdOn: new Date(),
       submittedBy: 'system',
-      submittedOn: Date.now(),
+      submittedOn: new Date(),
     };
   } else if (v2) {
     newRequest = {
@@ -259,9 +263,9 @@ function createRequest(i) {
       comments: request[22],
       status: 1,
       createdBy: 'system',
-      createdOn: Date.now(),
+      createdOn: new Date(),
       submittedBy: 'system',
-      submittedOn: Date.now(),
+      submittedOn: new Date(),
     };
   } else {
     newRequest = {
@@ -298,14 +302,14 @@ function createRequest(i) {
       comments: request[21],
       status: 1,
       createdBy: 'system',
-      createdOn: Date.now(),
+      createdOn: new Date(),
       submittedBy: 'system',
-      submittedOn: Date.now(),
+      submittedOn: new Date(),
     };
   }
   if (validate) {
-    newRequest = new Request(newRequest);
-    newRequest.validate(function (err) {
+    // dryrun only, create document and validate, but do not save!
+    new CableRequest(newRequest).validate(function (err) {
       if (err) {
         console.log('line ' + i + ':' + err);
       } else {
@@ -320,7 +324,7 @@ function createRequest(i) {
       }
     });
   } else {
-    Request.create(newRequest, function (err, doc) {
+    CableRequest.create(newRequest, function (err: any, doc: CableRequest) {
       if (err) {
         console.log(err);
       } else {
@@ -339,7 +343,7 @@ function createRequest(i) {
 }
 
 
-parser = csv.parse({
+parser = csv({
   trim: true,
 });
 
@@ -360,7 +364,7 @@ parser.on('readable', function () {
   }
 });
 
-parser.on('error', function (err) {
+parser.on('error', function (err: any) {
   console.log(err.message);
 });
 

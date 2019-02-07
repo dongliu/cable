@@ -17,6 +17,10 @@ export interface IUser {
 
 export interface User extends IUser, mongoose.Document {
   // nothing extra now
+
+  wbs: mongoose.Types.Array<string>;
+
+
 }
 
 const user = new Schema({

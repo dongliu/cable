@@ -7,11 +7,11 @@
  * @return  {string[]}   the three codes, an array with less than three elements indicates error.
  */
 
-function nameEncoding(cat, sub, sig, numbering) {
+export function encode(cat: string, sub: string, sig: string, numbering: any) {
   let c;
   let b;
   let g;
-  const result = [null, null, null];
+  const result: [string|null, string|null, string|null] = [null, null, null];
   for (c in numbering) {
     if (numbering.hasOwnProperty(c) && numbering[c].name === cat) {
       result[0] = c;
@@ -30,7 +30,3 @@ function nameEncoding(cat, sub, sig, numbering) {
   }
   return result;
 }
-
-export = {
-  encode: nameEncoding,
-};

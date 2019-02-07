@@ -6,7 +6,7 @@ interface ADConfig {
   adminPassword: string;
 }
 
-export let client: any;
+export let client: ldap.Client;
 
 let ad: ADConfig;
 
@@ -14,7 +14,7 @@ export function setADConfig(config: ADConfig) {
   ad = config;
   client = ldap.createClient({
     url: ad.url,
-    maxConnections: 5,
+    // maxConnections: 5,
     connectTimeout: 10 * 1000,
     timeout: 15 * 1000,
     bindDN: ad.adminDn,
@@ -22,13 +22,13 @@ export function setADConfig(config: ADConfig) {
   });
 }
 
-export function search(base, opts, raw, cb) {
+export function search(base: string, opts: ldap.SearchOptions, raw: boolean, cb: (err: any, entry?: any[]) => void) {
   client.search(base, opts, function (err, result) {
     if (err) {
       console.log(JSON.stringify(err));
       return cb(err);
     }
-    const items = [];
+    const items: any[] = [];
     result.on('searchEntry', function (entry) {
       if (raw) {
         items.push(entry.raw);
