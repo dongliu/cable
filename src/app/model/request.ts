@@ -160,7 +160,7 @@ export interface Cable extends ICable, mongoose.Document {
 export interface IChange {
   cableName?: string;
   property?: string;
-  oldValue?: {};
+  oldValue?: {} | null;
   newValue?: {};
   updatedBy?: string;
   updatedOn?: Date;
@@ -172,7 +172,7 @@ export interface Change extends IChange, mongoose.Document {
 
 export interface IUpdate {
   property?: string;
-  oldValue?: {};
+  oldValue?: {} | null;
   newValue?: {};
 }
 

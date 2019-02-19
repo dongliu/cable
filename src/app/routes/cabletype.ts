@@ -10,19 +10,19 @@ import util = require('../lib/util');
 export function init(app: express.Application) {
   app.get('/cabletypes/', auth.ensureAuthenticated, (req, res) => {
     res.render('cabletype', {
-      roles: req.session.roles,
+      roles: req.session ? req.session.roles : [],
     });
   });
 
   app.get('/cabletypes/manage', auth.ensureAuthenticated, (req, res) => {
-    if (req.session.roles.indexOf('admin') !== -1) {
+    if (req.session && req.session.roles.indexOf('admin') !== -1) {
       return res.render('cabletypemgmt');
     }
     return res.status(403).send('You are not authorized to access this resource');
   });
 
   app.get('/cabletypes/new', auth.ensureAuthenticated, (req, res) => {
-    if (req.session.roles.indexOf('admin') !== -1) {
+    if (req.session && req.session.roles.indexOf('admin') !== -1) {
       return res.render('newcabletype');
     }
     return res.status(403).send('You are not authorized to access this resource');
@@ -39,7 +39,7 @@ export function init(app: express.Application) {
 
   // tslint:disable:max-line-length
   app.post('/cabletypes/', auth.ensureAuthenticated, util.filterBody(['conductorNumber', 'conductorSize', 'fribType', 'typeNumber', 'newName', 'service', 'pairing', 'shielding', 'outerDiameter', 'voltageRating', 'raceway', 'tunnelHotcell', 'otherRequirements', 'manufacturer', 'partNumber']), (req, res) => {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
+    if (!req.session || req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource. ');
     }
 
@@ -91,7 +91,7 @@ export function init(app: express.Application) {
   });
 
   app.put('/cabletypes/:id', auth.ensureAuthenticated, (req, res) => {
-    if (req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
+    if (!req.session || req.session.roles.length === 0 || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource. ');
     }
     const conditions: any = {

@@ -31,14 +31,14 @@ interface Config {
   _?: Array<{}>;
 }
 
-let inputPath;
-let realPath;
+let inputPath: string = '';
+let realPath: string = '';
 let db;
 let line = 0;
 let done = 0;
-let changes: any[] = [];
+const changes: any[] = [];
 let parser: csv.Parser;
-let properties: any[] = [];
+const properties: any[] = [];
 
 const cfg: Config = {
   mongo: {
@@ -71,17 +71,17 @@ if (cfg.h || cfg.help) {
   process.exit(1);
 }
 
-if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
-  console.error('Error: need the input source csv file path!');
-  process.exit(1);
-}
-
 function splitTags(s?: string) {
   return s ? s.replace(/^(?:\s*,?)+/, '').replace(/(?:\s*,?)*$/, '').split(/\s*[,;]\s*/) : [];
 }
 
-inputPath = String(cfg._[0]);
-realPath = path.resolve(process.cwd(), inputPath);
+if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
+  console.error('Error: need the input source csv file path!');
+  process.exit(1);
+} else {
+  inputPath = String(cfg._[0]);
+  realPath = path.resolve(process.cwd(), inputPath);
+}
 
 if (!fs.existsSync(realPath)) {
   console.error('Error: ' + realPath + ' does not exist.');
@@ -111,17 +111,17 @@ mongoUrl +=  `${cfg.mongo.host}/${cfg.mongo.db}`;
 
 mongoose.connect(mongoUrl, cfg.mongo.options);
 db = mongoose.connection;
-db.on('error', function(err) {
+db.on('error', (err) => {
   console.error(err.toString());
   process.exit(1);
 });
-db.once('open', function () {
+db.once('open', () => {
   console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
 });
 
 function updateRequest(change: any, i: number, callback: (err?: any) => void) {
   console.log('processing change ' + i);
-  CableRequest.findOne({ _id: ObjectId(change[0]) }).exec(function (err, request) {
+  CableRequest.findOne({ _id: ObjectId(change[0]) }).exec((err, request) => {
     if (err) {
       console.error(err.toString());
       callback(err);
@@ -139,7 +139,7 @@ function updateRequest(change: any, i: number, callback: (err?: any) => void) {
     const updates = [];
     let conditionSatisfied = true;
 
-    properties.forEach(function (p, index) {
+    properties.forEach((p, index) => {
       const currentType = CableRequest.schema.path(p);
       if (!currentType) {
         err = new Error('request does not have path "' + p + '"');
@@ -178,8 +178,8 @@ function updateRequest(change: any, i: number, callback: (err?: any) => void) {
         currentValue = currentValue ? currentValue.join() : '';
         break;
       case 'status':
-        change[2 * index + 1] = parseInt(change[2 * index + 1]);
-        change[2 * index + 2] = parseInt(change[2 * index + 2]);
+        change[2 * index + 1] = parseInt(change[2 * index + 1], 10);
+        change[2 * index + 2] = parseInt(change[2 * index + 2], 10);
       }
 
       // Work around to ensure that date objects are properly compared.
@@ -196,6 +196,7 @@ function updateRequest(change: any, i: number, callback: (err?: any) => void) {
 
       if (change[2 * index + 1] === '_whatever_' || currentValue === change[2 * index + 1]) {
         if (change[2 * index + 2] !== currentValue) {
+          // tslint:disable:max-line-length
           if ([undefined, null, ''].indexOf(change[2 * index + 2]) !== -1 && [undefined, null, ''].indexOf(currentValue) !== -1) {
             // do nothing
           } else {
@@ -212,6 +213,7 @@ function updateRequest(change: any, i: number, callback: (err?: any) => void) {
           }
         }
       } else {
+        // tslint:disable:max-line-length
         console.error('Error: request ' + request.id + ' ' + p + ' is ' + request.get(p) + ', expect ' + change[2 * index + 1]);
         conditionSatisfied = false;
       }
@@ -242,7 +244,7 @@ function updateRequest(change: any, i: number, callback: (err?: any) => void) {
       return;
     }
 
-    request.update(update, { new: true }, function (err2) {
+    request.update(update, { new: true }, (err2) => {
       if (err2) {
         console.error(err2.toString());
         callback(err2);
@@ -259,7 +261,7 @@ parser = csv({
   trim: true,
 });
 
-parser.on('readable', function () {
+parser.on('readable', () => {
   let record = parser.read();
   let i;
 
@@ -287,16 +289,16 @@ parser.on('readable', function () {
   }
 });
 
-parser.on('error', function (err) {
+parser.on('error', (err) => {
   console.error(err.toString());
   process.exit(1);
 });
 
-parser.on('finish', function () {
+parser.on('finish', () => {
   console.log('Finished parsing the csv file at ' + Date.now());
   console.log('Starting to apply changes.');
-  changes.forEach(function (change, index) {
-    updateRequest(change, index, function(err) {
+  changes.forEach((change, index) => {
+    updateRequest(change, index, (err) => {
       done += 1;
       if (done === changes.length) {
         mongoose.disconnect();

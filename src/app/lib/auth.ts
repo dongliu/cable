@@ -64,7 +64,7 @@ export function ensureAuthWithToken(req: Request, res: Response, next: NextFunct
 
 export function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   const ticketUrl = url.parse(req.url, true);
-  if (req.session.userid) {
+  if (req.session && req.session.userid) {
     if (req.query.ticket) {
       // remove the ticket query param
       delete ticketUrl.query.ticket;
@@ -78,6 +78,10 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
     // redirected by CAS
     // var halt = pause(req);
     cas.validate(req.query.ticket, (err, casresponse, result) => {
+      if (!req.session) {
+        res.status(500).send('session missing');
+        return;
+      }
       if (err) {
         console.error(err.message);
         return res.status(401).send(err.message);
@@ -88,6 +92,10 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
         User.findOne({
           adid: userid,
         }).exec((err0, user) => {
+          if (!req.session) {
+            res.status(500).send('session missing');
+            return;
+          }
           if (err0) {
             console.error(err0);
             return res.status(500).send('internal error with db');
@@ -120,7 +128,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
               console.error(err2.name + ' : ' + err2.message);
               return res.status(500).send('something wrong with ad');
             }
-            if (ldapResult.length === 0) {
+            if (!ldapResult || ldapResult.length === 0) {
               console.warn('cannot find ' + userid);
               return res.status(500).send(userid + ' is not found!');
             }
@@ -140,6 +148,10 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
             });
 
             first.save((err3, newUser) => {
+              if (!req.session) {
+                res.status(500).send('session missing');
+                return;
+              }
               if (err3) {
                 // cannot save this user
                 console.error(err3);
@@ -172,7 +184,9 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
     }) + '"');
     res.status(401).send('xhr cannot be authenticated');
   } else {
-    req.session.landing = req.url;
+    if (req.session) {
+      req.session.landing = req.url;
+    }
     res.redirect(authConfig.cas + '/login?service=' + encodeURIComponent(authConfig.service));
   }
 
@@ -184,7 +198,7 @@ export function verifyRoles(roles: string[]): express.RequestHandler {
       return next();
     }
     let i;
-    if (req.session.roles) {
+    if (req.session && req.session.roles) {
       for (i = 0; i < roles.length; i += 1) {
         if (req.session.roles.indexOf(roles[i]) > -1) {
           return next();

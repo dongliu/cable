@@ -45,7 +45,7 @@ function addUser(req: express.Request, res: express.Response) {
       return res.status(500).json(err);
     }
 
-    if (result.length === 0) {
+    if (!result || result.length === 0) {
       return res.status(404).send(req.body.name + ' is not found in AD!');
     }
 
@@ -100,7 +100,7 @@ function updateUserProfile(user: User, res: express.Response) {
     if (err) {
       return res.status(500).json(err);
     }
-    if (result.length === 0) {
+    if (!result || result.length === 0) {
       return res.status(500).json({
         error: user.adid + ' is not found!',
       });
@@ -133,6 +133,10 @@ function updateUserProfile(user: User, res: express.Response) {
 export function init(app: express.Application) {
 
   app.get('/users/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('only admin allowed');
     }
@@ -140,6 +144,10 @@ export function init(app: express.Application) {
   });
 
   app.get('/usernames/:name', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     User.findOne({
       name: req.params.name,
     }).lean().exec((err, user) => {
@@ -150,7 +158,7 @@ export function init(app: express.Application) {
       if (user) {
         return res.render('user', {
           user: user,
-          myRoles: req.session.roles,
+          myRoles: req.session ? req.session.roles : [],
         });
       }
       return res.status(404).send(req.params.name + ' not found');
@@ -158,6 +166,10 @@ export function init(app: express.Application) {
   });
 
   app.post('/users/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('only admin allowed');
     }
@@ -184,6 +196,10 @@ export function init(app: express.Application) {
 
 
   app.get('/users/json', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource.');
     }
@@ -209,7 +225,7 @@ export function init(app: express.Application) {
       if (user) {
         return res.render('user', {
           user: user,
-          myRoles: req.session.roles,
+          myRoles: req.session ? req.session.roles : [],
         });
       }
       return res.status(404).send(req.params.id + ' has never logged into the application.');
@@ -217,6 +233,10 @@ export function init(app: express.Application) {
   });
 
   app.put('/users/:id/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource.');
     }
@@ -241,6 +261,10 @@ export function init(app: express.Application) {
 
 
   app.post('/users/:id/wbs/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource.');
     }
@@ -272,6 +296,10 @@ export function init(app: express.Application) {
   });
 
   app.delete('/users/:id/wbs/:wbs', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource.');
     }
@@ -315,6 +343,10 @@ export function init(app: express.Application) {
   });
 
   app.get('/users/:id/refresh', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.roles === undefined || req.session.roles.indexOf('admin') === -1) {
       return res.status(403).send('You are not authorized to access this resource.');
     }
@@ -348,7 +380,7 @@ export function init(app: express.Application) {
       if (err) {
         return res.status(500).json(err);
       }
-      if (result.length === 0) {
+      if (!result || result.length === 0) {
         return res.status(500).json({
           error: req.params.id + ' is not found!',
         });
@@ -377,7 +409,7 @@ export function init(app: express.Application) {
       if (err) {
         return res.status(500).json(err);
       }
-      if (result.length === 0) {
+      if (!result || result.length === 0) {
         return res.status(500).json({
           error: req.params.id + ' is not found!',
         });
@@ -411,7 +443,7 @@ export function init(app: express.Application) {
       if (err) {
         return res.status(500).json(err.message);
       }
-      if (result.length === 0) {
+      if (!result || result.length === 0) {
         return res.json([]);
       }
       return res.json(result);

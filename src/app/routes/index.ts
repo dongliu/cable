@@ -13,20 +13,20 @@ export function setAuthConfig(config: AuthConfig) {
 }
 
 export function main(req: express.Request, res: express.Response) {
-  if (req.session.roles && req.session.roles.length) {
+  if (req.session && req.session.roles && req.session.roles.length) {
     return res.render('manager', {
       roles: req.session.roles,
     });
   }
   return res.render('main', {
-    roles: req.session.roles,
+    roles: req.session ? req.session.roles : [],
   });
 }
 
 
 export function switch2normal(req: express.Request, res: express.Response) {
   return res.render('main', {
-    roles: req.session.roles,
+    roles: req.session ? req.session.roles : [],
   });
 }
 

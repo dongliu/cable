@@ -33,8 +33,8 @@ interface Config {
   _?: Array<{}>;
 }
 
-let inputPath: string;
-let realPath: string;
+let inputPath: string = '';
+let realPath: string = '';
 let db: mongoose.Connection;
 let line = 0;
 let done = 0;
@@ -76,10 +76,10 @@ if (cfg.h || cfg.help) {
 if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
   console.error('Error: need the input source csv file path!');
   process.exit(1);
+} else {
+  inputPath = String(cfg._[0]);
+  realPath = path.resolve(process.cwd(), inputPath);
 }
-
-inputPath = String(cfg._[0]);
-realPath = path.resolve(process.cwd(), inputPath);
 
 if (!fs.existsSync(realPath)) {
   console.error('Error: ' + realPath + ' does not exist.');
@@ -109,11 +109,11 @@ mongoUrl +=  `${cfg.mongo.host}/${cfg.mongo.db}`;
 
 mongoose.connect(mongoUrl, cfg.mongo.options);
 db = mongoose.connection;
-db.on('error', function(err) {
+db.on('error', (err) => {
   console.error(err.toString());
   process.exit(1);
 });
-db.once('open', function () {
+db.once('open', () => {
   console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
 });
 
@@ -124,7 +124,7 @@ function splitTags(s?: string) {
 
 function updateCable(change: any[], i: number, callback: (err?: any) => void) {
   console.log('processing change ' + i);
-  Cable.findOne({ number: change[0] }).exec(function (err, cable) {
+  Cable.findOne({ number: change[0] }).exec((err, cable) => {
     if (err) {
       console.error(err.toString());
       callback(err);
@@ -143,8 +143,8 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
     let multiChange = null;
     let conditionSatisfied = true;
 
-    properties.forEach(function (p, index) {
-      let currentType = Cable.schema.path(p);
+    properties.forEach((p, index) => {
+      const currentType = Cable.schema.path(p);
       if (!currentType) {
         err = new Error('cable does not have path "' + p + '"');
         console.error(err.toString());
@@ -155,7 +155,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
       if (change[2 * index + 1] !== '_whatever_') {
         try {
           change[2 * index + 1] = (currentType as any).cast(change[2 * index + 1]);
-        } catch(e) {
+        } catch (e) {
           console.error(e.toString());
           callback(e);
           return;
@@ -164,7 +164,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
 
       try {
         change[2 * index + 2] = (currentType as any).cast(change[2 * index + 2]);
-      } catch(e) {
+      } catch (e) {
         console.error(e.toString());
         callback(e);
         return;
@@ -182,8 +182,8 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
         currentValue = currentValue ? currentValue.join() : '';
         break;
       case 'status':
-        change[2 * index + 1] = parseInt(change[2 * index + 1]);
-        change[2 * index + 2] = parseInt(change[2 * index + 2]);
+        change[2 * index + 1] = parseInt(change[2 * index + 1], 10);
+        change[2 * index + 2] = parseInt(change[2 * index + 2], 10);
       }
 
       // Work around to ensure that date objects are properly compared.
@@ -200,6 +200,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
 
       if (change[2 * index + 1] === '_whatever_' || currentValue === change[2 * index + 1]) {
         if (change[2 * index + 2] !== currentValue) {
+          // tslint:disable:max-line-length
           if ([undefined, null, ''].indexOf(change[2 * index + 2]) !== -1 && [undefined, null, ''].indexOf(currentValue) !== -1) {
             // do nothing
           } else {
@@ -211,7 +212,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
             updates.push({
               property: p,
               oldValue: cable.get(p),
-              newValue: update[p]
+              newValue: update[p],
             });
           }
         }
@@ -253,7 +254,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
       updatedOn: Date.now(),
     });
 
-    multiChange.save(function (err1, c) {
+    multiChange.save((err1, c) => {
       if (err1) {
         console.error(err1.toString());
         callback(err1);
@@ -264,7 +265,7 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
         changeHistory: c._id,
       };
 
-      cable.update(update, { new: true }, function (err2) {
+      cable.update(update, { new: true }, (err2) => {
         if (err2) {
           console.error(err2.toString());
           callback(err2);
@@ -279,10 +280,10 @@ function updateCable(change: any[], i: number, callback: (err?: any) => void) {
 }
 
 parser = csv({
-  trim: true
+  trim: true,
 });
 
-parser.on('readable', function () {
+parser.on('readable', () => {
   let record = parser.read();
   let i;
 
@@ -310,16 +311,16 @@ parser.on('readable', function () {
   }
 });
 
-parser.on('error', function (err: any) {
+parser.on('error', (err: any) => {
   console.error(err.toString());
   process.exit(1);
 });
 
-parser.on('finish', function () {
+parser.on('finish', () => {
   console.log('Finished parsing the csv file at ' + Date.now());
   console.log('Starting to apply changes.');
-  changes.forEach(function (change, index) {
-    updateCable(change, index, function(err) {
+  changes.forEach((change, index) => {
+    updateCable(change, index, (err) => {
       done += 1;
       if (done === changes.length) {
         mongoose.disconnect();

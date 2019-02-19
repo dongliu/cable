@@ -5,7 +5,7 @@
         "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
         "removeComments": false,
@@ -13,3 +13,4 @@
         "sourceMap": false,
     }
 }
+

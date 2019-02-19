@@ -75,25 +75,27 @@ function increment(n: string) {
 }
 
 // tslint:disable:max-line-length
-function createCable(cableRequest: CableRequest, req: Request, res: Response, quantity: number | null, cables: ICable[]) {
+function createCable(cableRequest: CableRequest, req: Request, res: Response, qty: number | null, cables: ICable[]) {
   // fix the unspecified quantity in some requests
-  if (quantity === null) {
-    quantity = 1;
+  if (qty === null) {
+    qty = 1;
   }
-  if (isNaN(quantity)) {
+  if (isNaN(qty)) {
     warn('cable request ' + cableRequest._id + 'is not a number!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
-  if (quantity !== Math.round(quantity)) {
+  if (qty !== Math.round(qty)) {
     warn('cable request ' + cableRequest._id + ' is not an integer!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
 
-  if (quantity < 1) {
+  if (qty < 1) {
     warn('cable request ' + cableRequest._id + ' is less than 1!');
     return res.status(400).send('cable request ' + cableRequest._id + ' has a invalid quantity!');
   }
+
+  const quantity = qty;
 
   const sss = cableRequest.basic.originCategory + cableRequest.basic.originSubcategory + cableRequest.basic.signalClassification;
   Cable.findOne({
@@ -105,11 +107,15 @@ function createCable(cableRequest: CableRequest, req: Request, res: Response, qu
       number: -1,
     },
   }).lean().exec((err, cable: ICable) => {
-    let nextNumber: string;
+    let nextNumber: string | null;
     if (err) {
       error(err);
       // revert the request state?
       return res.status(500).send(err.message);
+    }
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
     }
     if (cable) {
       nextNumber = increment(cable.number);
@@ -181,23 +187,29 @@ function updateCable(conditions: any, update: any, req: Request, res: Response) 
 }
 
 function updateCableWithChanges(conditions: any, update: any, changes: IChange[], req: Request, res: Response) {
+  if (!req.session) {
+    res.status(500).send('session missing');
+    return;
+  }
   let idx = 0;
   let change: mongoose.Document | null = null;
-  for (idx = 0; idx < changes.length; idx += 1) {
-    if (changes[idx].oldValue === null) {
-      // for string, treat null and '' as the same
-      conditions[changes[idx].property] = {
-        $in: [null, ''],
-      };
-    } else if (changes[idx].oldValue === false) {
-      // for boolean, treat false and '' as the same
-      conditions[changes[idx].property] = {
-        $in: [null, false],
-      };
-    } else {
-      conditions[changes[idx].property] = changes[idx].oldValue;
+  for (const ch of changes) {
+    if (ch.property) {
+      if (ch.oldValue === null) {
+        // for string, treat null and '' as the same
+        conditions[ch.property] = {
+          $in: [null, ''],
+        };
+      } else if (ch.oldValue === false) {
+        // for boolean, treat false and '' as the same
+        conditions[ch.property] = {
+          $in: [null, false],
+        };
+      } else {
+        conditions[ch.property] = ch.oldValue;
+      }
+      update[ch.property] = ch.newValue;
     }
-    update[changes[idx].property] = changes[idx].newValue;
   }
   update.$inc = {
     __v: 1,
@@ -219,11 +231,13 @@ function updateCableWithChanges(conditions: any, update: any, changes: IChange[]
       updatedOn: Date.now(),
     });
     for (idx = 0; idx < changes.length; idx += 1) {
-      mchange.updates.push({
-        property: changes[idx].property,
-        oldValue: changes[idx].oldValue,
-        newValue: changes[idx].newValue,
-      });
+      if (mchange.updates) {
+        mchange.updates.push({
+          property: changes[idx].property,
+          oldValue: changes[idx].oldValue,
+          newValue: changes[idx].newValue,
+        });
+      }
     }
     change = mchange;
   }
@@ -246,19 +260,19 @@ export function init(app: express.Application) {
 
   app.get('/manager/', auth.ensureAuthenticated, auth.verifyRoles(['admin', 'manager']), (req, res) => {
     return res.render('manager', {
-      roles: req.session.roles,
+      roles: req.session ? req.session.roles : [],
     });
   });
 
   app.get('/manager/requests', auth.ensureAuthenticated, (req, res) => {
     return res.render('manage-requests', {
-      roles: req.session.roles,
+      roles: req.session ? req.session.roles : [],
     });
   });
 
   app.get('/manager/cables', auth.ensureAuthenticated, (req, res) => {
     return res.render('manage-cables', {
-      roles: req.session.roles,
+      roles: req.session ? req.session.roles : [],
     });
   });
 
@@ -266,7 +280,7 @@ export function init(app: express.Application) {
   app.get('/requests/new', auth.ensureAuthenticated, (req, res) => {
     return res.render('request', {
       sysSub: sysSub,
-      roles: req.session.roles,
+      roles: req.session ? req.session.roles : [],
     });
   });
 
@@ -274,6 +288,10 @@ export function init(app: express.Application) {
   // this is different from the request with status parameter
   // need more work when sharing is enabled
   app.get('/requests', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     CableRequest.find({
       createdBy: req.session.userid,
     }).lean().exec((err, requests: ICableRequest[]) => {
@@ -287,6 +305,10 @@ export function init(app: express.Application) {
   });
 
   app.get('/requests/json', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     CableRequest.find({
       createdBy: req.session.userid,
     }).lean().exec((err, requests: ICableRequest[]) => {
@@ -301,6 +323,10 @@ export function init(app: express.Application) {
 
   // create a new request from a form or clone
   app.post('/requests/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (!req.is('json')) {
       return res.status(415).send('json request expected.');
     }
@@ -352,6 +378,10 @@ export function init(app: express.Application) {
   // get the request details
   // add authorization check here
   app.get('/requests/:id/', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     return res.render('request', {
       sysSub: sysSub,
       id: req.params.id,
@@ -361,6 +391,10 @@ export function init(app: express.Application) {
 
   app.delete('/requests/:id/', auth.ensureAuthenticated, (req, res) => {
     CableRequest.findById(req.params.id).exec((err, request) => {
+      if (!req.session) {
+        res.status(500).send('session missing');
+        return;
+      }
       if (err) {
         error(err);
         return res.status(500).send(err.message);
@@ -432,6 +466,10 @@ export function init(app: express.Application) {
   }
 
   app.get('/requests/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 4) {
       return res.status(400).send('the status ' + status + ' is invalid.');
@@ -470,6 +508,10 @@ export function init(app: express.Application) {
   });
 
   function authorize(req: Request, res: Response, next: NextFunction) {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const roles = req.session.roles;
     const action = req.body.action;
     if (!req.body.action) {
@@ -491,6 +533,10 @@ export function init(app: express.Application) {
 
   // update a request
   app.put('/requests/:id/', auth.ensureAuthenticated, authorize, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const request = req.body.request || {};
     request.updatedBy = req.session.userid;
     request.updatedOn = Date.now();
@@ -672,6 +718,10 @@ export function init(app: express.Application) {
 
   // get the user's cables
   app.get('/cables/json', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     Cable.find({
       submittedBy: req.session.userid,
     }).lean().exec((err, cables: ICable[]) => {
@@ -712,6 +762,10 @@ export function init(app: express.Application) {
     // if (req.session.roles === undefined || (req.session.roles.indexOf('manager') === -1 && req.session.roles.indexOf('admin') === -1)) {
     //   return res.status(403).send('You are not authorized to access this resource. ');
     // }
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const low = 100;
     const up = 499;
     if (req.session.roles.indexOf('admin') !== -1) {
@@ -757,6 +811,10 @@ export function init(app: express.Application) {
   // status: 1 for procuring, 2 for installing, 3 for installed
 
   app.get('/cables/statuses/:s/json', auth.ensureAuthenticated, auth.verifyRoles(['manager', 'admin']), (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const status = parseInt(req.params.s, 10);
     if (status < 0 || status > 5) {
       return res.status(400).json({
@@ -899,6 +957,10 @@ export function init(app: express.Application) {
   });
 
   app.put('/cables/:id/', auth.ensureAuthenticated, auth.verifyRoles(['manager']), function updateCB(req, res) {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     const conditions: any = {
       number: req.params.id,
     };

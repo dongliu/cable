@@ -42,8 +42,8 @@ interface Config {
   };
 }
 
-let inputPath: string;
-let realPath: string;
+let inputPath: string = '';
+let realPath: string = '';
 let db: mongoose.Connection;
 let line = 0;
 const requests: any[] = [];
@@ -91,10 +91,11 @@ if (cfg.h || cfg.help) {
 if (!cfg._ || !Array.isArray(cfg._) || (cfg._.length === 0)) {
   console.error('Error: need the input source csv file path!');
   process.exit(1);
+} else {
+  inputPath = String(cfg._[0]);
+  realPath = path.resolve(process.cwd(), inputPath);
 }
 
-inputPath = String(cfg._[0]);
-realPath = path.resolve(process.cwd(), inputPath);
 if (!fs.existsSync(realPath)) {
   console.error(realPath + ' does not exist.');
   console.error('Please input a valid csv file path.');
@@ -140,7 +141,7 @@ if (!validate) {
   mongoose.connect(mongoUrl, cfg.mongo.options);
   db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function () {
+  db.once('open', () => {
     console.log('Connected to database: mongodb://%s/%s', cfg.mongo.host, cfg.mongo.db);
   });
 }
@@ -183,7 +184,8 @@ function createRequest(i: number): Request | undefined {
     return createRequest(i + 1);
   }
   namecodes = naming.encode(request[3], request[4], request[5], syssub);
-  if (namecodes.indexOf(null) !== -1) {
+  if (!namecodes[0] || !namecodes[1] || !namecodes[2])  {
+    // tslint:disable:max-line-length
     console.log('Line ' + lines[i] + ': cannot encode the name of: ' + request[3] + '/' + request[4] + '/' + request[5]);
     if (i === requests.length - 1) {
       jobDone();
@@ -243,7 +245,7 @@ function createRequest(i: number): Request | undefined {
         service: request[9],
         traySection: request[6],
         tags: splitTags(request[10]),
-        quantity: request[11]
+        quantity: request[11],
       },
       from: {
         rack: request[12],
@@ -309,7 +311,7 @@ function createRequest(i: number): Request | undefined {
   }
   if (validate) {
     // dryrun only, create document and validate, but do not save!
-    new CableRequest(newRequest).validate(function (err) {
+    new CableRequest(newRequest).validate((err) => {
       if (err) {
         console.log('line ' + i + ':' + err);
       } else {
@@ -318,13 +320,13 @@ function createRequest(i: number): Request | undefined {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        setImmediate(function() {
+        setImmediate(() => {
           createRequest(i + 1);
         });
       }
     });
   } else {
-    CableRequest.create(newRequest, function (err: any, doc: CableRequest) {
+    CableRequest.create(newRequest, (err: any, doc: CableRequest) => {
       if (err) {
         console.log(err);
       } else {
@@ -334,7 +336,7 @@ function createRequest(i: number): Request | undefined {
       if (i === requests.length - 1) {
         jobDone();
       } else {
-        setImmediate(function() {
+        setImmediate(() => {
           createRequest(i + 1);
         });
       }
@@ -347,7 +349,7 @@ parser = csv({
   trim: true,
 });
 
-parser.on('readable', function () {
+parser.on('readable', () => {
   let record = parser.read();
   while (record) {
     line += 1;
@@ -364,11 +366,11 @@ parser.on('readable', function () {
   }
 });
 
-parser.on('error', function (err: any) {
+parser.on('error', (err: any) => {
   console.log(err.message);
 });
 
-parser.on('finish', function () {
+parser.on('finish', () => {
   createRequest(0);
 });
 

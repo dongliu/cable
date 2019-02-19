@@ -12,6 +12,10 @@ import { User } from '../model/user';
 
 export function init(app: express.Application) {
   app.get('/profile', auth.ensureAuthenticated, (req: express.Request, res: express.Response) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     // render the profile page
     User.findOne({
       adid: req.session.userid,
@@ -28,6 +32,10 @@ export function init(app: express.Application) {
 
   // user update her/his profile. This is a little different from the admin update the user's roles.
   app.put('/profile', auth.ensureAuthenticated, (req, res) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (!req.is('json')) {
       return res.status(415).json({
         error: 'json request expected.',

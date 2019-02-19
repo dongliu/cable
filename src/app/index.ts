@@ -452,6 +452,10 @@ async function doStart(): Promise<express.Application> {
   })  );
 
   app.get('/login', auth.ensureAuthenticated, (req, res: any) => {
+    if (!req.session) {
+      res.status(500).send('session missing');
+      return;
+    }
     if (req.session.userid) {
       return res.redirect('/');
     }
