@@ -66,12 +66,12 @@ legend Basic information
 .control-group
   .control-label Tags
   .controls
-    input#tags(type='text', name='basic.tags', class='type[stringArray]')
+    input#tags(type='text', name='basic.tags', class=String('type[stringArray]'))
     span.help-inline Seperate tags by ","
 .control-group
   .control-label Quantity
   .controls
-    input#quantity(type='text', name='basic.quantity', class='type[number]', value=1, required, min=1)
+    input#quantity(type='text', name='basic.quantity', class=String('type[number]'), value=1, required, min=1)
 .control-group
   .control-label Owner provided
   .controls
