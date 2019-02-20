@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "build-all": "grunt clean build-all",
-    "postinstall": "cd ./public; npm ci",
     "grunt": "./node_modules/.bin/grunt",
     "mocha": "./node_modules/.bin/mocha",
     "nyc": "./node_modules/.bin/nyc",
