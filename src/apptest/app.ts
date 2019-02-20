@@ -18,6 +18,7 @@ import * as status from '../app/shared/status';
 import * as tasks from '../app/shared/tasks';
 
 import * as forgapi from './shared/mock-forgapi';
+import * as mongod from './shared/mongod';
 
 // application states
 export type State = State;
@@ -63,7 +64,13 @@ async function doStart(): Promise<express.Application> {
   await status.monitor.start();
 
   // configure Mongoose (MongoDB)
-  const mongoUrl = 'mongodb://localhost:27017/webapp-test';
+  let mongoPort = 27017;
+  if (process.env.WEBAPP_START_MONGOD === 'true') {
+    mongoPort = await mongod.start();
+  }
+
+  // configure Mongoose (MongoDB)
+  const mongoUrl = `mongodb://localhost:${mongoPort}/webapp-test`;
 
   const mongoOptions: mongoose.ConnectionOptions = {
     useMongoClient: true,
@@ -114,6 +121,14 @@ async function doStop(): Promise<void> {
     await mongoose.disconnect();
   } catch (err) {
     warn('Mongoose disconnect failure: %s', err);
+  }
+
+  if (process.env.WEBAPP_START_MONGOD === 'true') {
+    try {
+      await mongod.stop();
+    } catch (err) {
+      warn('MongoDB stop failure: %s', err);
+    }
   }
 
   try {
