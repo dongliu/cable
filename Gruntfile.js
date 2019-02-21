@@ -46,6 +46,15 @@ module.exports = function(grunt) {
           additionalFlags: '--outDir ./tools'
         },
       },
+      web: {
+        tsconfig: {
+          tsconfig: './src/web/ts',
+          passThrough: true,
+        },
+        options: {
+          additionalFlags: '--outDir ./public/javascripts'
+        },
+      },
     },
     tslint: {
       options: {
@@ -65,6 +74,7 @@ module.exports = function(grunt) {
       app: [ './app' ],
       test: [ './test' ],
       tools: [ './tools' ],
+      public: [ './public/javascripts' ],
     },
   });
 
@@ -125,6 +135,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'save_version_file',
     'ts:app',
+    'ts:web',
   ]);
 
   grunt.registerTask('build-tests', [
