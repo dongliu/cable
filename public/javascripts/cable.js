@@ -300,7 +300,7 @@ function jsonETL(json, template) {
 
 $(function () {
   $.ajax({
-    url: './json',
+    url: document.location.pathname + '/json',
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {
@@ -311,7 +311,7 @@ $(function () {
   }).always();
 
   $.ajax({
-    url: './changes/json',
+    url: document.location.pathname + '/changes/json',
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {

@@ -131,7 +131,7 @@ function personColumn(title, key) {
     mData: key,
     sDefaultContent: '',
     mRender: function (data, type, full) {
-      return '<a href = "/users/' + data + '" target="_blank">' + data + '</a>';
+      return '<a href = "' + basePath + '/users/' + data + '" target="_blank">' + data + '</a>';
     },
     bFilter: true
   };
@@ -143,7 +143,7 @@ function personNameColumn(title, key) {
     mData: key,
     sDefaultContent: '',
     mRender: function (data, type, full) {
-      return '<a href = "/usernames/' + data + '" target="_blank">' + data + '</a>';
+      return '<a href = "' + basePath + '/usernames/' + data + '" target="_blank">' + data + '</a>';
     },
     bFilter: true
   };
@@ -350,7 +350,7 @@ var editLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function (data, type, full) {
-    return '<a href="/requests/' + data + '" target="_blank"><i class="fa fa-edit fa-lg"></i></a>';
+    return '<a href="' + basePath + '/requests/' + data + '" target="_blank"><i class="fa fa-edit fa-lg"></i></a>';
   },
   bSortable: false
 };
@@ -359,7 +359,7 @@ var detailsLinkColumn = {
   sTitle: '',
   mData: '_id',
   mRender: function (data, type, full) {
-    return '<a href="/requests/' + data + '/details" target="_blank"><i class="fa fa-file-text-o fa-lg"></i></a>';
+    return '<a href="' + basePath + '/requests/' + data + '/details" target="_blank"><i class="fa fa-file-text-o fa-lg"></i></a>';
   },
   bSortable: false
 };
@@ -615,7 +615,7 @@ var numberColumn = {
   sTitle: 'Number',
   mData: 'number',
   mRender: function (data, type, full) {
-    return '<a href="/cables/' + data + '/" target="_blank">' + data + '</a>';
+    return '<a href="' + basePath + '/cables/' + data + '/" target="_blank">' + data + '</a>';
   },
   bFilter: true
 };
@@ -624,7 +624,7 @@ var requestNumberColumn = {
   sTitle: 'Request',
   mData: 'request_id',
   mRender: function (data, type, full) {
-    return '<a href="/requests/' + data + '/" target="_blank">' + data + '</a>';
+    return '<a href="' + basePath + '/requests/' + data + '/" target="_blank">' + data + '</a>';
   },
   bFilter: true
 };

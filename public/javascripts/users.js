@@ -14,7 +14,7 @@ function inArray(name, ao) {
 
 function initTable(oTable) {
   $.ajax({
-    url: '/users/json',
+    url: basePath + '/users/json',
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {
@@ -32,7 +32,7 @@ function updateFromModal(cb) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/users/' + that.id + '/refresh',
+      url: basePath + '/users/' + that.id + '/refresh',
       type: 'GET'
     }).done(function () {
       $(that).prepend('<i class="icon-check"></i>');
@@ -63,7 +63,7 @@ function modifyFromModal(cb) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/users/' + that.id + '/',
+      url: basePath + '/users/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -104,7 +104,7 @@ $(function () {
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
     prefetch: {
-      url: '/adusernames'
+      url: basePath + '/adusernames'
     }
   });
 
@@ -143,7 +143,7 @@ $(function () {
       $('#message').append('<div class="alert alert-info"><button class="close" data-dismiss="alert">x</button>The user named <strong>' + name + '</strong> is already in the user list. </div>');
     } else {
       $.ajax({
-        url: '/users/',
+        url: basePath + '/users/',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({

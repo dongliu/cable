@@ -4,7 +4,7 @@
 
 function initCable(table) {
   $.ajax({
-    url: '/cables/json',
+    url: basePath + '/cables/json',
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
@@ -27,7 +27,7 @@ function initRequests(savedTable, submittedTable, rejectedTable, approvedTable, 
     initCable(cablesTable);
   }
   $.ajax({
-    url: '/requests/json',
+    url: basePath + '/requests/json',
     type: 'GET',
     contentType: 'application/json',
     dataType: 'json'
@@ -109,7 +109,7 @@ function submitFromModal(rows, savedTable, submittedTable) {
   $('#modal .modal-body .request').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id + '/',
+      url: basePath + '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -164,7 +164,7 @@ function cloneFromModal(rows, requests, savedTable) {
     var quantity = parseInt($('input', that).val(), 10);
     if (!isNaN(quantity) && quantity > 0) {
       $.ajax({
-        url: '/requests/',
+        url: basePath + '/requests/',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
@@ -234,7 +234,7 @@ function revertFromModal(rows, savedTable, submittedTable) {
   $('#modal .modal-body .request').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id + '/',
+      url: basePath + '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -288,7 +288,7 @@ function deleteFromModal(table, rows) {
   $('#modal .modal-body .request').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + this.id + '/',
+      url: basePath + '/requests/' + this.id + '/',
       type: 'Delete'
     }).done(function () {
       $(that).wrap('<del></del>');

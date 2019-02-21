@@ -2,6 +2,8 @@ doctype html
 html
   head
     meta(http-equiv='X-UA-Compatible', content='IE=Edge')
+    link(rel='icon', href=basePath + '/favicon.ico?v=1')
+    script(type='text/javascript') var basePath = '#{basePath}';
     block head
   body
     .navbar.navbar-inverse.navbar-fixed-top
@@ -15,11 +17,11 @@ html
           .nav-collapse.collapse
             ul.nav
               li.active
-                a(href='/') Cable
+                a(href=basePath + '/') Cable
               li
                 a(href='https://controls.frib.msu.edu/', target='_blank') Controls
               li
-                a(href='/logout') Logout
+                a(href=basePath + '/logout') Logout
     block content
 
     block js

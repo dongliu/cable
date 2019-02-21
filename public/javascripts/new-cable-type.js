@@ -1,6 +1,6 @@
 /*global Binder: false*/
 function sendRequest(data) {
-  var url = '/cabletypes/';
+  var url = basePath + '/cabletypes/';
   var type = 'POST';
   $('form[name="cabletype"]').fadeTo('slow', 0.5);
   $.ajax({

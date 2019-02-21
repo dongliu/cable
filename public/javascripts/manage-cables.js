@@ -68,7 +68,7 @@ function updateTdFromModal(cableNumber, property, parseType, oldValue, newValue,
     data.newValue = newValue;
   }
   $.ajax({
-    url: '/cables/' + cableNumber + '/',
+    url: basePath + '/cables/' + cableNumber + '/',
     type: 'PUT',
     contentType: 'application/json',
     data: JSON.stringify(data),
@@ -126,7 +126,7 @@ function actionFromModal(rows, action, data, activeTable, destinationTable) {
   $('#modal .modal-body .cable').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/cables/' + that.id + '/',
+      url: basePath + '/cables/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify(data),
@@ -174,7 +174,7 @@ function newRequestFromModal(cables, rows) {
       comments: cables[index].comments
     };
     $.ajax({
-      url: '/requests/',
+      url: basePath + '/requests/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -378,7 +378,7 @@ $(function () {
 
   var procuringAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, approvedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   procuringTable = $('#procuring-table').dataTable({
-    sAjaxSource: '/cables/statuses/1/json',
+    sAjaxSource: basePath + '/cables/statuses/1/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,
@@ -447,7 +447,7 @@ $(function () {
   /*installing tab starts*/
   var installingAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnLongColumn, submittedByColumn, requiredColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   installingTable = $('#installing-table').dataTable({
-    sAjaxSource: '/cables/statuses/2/json',
+    sAjaxSource: basePath + '/cables/statuses/2/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,
@@ -538,7 +538,7 @@ $(function () {
   /*installed tab starts*/
   var installedAoColumns = [selectColumn, numberColumn, statusColumn, versionColumn, updatedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   installedTable = $('#installed-table').dataTable({
-    sAjaxSource: '/cables/statuses/3/json',
+    sAjaxSource: basePath + '/cables/statuses/3/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,
@@ -578,7 +578,7 @@ $(function () {
   /*obsoleted tab starts*/
   var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, obsoletedOnLongColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   obsoletedTable = $('#obsoleted-table').dataTable({
-    sAjaxSource: '/cables/statuses/5/json',
+    sAjaxSource: basePath + '/cables/statuses/5/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,

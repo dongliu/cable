@@ -6,7 +6,7 @@ $(function () {
   var allAoColumns = [numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   var allTable = $('#all-cable').dataTable({
-    sAjaxSource: '/allcables/json',
+    sAjaxSource: basePath + '/allcables/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     iDisplayLength: 25,

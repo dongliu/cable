@@ -7,7 +7,7 @@ function approveFromModal(requests, approvingTable, approvedTable) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id + '/',
+      url: basePath + '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       dataType: 'json',
@@ -60,7 +60,7 @@ function rejectFromModal(requests, approvingTable, rejectedTable) {
   $('#modal .modal-body div').each(function (index) {
     var that = this;
     $.ajax({
-      url: '/requests/' + that.id + '/',
+      url: basePath + '/requests/' + that.id + '/',
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -118,7 +118,7 @@ $(function () {
   var approvingAoCulumns = [selectColumn, editLinkColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
 
   approvingTable = $('#approving-table').dataTable({
-    sAjaxSource: '/requests/statuses/1/json',
+    sAjaxSource: basePath + '/requests/statuses/1/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,
@@ -170,7 +170,7 @@ $(function () {
   var rejectedAoColumns = [detailsLinkColumn, rejectedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   rejectedTable = $('#rejected-table').dataTable({
     aaData: [],
-    sAjaxSource: '/requests/statuses/3/json',
+    sAjaxSource: basePath + '/requests/statuses/3/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,
@@ -207,7 +207,7 @@ $(function () {
 
   var approvedAoColumns = [detailsLinkColumn, approvedOnLongColumn, submittedOnLongColumn, submittedByColumn].concat(basicColumns, ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   approvedTable = $('#approved-table').dataTable({
-    sAjaxSource: '/requests/statuses/2/json',
+    sAjaxSource: basePath + '/requests/statuses/2/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     bProcessing: true,

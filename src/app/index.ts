@@ -457,7 +457,7 @@ async function doStart(): Promise<express.Application> {
       return;
     }
     if (req.session.userid) {
-      return res.redirect('/');
+      return res.redirect(res.locals.basePath || '/');
     }
     // something wrong
     res.send(400, 'please enable cookie in your browser');

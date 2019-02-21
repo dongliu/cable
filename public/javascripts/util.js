@@ -32,7 +32,7 @@ function nameAuto(input, nameCache){
         res(filter(term, nameCache[key]));
         return;
       }
-      $.getJSON('/adusernames', {term: key}, function(data, status, xhr) {
+      $.getJSON(basePath + '/adusernames', {term: key}, function(data, status, xhr) {
         var names = [];
         for (var i = 0; i < data.length; i += 1) {
           if (data[i].displayName.indexOf(',') !== -1) {

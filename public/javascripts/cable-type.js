@@ -23,7 +23,7 @@ $(function () {
   filterEvent();
 
   $.ajax({
-    url: '/cabletypes/json',
+    url: basePath + '/cabletypes/json',
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {

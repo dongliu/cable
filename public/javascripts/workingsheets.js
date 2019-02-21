@@ -220,7 +220,7 @@ $(function () {
   /*approving table starts*/
   var activeAoCulumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, versionColumn, updatedOnLongColumn, approvedOnLongColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   var activeTable = $('#active-table').dataTable({
-    sAjaxSource: '/activecables/json',
+    sAjaxSource: basePath + '/activecables/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     iDisplayLength: 10,
@@ -267,7 +267,7 @@ $(function () {
   /*obsoleted tab starts*/
   var obsoletedAoColumns = [selectColumn, numberColumn, requestNumberColumn, statusColumn, obsoletedOnColumn, obsoletedByColumn, submittedByColumn].concat(basicColumns.slice(0, 2), basicColumns.slice(3, 8), ownerProvidedColumn, fromColumns, toColumns).concat([conduitColumn, lengthColumn, commentsColumn]);
   obsoletedTable = $('#obsoleted-table').dataTable({
-    sAjaxSource: '/cables/statuses/5/json',
+    sAjaxSource: basePath + '/cables/statuses/5/json',
     sAjaxDataProp: '',
     bAutoWidth: false,
     iDisplayLength: 10,

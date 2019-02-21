@@ -4,16 +4,16 @@ block head
   meta(charset='urf-8')
   title FRIB Cable :: user profile
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
-  link(rel='stylesheet', href='/stylesheets/style.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href=basePath + '/ui-lightness/jquery-ui-1.10.2.custom.css')
+  link(rel='stylesheet', href=basePath + '/stylesheets/style.css')
 
 block content
   .container(style='margin-top: 10px;')
     #message
     .well#profile
-      img(src='/adusers/' + user.adid + '/photo', alt=user.adid)
+      img(src=basePath + '/adusers/' + user.adid + '/photo', alt=user.adid)
       dl
         dt Name
         dd #{user.name}
@@ -41,7 +41,7 @@ block content
             button.btn#modify(type='submit') Modify
 
 block js
-  script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
-  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/dependencies/moment.js')
-  script(type='text/javascript', src='/javascripts/profile.js')
+  script(type='text/javascript', src=basePath + '/jquery/jquery-1.9.1.js')
+  script(type='text/javascript', src=basePath + '/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src=basePath + '/dependencies/moment.js')
+  script(type='text/javascript', src=basePath + '/javascripts/profile.js')

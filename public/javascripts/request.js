@@ -6,8 +6,8 @@ function sendRequest(data, initModel, binder) {
   var path = window.location.pathname;
   var url;
   var type;
-  if (/^\/requests\/new/.test(path) || data.action === 'clone') {
-    url = '/requests/';
+  if (/\/requests\/new$/.test(path) || data.action === 'clone') {
+    url = basePath + '/requests/';
     type = 'POST';
   } else {
     url = path;
@@ -23,7 +23,7 @@ function sendRequest(data, initModel, binder) {
     processData: false,
     dataType: 'json'
   }).done(function (json) {
-    if (/^\/requests\/new/.test(path)) {
+    if (/\/requests\/new$/.test(path)) {
       document.location.href = json.location;
     } else {
       var timestamp = formRequest.getResponseHeader('Date');
@@ -187,7 +187,7 @@ $(function () {
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
     prefetch: {
-      url: '/adusernames'
+      url: basePath + '/adusernames'
     }
   });
 
@@ -208,7 +208,7 @@ $(function () {
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 20,
     prefetch: {
-      url: '/cabletypes/json'
+      url: basePath + '/cabletypes/json'
     }
   });
 
@@ -246,7 +246,7 @@ $(function () {
   // check if the request is for an existing request
   if ($('#requestId').length) {
     $.ajax({
-      url: '/requests/' + $('#requestId').text() + '/json',
+      url: basePath + '/requests/' + $('#requestId').text() + '/json',
       type: 'GET',
       async: true,
       dataType: 'json'

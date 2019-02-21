@@ -27,7 +27,7 @@ function tdEdit(oTable) {
       data.update = null;
     }
     $.ajax({
-      url: '/cabletypes/' + oTable.fnGetData(that.parentNode)._id,
+      url: basePath + '/cabletypes/' + oTable.fnGetData(that.parentNode)._id,
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify(data),
@@ -67,7 +67,7 @@ $(function () {
   filterEvent();
 
   $.ajax({
-    url: '/cabletypes/json',
+    url: basePath + '/cabletypes/json',
     type: 'GET',
     dataType: 'json'
   }).done(function (json) {

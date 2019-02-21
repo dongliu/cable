@@ -16,7 +16,7 @@ export function setWBSConfig(config: WBSConfig) {
 
 export function init(app: express.Application) {
   app.get('/:project/wbs', (req, res) => {
-    res.render('wbs', {project: req.params.project, json: path.join(req.path, '/json')});
+    res.render('wbs', {project: req.params.project, json: path.join(res.locals.basePath, req.path, '/json')});
   });
 
   app.get('/:project/wbs/json', (req, res) => {

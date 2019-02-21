@@ -69,7 +69,7 @@ $(function () {
           wbs = [];
         }
         $.ajax({
-          url: './wbs/',
+          url: window.location.pathname + '/wbs/',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({
@@ -97,7 +97,7 @@ $(function () {
     var $that = $(this);
     var toRemove = $that.siblings('span.wbs').text();
     $.ajax({
-      url: './wbs/' + toRemove,
+      url: window.location.pathname + '/wbs/' + toRemove,
       type: 'DELETE'
     }).done(function (data, status, jqXHR) {
       var index = wbs.indexOf(toRemove);

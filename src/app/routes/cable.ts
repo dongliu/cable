@@ -363,10 +363,10 @@ export function init(app: express.Application) {
             error(err);
             return res.status(500).send(err.message);
           }
-          const url = req.protocol + '://' + req.get('host') + '/requests/' + cableRequest.id;
+          const url = res.locals.basePath + '/requests/' + cableRequest.id;
           res.set('Location', url);
           res.status(201).json({
-            location: '/requests/' + cableRequest.id,
+            location: res.locals.basePath + '/requests/' + cableRequest.id,
           });
         });
       }

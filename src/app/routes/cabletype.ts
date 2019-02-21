@@ -64,14 +64,14 @@ export function init(app: express.Application) {
         }
         return res.status(500).send(err.message || err.err);
       }
-      const url = req.protocol + '://' + req.get('host') + '/cabletypes/' + type._id + '/';
+      const url = res.locals.basePath + '/cabletypes/' + type._id;
       res.set('Location', url);
       return res.status(201).send('A new cable type is created at <a href="' + url + '"">' + url + '</a>');
     });
   });
 
   app.get('/cabletypes/:id/', auth.ensureAuthenticated, (req, res) => {
-    res.redirect('/cabletypes/' + req.params.id + '/details');
+    res.redirect(res.locals.basePath + '/cabletypes/' + req.params.id + '/details');
   });
 
   app.get('/cabletypes/:id/details', auth.ensureAuthenticated, (req, res) => {

@@ -4,10 +4,10 @@ block head
   meta(charset='urf-8')
   title FRIB Cable :: user profile
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/font-awesome-4.2.0/css/font-awesome.css')
-  link(rel='stylesheet', href='/stylesheets/style.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href=basePath + '/font-awesome-4.2.0/css/font-awesome.css')
+  link(rel='stylesheet', href=basePath + '/stylesheets/style.css')
 
 block content
   script.
@@ -19,7 +19,7 @@ block content
   .container(style='margin-top: 10px')
     #message
     .well#profile
-      img(src='/adusers/' + user.adid + '/photo', alt=user.adid)
+      img(src=basePath + '/adusers/' + user.adid + '/photo', alt=user.adid)
       dl
         dt Name
         dd #{user.name}
@@ -65,7 +65,7 @@ block content
       button.btn#cacel(type='button', onclick='window.open("", "_self", "");window.close(); return false;') Close window
 
 block js
-  script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
-  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/dependencies/moment.js')
-  script(type='text/javascript', src='/javascripts/user.js')
+  script(type='text/javascript', src=basePath + '/jquery/jquery-1.9.1.js')
+  script(type='text/javascript', src=basePath + '/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src=basePath + '/dependencies/moment.js')
+  script(type='text/javascript', src=basePath + '/javascripts/user.js')

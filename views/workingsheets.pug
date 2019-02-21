@@ -4,12 +4,12 @@ block head
   meta(charset='urf-8')
   title My Working Sheets
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
-  link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
-  link(rel='stylesheet', href='/datatables/css/dataTables.bootstrap.css')
-  link(rel='stylesheet', href='/ui-lightness/jquery-ui-1.10.2.custom.css')
-  link(rel='stylesheet', href='/font-awesome-4.2.0/css/font-awesome.css')
-  link(rel='stylesheet', href='/stylesheets/style.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap.css')
+  link(rel='stylesheet', href=basePath + '/bootstrap/css/bootstrap-responsive.css')
+  link(rel='stylesheet', href=basePath + '/datatables/css/dataTables.bootstrap.css')
+  link(rel='stylesheet', href=basePath + '/ui-lightness/jquery-ui-1.10.2.custom.css')
+  link(rel='stylesheet', href=basePath + '/font-awesome-4.2.0/css/font-awesome.css')
+  link(rel='stylesheet', href=basePath + '/stylesheets/style.css')
 
 block content
   .container-fluid
@@ -71,17 +71,17 @@ block content
             table.table.table-bordered.table-hover#obsoleted-table
 
 block js
-  script(type='text/javascript', src='/jquery/jquery-1.9.1.js')
-  script(type='text/javascript', src='/datatables/js/jquery.dataTables.js')
-  script(type='text/javascript', src='/bootstrap/js/bootstrap.js')
-  script(type='text/javascript', src='/datatables/js/ZeroClipboard.js')
-  script(type='text/javascript', src='/datatables/js/TableTools.js')
-  script(type='text/javascript', src='/datatables/js/dataTables.bootstrap.js')
-  script(type='text/javascript', src='/dependencies/moment.js')
-  script(type='text/javascript', src='/dependencies/lodash.js')
-  script(type='text/javascript', src='/javascripts/table.js')
-  script(type='text/javascript', src='/javascripts/util.js')
-  script(type='text/javascript', src='/dependencies/Chart.js')
-  script(type='text/javascript', src='/javascripts/workingsheets.js')
+  script(type='text/javascript', src=basePath + '/jquery/jquery-1.9.1.js')
+  script(type='text/javascript', src=basePath + '/datatables/js/jquery.dataTables.js')
+  script(type='text/javascript', src=basePath + '/bootstrap/js/bootstrap.js')
+  script(type='text/javascript', src=basePath + '/datatables/js/ZeroClipboard.js')
+  script(type='text/javascript', src=basePath + '/datatables/js/TableTools.js')
+  script(type='text/javascript', src=basePath + '/datatables/js/dataTables.bootstrap.js')
+  script(type='text/javascript', src=basePath + '/dependencies/moment.js')
+  script(type='text/javascript', src=basePath + '/dependencies/lodash.js')
+  script(type='text/javascript', src=basePath + '/javascripts/table.js')
+  script(type='text/javascript', src=basePath + '/javascripts/util.js')
+  script(type='text/javascript', src=basePath + '/dependencies/Chart.js')
+  script(type='text/javascript', src=basePath + '/javascripts/workingsheets.js')
 
 
