@@ -122,7 +122,7 @@ export function init(app: express.Application) {
         return res.status(500).send(err.message || err.errmsg);
       }
       if (type) {
-        return res.send(204);
+        return res.sendStatus(204);
       }
       return res.status(410).send('cannot find type ' + req.params.id);
     });

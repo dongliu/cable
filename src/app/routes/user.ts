@@ -129,7 +129,7 @@ function updateUserProfile(user: User, res: express.Response) {
       if (err0) {
         return res.status(500).json(err0);
       }
-      res.send(204);
+      res.sendStatus(204);
     });
   });
 }
@@ -257,7 +257,7 @@ export function init(app: express.Application) {
         });
       }
       if (user) {
-        return res.send(204);
+        return res.sendStatus(204);
       }
       return res.status(404).send('cannot find user ' + req.params.id);
     });
@@ -318,7 +318,7 @@ export function init(app: express.Application) {
         return res.status(404).send('cannot find user ' + req.params.id);
       }
       if (user.wbs === undefined) {
-        return res.send(204);
+        return res.sendStatus(204);
       }
       user.wbs.pull(req.params.wbs);
       user.save((err0) => {
@@ -326,7 +326,7 @@ export function init(app: express.Application) {
           error(err0);
           return res.status(500).send(err0.message);
         }
-        return res.send(204);
+        return res.sendStatus(204);
       });
     });
   });

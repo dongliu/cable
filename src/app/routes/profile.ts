@@ -52,7 +52,7 @@ export function init(app: express.Application) {
           error: err.message,
         });
       }
-      res.send(204);
+      res.sendStatus(204);
     });
   });
 }
