@@ -456,11 +456,11 @@ async function doStart(): Promise<express.Application> {
       res.status(500).send('session missing');
       return;
     }
-    if (req.session.userid) {
-      return res.redirect(res.locals.basePath || '/');
+    if (req.session.landing && req.session.landing !== req.url) {
+      res.redirect(res.locals.basePath + req.session.landing);
+      return;
     }
-    // something wrong
-    res.send(400, 'please enable cookie in your browser');
+    res.redirect(res.locals.basePath || '/');
   });
 
   routes.setAuthConfig({ cas: String(cfg.cas.cas_url) });

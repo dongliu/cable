@@ -1,6 +1,7 @@
 /* tslint:disable:no-console */
 import * as url from 'url';
 
+import * as Debug from 'debug';
 import * as express from 'express';
 
 // authentication and authorization functions
@@ -31,6 +32,8 @@ let ad: ADConfig;
 export function setADConfig(config: ADConfig) {
   ad = config;
 }
+
+const debug = Debug('cable:auth');
 
 let cas: Client;
 
@@ -109,12 +112,8 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
                 console.error(err1.message);
               }
             });
-            if (req.session.landing && req.session.landing !== '/login') {
-              return res.redirect(req.session.landing);
-            }
-            // has a ticket but not landed before, must copy the ticket from somewhere ...
-            return res.redirect('/');
-            // halt.resume();
+            next();
+            return;
           }
           // create a new user
           const searchFilter = ad.searchFilter.replace('_id', userid);
@@ -163,11 +162,8 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
               req.session.roles = [];
               req.session.username = first.name;
 
-              if (req.session.landing && req.session.landing !== '/login') {
-                return res.redirect(req.session.landing);
-              }
-              // has a ticket but not landed before, must copy the ticket from somewhere ...
-              return res.redirect('/');
+              next();
+              return;
             });
           });
         });
@@ -185,6 +181,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
     res.status(401).send('xhr cannot be authenticated');
   } else {
     if (req.session) {
+      debug('Store landing page in session: %s', req.url);
       req.session.landing = req.url;
     }
     res.redirect(authConfig.cas + '/login?service=' + encodeURIComponent(authConfig.service));
