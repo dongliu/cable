@@ -7,7 +7,7 @@ import * as express from 'express';
 // authentication and authorization functions
 import Client = require('cas.js');
 
-import * as ldapClient from './ldap-client';
+import * as ldapjs from './ldapjs-client';
 
 import { User } from '../model/user';
 
@@ -46,6 +46,12 @@ export function setAuthConfig(config: AuthConfig) {
     service: authConfig.service,
     version: 1.0,
   });
+}
+
+let ldapClient: ldapjs.Client;
+
+export function setLDAPClient(client: ldapjs.Client) {
+  ldapClient = client;
 }
 
 // Authorize request using API token otherwise use standard method.
@@ -122,7 +128,7 @@ export function ensureAuthenticated(req: Request, res: Response, next: NextFunct
             attributes: ad.objAttributes,
             scope: 'sub',
           };
-          ldapClient.search(ad.searchBase, opts, false, (err2, ldapResult) => {
+          ldapClient.legacySearch(ad.searchBase, opts, false, (err2, ldapResult) => {
             if (err2) {
               console.error(err2.name + ' : ' + err2.message);
               return res.status(500).send('something wrong with ad');

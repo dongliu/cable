@@ -5,14 +5,13 @@ import {
   info,
 } from '../shared/logging';
 
-import ldapClient = require('../lib/ldap-client');
+import * as auth from '../lib/auth';
+import * as ldapjs from '../lib/ldapjs-client';
 
 import {
   IUser,
   User,
 } from '../model/user';
-
-import auth = require('../lib/auth');
 
 // const Roles = ['manager', 'admin'];
 
@@ -30,6 +29,11 @@ export function setADConfig(config: ADConfig) {
   ad = config;
 }
 
+let ldapClient: ldapjs.Client;
+
+export function setLDAPClient(client: ldapjs.Client) {
+  ldapClient = client;
+}
 
 function addUser(req: express.Request, res: express.Response) {
   const nameFilter = ad.nameFilter.replace('_name', req.body.name);
@@ -39,7 +43,7 @@ function addUser(req: express.Request, res: express.Response) {
     scope: 'sub',
   };
 
-  ldapClient.search(ad.searchBase, opts, false, (err, result) => {
+  ldapClient.legacySearch(ad.searchBase, opts, false, (err, result) => {
     if (err) {
       error(err.name + ' : ' + err.message);
       return res.status(500).json(err);
@@ -96,7 +100,7 @@ function updateUserProfile(user: User, res: express.Response) {
     attributes: ad.objAttributes,
     scope: 'sub',
   };
-  ldapClient.search(ad.searchBase, opts, false, (err, result) => {
+  ldapClient.legacySearch(ad.searchBase, opts, false, (err, result) => {
     if (err) {
       return res.status(500).json(err);
     }
@@ -376,7 +380,7 @@ export function init(app: express.Application) {
       attributes: ad.objAttributes,
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, false, (err, result) => {
+    ldapClient.legacySearch(ad.searchBase, opts, false, (err, result) => {
       if (err) {
         return res.status(500).json(err);
       }
@@ -405,7 +409,7 @@ export function init(app: express.Application) {
       attributes: ad.rawAttributes,
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, true, (err, result) => {
+    ldapClient.legacySearch(ad.searchBase, opts, true, (err, result) => {
       if (err) {
         return res.status(500).json(err);
       }
@@ -439,7 +443,7 @@ export function init(app: express.Application) {
       attributes: ['displayName'],
       scope: 'sub',
     };
-    ldapClient.search(ad.searchBase, opts, false, (err, result) => {
+    ldapClient.legacySearch(ad.searchBase, opts, false, (err, result) => {
       if (err) {
         return res.status(500).json(err.message);
       }

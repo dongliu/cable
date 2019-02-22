@@ -26,7 +26,7 @@ import * as promises from './shared/promises';
 import * as status from './shared/status';
 import * as tasks from './shared/tasks';
 
-import ldapClient = require('./lib/ldap-client');
+import ldapjs = require('./lib/ldapjs-client');
 
 import routes = require('./routes');
 import * as about from './routes/about';
@@ -101,7 +101,7 @@ export type State = 'STARTING' | 'STARTED' | 'STOPPING' | 'STOPPED';
 let app: express.Application;
 
 // AD Client
-let adClient: any;
+let adClient: ldapjs.Client | null = null;
 
 // application logging
 export let info = logging.info;
@@ -343,6 +343,40 @@ async function doStart(): Promise<express.Application> {
   });
 
   // Authentication Configuration
+  adClient = await ldapjs.Client.create({
+    url: String(cfg.ad.url),
+    bindDN: String(cfg.ad.adminDn),
+    bindCredentials: String(cfg.ad.adminPassword),
+    // TODO: Move to external configuration //
+    reconnect: true,
+    timeout: 15 * 1000,
+    idleTimeout: 10 * 1000,
+    connectTimeout: 10 * 1000,
+    //////////////////////////////////////////
+  });
+  info('LDAP client connected: %s', cfg.ad.url);
+  status.setComponentOk('LDAP Client', 'Connected');
+
+  adClient.on('connect', () => {
+    info('LDAP client reconnected: %s', cfg.ad.url);
+    status.setComponentOk('LDAP Client', 'Reconnected');
+  });
+
+  adClient.on('idle', () => {
+    info('LDAP client connection is idle');
+  });
+
+  adClient.on('close', () => {
+    warn('LDAP client connection is closed');
+  });
+
+  adClient.on('error', (err) => {
+    error('LDAP client connection: %s', err);
+  });
+
+  adClient.on('quietError', (err) => {
+    status.setComponentError('LDAP Client', '%s', err);
+  });
 
   auth.setADConfig({
     objAttributes: Array.isArray(cfg.ad.objAttributes) ? cfg.ad.objAttributes.map(String) : [],
@@ -356,11 +390,7 @@ async function doStart(): Promise<express.Application> {
     tokens: Array.isArray(cfg.access_tokens) ? cfg.access_tokens.map(String) : [],
   });
 
-  ldapClient.setADConfig({
-    url: String(cfg.ad.url),
-    adminDn: String(cfg.ad.adminDn),
-    adminPassword: String(cfg.ad.adminPassword),
-  });
+  auth.setLDAPClient(adClient);
 
   // Read metadata from data files
   if (!cfg.metadata.syssubsystem_path) {
@@ -466,8 +496,6 @@ async function doStart(): Promise<express.Application> {
   routes.setAuthConfig({ cas: String(cfg.cas.cas_url) });
   app.get('/logout', routes.logout);
 
-  adClient = require('./lib/ldap-client').client;
-
   app.get('/about', about.index);
   app.get('/', auth.ensureAuthenticated, routes.main);
 
@@ -480,6 +508,7 @@ async function doStart(): Promise<express.Application> {
     searchBase: String(cfg.ad.searchBase),
     searchFilter: String(cfg.ad.searchFilter),
   });
+  user.setLDAPClient(adClient);
   user.init(app);
 
   wbs.setWBSConfig({ frib: wbsFRIB, rea6: wbsREA6 });
@@ -546,19 +575,14 @@ async function doStop(): Promise<void> {
   }
 
   // Unbind AD Client
-  try {
-    await new Promise((resolve, reject) => {
-      adClient.unbind((err: any) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve();
-      });
-    });
-    info('ldap client stops.');
-  } catch (err) {
-    warn('AD unbind failure: %s', err);
+  if (adClient) {
+    try {
+      await adClient.unbind();
+      adClient.destroy();
+      info('LDAP client connection destroyed');
+    } catch (err) {
+      warn('LDAP client connection unbind failure: %s', err);
+    }
   }
 
   // disconnect Mongoose (MongoDB)
